@@ -21,7 +21,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 /**
  * Testcase for the FlowQuery SiblingsOperation
  */
-class SiblingsOperationTest extends AbstractQueryOperationsTest
+class SiblingsOperationTest extends AbstractQueryOperationsTestCase
 {
     /**
      * @var Context

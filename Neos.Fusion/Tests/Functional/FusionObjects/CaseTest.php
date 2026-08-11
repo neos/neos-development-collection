@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Case Fusion object
  *
  */
-class CaseTest extends AbstractFusionObjectTest
+class CaseTest extends AbstractFusionObjectTestCase
 {
     public function assertMatchingWorks($path)
     {

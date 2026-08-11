@@ -11,12 +11,12 @@ namespace Neos\Neos\Tests\Functional\Domain;
  * source code.
  */
 
-use Neos\Neos\Tests\Functional\AbstractNodeTest;
+use Neos\Neos\Tests\Functional\AbstractNodeTestCase;
 
 /**
  * Tests checking correct Uri behavior for Neos nodes.
  */
-class NodeUriTest extends AbstractNodeTest
+class NodeUriTest extends AbstractNodeTestCase
 {
     /**
      * @var string the Nodes fixture

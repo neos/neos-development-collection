@@ -21,13 +21,13 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
 
 /**
  * Testcase for the asset helper
  *
  */
-class AssetsHelperTest extends AbstractTest
+class AssetsHelperTest extends AbstractTestCase
 {
     /**
      * @var boolean

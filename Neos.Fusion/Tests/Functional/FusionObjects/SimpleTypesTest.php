@@ -18,7 +18,7 @@ use Neos\Fusion\Exception\MissingFusionObjectException;
  * Testcase for the Fusion View
  *
  */
-class SimpleTypesTest extends AbstractFusionObjectTest
+class SimpleTypesTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

@@ -16,9 +16,9 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
 
-class TagTest extends AbstractTest
+class TagTest extends AbstractTestCase
 {
     /**
      * @var boolean

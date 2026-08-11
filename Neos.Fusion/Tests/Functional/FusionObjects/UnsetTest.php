@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for unsetting Fusion paths
  *
  */
-class UnsetTest extends AbstractFusionObjectTest
+class UnsetTest extends AbstractFusionObjectTestCase
 {
     public function unsetExamples()
     {

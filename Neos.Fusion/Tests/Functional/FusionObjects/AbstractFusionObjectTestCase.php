@@ -24,7 +24,7 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  * Testcase for the Fusion View
  *
  */
-abstract class AbstractFusionObjectTest extends FunctionalTestCase
+abstract class AbstractFusionObjectTestCase extends FunctionalTestCase
 {
     /**
      * @var ControllerContext

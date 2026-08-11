@@ -20,7 +20,7 @@ use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
 /**
  * Test case for the Fusion ContentCache
  */
-class ContentCacheTest extends AbstractFusionObjectTest
+class ContentCacheTest extends AbstractFusionObjectTestCase
 {
     /**
      * @var ContentCache

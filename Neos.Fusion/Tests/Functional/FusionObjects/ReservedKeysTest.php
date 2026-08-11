@@ -17,7 +17,7 @@ use Neos\Fusion\Exception;
  * Testcase for reserved Fusion keys
  *
  */
-class ReservedKeysTest extends AbstractFusionObjectTest
+class ReservedKeysTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

@@ -17,7 +17,7 @@ use Neos\Fusion\Service\DebugStack;
  * Testcase for the Debug object
  *
  */
-class DebugTest extends AbstractFusionObjectTest
+class DebugTest extends AbstractFusionObjectTestCase
 {
     /**
      * @var DebugStack

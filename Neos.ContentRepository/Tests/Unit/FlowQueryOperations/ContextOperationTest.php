@@ -20,7 +20,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 /**
  * Testcase for the FlowQuery ContextOperation
  */
-class ContextOperationTest extends AbstractQueryOperationsTest
+class ContextOperationTest extends AbstractQueryOperationsTestCase
 {
     /**
      * @var ContextOperation

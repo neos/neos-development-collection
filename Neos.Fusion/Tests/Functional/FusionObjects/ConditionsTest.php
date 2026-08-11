@@ -10,11 +10,10 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for conditional rendering (if)
  */
-class ConditionsTest extends AbstractFusionObjectTest
+class ConditionsTest extends AbstractFusionObjectTestCase
 {
     public function conditionExamples()
     {

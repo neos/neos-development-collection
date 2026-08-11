@@ -11,12 +11,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Debug object
  *
  */
-class MatchTest extends AbstractFusionObjectTest
+class MatchTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

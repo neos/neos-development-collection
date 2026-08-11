@@ -12,12 +12,12 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  */
 
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
 /**
  * Functional test case which tests FlowQuery ParentsOperation
  */
-class ParentsOperationTest extends AbstractNodeTest
+class ParentsOperationTest extends AbstractNodeTestCase
 {
     /**
      * @test

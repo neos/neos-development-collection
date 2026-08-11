@@ -17,9 +17,9 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Migration\Domain\Model\Migration;
 use Neos\ContentRepository\Migration\Service\NodeMigration;
-use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
-class MigrationTest extends AbstractNodeTest
+class MigrationTest extends AbstractNodeTestCase
 {
     /**
      * @var NodeTypeManager

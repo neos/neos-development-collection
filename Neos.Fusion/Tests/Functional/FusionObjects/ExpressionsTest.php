@@ -19,7 +19,7 @@ use Neos\Fusion\Core\Runtime;
 /**
  * Testcase for Eel expressions in Fusion
  */
-class ExpressionsTest extends AbstractFusionObjectTest
+class ExpressionsTest extends AbstractFusionObjectTestCase
 {
     public function expressionExamples()
     {
@@ -46,7 +46,7 @@ class ExpressionsTest extends AbstractFusionObjectTest
     }
 
     /**
-     * The view and runtime of the AbstractFusionObjectTest
+     * The view and runtime of the AbstractFusionObjectTestCase
      * is not used to make sure the runtime context is empty.
      *
      * @test

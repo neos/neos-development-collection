@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Iteration Fusion object
  *
  */
-class LoopTest extends AbstractFusionObjectTest
+class LoopTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

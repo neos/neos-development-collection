@@ -17,7 +17,7 @@ use Neos\FluidAdaptor\View\Exception\InvalidTemplateResourceException;
  * Testcase for basic Fusion rendering
  *
  */
-class BasicRenderingTest extends AbstractFusionObjectTest
+class BasicRenderingTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

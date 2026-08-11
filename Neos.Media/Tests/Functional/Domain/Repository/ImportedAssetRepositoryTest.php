@@ -14,9 +14,9 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
 
-class ImportedAssetRepositoryTest extends AbstractTest
+class ImportedAssetRepositoryTest extends AbstractTestCase
 {
     /**
      * @var boolean

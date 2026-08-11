@@ -17,7 +17,7 @@ use Neos\Utility\PositionalArraySorter;
 /**
  * Testcase for the Fusion Dictionary
  */
-class DataStructureTest extends AbstractFusionObjectTest
+class DataStructureTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

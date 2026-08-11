@@ -21,7 +21,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\Tests\Functional\AbstractNodeTest;
+use Neos\Neos\Tests\Functional\AbstractNodeTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -29,7 +29,7 @@ use Symfony\Component\DomCrawler\Crawler;
  *
  * @group large
  */
-class RenderingTest extends AbstractNodeTest
+class RenderingTest extends AbstractNodeTestCase
 {
     /**
      * @test

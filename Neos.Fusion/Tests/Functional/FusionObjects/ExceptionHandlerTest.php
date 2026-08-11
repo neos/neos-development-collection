@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Fusion exception handling
  *
  */
-class ExceptionHandlerTest extends AbstractFusionObjectTest
+class ExceptionHandlerTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

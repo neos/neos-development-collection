@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Renderer Fusion object
  *
  */
-class RendererTest extends AbstractFusionObjectTest
+class RendererTest extends AbstractFusionObjectTestCase
 {
     public function assertRenderingWorks($path, $expectation)
     {

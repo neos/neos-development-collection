@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Reduction Fusion object
  *
  */
-class ReduceTest extends AbstractFusionObjectTest
+class ReduceTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

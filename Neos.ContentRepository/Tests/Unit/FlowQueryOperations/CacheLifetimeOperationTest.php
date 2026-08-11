@@ -18,7 +18,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 /**
  * Testcase for the ContentRepository FlowQuery CacheLifetimeOperation
  */
-class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
+class CacheLifetimeOperationTest extends AbstractQueryOperationsTestCase
 {
     /**
      * @var CacheLifetimeOperation

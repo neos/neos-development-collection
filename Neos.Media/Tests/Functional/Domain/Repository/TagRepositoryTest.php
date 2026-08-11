@@ -14,13 +14,13 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
 
 /**
  * Testcase for an tag repository
  *
  */
-class TagRepositoryTest extends AbstractTest
+class TagRepositoryTest extends AbstractTestCase
 {
     /**
      * @var boolean

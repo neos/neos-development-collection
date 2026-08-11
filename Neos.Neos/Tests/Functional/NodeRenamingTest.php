@@ -22,7 +22,7 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
  *
  * @group large
  */
-class NodeRenamingTest extends AbstractNodeTest
+class NodeRenamingTest extends AbstractNodeTestCase
 {
     /**
      * @var \Neos\ContentRepository\Domain\Model\NodeInterface

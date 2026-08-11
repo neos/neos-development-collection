@@ -13,13 +13,13 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
 
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 use Neos\Eel\FlowQuery\FlowQueryException;
 
 /**
  * Functional test case which tests FlowQuery FindOperation
  */
-class FindOperationTest extends AbstractNodeTest
+class FindOperationTest extends AbstractNodeTestCase
 {
     /**
      * @test

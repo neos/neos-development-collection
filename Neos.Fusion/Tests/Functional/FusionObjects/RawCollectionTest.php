@@ -10,12 +10,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the RawCollection Fusion object
  *
  */
-class RawCollectionTest extends AbstractFusionObjectTest
+class RawCollectionTest extends AbstractFusionObjectTestCase
 {
     /**
      * @test

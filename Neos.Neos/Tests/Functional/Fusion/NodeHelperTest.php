@@ -13,14 +13,14 @@ namespace Neos\Neos\Tests\Functional\Fusion;
 
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
+use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTestCase;
 use Neos\Neos\Domain\Service\ContentContext;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Fusion NodeLabel helper
  */
-class NodeHelperTest extends AbstractFusionObjectTest
+class NodeHelperTest extends AbstractFusionObjectTestCase
 {
     /**
      * @var Node|MockObject
