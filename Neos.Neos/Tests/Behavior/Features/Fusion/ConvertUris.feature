@@ -14,10 +14,11 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
         'Neos.Neos:Document': true
     """
     And I have the following nodes:
-      | Identifier | Path        | Node Type                   | Properties                                   |
-      | root       | /sites      | unstructured                |                                              |
-      | a          | /sites/a    | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a", "title": "Node a"}   |
-      | a1         | /sites/a/a1 | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a1", "title": "Node a1"} |
+      | Identifier | Path        | Node Type                   | Properties                                   | Hidden |
+      | root       | /sites      | unstructured                |                                              | false  |
+      | a          | /sites/a    | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a", "title": "Node a"}   | false  |
+      | a1         | /sites/a/a1 | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a1", "title": "Node a1"} | false  |
+      | a2         | /sites/a/a2 | Neos.Neos:Test.DocumentType | {"uriPathSegment": "a2", "title": "Node a2"} | true   |
     And the Fusion context node is "a"
     And the Fusion context request URI is "http://localhost"
 
@@ -78,6 +79,22 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI: /en/a1.
     """
 
+  Scenario: URI to hidden node
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      node = ${q(node).context({'invisibleContentShown': false}).get(0)}
+      value = 'Some value with node URI to hidden node: node://a2.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI to hidden node: .
+    """
+
   Scenario: Anchor tag without node or asset URI
     When I execute the following Fusion code:
     """fusion
@@ -121,6 +138,22 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Then I expect the following Fusion rendering result:
     """
     some <a href="/en/a1">Link</a>
+    """
+
+  Scenario: Anchor tag with node URI to hidden node
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      node = ${q(node).context({'invisibleContentShown': false}).get(0)}
+      value = 'some <a href="node://a2">Link</a>'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    some Link
     """
 
   Scenario: URI to non-existing asset
