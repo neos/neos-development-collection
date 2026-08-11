@@ -81,7 +81,7 @@ jobs:
           distribution-path: ${{ env.NEOS_DIST_FOLDER }}
 
       - name: Run unit tests
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
 
   functional-tests:
     permissions:
@@ -153,7 +153,7 @@ jobs:
         run: FLOW_CONTEXT=Testing ./flow doctrine:migrate
 
       - name: Run functional tests
-        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"
 
   behavioral-tests:
     permissions:
