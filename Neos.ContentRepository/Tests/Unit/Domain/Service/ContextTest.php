@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Utility\Now;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -29,7 +30,7 @@ class ContextTest extends UnitTestCase
     public function setUp(): void
     {
         $this->contextFactory = new ContextFactory();
-        $this->inject($this->contextFactory, 'now', new \Neos\Flow\Utility\Now());
+        $this->inject($this->contextFactory, 'now', new Now());
         $this->inject($this->contextFactory, 'securityContext', $this->createMock(Context::class));
 
         $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);

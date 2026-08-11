@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Unit\Service;
  * source code.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
@@ -45,22 +46,22 @@ class UserServiceTest extends UnitTestCase
     protected $userDomainService;
 
     /**
-     * @var WorkspaceRepository | \PHPUnit\Framework\MockObject\MockObject
+     * @var WorkspaceRepository|MockObject
      */
     protected $mockWorkspaceRepository;
 
     /**
-     * @var AccountRepository | \PHPUnit\Framework\MockObject\MockObject
+     * @var AccountRepository|MockObject
      */
     protected $mockAccountRepository;
 
     /**
-     * @var PartyService | \PHPUnit\Framework\MockObject\MockObject
+     * @var PartyService|MockObject
      */
     protected $mockPartyService;
 
     /**
-     * @var PartyRepository | \PHPUnit\Framework\MockObject\MockObject
+     * @var PartyRepository|MockObject
      */
     protected $mockPartyRepository;
 

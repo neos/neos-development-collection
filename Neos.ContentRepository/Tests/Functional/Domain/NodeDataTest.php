@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * source code.
  */
 
+use Neos\ContentRepository\Tests\Functional\Domain\Fixtures\RelatedEntity;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Neos\Domain\Service\SiteImportService;
@@ -91,7 +92,7 @@ class NodeDataTest extends FunctionalTestCase
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
-        $newEntity = new Fixtures\RelatedEntity();
+        $newEntity = new RelatedEntity();
         $newEntity->setFavoritePlace('Reykjavik');
         $template->setProperty('entity', $newEntity);
 
@@ -119,7 +120,7 @@ class NodeDataTest extends FunctionalTestCase
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
-        $newEntity = new Fixtures\RelatedEntity();
+        $newEntity = new RelatedEntity();
         $newEntity->setFavoritePlace('Reykjavik');
         $template->setProperty('entity', $newEntity);
 
@@ -159,9 +160,9 @@ class NodeDataTest extends FunctionalTestCase
         $template->setName('new-node');
         $template->setIdentifier($identifier);
 
-        $newEntity = new Fixtures\RelatedEntity();
+        $newEntity = new RelatedEntity();
         $newEntity->setFavoritePlace('Reykjavik');
-        $anotherNewEntity = new Fixtures\RelatedEntity();
+        $anotherNewEntity = new RelatedEntity();
         $anotherNewEntity->setFavoritePlace('Japan');
         $template->setProperty('entity', [$newEntity, $anotherNewEntity]);
 

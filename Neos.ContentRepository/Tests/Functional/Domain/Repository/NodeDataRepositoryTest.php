@@ -104,7 +104,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $relationMap = [
-            Fixtures\Image::class => [$this->persistenceManager->getIdentifierByObject($testImage)]
+            Image::class => [$this->persistenceManager->getIdentifierByObject($testImage)]
         ];
 
         $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);
@@ -137,7 +137,7 @@ class NodeDataRepositoryTest extends FunctionalTestCase
         $this->persistenceManager->persistAll();
 
         $relationMap = [
-            Fixtures\Image::class => [$testImageIdentifier]
+            Image::class => [$testImageIdentifier]
         ];
 
         $result = $this->nodeDataRepository->findNodesByRelatedEntities($relationMap);

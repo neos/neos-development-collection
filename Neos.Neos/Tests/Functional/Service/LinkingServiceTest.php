@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Functional\Service;
  * source code.
  */
 
+use Neos\Media\Domain\Repository\AssetRepository;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
@@ -28,7 +29,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -256,7 +256,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceCanConvertUriToObject()
     {
-        $assetRepository = $this->objectManager->get(\Neos\Media\Domain\Repository\AssetRepository::class);
+        $assetRepository = $this->objectManager->get(AssetRepository::class);
         $asset = $assetRepository->findByIdentifier('89cd85cc-270e-0902-7113-d14ac7539c75');
 
         self::assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));
@@ -268,7 +268,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceThrowsAnExceptionWhenTryingToLinkToANonExistingNode()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(NeosException::class);
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/not-found', $this->baseNode);
     }
 
@@ -277,7 +277,7 @@ class LinkingServiceTest extends FunctionalTestCase
      */
     public function linkingServiceThrowsAnExceptionWhenItIsGivenAnEmptyString()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(NeosException::class);
         $this->linkingService->createNodeUri($this->controllerContext, '', $this->baseNode);
     }
 

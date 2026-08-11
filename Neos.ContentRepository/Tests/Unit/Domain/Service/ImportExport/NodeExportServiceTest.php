@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
  * source code.
  */
 
+use Neos\Flow\Property\PropertyMapper;
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
@@ -22,7 +24,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 class NodeExportServiceTest extends UnitTestCase
 {
     /**
-     * @var Context|\PHPUnit\Framework\MockObject\MockObject
+     * @var Context|MockObject
      */
     protected $mockSecurityContext;
 
@@ -39,7 +41,7 @@ class NodeExportServiceTest extends UnitTestCase
      */
     public function exportEmptyListOfNodesCreatesEmptyXml()
     {
-        /** @var NodeExportService|\PHPUnit\Framework\MockObject\MockObject $nodeExportService */
+        /** @var NodeExportService|MockObject $nodeExportService */
         $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(['findNodeDataListToExport'])->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
 
@@ -59,7 +61,7 @@ class NodeExportServiceTest extends UnitTestCase
      */
     public function exportRootNodeCreatesSingleNode()
     {
-        /** @var NodeExportService|\PHPUnit\Framework\MockObject\MockObject $nodeExportService */
+        /** @var NodeExportService|MockObject $nodeExportService */
         $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(['findNodeDataListToExport'])->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
         $nodeTypeManager = $this->createMock(NodeTypeManager::class);
@@ -98,7 +100,7 @@ class NodeExportServiceTest extends UnitTestCase
      */
     public function exportNodeWithoutParentSkipsBrokenNode()
     {
-        /** @var NodeExportService|\PHPUnit\Framework\MockObject\MockObject $nodeExportService */
+        /** @var NodeExportService|MockObject $nodeExportService */
         $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(['findNodeDataListToExport'])->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
         $nodeTypeManager = $this->createMock(NodeTypeManager::class);

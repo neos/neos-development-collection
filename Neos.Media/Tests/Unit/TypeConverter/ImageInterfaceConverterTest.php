@@ -10,6 +10,7 @@ namespace Neos\Media\Tests\Unit\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfiguration;
@@ -32,17 +33,17 @@ class ImageInterfaceConverterTest extends UnitTestCase
     protected $converter;
 
     /**
-     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
+     * @var ReflectionService|MockObject
      */
     protected $mockReflectionService;
 
     /**
-     * @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var PersistenceManagerInterface|MockObject
      */
     protected $mockPersistenceManager;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ObjectManagerInterface|MockObject
      */
     protected $mockObjectManager;
 

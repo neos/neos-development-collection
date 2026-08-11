@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimension;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
@@ -25,7 +26,7 @@ class ContentDimensionTest extends UnitTestCase
      */
     public function createValueRegistersCreatedValue()
     {
-        $dimension = new IntraDimension\ContentDimension('test');
+        $dimension = new ContentDimension('test');
         $testValue = $dimension->createValue('test');
 
         self::assertSame($testValue, $dimension->getValue('test'));
@@ -36,7 +37,7 @@ class ContentDimensionTest extends UnitTestCase
      */
     public function createValueWithoutFallbackDoesNotIncreaseDepth()
     {
-        $dimension = new IntraDimension\ContentDimension('test');
+        $dimension = new ContentDimension('test');
         $dimension->createValue('test');
 
         self::assertSame(0, $dimension->getDepth());
@@ -48,7 +49,7 @@ class ContentDimensionTest extends UnitTestCase
     public function createValueWithFallbackDoesNotDecreaseDepth()
     {
         $testDepth = random_int(1, 100);
-        $dimension = new IntraDimension\ContentDimension('test');
+        $dimension = new ContentDimension('test');
         ObjectAccess::setProperty($dimension, 'depth', $testDepth, true);
         $fallbackValue = $dimension->createValue('fallback');
         $dimension->createValue('test', $fallbackValue);
@@ -62,7 +63,7 @@ class ContentDimensionTest extends UnitTestCase
     public function createValueWithFallbackIncreasesDepthIfFallbackHasCurrentMaximumDepth()
     {
         $testDepth = random_int(0, 100);
-        $dimension = new IntraDimension\ContentDimension('test');
+        $dimension = new ContentDimension('test');
         ObjectAccess::setProperty($dimension, 'depth', $testDepth, true);
         $fallbackValue = $dimension->createValue('fallback');
         ObjectAccess::setProperty($fallbackValue, 'depth', $testDepth, true);
@@ -77,7 +78,7 @@ class ContentDimensionTest extends UnitTestCase
     public function getRootValuesOnlyReturnsValuesOfDepthZero()
     {
         $testDepth = random_int(1, 100);
-        $dimension = new IntraDimension\ContentDimension('test');
+        $dimension = new ContentDimension('test');
         $depthZeroValue = $dimension->createValue('depthZero');
         $depthGreaterZeroValue = $dimension->createValue('depthGreaterZero');
         ObjectAccess::setProperty($depthGreaterZeroValue, 'depth', $testDepth, true);

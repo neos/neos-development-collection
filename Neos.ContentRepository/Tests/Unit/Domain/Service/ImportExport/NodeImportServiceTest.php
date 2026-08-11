@@ -11,6 +11,11 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
  * source code.
  */
 
+use Neos\Error\Messages\Result;
+use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\Model\Image;
+use Neos\Media\Domain\Model\Asset;
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
@@ -19,12 +24,12 @@ use Neos\ContentRepository\Domain\Service\ImportExport\NodeImportService;
 class NodeImportServiceTest extends UnitTestCase
 {
     /**
-     * @var PropertyMapper|\PHPUnit\Framework\MockObject\MockObject
+     * @var PropertyMapper|MockObject
      */
     protected $mockPropertyMapper;
 
     /**
-     * @var Context|\PHPUnit\Framework\MockObject\MockObject
+     * @var Context|MockObject
      */
     protected $mockSecurityContext;
 
@@ -195,7 +200,7 @@ class NodeImportServiceTest extends UnitTestCase
                     'relatedDocuments' => [],
                     'image' =>
                         [
-                            'targetType' => \Neos\Media\Domain\Model\ImageVariant::class,
+                            'targetType' => ImageVariant::class,
                             'source' =>
                                 [
                                     'originalImage' =>
@@ -267,7 +272,7 @@ class NodeImportServiceTest extends UnitTestCase
                 'properties' => [
                     'assets' => [
                         0 => [
-                            'targetType' => \Neos\Media\Domain\Model\Image::class,
+                            'targetType' => Image::class,
                             'source' =>
                                 [
                                     'title' => '',
@@ -280,7 +285,7 @@ class NodeImportServiceTest extends UnitTestCase
                                 ],
                         ],
                         1 => [
-                            'targetType' => \Neos\Media\Domain\Model\Asset::class,
+                            'targetType' => Asset::class,
                             'source' =>
                                 [
                                     'title' => '',

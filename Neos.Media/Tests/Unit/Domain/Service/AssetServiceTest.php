@@ -11,6 +11,7 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Audio;
@@ -48,7 +49,7 @@ class AssetServiceTest extends UnitTestCase
     {
         $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
-        $mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())
             ->method('get')
             ->willReturn($this->createMock($expectedRepositoryClassName));

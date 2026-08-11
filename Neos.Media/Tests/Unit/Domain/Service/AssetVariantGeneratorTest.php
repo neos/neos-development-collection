@@ -11,6 +11,7 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
@@ -168,7 +169,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
     /**
      * @param array $methods
      * @param array $variantPresetsConfiguration
-     * @return AssetVariantGenerator|\PHPUnit\Framework\MockObject\MockObject
+     * @return AssetVariantGenerator|MockObject
      */
     private function mockAssetVariantGenerator(array $methods, array $variantPresetsConfiguration = [])
     {
@@ -225,7 +226,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @return Image|\PHPUnit\Framework\MockObject\MockObject
+     * @return Image|MockObject
      */
     private function mockImage()
     {

@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Utility;
  * source code.
  */
 
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
@@ -18,7 +19,7 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  * Testcase for the NodeService
  *
  */
-class NodePathsTest extends \Neos\Flow\Tests\UnitTestCase
+class NodePathsTest extends UnitTestCase
 {
     /**
      * @test

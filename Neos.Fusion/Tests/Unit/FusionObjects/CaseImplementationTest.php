@@ -11,6 +11,7 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * source code.
  */
 
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\CaseImplementation;
@@ -18,7 +19,7 @@ use Neos\Fusion\FusionObjects\CaseImplementation;
 /**
  * Testcase for the Case object
  */
-class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
+class CaseImplementationTest extends UnitTestCase
 {
     /**
      * @test

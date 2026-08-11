@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Functional\ViewHelpers\Link;
  * source code.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
@@ -130,7 +131,7 @@ class NodeViewHelperTest extends FunctionalTestCase
             'alternativeDocumentNode' => $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')
         ]);
         $this->inject($fusionObject, 'runtime', $this->runtime);
-        /** @var AbstractTemplateView|\PHPUnit\Framework\MockObject\MockObject $mockView */
+        /** @var AbstractTemplateView|MockObject $mockView */
         $mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
         $mockView->expects(self::any())->method('getFusionObject')->willReturn($fusionObject);
         $viewHelperVariableContainer = new ViewHelperVariableContainer();

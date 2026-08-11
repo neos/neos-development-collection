@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Exception\NodeTypeIsFinalException;
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\ContentRepository\Exception;
 use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -28,7 +30,7 @@ class NodeTypeManagerTest extends UnitTestCase
     protected $nodeTypeManager;
 
     /**
-     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var ConfigurationManager|MockObject
      */
     protected $mockConfigurationManager;
 
@@ -338,7 +340,7 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     public function getNodeTypeThrowsExceptionIfFinalNodeTypeIsSubclassed()
     {
-        $this->expectException(Exception\NodeTypeIsFinalException::class);
+        $this->expectException(NodeTypeIsFinalException::class);
         $nodeTypesFixture = [
             'Neos.ContentRepository.Testing:Base' => [
                 'final' => true

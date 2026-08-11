@@ -11,6 +11,8 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * source code.
  */
 
+use PHPUnit\Framework\Exception;
+use Neos\Fusion\Core\Runtime;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
@@ -308,7 +310,7 @@ class RenderingTest extends AbstractNodeTestCase
                 self::assertTrue($found <= $count['<='], $message);
             }
         } else {
-            throw new \PHPUnit\Framework\Exception('Invalid count format');
+            throw new Exception('Invalid count format');
         }
     }
 
@@ -353,7 +355,7 @@ class RenderingTest extends AbstractNodeTestCase
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function createRuntimeWithFixtures($additionalFusionFile = null): \Neos\Fusion\Core\Runtime
+    protected function createRuntimeWithFixtures($additionalFusionFile = null): Runtime
     {
         $fusionService = new FusionService();
         $fusionService->setSiteRootFusionPattern(__DIR__ . '/Fixtures/Base.fusion');

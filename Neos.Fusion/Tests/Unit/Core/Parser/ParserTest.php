@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * source code.
  */
 
+use Neos\Fusion\Core\FusionSourceCodeCollection;
+use Neos\Fusion\Exception;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion;
@@ -1028,7 +1030,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesToExpectedAst($fusion, $expectedAst): void
     {
-        $parsedFusionAst = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        $parsedFusionAst = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
         self::assertSame($expectedAst, $parsedFusionAst);
     }
 
@@ -1041,8 +1043,8 @@ class ParserTest extends UnitTestCase
      */
     public function itThrowsWhileParsing($fusion): void
     {
-        self::expectException(Fusion\Exception::class);
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        self::expectException(Exception::class);
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
     /**
@@ -1052,7 +1054,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesWithoutError($fusion): void
     {
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
         self::assertTrue(true);
     }
 
@@ -1071,6 +1073,6 @@ class ParserTest extends UnitTestCase
             ->method('handleDslTranspile')
             ->with($expectedDslName, $expectedDslContent);
 
-        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }
 }

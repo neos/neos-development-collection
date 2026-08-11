@@ -12,6 +12,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
+use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
@@ -259,7 +260,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
      */
     public function processThrowsExceptionIfNoPropertyEditorCanBeResolved(): void
     {
-        $this->expectException(\Neos\Neos\Exception::class);
+        $this->expectException(Exception::class);
 
         $configuration = [
             'properties' => [

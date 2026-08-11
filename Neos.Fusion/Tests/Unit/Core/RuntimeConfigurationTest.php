@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * source code.
  */
 
+use Neos\Fusion\Core\RuntimeConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
 
 class RuntimeConfigurationTest extends UnitTestCase
@@ -50,7 +51,7 @@ class RuntimeConfigurationTest extends UnitTestCase
                 ]
             ]
         ];
-        $runtimeConfiguration = new \Neos\Fusion\Core\RuntimeConfiguration($fusionConfiguration);
+        $runtimeConfiguration = new RuntimeConfiguration($fusionConfiguration);
         $configuration = $runtimeConfiguration->forPath('root/item1/renderer');
 
         $this->assertEquals([

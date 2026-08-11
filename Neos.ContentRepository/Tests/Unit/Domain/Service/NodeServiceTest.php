@@ -11,9 +11,11 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\ArrayPropertyCollection;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
@@ -231,7 +233,7 @@ class NodeServiceTest extends UnitTestCase
         $nodeService = $this->createNodeService();
 
         $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
-        $mockNodeData = $this->getMockBuilder(\Neos\ContentRepository\Domain\Model\NodeData::class)->disableOriginalConstructor()->getMock();
+        $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $mockNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:Content');
 
         $mockNodeData->expects(self::once())

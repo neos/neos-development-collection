@@ -11,6 +11,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\InterDimension;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\InterDimension\ContentSubgraph;
+use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimensionValue;
+use Neos\ContentRepository\Domain\Model\InterDimension\VariationEdge;
 use Neos\ContentRepository\Domain\Model\InterDimension;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\Flow\Tests\UnitTestCase;
@@ -25,10 +28,10 @@ class VariationEdgeTest extends UnitTestCase
      */
     public function variationEdgesAreRegisteredInFallbackAndVariantUponCreation()
     {
-        $variant = new InterDimension\ContentSubgraph(['test' => new IntraDimension\ContentDimensionValue('a')]);
-        $fallback = new InterDimension\ContentSubgraph(['test' => new IntraDimension\ContentDimensionValue('b')]);
+        $variant = new ContentSubgraph(['test' => new ContentDimensionValue('a')]);
+        $fallback = new ContentSubgraph(['test' => new ContentDimensionValue('b')]);
 
-        $variationEdge = new InterDimension\VariationEdge($variant, $fallback, [1]);
+        $variationEdge = new VariationEdge($variant, $fallback, [1]);
 
         self::assertContains($variationEdge, $variant->getFallbackEdges());
         self::assertContains($variationEdge, $fallback->getVariantEdges());

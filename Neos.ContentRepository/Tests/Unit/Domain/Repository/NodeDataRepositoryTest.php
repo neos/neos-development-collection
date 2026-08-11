@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Repository;
  * source code.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Doctrine\ORM\QueryBuilder;
 use Neos\Flow\Persistence\Doctrine\Query;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -22,19 +23,19 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 class NodeDataRepositoryTest extends UnitTestCase
 {
     /**
-     * @var \Neos\ContentRepository\Domain\Repository\NodeDataRepository|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Neos\ContentRepository\Domain\Repository\NodeDataRepository|MockObject
      */
     protected $nodeDataRepository;
 
     /**
      * Mocks the getResult method of \Doctrine\ORM\Query, which cannot be mocked for real, since it is final.
      *
-     * @var \PHPUnit\Framework\MockObject\MockObject
+     * @var MockObject
      */
     protected $mockQuery;
 
     /**
-     * @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject
+     * @var QueryBuilder|MockObject
      */
     protected $mockQueryBuilder;
 

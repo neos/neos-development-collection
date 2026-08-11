@@ -402,7 +402,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         $view->setOption('enableContentCache', true);
         $view->setFusionPath('contentCache/maximumLifetimeInNestedEmbedAndCachedSegments');
 
-        $mockCache = $this->createMock(\Neos\Cache\Frontend\FrontendInterface::class);
+        $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($this->contentCache, 'cache', $mockCache);
 
         $mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
@@ -446,7 +446,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
     public function cacheUsesGlobalCacheIdentifiersAsDefaultPrototypeForEntryIdentifier()
     {
         $entriesWritten = [];
-        $mockCache = $this->createMock(\Neos\Cache\Frontend\FrontendInterface::class);
+        $mockCache = $this->createMock(FrontendInterface::class);
         $mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
         $mockCache->expects(self::any())->method('has')->will(self::returnValue(false));
         $mockCache->expects(self::atLeastOnce())->method('set')->will(self::returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
@@ -490,7 +490,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
     public function globalIdentifiersAreUsedWithBlankEntryIdentifiers()
     {
         $entriesWritten = [];
-        $mockCache = $this->createMock(\Neos\Cache\Frontend\FrontendInterface::class);
+        $mockCache = $this->createMock(FrontendInterface::class);
         $mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
         $mockCache->expects(self::any())->method('has')->will(self::returnValue(false));
         $mockCache->expects(self::atLeastOnce())->method('set')->will(self::returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {

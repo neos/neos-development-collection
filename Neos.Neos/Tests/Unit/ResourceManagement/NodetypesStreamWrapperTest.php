@@ -11,6 +11,8 @@ namespace Neos\Neos\Tests\Unit\ResourceManagement;
  * source code.
  */
 
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\ResourceManagement\Exception;
 use org\bovigo\vfs\vfsStream;
@@ -29,7 +31,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
     protected $nodeTypesStreamWrapper;
 
     /**
-     * @var PackageManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var PackageManager|MockObject
      */
     protected $mockPackageManager;
 
@@ -95,7 +97,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
     {
         $this->expectException(Exception::class);
         $packageKey = 'Non.Existing.Package';
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->willThrowException(new \Neos\Flow\Package\Exception\UnknownPackageException('Test exception'));
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->willThrowException(new UnknownPackageException('Test exception'));
 
         $openedPathAndFilename = '';
         $this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename);

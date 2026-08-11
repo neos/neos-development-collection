@@ -11,6 +11,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Helpers;
  * source code.
  */
 
+use Neos\Fusion\FusionObjects\ValueImplementation;
+use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 
@@ -27,8 +29,8 @@ class LazyPropsTest extends UnitTestCase
             return $path;
         });
 
-        $fusionObject = new \Neos\Fusion\FusionObjects\ValueImplementation($mockRuntime, 'test/path', 'Value');
-        $lazyProps = new \Neos\Fusion\FusionObjects\Helpers\LazyProps($fusionObject, 'test/path', $mockRuntime, ['foo', 'bar'], ['value' => 42]);
+        $fusionObject = new ValueImplementation($mockRuntime, 'test/path', 'Value');
+        $lazyProps = new LazyProps($fusionObject, 'test/path', $mockRuntime, ['foo', 'bar'], ['value' => 42]);
 
         $serializedProps = json_encode($lazyProps);
         $this->assertEquals('{"foo":"test\/path\/foo","bar":"test\/path\/bar"}', $serializedProps);

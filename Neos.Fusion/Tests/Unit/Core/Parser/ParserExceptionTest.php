@@ -11,6 +11,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * source code.
  */
 
+use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Cache\ParserCache;
@@ -310,7 +311,7 @@ class ParserExceptionTest extends UnitTestCase
     {
         self::expectException(ParserException::class);
         self::expectExceptionMessage($expectedMessage);
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
     /**
@@ -326,7 +327,7 @@ class ParserExceptionTest extends UnitTestCase
     public function itMatchesThePartialExceptionMessage($fusion, $expectedMessage): void
     {
         try {
-            $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+            $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
             self::fail('No exception was thrown. Expected message: ' . $expectedMessage);
         } catch (ParserException $e) {
             self::assertSame($expectedMessage, $e->getHelperMessagePart());

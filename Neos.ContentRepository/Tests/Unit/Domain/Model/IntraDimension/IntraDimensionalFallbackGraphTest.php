@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\IntraDimension\IntraDimensionalFallbackGraph;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -24,7 +25,7 @@ class IntraDimensionalFallbackGraphTest extends UnitTestCase
      */
     public function createDimensionRegistersDimension()
     {
-        $graph = new IntraDimension\IntraDimensionalFallbackGraph();
+        $graph = new IntraDimensionalFallbackGraph();
         $dimension = $graph->createDimension('test');
 
         self::assertSame($dimension, $graph->getDimension('test'));

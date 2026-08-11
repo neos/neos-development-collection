@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Functional\Fusion\Cache;
  * source code.
  */
 
+use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
@@ -63,7 +64,7 @@ class ContentCacheFlusherTest extends FunctionalTestCase
         $this->contentCacheFlusher = $this->objectManager->get(ContentCacheFlusher::class);
 
         $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
-        $siteImportService = $this->objectManager->get(\Neos\Neos\Domain\Service\SiteImportService::class);
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/Fixtures/CacheableNodes.xml', $this->context);
 
         // Assume an empty state for $contentCacheFlusher - this is needed as importing nodes will register

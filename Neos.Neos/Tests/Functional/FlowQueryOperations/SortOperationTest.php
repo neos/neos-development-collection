@@ -11,6 +11,11 @@ namespace Neos\Neos\Tests\Functional\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Neos\Domain\Service\SiteImportService;
+use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Eel\FlowQueryOperations\SortOperation;
@@ -47,14 +52,14 @@ class SortOperationTest extends FunctionalTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $workspaceRepository = $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class);
+        $workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $workspaceRepository->add(new Workspace('live'));
         $this->persistenceManager->persistAll();
-        $this->contextFactory = $this->objectManager->get(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class);
+        $this->contextFactory = $this->objectManager->get(ContextFactoryInterface::class);
         $this->context = $this->contextFactory->create(['workspaceName' => 'live']);
 
 
-        $siteImportService = $this->objectManager->get(\Neos\Neos\Domain\Service\SiteImportService::class);
+        $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile(__DIR__ . '/Fixtures/SortableNodes.xml', $this->context);
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
@@ -62,7 +67,7 @@ class SortOperationTest extends FunctionalTestCase
 
         // The context is not important here, just a quick way to get a (live) workspace
         //        $context = $this->contextFactory->create();
-        $this->nodeDataRepository = $this->objectManager->get(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class);
+        $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
     }
 
     /**
@@ -80,7 +85,7 @@ class SortOperationTest extends FunctionalTestCase
     public function callWithoutArgumentsCausesException()
     {
         $this->expectException(FlowQueryException::class);
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
+        $flowQuery = new FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, []);
     }
@@ -91,7 +96,7 @@ class SortOperationTest extends FunctionalTestCase
     public function invalidSortDirectionCausesException()
     {
         $this->expectException(FlowQueryException::class);
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
+        $flowQuery = new FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'FOO']);
     }
@@ -111,7 +116,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), [])
         ];
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'ASC']);
 
@@ -133,7 +138,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), [])
         ];
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'DESC']);
 
@@ -155,7 +160,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), [])
         ];
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['_lastPublicationDateTime', 'ASC']);
 
@@ -177,7 +182,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), [])
         ];
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['_lastPublicationDateTime', 'DESC']);
 
@@ -190,7 +195,7 @@ class SortOperationTest extends FunctionalTestCase
     public function invalidSortOptionCausesException()
     {
         $this->expectException(FlowQueryException::class);
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
+        $flowQuery = new FlowQuery([]);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'ASC', 'SORT_BAR']);
     }
@@ -214,7 +219,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), [])
         ];
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['title', 'ASC', ['SORT_NATURAL', 'SORT_FLAG_CASE']]);
 
@@ -234,7 +239,7 @@ class SortOperationTest extends FunctionalTestCase
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addb', $this->context->getWorkspace(true), []),
             $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addc', $this->context->getWorkspace(true), []),
         ];
-        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $flowQuery = new FlowQuery($nodesToSort);
         $operation = new SortOperation();
         $operation->evaluate($flowQuery, ['text', 'DESC', 'SORT_NUMERIC']);
 

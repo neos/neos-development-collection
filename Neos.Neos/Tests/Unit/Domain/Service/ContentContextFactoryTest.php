@@ -11,6 +11,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -22,7 +23,7 @@ use Neos\Neos\Domain\Service\ContentContextFactory;
  * Testcase for the ContentContextFactory
  *
  */
-class ContentContextFactoryTest extends \Neos\Flow\Tests\UnitTestCase
+class ContentContextFactoryTest extends UnitTestCase
 {
     /**
      * @test
