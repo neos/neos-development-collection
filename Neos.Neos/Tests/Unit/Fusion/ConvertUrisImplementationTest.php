@@ -26,6 +26,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Fusion\Core\Runtime;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -82,6 +83,21 @@ class ConvertUrisImplementationTest extends UnitTestCase
      * @var CachingHelper
      */
     protected $mockCachingHelper;
+
+    /**
+     * @var Uri|MockObject
+     */
+    protected $mockHttpUri;
+
+    /**
+     * @var ServerRequestInterface|MockObject
+     */
+    protected $mockHttpRequest;
+
+    /**
+     * @var ActionRequest|MockObject
+     */
+    protected $mockActionRequest;
 
     public function setUp(): void
     {
