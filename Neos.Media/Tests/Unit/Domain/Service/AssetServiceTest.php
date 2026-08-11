@@ -31,7 +31,7 @@ class AssetServiceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function getRepositoryReturnsRepositoryForGivenAssetProvider(): array
+    public static function getRepositoryReturnsRepositoryForGivenAssetProvider(): array
     {
         return [
             [Audio::class, AudioRepository::class],

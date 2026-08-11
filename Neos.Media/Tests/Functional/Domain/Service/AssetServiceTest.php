@@ -56,7 +56,7 @@ class AssetServiceTest extends AbstractTestCase
         $this->assetService = $this->objectManager->get(AssetService::class);
     }
 
-    public function replaceAssetResourceDataProvider(): array
+    public static function replaceAssetResourceDataProvider(): array
     {
         return [
             'jpgWithJpg' => [

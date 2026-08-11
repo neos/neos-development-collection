@@ -91,7 +91,7 @@ class PluginImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function responseHeadersDataProvider(): array
+    public static function responseHeadersDataProvider(): array
     {
         return [
             [

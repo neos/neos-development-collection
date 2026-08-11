@@ -46,7 +46,7 @@ class DataStructureImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElements(): array
+    public static function positionalSubElements(): array
     {
         return [
             [
@@ -128,7 +128,7 @@ class DataStructureImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElementsThatShouldFailByInvalidPositions(): array
+    public static function positionalSubElementsThatShouldFailByInvalidPositions(): array
     {
         return [
             [

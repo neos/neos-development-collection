@@ -76,9 +76,11 @@ class ImageInterfaceConverterTest extends UnitTestCase
     /**
      * @return array
      */
-    public function canConvertFromDataProvider()
+    public static function canConvertFromDataProvider()
     {
-        $dummyResource = $this->createMock(PersistentResource::class);
+        // data providers must be static and cannot build mocks, so the resource is
+        // described by a marker that canConvertFromTests() replaces with a mock
+        $dummyResource = '__mock:PersistentResource';
         return [
             [['resource' => $dummyResource], Image::class, true],
             [['__identity' => 'foo'], Image::class, false],
@@ -96,6 +98,9 @@ class ImageInterfaceConverterTest extends UnitTestCase
     #[Test]
     public function canConvertFromTests($source, $targetType, $expected)
     {
+        if (($source['resource'] ?? null) === '__mock:PersistentResource') {
+            $source['resource'] = $this->createMock(PersistentResource::class);
+        }
         self::assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
     }
 

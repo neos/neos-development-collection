@@ -414,7 +414,7 @@ class NodeServiceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function abnormalPaths()
+    public static function abnormalPaths()
     {
         return [
             ['/', '/', '/'],

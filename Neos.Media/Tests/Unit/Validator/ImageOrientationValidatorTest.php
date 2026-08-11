@@ -35,7 +35,7 @@ class ImageOrientationValidatorTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidOptionsTestsDataProvider()
+    public static function invalidOptionsTestsDataProvider()
     {
         return [
             [[]],
@@ -62,7 +62,7 @@ class ImageOrientationValidatorTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validatorTestsDataProvider()
+    public static function validatorTestsDataProvider()
     {
         return [
             [['allowedOrientations' => ['landscape']], null, false],

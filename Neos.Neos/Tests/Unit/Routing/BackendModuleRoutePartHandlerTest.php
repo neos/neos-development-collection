@@ -26,7 +26,7 @@ class BackendModuleRoutePartHandlerTest extends UnitTestCase
     /**
      * Data provider for ... see below
      */
-    public function requestPaths()
+    public static function requestPaths()
     {
         return [
             'empty' => ['', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null],

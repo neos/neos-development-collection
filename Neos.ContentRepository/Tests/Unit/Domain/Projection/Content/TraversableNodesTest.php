@@ -42,6 +42,23 @@ class TraversableNodesTest extends UnitTestCase
         $this->mockNode3 = $this->mockNode();
     }
 
+    /**
+     * Data providers have to be static, so they cannot build mocks. Instead they refer to
+     * nodes by index and this helper resolves those indices to the mocks built in setUp().
+     *
+     * @param int[] $nodeIndices
+     * @return TraversableNodeInterface[]
+     */
+    private function resolveNodes(array $nodeIndices): array
+    {
+        return array_map(fn (int $nodeIndex) => $this->resolveNode($nodeIndex), $nodeIndices);
+    }
+
+    private function resolveNode(int $nodeIndex): TraversableNodeInterface
+    {
+        return [$this->mockNode1, $this->mockNode2, $this->mockNode3][$nodeIndex];
+    }
+
     private function mockNode(): TraversableNodeInterface
     {
         /** @var TraversableNodeInterface|MockObject $mockNode */
@@ -67,19 +84,16 @@ class TraversableNodesTest extends UnitTestCase
         TraversableNodes::fromArray([new \stdClass()]);
     }
 
-    public function mergeDataProvider()
+    public static function mergeDataProvider(): array
     {
-        $mockNode1 = $this->mockNode();
-        $mockNode2 = $this->mockNode();
-        $mockNode3 = $this->mockNode();
         return [
             ['nodes1' => [], 'nodes2' => [], 'expectedResult' => []],
-            ['nodes1' => [$mockNode1], 'nodes2' => [$mockNode2], 'expectedResult' => [$mockNode1, $mockNode2]],
-            ['nodes1' => [$mockNode1, $mockNode2], 'nodes2' => [$mockNode3], 'expectedResult' => [$mockNode1, $mockNode2, $mockNode3]],
-            ['nodes1' => [$mockNode1], 'nodes2' => [$mockNode2, $mockNode3], 'expectedResult' => [$mockNode1, $mockNode2, $mockNode3]],
+            ['nodes1' => [0], 'nodes2' => [1], 'expectedResult' => [0, 1]],
+            ['nodes1' => [0, 1], 'nodes2' => [2], 'expectedResult' => [0, 1, 2]],
+            ['nodes1' => [0], 'nodes2' => [1, 2], 'expectedResult' => [0, 1, 2]],
 
             // TODO is the following expected or should TraversableNodes deduplicate nodes?
-            ['nodes1' => [$mockNode1], 'nodes2' => [$mockNode1], 'expectedResult' => [$mockNode1, $mockNode1]],
+            ['nodes1' => [0], 'nodes2' => [0], 'expectedResult' => [0, 0]],
         ];
     }
 
@@ -92,10 +106,10 @@ class TraversableNodesTest extends UnitTestCase
     #[Test]
     public function mergeTests(array $nodes1, array $nodes2, array $expectedResult)
     {
-        $nodes1 = TraversableNodes::fromArray($nodes1);
-        $nodes2 = TraversableNodes::fromArray($nodes2);
+        $nodes1 = TraversableNodes::fromArray($this->resolveNodes($nodes1));
+        $nodes2 = TraversableNodes::fromArray($this->resolveNodes($nodes2));
         $mergeResult = $nodes1->merge($nodes2);
-        self::assertSame($expectedResult, $mergeResult->toArray());
+        self::assertSame($this->resolveNodes($expectedResult), $mergeResult->toArray());
     }
 
     #[Test]
@@ -162,32 +176,28 @@ class TraversableNodesTest extends UnitTestCase
         $nodes->previousAll($this->mockNode3);
     }
 
-    public function previousAllDataProvider()
+    public static function previousAllDataProvider(): array
     {
-        $mockNode1 = $this->mockNode();
-        $mockNode2 = $this->mockNode();
-        $mockNode3 = $this->mockNode();
         return [
-            ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode1, 'expectedResult' => []],
-            ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode2, 'expectedResult' => [$mockNode1]],
-            ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode3, 'expectedResult' => [$mockNode1, $mockNode2]],
-            ['nodes' => [$mockNode1], 'reference' => $mockNode1, 'expectedResult' => []],
+            ['nodes' => [0, 1, 2], 'reference' => 0, 'expectedResult' => []],
+            ['nodes' => [0, 1, 2], 'reference' => 1, 'expectedResult' => [0]],
+            ['nodes' => [0, 1, 2], 'reference' => 2, 'expectedResult' => [0, 1]],
+            ['nodes' => [0], 'reference' => 0, 'expectedResult' => []],
         ];
     }
 
     /**
-     * @param array $nodes
-     * @param TraversableNodeInterface $reference
-     * @param array $expectedResult
+     * @param int[] $nodes
+     * @param int[] $expectedResult
      */
     #[DataProvider('previousAllDataProvider')]
     #[Test]
-    public function previousAllTests(array $nodes, TraversableNodeInterface $reference, array $expectedResult)
+    public function previousAllTests(array $nodes, int $reference, array $expectedResult)
     {
-        $traversableNodes = TraversableNodes::fromArray($nodes);
-        $result = $traversableNodes->previousAll($reference);
+        $traversableNodes = TraversableNodes::fromArray($this->resolveNodes($nodes));
+        $result = $traversableNodes->previousAll($this->resolveNode($reference));
 
-        self::assertSame($expectedResult, $result->toArray());
+        self::assertSame($this->resolveNodes($expectedResult), $result->toArray());
     }
 
     #[Test]
@@ -226,31 +236,27 @@ class TraversableNodesTest extends UnitTestCase
         $nodes->nextAll($this->mockNode3);
     }
 
-    public function nextAllDataProvider()
+    public static function nextAllDataProvider(): array
     {
-        $mockNode1 = $this->mockNode();
-        $mockNode2 = $this->mockNode();
-        $mockNode3 = $this->mockNode();
         return [
-            ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode3, 'expectedResult' => []],
-            ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode1, 'expectedResult' => [$mockNode2, $mockNode3]],
-            ['nodes' => [$mockNode1, $mockNode2, $mockNode3], 'reference' => $mockNode2, 'expectedResult' => [$mockNode3]],
-            ['nodes' => [$mockNode1], 'reference' => $mockNode1, 'expectedResult' => []],
+            ['nodes' => [0, 1, 2], 'reference' => 2, 'expectedResult' => []],
+            ['nodes' => [0, 1, 2], 'reference' => 0, 'expectedResult' => [1, 2]],
+            ['nodes' => [0, 1, 2], 'reference' => 1, 'expectedResult' => [2]],
+            ['nodes' => [0], 'reference' => 0, 'expectedResult' => []],
         ];
     }
 
     /**
-     * @param array $nodes
-     * @param TraversableNodeInterface $reference
-     * @param array $expectedResult
+     * @param int[] $nodes
+     * @param int[] $expectedResult
      */
     #[DataProvider('nextAllDataProvider')]
     #[Test]
-    public function nextAllTests(array $nodes, TraversableNodeInterface $reference, array $expectedResult)
+    public function nextAllTests(array $nodes, int $reference, array $expectedResult)
     {
-        $traversableNodes = TraversableNodes::fromArray($nodes);
-        $result = $traversableNodes->nextAll($reference);
+        $traversableNodes = TraversableNodes::fromArray($this->resolveNodes($nodes));
+        $result = $traversableNodes->nextAll($this->resolveNode($reference));
 
-        self::assertSame($expectedResult, $result->toArray());
+        self::assertSame($this->resolveNodes($expectedResult), $result->toArray());
     }
 }

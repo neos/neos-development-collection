@@ -44,7 +44,7 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validStrings(): array
+    public static function validStrings(): array
     {
         return [
             ['16:9'],
@@ -69,7 +69,7 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidStrings(): array
+    public static function invalidStrings(): array
     {
         return [
             ['invalid'],
@@ -97,7 +97,7 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @return array
      */
-    public function aspectRatiosAndOrientations(): array
+    public static function aspectRatiosAndOrientations(): array
     {
         return [
             ['4:3', AspectRatio::ORIENTATION_LANDSCAPE],

@@ -54,7 +54,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         $this->nodeTypesStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
     }
 
-    public function providePathesToCheckForForbiddenTraversalOutOfPath(): array
+    public static function providePathesToCheckForForbiddenTraversalOutOfPath(): array
     {
         return [
             // pathes that traverse out of package scope

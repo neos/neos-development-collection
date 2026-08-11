@@ -32,7 +32,7 @@ class ImageTypeValidatorTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validatorTestsDataProvider()
+    public static function validatorTestsDataProvider()
     {
         return [
             [['allowedTypes' => ['png']], null, false],

@@ -32,7 +32,7 @@ class TagImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    public function tagExamples()
+    public static function tagExamples()
     {
         return [
             'default properties' => [[], null, null, '<div></div>'],

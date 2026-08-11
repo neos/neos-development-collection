@@ -35,7 +35,7 @@ class JoinImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElements()
+    public static function positionalSubElements()
     {
         return [
             [
@@ -99,7 +99,7 @@ class JoinImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElementsThatShouldFailByInvalidPositions()
+    public static function positionalSubElementsThatShouldFailByInvalidPositions()
     {
         return [
             [

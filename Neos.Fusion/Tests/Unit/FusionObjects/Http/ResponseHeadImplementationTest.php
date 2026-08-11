@@ -35,7 +35,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    public function responseHeadExamples()
+    public static function responseHeadExamples()
     {
         return [
             'default properties' => [null, null, [], "HTTP/1.1 200 OK\r\n\r\n"],

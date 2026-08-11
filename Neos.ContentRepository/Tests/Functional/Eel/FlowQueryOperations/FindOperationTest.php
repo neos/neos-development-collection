@@ -33,7 +33,7 @@ class FindOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function identifierFilterExamples()
+    public static function identifierFilterExamples()
     {
         return [
             'Single identifier' => ['#30e893c1-caef-0ca5-b53d-e5699bb8e506', ['/sites/example/home/about-us']],
@@ -61,7 +61,7 @@ class FindOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function pathAndPropertyNameFilterExamples()
+    public static function pathAndPropertyNameFilterExamples()
     {
         return [
             'Absolute path' => ['/sites/example/home', ['/sites/example/home']],
@@ -91,7 +91,7 @@ class FindOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function attributeFilterExamples()
+    public static function attributeFilterExamples()
     {
         return [
             'Single instanceof' => [

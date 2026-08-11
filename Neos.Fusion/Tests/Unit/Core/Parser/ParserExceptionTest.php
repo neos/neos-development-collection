@@ -37,7 +37,7 @@ class ParserExceptionTest extends UnitTestCase
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
-    public function fullParserExceptionMessage(): \Generator
+    public static function fullParserExceptionMessage(): \Generator
     {
         yield 'no closing brace' => [
             <<<'FUSION'
@@ -101,7 +101,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function generalInvalidFusion(): \Generator
+    public static function generalInvalidFusion(): \Generator
     {
         yield 'space in object path' => [
             'path. hello = 123',
@@ -159,7 +159,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration(): \Generator
+    public static function privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration(): \Generator
     {
         yield 'simple @private meta key cannot be declared from outside' => [
             <<<'FUSION'
@@ -198,7 +198,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function parsingWorksButOtherLogicThrows(): \Generator
+    public static function parsingWorksButOtherLogicThrows(): \Generator
     {
         yield 'invalid path to object inheritance' => [
             'prototype(a:b) < path.simple',
@@ -217,7 +217,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function advancedGuessingWhatWentWrong(): \Generator
+    public static function advancedGuessingWhatWentWrong(): \Generator
     {
         yield 'misspelled prototype declaration' => [
             'prooototype(a:b)',
@@ -230,7 +230,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function unclosedStatements(): \Generator
+    public static function unclosedStatements(): \Generator
     {
         yield 'unclosed multiline comment' => [
             '/*',
@@ -278,7 +278,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function removedLanguageFeaturedAreExplained(): \Generator
+    public static function removedLanguageFeaturedAreExplained(): \Generator
     {
         yield 'unqualified object type' => [
             'a = Value',
@@ -291,7 +291,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function endOfLineExpected(): \Generator
+    public static function endOfLineExpected(): \Generator
     {
         yield 'multiple values' => [
             'a = 1 + 1',

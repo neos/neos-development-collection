@@ -21,7 +21,7 @@ use Neos\Neos\Validation\Validator\HostnameValidator;
  */
 class HostNameValidatorTest extends UnitTestCase
 {
-    public function hostNameDataProvider()
+    public static function hostNameDataProvider()
     {
         return [
             // correct names

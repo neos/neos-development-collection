@@ -92,7 +92,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      */
-    public function invalidPaths()
+    public static function invalidPaths()
     {
         return [
             ['foo'],
@@ -116,7 +116,7 @@ class NodeDataTest extends UnitTestCase
 
     /**
      */
-    public function validPaths()
+    public static function validPaths()
     {
         return [
             ['/foo'],
@@ -489,7 +489,7 @@ class NodeDataTest extends UnitTestCase
     /**
      * @return array
      */
-    public function hasAccessRestrictionsDataProvider()
+    public static function hasAccessRestrictionsDataProvider()
     {
         return [
             ['accessRoles' => null, 'expectedResult' => false],

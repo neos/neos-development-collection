@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\Test;
  */
 class UnsetTest extends AbstractFusionObjectTestCase
 {
-    public function unsetExamples()
+    public static function unsetExamples()
     {
         return [
             ['valueUnset/inheritedPrototypePath', 'Baz'],

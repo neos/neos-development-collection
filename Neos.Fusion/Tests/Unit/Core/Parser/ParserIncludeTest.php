@@ -76,7 +76,7 @@ class ParserIncludeTest extends UnitTestCase
         self::setUniqueLastModifiedTimeForEachFileRecursive($file_system);
     }
 
-    public function includeSingleFile(): \Generator
+    public static function includeSingleFile(): \Generator
     {
         yield 'single file without quotes and space relative' => [
             'context' => 'vfs://fusion/root.fusion',
@@ -128,7 +128,7 @@ class ParserIncludeTest extends UnitTestCase
         ];
     }
 
-    public function includeRecursiveGlobbing(): \Generator
+    public static function includeRecursiveGlobbing(): \Generator
     {
         yield 'recursive glob relative with specified file end' => [
             'context' => 'vfs://fusion/root.fusion',
@@ -221,7 +221,7 @@ class ParserIncludeTest extends UnitTestCase
         $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusionCode))->toArray();
     }
 
-    public function weirdFusionIncludeValuesAreHandedOver(): \Generator
+    public static function weirdFusionIncludeValuesAreHandedOver(): \Generator
     {
         yield 'pattern with direct comment' => [
             'include: pattern /* this is a comment */', 'pattern'
@@ -251,7 +251,7 @@ class ParserIncludeTest extends UnitTestCase
         $parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
-    public function throwsFusionIncludesWithSpaces(): \Generator
+    public static function throwsFusionIncludesWithSpaces(): \Generator
     {
         yield 'pattern with direct comment' => [
             'include: /* comments are here not allowed */ pattern '
@@ -289,7 +289,7 @@ class ParserIncludeTest extends UnitTestCase
     /**
      * FilePattern accept only simple File paths or /**\/* and /*
      */
-    public function unsupportedGlobbingTechnics(): array
+    public static function unsupportedGlobbingTechnics(): array
     {
         return [
             'simple glob at end without slash (that means its a file)' => ['file*'],

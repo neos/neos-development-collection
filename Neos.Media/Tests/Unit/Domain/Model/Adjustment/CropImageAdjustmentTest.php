@@ -105,7 +105,7 @@ class CropImageAdjustmentTest extends UnitTestCase
     /**
      * @return array
      */
-    public function imageCropByAspectRatioDataProvider(): array
+    public static function imageCropByAspectRatioDataProvider(): array
     {
         return [
             ['16:9', 1600, 1000, 0, 50, 1600, 900],

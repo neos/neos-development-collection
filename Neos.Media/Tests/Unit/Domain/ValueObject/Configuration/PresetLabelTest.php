@@ -20,7 +20,7 @@ class PresetLabelTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validLabels(): array
+    public static function validLabels(): array
     {
         return [
             ['Demo Preset 1'],
@@ -52,7 +52,7 @@ class PresetLabelTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidLabels(): array
+    public static function invalidLabels(): array
     {
         return [
             [''],

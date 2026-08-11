@@ -50,7 +50,7 @@ class NodeTypeTest extends FunctionalTestCase
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
     }
 
-    public function getFilterExpressionsDataprovider(): array
+    public static function getFilterExpressionsDataprovider(): array
     {
         return [
             'nodeTypeOnly' => [

@@ -33,7 +33,7 @@ class MigrationTest extends AbstractNodeTestCase
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
     }
 
-    public function migrationDataprovider(): array
+    public static function migrationDataprovider(): array
     {
         return [
             'nodeTypeNoSubTypesShouldMatchType' => [

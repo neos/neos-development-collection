@@ -29,7 +29,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertFalse($constraints->hasMediaTypeConstraint());
     }
 
-    public function fromArrayDataProvider(): array
+    public static function fromArrayDataProvider(): array
     {
         return [
             ['input' => [], 'expectedAllowedAssetSourceIdentifiers' => [], 'expectedAllowedMediaTypes' => []],
@@ -55,7 +55,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame($expectedAllowedMediaTypes, $constraints->getAllowedMediaTypes());
     }
 
-    public function invalidFromArrayDataProvider(): array
+    public static function invalidFromArrayDataProvider(): array
     {
         return [
             [['unknown-constraint' => 'foo']],
@@ -183,7 +183,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame([], $resultingAssetSources);
     }
 
-    public function applyToAssetSourceIdentifiersDataProvider(): array
+    public static function applyToAssetSourceIdentifiersDataProvider(): array
     {
         return [
             ['allowedAssetSourceIdentifiers' => [], 'assetSourceIdentifier' => null, 'expectedResult' => null],
@@ -209,7 +209,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame($expectedResult, $constraints->applyToAssetSourceIdentifiers($assetSourceIdentifier));
     }
 
-    public function applyToAssetTypeFilterDataProvider(): array
+    public static function applyToAssetTypeFilterDataProvider(): array
     {
         return [
             ['mediaTypes' => [], 'assetType' => null, 'expectedResult' => 'All'],
@@ -236,7 +236,7 @@ class AssetConstraintsTest extends UnitTestCase
         self::assertSame($expectedResult, (string)$constraints->applyToAssetTypeFilter($assetType));
     }
 
-    public function getAllowedAssetTypeFilterOptionsDataProvider(): array
+    public static function getAllowedAssetTypeFilterOptionsDataProvider(): array
     {
         return [
             ['mediaTypes' => [], 'expectedResult' => ['All', 'Image', 'Document', 'Video', 'Audio']],

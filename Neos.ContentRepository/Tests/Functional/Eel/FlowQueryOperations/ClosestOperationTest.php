@@ -24,7 +24,7 @@ class ClosestOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function closestOperationDataProvider()
+    public static function closestOperationDataProvider()
     {
         return [
             [

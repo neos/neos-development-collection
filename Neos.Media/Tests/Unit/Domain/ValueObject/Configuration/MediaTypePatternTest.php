@@ -20,7 +20,7 @@ class MediaTypePatternTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validMediaTypePatterns(): array
+    public static function validMediaTypePatterns(): array
     {
         return [
             ['/image\/.*/'],
@@ -42,7 +42,7 @@ class MediaTypePatternTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidMediaTypePatterns(): array
+    public static function invalidMediaTypePatterns(): array
     {
         return [
             [''],

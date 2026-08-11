@@ -86,7 +86,7 @@ class NodeTest extends UnitTestCase
      *
      * @return array
      */
-    public function dataSourceForContextPathPattern()
+    public static function dataSourceForContextPathPattern()
     {
         return [
             'empty node path' => [
@@ -160,7 +160,7 @@ class NodeTest extends UnitTestCase
     /**
      * @return array
      */
-    public function dataSourceForInvalidContextPaths()
+    public static function dataSourceForInvalidContextPaths()
     {
         return [
             'invalid dimension values' => [

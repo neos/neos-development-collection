@@ -66,7 +66,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTestCase
         self::assertTrue($result);
     }
 
-    public function nodePropertiesAndLifetime()
+    public static function nodePropertiesAndLifetime()
     {
         return [
             'Minimum in hiddenBeforeDateTime' => [

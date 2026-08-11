@@ -24,7 +24,7 @@ class ParentsUntilOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function parentsUntilOperationDataProvider()
+    public static function parentsUntilOperationDataProvider()
     {
         return [
             [

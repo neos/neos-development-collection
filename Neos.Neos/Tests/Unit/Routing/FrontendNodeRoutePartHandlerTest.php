@@ -155,7 +155,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
      *
      * @return array
      */
-    public function contextPathsAndRequestPathsDataProvider()
+    public static function contextPathsAndRequestPathsDataProvider()
     {
         return [
             ['/sites/examplecom@live;language=en_US', '', true],
@@ -734,7 +734,7 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
     /**
      * data provider for dimensionRequestPathRegex
      */
-    public function dimensionRequestPathMatcherDataProvider()
+    public static function dimensionRequestPathMatcherDataProvider()
     {
         return [
             'an empty request path does not match' => [

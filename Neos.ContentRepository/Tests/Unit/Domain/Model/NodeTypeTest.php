@@ -257,7 +257,7 @@ class NodeTypeTest extends UnitTestCase
     /**
      * data source for accessingConfigurationOptionsInitializesTheNodeType()
      */
-    public function gettersThatRequiresInitialization()
+    public static function gettersThatRequiresInitialization()
     {
         return [
             ['getFullConfiguration'],

@@ -27,7 +27,7 @@ class SetDimensionsTest extends UnitTestCase
     /**
      * @return array
      */
-    public function setDimensionsInput()
+    public static function setDimensionsInput()
     {
         return [
             // single dimension, single value

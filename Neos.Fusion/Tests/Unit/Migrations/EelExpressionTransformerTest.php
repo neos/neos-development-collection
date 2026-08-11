@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class EelExpressionTransformerTest extends TestCase
 {
-    public function examples(): iterable
+    public static function examples(): iterable
     {
         yield 'L ' . __LINE__ => [
             fn (string $eelExpression) => str_replace('someVariable', 'myNewVariable', $eelExpression),

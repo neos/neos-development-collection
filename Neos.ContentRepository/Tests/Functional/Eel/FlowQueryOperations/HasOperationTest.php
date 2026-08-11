@@ -24,7 +24,7 @@ class HasOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function hasOperationDataProvider()
+    public static function hasOperationDataProvider()
     {
         return [
             [

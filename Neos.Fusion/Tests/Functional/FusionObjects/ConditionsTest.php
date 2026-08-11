@@ -18,7 +18,7 @@ use PHPUnit\Framework\Attributes\Test;
  */
 class ConditionsTest extends AbstractFusionObjectTestCase
 {
-    public function conditionExamples()
+    public static function conditionExamples()
     {
         return [
             ['conditions/simpleValueTrue', 'Foo'],
@@ -53,7 +53,7 @@ class ConditionsTest extends AbstractFusionObjectTestCase
         self::assertSame($expected, $view->render());
     }
 
-    public function valuesForCondition()
+    public static function valuesForCondition()
     {
         return [
             [false, null],

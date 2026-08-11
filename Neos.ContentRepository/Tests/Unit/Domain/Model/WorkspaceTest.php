@@ -123,7 +123,7 @@ class WorkspaceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validContextNodePaths()
+    public static function validContextNodePaths()
     {
         return [
             ['foo@user-bar'],
@@ -144,7 +144,7 @@ class WorkspaceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidContextNodePaths()
+    public static function invalidContextNodePaths()
     {
         return [
             ['foo@user-bar.html'],

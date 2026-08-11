@@ -24,7 +24,7 @@ class PrevUntilOperationTest extends AbstractNodeTestCase
     /**
      * @return array
      */
-    public function prevUntilOperationDataProvider()
+    public static function prevUntilOperationDataProvider()
     {
         return [
             [

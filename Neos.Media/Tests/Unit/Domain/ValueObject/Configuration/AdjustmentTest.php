@@ -21,7 +21,7 @@ class AdjustmentTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidIdentifiers(): array
+    public static function invalidIdentifiers(): array
     {
         return [
             ['something with spaces'],

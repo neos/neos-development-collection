@@ -185,7 +185,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission@live'));
     }
 
-    public function supportedSchemesDataProvider()
+    public static function supportedSchemesDataProvider()
     {
         return [
             ['node://aeabe76a-551a-495f-a324-ad9a86b2aff7', true],

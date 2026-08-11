@@ -38,7 +38,7 @@ class HtmlAugmenterTest extends UnitTestCase
         self::assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
     }
 
-    public function addAttributesDataProvider()
+    public static function addAttributesDataProvider()
     {
         eval('
             class ClassWithToStringMethod {
@@ -410,7 +410,7 @@ class HtmlAugmenterTest extends UnitTestCase
         ];
     }
 
-    public function invalidAttributesDataProvider()
+    public static function invalidAttributesDataProvider()
     {
         return [
             // invalid attributes

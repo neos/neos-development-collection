@@ -124,7 +124,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
      *
      * @return array
      */
-    public function minimumAndMaximumDimensions()
+    public static function minimumAndMaximumDimensions()
     {
         return [
             [null, 110, null, null, 110, 83, ImageInterface::RATIOMODE_INSET, false], # maximum width respects aspect ratio

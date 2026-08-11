@@ -33,7 +33,7 @@ class AttributesImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    public function attributeExamples()
+    public static function attributeExamples()
     {
         return [
             'null' => [null, ''],

@@ -22,7 +22,7 @@ use Neos\Fusion\Core\Runtime;
  */
 class ExpressionsTest extends AbstractFusionObjectTestCase
 {
-    public function expressionExamples()
+    public static function expressionExamples()
     {
         return [
             ['expressions/calculus', 42],

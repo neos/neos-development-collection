@@ -37,7 +37,7 @@ class ParserTest extends UnitTestCase
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
-    public function pathBlockTest(): array
+    public static function pathBlockTest(): array
     {
         return [
             [
@@ -97,7 +97,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function unexpectedBlocksWork(): array
+    public static function unexpectedBlocksWork(): array
     {
         // test of normal objects is already done with the fixtures
         return [
@@ -132,7 +132,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function unsetPathOrSetToNull()
+    public static function unsetPathOrSetToNull()
     {
         yield 'overwrite with boolean value' => [
             <<<'Fusion'
@@ -188,7 +188,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function simplePathToArray(): \Generator
+    public static function simplePathToArray(): \Generator
     {
         yield 'simple string "opened" with meta' => [
             <<<'Fusion'
@@ -231,7 +231,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function overridePaths(): \Generator
+    public static function overridePaths(): \Generator
     {
         yield 'eel expression is overridden by simple type' => [
             <<<'Fusion'
@@ -327,7 +327,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function commentsTest(): array
+    public static function commentsTest(): array
     {
         $obj = function (string $name): array {
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
@@ -386,7 +386,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsWrongComments(): array
+    public static function throwsWrongComments(): array
     {
         return[
             [
@@ -430,7 +430,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function prototypeDeclarationAndInheritance(): array
+    public static function prototypeDeclarationAndInheritance(): array
     {
         return [
             [
@@ -511,7 +511,7 @@ class ParserTest extends UnitTestCase
         self::assertSame('123.456', $asArrayKey('123.456'), 'string float array keys stay strings');
     }
 
-    public function problematicPathIdNames(): \Generator
+    public static function problematicPathIdNames(): \Generator
     {
         yield 'float in quotes as path identifier' => [
             <<<'Fusion'
@@ -601,7 +601,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsOldNamespaceDeclaration(): array
+    public static function throwsOldNamespaceDeclaration(): array
     {
         return [
             [
@@ -619,7 +619,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsGeneralWrongSyntax(): \Generator
+    public static function throwsGeneralWrongSyntax(): \Generator
     {
         yield 'path declaration after opening' => [<<<'Fusion'
             a { b = "hello"
@@ -721,7 +721,7 @@ class ParserTest extends UnitTestCase
             Fusion];
     }
 
-    public function unexpectedCopyAssigment()
+    public static function unexpectedCopyAssigment()
     {
         yield 'copying from undefined path 1' => ['a < b', ['a' => null]];
 
@@ -760,7 +760,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function unexpectedObjectPaths(): array
+    public static function unexpectedObjectPaths(): array
     {
         return [
             ['0 = ""', [0 => '']],
@@ -789,14 +789,14 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function metaObjectPaths(): array
+    public static function metaObjectPaths(): array
     {
         return [
             ['a.@abc = 1', ['a' => ['__meta' => ['abc' => 1]]]],
         ];
     }
 
-    public function nestedObjectPaths(): array
+    public static function nestedObjectPaths(): array
     {
         return [
             ['12f:o:o.ba:r.as.ba:z = 1', ['12f:o:o' => ['ba:r' => ['as' => ['ba:z' => 1]]]]],
@@ -806,7 +806,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function simpleValueAssign(): array
+    public static function simpleValueAssign(): array
     {
         return [
             ['a="b"', ['a' => 'b']],
@@ -835,7 +835,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function eelValueAssign(): \Generator
+    public static function eelValueAssign(): \Generator
     {
         $eel = function (string $exp): array {
             return ['__eelExpression' => $exp, '__value' => null, '__objectType' => null];
@@ -895,7 +895,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function stringAndCharValueAssign(): array
+    public static function stringAndCharValueAssign(): array
     {
         return [
             [<<<'Fusion'
@@ -922,7 +922,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function fusionObjectNameEdgeCases(): array
+    public static function fusionObjectNameEdgeCases(): array
     {
         $obj = function (string $name): array {
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
@@ -940,7 +940,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain(): array
+    public static function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain(): array
     {
         return [
             ['a = ABC:123'],
@@ -955,7 +955,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsFusionObjectNamesWithoutNamespace(): array
+    public static function throwsFusionObjectNamesWithoutNamespace(): array
     {
         return [
             ['a = Value'],
@@ -973,7 +973,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function weirdDslNames(): \Generator
+    public static function weirdDslNames(): \Generator
     {
         yield 'true as dsl key' => [
             'foo = true`code`',
@@ -1000,7 +1000,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function dslWithBraceOnFirstLine(): \Generator
+    public static function dslWithBraceOnFirstLine(): \Generator
     {
         yield 'dsl with brace on end of first line' => [
             'foo = dsl1`code {`',

@@ -51,7 +51,7 @@ class ProcessorTest extends AbstractFusionObjectTestCase
      *
      * @return array
      */
-    public function dataProviderForUnsettingProcessors()
+    public static function dataProviderForUnsettingProcessors()
     {
         return [
             ['processors/newSyntax/unset/simple'],
