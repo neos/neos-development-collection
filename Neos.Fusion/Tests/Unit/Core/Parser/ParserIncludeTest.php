@@ -39,8 +39,8 @@ class ParserIncludeTest extends UnitTestCase
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
         $parserCache = $this->getMockBuilder(ParserCache::class)->getMock();
-        $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
-        $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
+        $parserCache->method('cacheForFusionFile')->willReturnCallback(fn ($_, $getValue) => $getValue());
+        $parserCache->method('cacheForDsl')->willReturnCallback(fn ($_, $_2, $getValue) => $getValue());
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
@@ -79,48 +79,48 @@ class ParserIncludeTest extends UnitTestCase
     public static function includeSingleFile(): \Generator
     {
         yield 'single file without quotes and space relative' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include:file.fusion',
-            'include' => ['file.fusion' => true]
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include:file.fusion',
+            'expectedFusionAst' => ['file.fusion' => true]
         ];
 
         yield 'single file without quotes and special chars absolute' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include: vfs://fusion/sp3z:al-CHAR_.fs ',
-            'include' => ['sp3z:al-CHAR_.fs' => true]
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include: vfs://fusion/sp3z:al-CHAR_.fs ',
+            'expectedFusionAst' => ['sp3z:al-CHAR_.fs' => true]
         ];
 
         yield 'single file without quotes and with space absolute' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include:  vfs://fusion/file.fusion  ',
-            'include' => ['file.fusion' => true]
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include:  vfs://fusion/file.fusion  ',
+            'expectedFusionAst' => ['file.fusion' => true]
         ];
 
         yield 'single file with single quotes explicit relative' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include:\'./file.fusion\'',
-            'include' => ['file.fusion' => true]
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include:\'./file.fusion\'',
+            'expectedFusionAst' => ['file.fusion' => true]
         ];
 
         yield 'single file with double quotes space explicit relative' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include:  "  ./file.fusion  "  ',
-            'include' => ['file.fusion' => true]
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include:  "  ./file.fusion  "  ',
+            'expectedFusionAst' => ['file.fusion' => true]
         ];
 
         yield 'single file context will prevent recursion' => [
-            'context' => 'vfs://fusion/file.fusion',
-            'fusion ' => 'include:./file.fusion',
-            'include' => []
+            'contextPathAndFilename' => 'vfs://fusion/file.fusion',
+            'fusionCode' => 'include:./file.fusion',
+            'expectedFusionAst' => []
         ];
     }
 
-    public function includeNormalGlobbing(): \Generator
+    public static function includeNormalGlobbing(): \Generator
     {
         yield 'simple glob relative' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include: Globbing/* ',
-            'include' => [
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include: Globbing/* ',
+            'expectedFusionAst' => [
                 'Globbing/level1-A.fusion' => true,
                 'Globbing/level1-B.fusion' => true,
                 'Globbing/level1-C.fusion' => true,
@@ -131,9 +131,9 @@ class ParserIncludeTest extends UnitTestCase
     public static function includeRecursiveGlobbing(): \Generator
     {
         yield 'recursive glob relative with specified file end' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include:Globbing/**/*.fusion',
-            'include' => [
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include:Globbing/**/*.fusion',
+            'expectedFusionAst' => [
                 'Globbing/Nested/level2-A.fusion' => true,
                 'Globbing/Nested/level2-B.fusion' => true,
                 'Globbing/Nested/Deep/level3-A.fusion' => true,
@@ -144,9 +144,9 @@ class ParserIncludeTest extends UnitTestCase
         ];
 
         yield 'recursive glob relative without recursion' => [
-            'context' => 'vfs://fusion/Globbing/level1-A.fusion',
-            'fusion ' => 'include:**/*',
-            'include' => [
+            'contextPathAndFilename' => 'vfs://fusion/Globbing/level1-A.fusion',
+            'fusionCode' => 'include:**/*',
+            'expectedFusionAst' => [
                 'Globbing/Nested/level2-A.fusion' => true,
                 'Globbing/Nested/level2-B.fusion' => true,
                 'Globbing/Nested/Deep/level3-A.fusion' => true,
@@ -158,9 +158,9 @@ class ParserIncludeTest extends UnitTestCase
         ];
 
         yield 'recursive glob absolute' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include: vfs://fusion/Globbing/**/*',
-            'include' => [
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include: vfs://fusion/Globbing/**/*',
+            'expectedFusionAst' => [
                 'Globbing/Nested/level2-A.fusion' => true,
                 'Globbing/Nested/level2-B.fusion' => true,
                 'Globbing/Nested/Deep/level3-A.fusion' => true,
@@ -171,9 +171,9 @@ class ParserIncludeTest extends UnitTestCase
         ];
 
         yield 'recursive glob relative parent' => [
-            'context' => 'vfs://fusion/Globbing/Nested/level2-A.fusion',
-            'fusion ' => 'include: ../**/*',
-            'include' => [
+            'contextPathAndFilename' => 'vfs://fusion/Globbing/Nested/level2-A.fusion',
+            'fusionCode' => 'include: ../**/*',
+            'expectedFusionAst' => [
                 // Not included because this would mean a recursion.
                 // 'Globbing/Nested/level2-A.fusion' => true,
                 'Globbing/Nested/level2-B.fusion' => true,
@@ -185,9 +185,9 @@ class ParserIncludeTest extends UnitTestCase
         ];
 
         yield 'recursive glob relative with uncommon specified file end' => [
-            'context' => 'vfs://fusion/root.fusion',
-            'fusion ' => 'include: ./Globbing/**/*-A.fusion',
-            'include' => [
+            'contextPathAndFilename' => 'vfs://fusion/root.fusion',
+            'fusionCode' => 'include: ./Globbing/**/*-A.fusion',
+            'expectedFusionAst' => [
                 'Globbing/Nested/level2-A.fusion' => true,
                 'Globbing/Nested/Deep/level3-A.fusion' => true,
                 'Globbing/level1-A.fusion' => true,
@@ -243,10 +243,15 @@ class ParserIncludeTest extends UnitTestCase
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleFileInclude'])->getMock();
         $this->injectParserCacheMockIntoParser($parser);
+        $matcher = self::once();
         $parser
-            ->expects(self::once())
+            ->expects($matcher)
             ->method('handleFileInclude')
-            ->withConsecutive([self::anything(), $includePattern]);
+            ->willReturnCallback(function (...$parameters) use ($matcher, $includePattern) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame($includePattern, $parameters[1]);
+                }
+            });
 
         $parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }

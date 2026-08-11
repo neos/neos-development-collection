@@ -375,16 +375,16 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         $mockCache = $this->createMock(FrontendInterface::class);
         $this->inject($this->contentCache, 'cache', $mockCache);
 
-        $mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
-        $mockCache->expects(self::any())->method('has')->will(self::returnValue(false));
+        $mockCache->expects(self::any())->method('get')->willReturn(false);
+        $mockCache->expects(self::any())->method('has')->willReturn(false);
 
         $entriesWritten = [];
 
-        $mockCache->expects(self::atLeastOnce())->method('set')->will(self::returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+        $mockCache->expects(self::atLeastOnce())->method('set')->willReturnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
             $entriesWritten[$entryIdentifier] = [
                 'lifetime' => $lifetime
             ];
-        }));
+        });
 
         $firstRenderResult = $view->render();
         self::assertEquals('Foo|Bar|Baz|Qux', $firstRenderResult);
@@ -415,13 +415,13 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
     {
         $entriesWritten = [];
         $mockCache = $this->createMock(FrontendInterface::class);
-        $mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
-        $mockCache->expects(self::any())->method('has')->will(self::returnValue(false));
-        $mockCache->expects(self::atLeastOnce())->method('set')->will(self::returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+        $mockCache->expects(self::any())->method('get')->willReturn(false);
+        $mockCache->expects(self::any())->method('has')->willReturn(false);
+        $mockCache->expects(self::atLeastOnce())->method('set')->willReturnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
             $entriesWritten[$entryIdentifier] = [
                 'tags' => $tags
             ];
-        }));
+        });
         $this->inject($this->contentCache, 'cache', $mockCache);
 
         $object = new TestModel(42, 'Object value 1');
@@ -457,13 +457,13 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
     {
         $entriesWritten = [];
         $mockCache = $this->createMock(FrontendInterface::class);
-        $mockCache->expects(self::any())->method('get')->will(self::returnValue(false));
-        $mockCache->expects(self::any())->method('has')->will(self::returnValue(false));
-        $mockCache->expects(self::atLeastOnce())->method('set')->will(self::returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+        $mockCache->expects(self::any())->method('get')->willReturn(false);
+        $mockCache->expects(self::any())->method('has')->willReturn(false);
+        $mockCache->expects(self::atLeastOnce())->method('set')->willReturnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
             $entriesWritten[$entryIdentifier] = [
                 'tags' => $tags
             ];
-        }));
+        });
         $this->inject($this->contentCache, 'cache', $mockCache);
 
         $view = $this->buildView();
@@ -493,28 +493,28 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
     {
         $entriesWritten = [];
         $mockCache = $this->createMock(FrontendInterface::class);
-        $mockCache->expects(self::any())->method('get')->will(self::returnCallback(function ($entryIdentifier) use ($entriesWritten) {
+        $mockCache->expects(self::any())->method('get')->willReturnCallback(function ($entryIdentifier) use ($entriesWritten) {
             if (isset($entriesWritten[$entryIdentifier])) {
                 return $entriesWritten[$entryIdentifier]['data'];
             } else {
                 return false;
             }
-        }));
-        $mockCache->expects(self::any())->method('has')->will(self::returnCallback(function ($entryIdentifier) use ($entriesWritten) {
+        });
+        $mockCache->expects(self::any())->method('has')->willReturnCallback(function ($entryIdentifier) use ($entriesWritten) {
             if (isset($entriesWritten[$entryIdentifier])) {
                 return true;
             } else {
                 return false;
             }
-        }));
-        $mockCache->expects(self::atLeastOnce())->method('set')->will(self::returnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
+        });
+        $mockCache->expects(self::atLeastOnce())->method('set')->willReturnCallback(function ($entryIdentifier, $data, $tags, $lifetime) use (&$entriesWritten) {
             if (!isset($entriesWritten[$entryIdentifier])) {
                 $entriesWritten[$entryIdentifier] = [
                     'tags' => $tags,
                     'data' => $data
                 ];
             }
-        }));
+        });
         $this->inject($this->contentCache, 'cache', $mockCache);
 
         $object = new TestModel(42, 'Object value 1');

@@ -205,7 +205,7 @@ class NodeTypeTest extends UnitTestCase
     #[Test]
     public function hasConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->onlyMethods(['initialize'])->getMock();
         $nodeType->expects(self::once())->method('initialize');
         $nodeType->hasConfiguration('foo');
     }
@@ -231,7 +231,7 @@ class NodeTypeTest extends UnitTestCase
     #[Test]
     public function getConfigurationInitializesTheNodeType()
     {
-        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->setMethods(['initialize'])->getMock();
+        $nodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->onlyMethods(['initialize'])->getMock();
         $nodeType->expects(self::once())->method('initialize');
         $nodeType->getConfiguration('foo');
     }
@@ -423,7 +423,7 @@ class NodeTypeTest extends UnitTestCase
             'childNodes' => ['nodeName' => $childNodeConfiguration]
         ]);
         $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
-        $mockNodeTypeManager->expects(self::any())->method('getNodeType')->will(self::returnValue($baseType));
+        $mockNodeTypeManager->expects(self::any())->method('getNodeType')->willReturn($baseType);
         $this->inject($baseType, 'nodeTypeManager', $mockNodeTypeManager);
 
         $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('Neos.ContentRepository:Base')->getAutoCreatedChildNodes();

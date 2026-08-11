@@ -167,12 +167,20 @@ class ContentCacheTest extends UnitTestCase
             ['mytag2'],
             86400
         );
-        $mockCache->expects(self::atLeast(2))
-            ->method('set')
-            ->withConsecutive(
-                [self::anything(), $invalidContent, ['mytag1', 'mytag2'], null],
-                [self::anything(), $validContent, ['mytag2'], 86400],
-            );
+        $matcher = self::atLeast(2);
+        $mockCache->expects($matcher)
+            ->method('set')->willReturnCallback(function (...$parameters) use ($matcher, $invalidContent, $validContent) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame($invalidContent, $parameters[1]);
+                $this->assertSame(['mytag1', 'mytag2'], $parameters[2]);
+                $this->assertSame(null, $parameters[3]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame($validContent, $parameters[1]);
+                $this->assertSame(['mytag2'], $parameters[2]);
+                $this->assertSame(86400, $parameters[3]);
+            }
+        });
 
         $output = $contentCache->processCacheSegments($content);
 
@@ -185,7 +193,7 @@ class ContentCacheTest extends UnitTestCase
         $contentCache = new ContentCache();
 
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper->expects(self::any())->method('convert')->willReturnArgument(0);
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockCache = $this->createMock(FrontendInterface::class);
@@ -213,7 +221,7 @@ class ContentCacheTest extends UnitTestCase
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
 
         $mockPropertyMapper = $this->createMock(PropertyMapper::class);
-        $mockPropertyMapper->expects(self::any())->method('convert')->will($this->returnArgument(0));
+        $mockPropertyMapper->expects(self::any())->method('convert')->willReturnArgument(0);
         $this->inject($contentCache, 'propertyMapper', $mockPropertyMapper);
 
         $mockContext = $this->getMockBuilder(EnvironmentConfiguration::class)->disableOriginalConstructor()->getMock();

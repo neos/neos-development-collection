@@ -60,14 +60,14 @@ class XliffServiceTest extends FunctionalTestCase
             ->getMock();
         $mockPackageManager->expects(self::any())
             ->method('getFlowPackages')
-            ->will(self::returnValue($this->packages));
+            ->willReturn($this->packages);
         $mockPackageManager->expects(self::any())
             ->method('getPackage')
             ->with($this->logicalOr(
                 $this->equalTo('Vendor.BasePackage'),
                 $this->equalTo('Vendor.DependentPackage')
             ))
-            ->will(self::returnCallback([$this, 'myCallback']));
+            ->willReturnCallback([$this, 'myCallback']);
         $this->inject($this->xliffService, 'packageManager', $mockPackageManager);
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
 

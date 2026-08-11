@@ -212,14 +212,14 @@ class AssetConstraintsTest extends UnitTestCase
     public static function applyToAssetTypeFilterDataProvider(): array
     {
         return [
-            ['mediaTypes' => [], 'assetType' => null, 'expectedResult' => 'All'],
-            ['mediaTypes' => [], 'assetType' => 'All', 'expectedResult' => 'All'],
-            ['mediaTypes' => [], 'assetType' => 'Image', 'expectedResult' => 'Image'],
-            ['mediaTypes' => ['image/*'], 'assetType' => 'Image', 'expectedResult' => 'Image'],
-            ['mediaTypes' => ['audio/*', 'image/*'], 'assetType' => 'Image', 'expectedResult' => 'Image'],
-            ['mediaTypes' => ['audio/*', 'image/*'], 'assetType' => null, 'expectedResult' => 'Audio'],
-            ['mediaTypes' => ['audio/*', 'image/*'], 'assetType' => 'Video', 'expectedResult' => 'Audio'],
-            ['mediaTypes' => ['audio/*', 'image/*'], 'assetType' => 'All', 'expectedResult' => 'Audio'],
+            ['allowedMediaTypes' => [], 'assetType' => null, 'expectedResult' => 'All'],
+            ['allowedMediaTypes' => [], 'assetType' => 'All', 'expectedResult' => 'All'],
+            ['allowedMediaTypes' => [], 'assetType' => 'Image', 'expectedResult' => 'Image'],
+            ['allowedMediaTypes' => ['image/*'], 'assetType' => 'Image', 'expectedResult' => 'Image'],
+            ['allowedMediaTypes' => ['audio/*', 'image/*'], 'assetType' => 'Image', 'expectedResult' => 'Image'],
+            ['allowedMediaTypes' => ['audio/*', 'image/*'], 'assetType' => null, 'expectedResult' => 'Audio'],
+            ['allowedMediaTypes' => ['audio/*', 'image/*'], 'assetType' => 'Video', 'expectedResult' => 'Audio'],
+            ['allowedMediaTypes' => ['audio/*', 'image/*'], 'assetType' => 'All', 'expectedResult' => 'Audio'],
         ];
     }
 
@@ -239,12 +239,12 @@ class AssetConstraintsTest extends UnitTestCase
     public static function getAllowedAssetTypeFilterOptionsDataProvider(): array
     {
         return [
-            ['mediaTypes' => [], 'expectedResult' => ['All', 'Image', 'Document', 'Video', 'Audio']],
-            ['mediaTypes' => ['image/*'], 'expectedResult' => []],
-            ['mediaTypes' => ['unknown/media-type'], 'expectedResult' => []],
-            ['mediaTypes' => ['video/*', 'image/*'], 'expectedResult' => ['Video', 'Image']],
-            ['mediaTypes' => ['video/*', 'image/jpeg', 'image/gif'], 'expectedResult' => ['Video', 'Image']],
-            ['mediaTypes' => ['unknown/media-type', 'video/*'], 'expectedResult' => ['Document', 'Video']],
+            ['allowedMediaTypes' => [], 'expectedResult' => ['All', 'Image', 'Document', 'Video', 'Audio']],
+            ['allowedMediaTypes' => ['image/*'], 'expectedResult' => []],
+            ['allowedMediaTypes' => ['unknown/media-type'], 'expectedResult' => []],
+            ['allowedMediaTypes' => ['video/*', 'image/*'], 'expectedResult' => ['Video', 'Image']],
+            ['allowedMediaTypes' => ['video/*', 'image/jpeg', 'image/gif'], 'expectedResult' => ['Video', 'Image']],
+            ['allowedMediaTypes' => ['unknown/media-type', 'video/*'], 'expectedResult' => ['Document', 'Video']],
         ];
     }
 

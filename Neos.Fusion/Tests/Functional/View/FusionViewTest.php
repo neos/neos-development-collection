@@ -68,9 +68,9 @@ class FusionViewTest extends FunctionalTestCase
     protected function buildView($controllerObjectName, $controllerActionName)
     {
         $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $request->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $request->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($request));
+        $request->expects(self::any())->method('getControllerObjectName')->willReturn($controllerObjectName);
+        $request->expects(self::any())->method('getControllerActionName')->willReturn($controllerActionName);
+        $this->mockControllerContext->expects(self::any())->method('getRequest')->willReturn($request);
 
         $view = new FusionView();
         $view->setControllerContext($this->mockControllerContext);

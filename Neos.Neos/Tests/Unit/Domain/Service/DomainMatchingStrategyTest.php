@@ -25,7 +25,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = [$this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock()];
-        $mockDomains[0]->expects(self::any())->method('getHostname')->will(self::returnValue('www.neos.io'));
+        $mockDomains[0]->expects(self::any())->method('getHostname')->willReturn('www.neos.io');
         $expectedDomains = [$mockDomains[0]];
 
         $strategy = new DomainMatchingStrategy();
@@ -37,10 +37,10 @@ class DomainMatchingStrategyTest extends UnitTestCase
     public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst()
     {
         $mockDomains = [
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
         ];
 
         $mockDomains[0]->setHostname('neos.io');
@@ -62,7 +62,7 @@ class DomainMatchingStrategyTest extends UnitTestCase
     public function getSortedMatchesReturnsNoMatchIfDomainIsLongerThanHostname()
     {
         $mockDomains = [
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
         ];
 
         $mockDomains[0]->setHostname('flow.neos.io');

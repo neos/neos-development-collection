@@ -60,7 +60,7 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
 
         $modifiedNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockContextFactory->expects(self::atLeastOnce())->method('create')->with($expectedModifiedContextProperties)->will(self::returnValue($modifiedNodeContext));
+        $this->mockContextFactory->expects(self::atLeastOnce())->method('create')->with($expectedModifiedContextProperties)->willReturn($modifiedNodeContext);
 
         $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
     }
@@ -73,15 +73,15 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
         $mockNode = $this->createMock(NodeInterface::class);
-        $mockNode->expects(self::any())->method('getIdentifier')->will(self::returnValue($nodeIdentifier));
+        $mockNode->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
         $modifiedNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $nodeInModifiedContext = $this->createMock(NodeInterface::class);
-        $nodeInModifiedContext->expects(self::any())->method('getPath')->will(self::returnValue('/foo/bar'));
-        $this->mockContextFactory->expects(self::any())->method('create')->will(self::returnValue($modifiedNodeContext));
+        $nodeInModifiedContext->expects(self::any())->method('getPath')->willReturn('/foo/bar');
+        $this->mockContextFactory->expects(self::any())->method('create')->willReturn($modifiedNodeContext);
 
-        $modifiedNodeContext->expects(self::once())->method('getNodeByIdentifier')->with($nodeIdentifier)->will(self::returnValue($nodeInModifiedContext));
+        $modifiedNodeContext->expects(self::once())->method('getNodeByIdentifier')->with($nodeIdentifier)->willReturn($nodeInModifiedContext);
         $mockFlowQuery->expects(self::atLeastOnce())->method('setContext')->with([$nodeInModifiedContext]);
 
         $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
@@ -95,13 +95,13 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
         $nodeIdentifier = 'c575c430-c971-11e3-a6e7-14109fd7a2dd';
 
         $mockNode = $this->createMock(NodeInterface::class);
-        $mockNode->expects(self::any())->method('getIdentifier')->will(self::returnValue($nodeIdentifier));
+        $mockNode->expects(self::any())->method('getIdentifier')->willReturn($nodeIdentifier);
         $mockFlowQuery = $this->buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties);
 
         $modifiedNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockContextFactory->expects(self::any())->method('create')->will(self::returnValue($modifiedNodeContext));
+        $this->mockContextFactory->expects(self::any())->method('create')->willReturn($modifiedNodeContext);
 
-        $modifiedNodeContext->expects(self::once())->method('getNodeByIdentifier')->with($nodeIdentifier)->will(self::returnValue(null));
+        $modifiedNodeContext->expects(self::once())->method('getNodeByIdentifier')->with($nodeIdentifier)->willReturn(null);
         $mockFlowQuery->expects(self::atLeastOnce())->method('setContext')->with([]);
 
         $this->operation->evaluate($mockFlowQuery, [$suppliedContextProperties]);
@@ -115,12 +115,12 @@ class ContextOperationTest extends AbstractQueryOperationsTestCase
     protected function buildFlowQueryWithNodeInContext($mockNode, $nodeContextProperties)
     {
         $mockNodeContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $mockNodeContext->expects(self::any())->method('getProperties')->will(self::returnValue($nodeContextProperties));
+        $mockNodeContext->expects(self::any())->method('getProperties')->willReturn($nodeContextProperties);
 
-        $mockNode->expects(self::any())->method('getContext')->will(self::returnValue($mockNodeContext));
+        $mockNode->expects(self::any())->method('getContext')->willReturn($mockNodeContext);
 
         $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
-        $mockFlowQuery->expects(self::any())->method('getContext')->will(self::returnValue([$mockNode]));
+        $mockFlowQuery->expects(self::any())->method('getContext')->willReturn([$mockNode]);
         return $mockFlowQuery;
     }
 }

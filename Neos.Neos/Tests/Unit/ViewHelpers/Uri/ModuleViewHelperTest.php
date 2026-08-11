@@ -35,7 +35,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
     public function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->setMethods(['setMainRequestToUriBuilder'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->onlyMethods(['setMainRequestToUriBuilder'])->getMock();
         $this->uriBuilder = $this->createMock(UriBuilder::class);
         $this->inject($this->viewHelper, 'uriBuilder', $this->uriBuilder);
     }
@@ -43,10 +43,10 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
     #[Test]
     public function callingRenderAssignsVariablesCorrectlyToUriBuilder()
     {
-        $this->uriBuilder->expects(self::once())->method('setSection')->with('section')->will(self::returnSelf());
-        $this->uriBuilder->expects(self::once())->method('setArguments')->with(['additionalParams'])->will(self::returnSelf());
-        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->will(self::returnSelf());
-        $this->uriBuilder->expects(self::once())->method('setFormat')->with('format')->will(self::returnSelf());
+        $this->uriBuilder->expects(self::once())->method('setSection')->with('section')->willReturnSelf();
+        $this->uriBuilder->expects(self::once())->method('setArguments')->with(['additionalParams'])->willReturnSelf();
+        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->willReturnSelf();
+        $this->uriBuilder->expects(self::once())->method('setFormat')->with('format')->willReturnSelf();
 
         $expectedModifiedArguments = [
             'module' => 'the/path',

@@ -127,9 +127,9 @@ class JoinImplementationTest extends UnitTestCase
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+        $mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
-        }));
+        });
 
         $path = '';
         $fusionObjectName = 'Neos.Fusion:Join';
@@ -155,9 +155,9 @@ class JoinImplementationTest extends UnitTestCase
         try {
             $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-            $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+            $mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($path) use (&$renderedPaths) {
                 $renderedPaths[] = $path;
-            }));
+            });
 
             $path = '';
             $fusionObjectName = 'Neos.Fusion:Join';

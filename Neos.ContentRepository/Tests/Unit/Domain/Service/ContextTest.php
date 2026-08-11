@@ -35,7 +35,7 @@ class ContextTest extends UnitTestCase
         $this->inject($this->contextFactory, 'securityContext', $this->createMock(Context::class));
 
         $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
-        $mockContentDimensionRepository->expects(self::any())->method('findAll')->will(self::returnValue([]));
+        $mockContentDimensionRepository->expects(self::any())->method('findAll')->willReturn([]);
         $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
     }
 

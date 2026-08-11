@@ -45,9 +45,9 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     #[Test]
     public function getNameOfSitePackageGeneratorWithName()
     {
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturnCallback(function ($className) {
             return new NamedSitePackageGenerator();
-        }));
+        });
 
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(NamedSitePackageGenerator::class),
@@ -58,9 +58,9 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
     #[Test]
     public function getClassNameOfSitePackageGenerator()
     {
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturnCallback(function ($className) {
             return new BlankSitePackageGenerator();
-        }));
+        });
 
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(BlankSitePackageGenerator::class),

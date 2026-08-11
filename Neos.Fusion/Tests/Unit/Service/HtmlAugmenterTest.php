@@ -419,7 +419,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-foo' => (object)[]],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
-                'expectedResult' => '<root>array value ignored</root>',
+                'allowEmpty' => '<root>array value ignored</root>',
             ],
         ];
     }

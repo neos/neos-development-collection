@@ -146,14 +146,14 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTestCase
         $contextValues = [];
         foreach ($nodes as $nodeProperties) {
             $mockNode = $this->createMock(NodeInterface::class);
-            $mockNode->expects(self::any())->method('getHiddenBeforeDateTime')->will(self::returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
-            $mockNode->expects(self::any())->method('getHiddenAfterDateTime')->will(self::returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
+            $mockNode->expects(self::any())->method('getHiddenBeforeDateTime')->willReturn($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null);
+            $mockNode->expects(self::any())->method('getHiddenAfterDateTime')->willReturn($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null);
 
             $contextValues[] = $mockNode;
         }
 
         $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
-        $mockFlowQuery->expects(self::any())->method('getContext')->will(self::returnValue($contextValues));
+        $mockFlowQuery->expects(self::any())->method('getContext')->willReturn($contextValues);
         return $mockFlowQuery;
     }
 }

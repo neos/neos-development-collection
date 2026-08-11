@@ -59,17 +59,17 @@ class SiblingsOperationTest extends AbstractQueryOperationsTestCase
         $this->secondNodeInLevel = $this->mockNode('second-node');
         $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
+        $this->siteNode->expects(self::any())->method('findChildNodes')->willReturn(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        ])));
+        ]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->siteNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));
-        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->siteNode->expects(self::any())->method('findParentNode')->willThrowException(new NodeException('No parent'));
+        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
     }
 
     #[Test]

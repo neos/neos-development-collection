@@ -50,7 +50,7 @@ class NodeFactoryTest extends UnitTestCase
      */
     public function setUp(): void
     {
-        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->setMethods(['filterNodeByContext'])->getMock();
+        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->onlyMethods(['filterNodeByContext'])->getMock();
 
         $this->nodeFactory->expects(self::any())->method('filterNodeByContext')->willReturnArgument(0);
 
@@ -91,7 +91,7 @@ class NodeFactoryTest extends UnitTestCase
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $mockWorkspace = $this->getMockBuilder(Workspace::class)->setMockClassName('MockWorkspace')->disableOriginalConstructor()->getMock();
-        $mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue($workspaceName));
+        $mockWorkspace->expects(self::any())->method('getName')->willReturn($workspaceName);
 
         $mockContextFactory = $this->createMock(ContextFactoryInterface::class);
         $mockContextFactory->expects(self::once())->method('create')->with([
@@ -105,7 +105,7 @@ class NodeFactoryTest extends UnitTestCase
         $this->inject($this->nodeFactory, 'contextFactory', $mockContextFactory);
 
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockNodeData->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockWorkspace));
+        $mockNodeData->expects(self::any())->method('getWorkspace')->willReturn($mockWorkspace);
         $mockNodeData->expects(self::any())->method('getDimensionValues')->willReturn($dimensionValues);
 
         $context = $this->nodeFactory->createContextMatchingNodeData($mockNodeData);

@@ -50,7 +50,7 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
         $this->viewHelper = $this->getAccessibleMock(ModuleViewHelper::class, ['renderChildren']);
         $this->tagBuilder = $this->createMock(TagBuilder::class);
         $this->tagBuilder->expects(self::once())->method('render')->willReturn('renderingResult');
-        $this->uriModuleViewHelper = $this->getMockBuilder(UriModuleViewHelper::class)->setMethods(['setRenderingContext', 'setArguments', 'render'])->getMock();
+        $this->uriModuleViewHelper = $this->getMockBuilder(UriModuleViewHelper::class)->onlyMethods(['setRenderingContext', 'setArguments', 'render'])->getMock();
 
         $this->dummyRenderingContext = $this->createMock(RenderingContextInterface::class);
         $this->inject($this->viewHelper, 'renderingContext', $this->dummyRenderingContext);

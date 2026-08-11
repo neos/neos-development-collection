@@ -53,7 +53,7 @@ class ImageTypeValidatorTest extends UnitTestCase
     public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
     {
         $image = $this->getMockBuilder(Image::class)->disableOriginalConstructor()->getMock();
-        $image->expects(self::any())->method('getMediaType')->will(self::returnValue($actualMediaType));
+        $image->expects(self::any())->method('getMediaType')->willReturn($actualMediaType);
 
         $validator = new ImageTypeValidator($options);
         $validationResult = $validator->validate($image);

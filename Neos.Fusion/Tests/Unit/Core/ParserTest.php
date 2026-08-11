@@ -34,8 +34,8 @@ class ParserTest extends UnitTestCase
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
         $parserCache = $this->getMockBuilder(ParserCache::class)->getMock();
-        $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
-        $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
+        $parserCache->method('cacheForFusionFile')->willReturnCallback(fn ($_, $getValue) => $getValue());
+        $parserCache->method('cacheForDsl')->willReturnCallback(fn ($_, $_2, $getValue) => $getValue());
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
@@ -847,16 +847,22 @@ class ParserTest extends UnitTestCase
         $this->injectParserCacheMockIntoParser($parser);
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
+        $matcher = $this->exactly(2);
 
         $parser
-            ->expects($this->exactly(2))
-            ->method('handleDslTranspile')
-            ->withConsecutive(
-                ['dsl1', 'example value'],
-                ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value']
-            );
+            ->expects($matcher)
+            ->method('handleDslTranspile')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('dsl1', $parameters[0]);
+                $this->assertSame('example value', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('dsl2', $parameters[0]);
+                $this->assertSame('another' . chr(10) . 'multiline' . chr(10) . 'value', $parameters[1]);
+            }
+        });
 
-        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }
 
     /**

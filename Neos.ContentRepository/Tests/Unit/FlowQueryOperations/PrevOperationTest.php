@@ -59,17 +59,17 @@ class PrevOperationTest extends AbstractQueryOperationsTestCase
         $this->secondNodeInLevel = $this->mockNode('second-node');
         $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site')));
-        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
+        $this->siteNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/site'));
+        $this->siteNode->expects(self::any())->method('findChildNodes')->willReturn(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        ])));
+        ]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
     }
 
     #[Test]

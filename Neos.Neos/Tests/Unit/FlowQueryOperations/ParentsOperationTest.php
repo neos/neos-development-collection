@@ -36,16 +36,16 @@ class ParentsOperationTest extends UnitTestCase
         $firstLevelNode = $this->createMock(TraversableNodeInterface::class);
         $secondLevelNode = $this->createMock(TraversableNodeInterface::class);
 
-        $rootNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/')));
-        $rootNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));
-        $sitesNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/sites')));
-        $sitesNode->expects(self::any())->method('findParentNode')->will(self::returnValue($rootNode));
-        $siteNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/sites/site')));
-        $siteNode->expects(self::any())->method('findParentNode')->will(self::returnValue($sitesNode));
-        $firstLevelNode->expects(self::any())->method('findParentNode')->will(self::returnValue($siteNode));
-        $firstLevelNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/sites/site/first')));
-        $secondLevelNode->expects(self::any())->method('findParentNode')->will(self::returnValue($firstLevelNode));
-        $secondLevelNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/sites/site/first/second')));
+        $rootNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/'));
+        $rootNode->expects(self::any())->method('findParentNode')->willThrowException(new NodeException('No parent'));
+        $sitesNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/sites'));
+        $sitesNode->expects(self::any())->method('findParentNode')->willReturn($rootNode);
+        $siteNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/sites/site'));
+        $siteNode->expects(self::any())->method('findParentNode')->willReturn($sitesNode);
+        $firstLevelNode->expects(self::any())->method('findParentNode')->willReturn($siteNode);
+        $firstLevelNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/sites/site/first'));
+        $secondLevelNode->expects(self::any())->method('findParentNode')->willReturn($firstLevelNode);
+        $secondLevelNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/sites/site/first/second'));
 
         $context = [$secondLevelNode];
         $q = new FlowQuery($context);

@@ -31,7 +31,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
-            ->setMethods(['getPropertyType'])
+            ->onlyMethods(['getPropertyType'])
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
@@ -41,7 +41,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $node = $this
             ->getMockBuilder(Node::class)
-            ->setMethods(['getProperty', 'getNodeType'])
+            ->onlyMethods(['getProperty', 'getNodeType'])
             ->disableOriginalConstructor()
             ->getMock();
         $node
@@ -72,7 +72,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
-            ->setMethods(['getPropertyType'])
+            ->onlyMethods(['getPropertyType'])
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
@@ -82,7 +82,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $node = $this
             ->getMockBuilder(Node::class)
-            ->setMethods(['getProperty', 'getNodeType'])
+            ->onlyMethods(['getProperty', 'getNodeType'])
             ->disableOriginalConstructor()
             ->getMock();
         $node
@@ -108,7 +108,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
-            ->setMethods(['getPropertyType'])
+            ->onlyMethods(['getPropertyType'])
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
@@ -118,7 +118,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $node = $this
             ->getMockBuilder(Node::class)
-            ->setMethods(['getProperty', 'getNodeType'])
+            ->onlyMethods(['getProperty', 'getNodeType'])
             ->disableOriginalConstructor()
             ->getMock();
         $node
@@ -148,7 +148,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
-            ->setMethods(['getPropertyType'])
+            ->onlyMethods(['getPropertyType'])
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
@@ -158,7 +158,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $node = $this
             ->getMockBuilder(Node::class)
-            ->setMethods(['getProperty', 'getNodeType'])
+            ->onlyMethods(['getProperty', 'getNodeType'])
             ->disableOriginalConstructor()
             ->getMock();
         $node
@@ -209,7 +209,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
-            ->setMethods(['getPropertyType'])
+            ->onlyMethods(['getPropertyType'])
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
@@ -219,7 +219,7 @@ class NodePropertyConverterServiceTest extends FunctionalTestCase
 
         $node = $this
             ->getMockBuilder(Node::class)
-            ->setMethods(['getProperty', 'getNodeType'])
+            ->onlyMethods(['getProperty', 'getNodeType'])
             ->disableOriginalConstructor()
             ->getMock();
         $node

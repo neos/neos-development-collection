@@ -66,12 +66,12 @@ class NodeServiceTest extends UnitTestCase
         $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
         $mockNodeTypeManager->expects(self::any())
             ->method('getSubNodeTypes')
-            ->will(self::returnValue($this->subNodeTypesFixture));
+            ->willReturn($this->subNodeTypesFixture);
         $mockNodeTypeManager->expects(self::any())
             ->method('getNodeType')
-            ->will(self::returnCallback(function ($nodeTypeName) {
+            ->willReturnCallback(function ($nodeTypeName) {
                 return new NodeType($nodeTypeName, [], []);
-            }));
+            });
 
         $this->inject($nodeService, 'nodeTypeManager', $mockNodeTypeManager);
 
@@ -87,10 +87,10 @@ class NodeServiceTest extends UnitTestCase
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
         $mockNodeType->expects(self::any())
             ->method('getName')
-            ->will(self::returnValue($nodeTypeName));
+            ->willReturn($nodeTypeName);
         $mockNodeType->expects(self::any())
             ->method('__toString')
-            ->will(self::returnValue($nodeTypeName));
+            ->willReturn($nodeTypeName);
 
         return $mockNodeType;
     }
@@ -106,12 +106,12 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNode->expects(self::once())
             ->method('getProperty')
             ->with('title')
-            ->will(self::returnValue(null));
+            ->willReturn(null);
 
         $mockNode->expects(self::once())
             ->method('setProperty')
@@ -119,9 +119,9 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects(self::once())
             ->method('getDefaultValuesForProperties')
-            ->will(self::returnValue([
+            ->willReturn([
                 'title' => 'hello'
-            ]));
+            ]);
 
         $nodeService->setDefaultValues($mockNode);
     }
@@ -137,12 +137,12 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNode->expects(self::once())
             ->method('getProperty')
             ->with('date')
-            ->will(self::returnValue(null));
+            ->willReturn(null);
 
         $mockNode->expects(self::once())
             ->method('setProperty')
@@ -150,9 +150,9 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects(self::once())
             ->method('getDefaultValuesForProperties')
-            ->will(self::returnValue([
+            ->willReturn([
                 'date' => new \DateTime('2014-09-03')
-            ]));
+            ]);
 
         $nodeService->setDefaultValues($mockNode);
     }
@@ -168,21 +168,21 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNode->expects(self::once())
             ->method('getProperty')
             ->with('title')
-            ->will(self::returnValue('Existing value'));
+            ->willReturn('Existing value');
 
         $mockNode->expects(self::never())
             ->method('setProperty');
 
         $mockNodeType->expects(self::once())
             ->method('getDefaultValuesForProperties')
-            ->will(self::returnValue([
+            ->willReturn([
                 'title' => 'hello'
-            ]));
+            ]);
 
         $nodeService->setDefaultValues($mockNode);
     }
@@ -200,20 +200,30 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects(self::once())
             ->method('getAutoCreatedChildNodes')
-            ->will(self::returnValue([
+            ->willReturn([
                 'first-child-node-name' => $firstChildNodeType,
                 'second-child-node-name' => $secondChildNodeType
-            ]));
+            ]);
 
         $mockNode->method('getIdentifier')->willReturn(Algorithms::generateUUID());
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
+        $matcher = self::atLeast(2);
 
-        $mockNode->expects(self::atLeast(2))
-            ->method('createNode')
-            ->withConsecutive(['first-child-node-name', $firstChildNodeType], ['second-child-node-name', $secondChildNodeType]);
+        $mockNode->expects($matcher)
+            ->method('createNode')->willReturnCallback(function (...$parameters) use ($matcher, $firstChildNodeType, $secondChildNodeType) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('first-child-node-name', $parameters[0]);
+                $this->assertSame($firstChildNodeType, $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('second-child-node-name', $parameters[0]);
+                $this->assertSame($secondChildNodeType, $parameters[1]);
+            }
+            return $this->createMock(NodeInterface::class);
+        });
 
         $nodeService->createChildNodes($mockNode);
     }
@@ -233,30 +243,30 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNodeType->expects(self::once())
             ->method('getProperties')
-            ->will(self::returnValue([
+            ->willReturn([
                 'title' => [],
                 'description' => []
-            ]));
+            ]);
 
         $mockNode->expects(self::once())
             ->method('isRemoved')
-            ->will(self::returnValue(false));
+            ->willReturn(false);
 
         $mockNode->expects(self::once())
             ->method('getNodeData')
-            ->will(self::returnValue($mockNodeData));
+            ->willReturn($mockNodeData);
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNode->expects(self::once())
             ->method('getProperties')
-            ->will(self::returnValue(new ArrayPropertyCollection([
+            ->willReturn(new ArrayPropertyCollection([
                 'title' => 'hello',
                 'description' => 'world',
                 'invalidProperty' => 'world'
-            ])));
+            ]));
 
         $nodeService->cleanUpProperties($mockNode);
     }
@@ -280,30 +290,30 @@ class NodeServiceTest extends UnitTestCase
         $mockFirstChildNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $mockFirstChildNode->expects(self::any())
             ->method('getNodeType')
-            ->will(self::returnValue($mockContentNodeType));
+            ->willReturn($mockContentNodeType);
         $mockFirstChildNode->expects(self::any())
             ->method('getName')
-            ->will(self::returnValue('main'));
+            ->willReturn('main');
         $mockFirstChildNode->expects(self::never())
             ->method('remove');
 
         $mockSecondChildNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $mockSecondChildNode->expects(self::any())
             ->method('getNodeType')
-            ->will(self::returnValue($mockContentNodeType));
+            ->willReturn($mockContentNodeType);
         $mockSecondChildNode->expects(self::any())
             ->method('getName')
-            ->will(self::returnValue('sidebar'));
+            ->willReturn('sidebar');
         $mockSecondChildNode->expects(self::never())
             ->method('remove');
 
         $mockThirdChildNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $mockThirdChildNode->expects(self::any())
             ->method('getNodeType')
-            ->will(self::returnValue($mockContentNodeType));
+            ->willReturn($mockContentNodeType);
         $mockThirdChildNode->expects(self::any())
             ->method('getName')
-            ->will(self::returnValue('footer'));
+            ->willReturn('footer');
         $mockThirdChildNode->expects(self::once())
             ->method('remove');
 
@@ -311,22 +321,22 @@ class NodeServiceTest extends UnitTestCase
         $mockSidebarChildNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:ContentCollection');
         $mockNodeType->expects(self::once())
             ->method('getAutoCreatedChildNodes')
-            ->will(self::returnValue([
+            ->willReturn([
                 'main' => $mockMainChildNodeType,
                 'sidebar' => $mockSidebarChildNodeType
-            ]));
+            ]);
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNode->expects(self::once())
             ->method('getChildNodes')
-            ->will(self::returnValue([
+            ->willReturn([
                 $mockFirstChildNode,
                 $mockSecondChildNode,
                 $mockThirdChildNode
-            ]));
+            ]);
 
         $nodeService->cleanUpChildNodes($mockNode);
     }
@@ -350,29 +360,29 @@ class NodeServiceTest extends UnitTestCase
         $mockFirstChildNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $mockFirstChildNode->expects(self::any())
             ->method('getNodeType')
-            ->will(self::returnValue($mockContentNodeType));
+            ->willReturn($mockContentNodeType);
         $mockFirstChildNode->expects(self::any())
             ->method('getName')
-            ->will(self::returnValue('sidebar'));
+            ->willReturn('sidebar');
         $mockFirstChildNode->expects(self::never())
             ->method('remove');
 
         $mockMainChildNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:ContentCollection');
         $mockNodeType->expects(self::once())
             ->method('getAutoCreatedChildNodes')
-            ->will(self::returnValue([
+            ->willReturn([
                 'main' => $mockMainChildNodeType
-            ]));
+            ]);
 
         $mockNode->expects(self::once())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNode->expects(self::once())
             ->method('getChildNodes')
-            ->will(self::returnValue([
+            ->willReturn([
                 $mockFirstChildNode,
-            ]));
+            ]);
 
         $nodeService->cleanUpChildNodes($mockNode);
     }
@@ -388,7 +398,7 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects(self::atLeastOnce())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         $mockNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:ContentObject');
         self::assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
@@ -405,7 +415,7 @@ class NodeServiceTest extends UnitTestCase
 
         $mockNode->expects(self::atLeastOnce())
             ->method('getNodeType')
-            ->will(self::returnValue($mockNodeType));
+            ->willReturn($mockNodeType);
 
         self::assertTrue($nodeService->isNodeOfType($mockNode, $mockNodeType));
     }

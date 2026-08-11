@@ -50,7 +50,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
     {
         $path = 'responseHead/test';
 
-        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'httpVersion':
@@ -61,7 +61,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
                     return $headers;
             }
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
-        }));
+        });
 
         $fusionObjectName = 'Neos.Fusion:Http.ResponseHead';
         $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $fusionObjectName);

@@ -50,7 +50,7 @@ class TagImplementationTest extends UnitTestCase
     public function evaluateTests($properties, $attributes, $content, $expectedOutput)
     {
         $path = 'tag/test';
-        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'attributes':
@@ -59,7 +59,7 @@ class TagImplementationTest extends UnitTestCase
                     return $content;
             }
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
-        }));
+        });
 
         $fusionObjectName = 'Neos.Fusion:Tag';
         $renderer = new TagImplementation($this->mockRuntime, $path, $fusionObjectName);

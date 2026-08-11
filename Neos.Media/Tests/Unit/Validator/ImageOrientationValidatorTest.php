@@ -84,7 +84,7 @@ class ImageOrientationValidatorTest extends UnitTestCase
     {
         $validator = new ImageOrientationValidator($options);
         $image = $this->createMock(ImageInterface::class);
-        $image->expects(self::any())->method('getOrientation')->will(self::returnValue($imageOrientation));
+        $image->expects(self::any())->method('getOrientation')->willReturn($imageOrientation);
 
         $validationResult = $validator->validate($image);
         if ($isValid) {

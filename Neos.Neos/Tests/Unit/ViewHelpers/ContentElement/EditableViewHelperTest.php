@@ -112,7 +112,9 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
         $this->mockContext = ['node' => $this->mockNode];
         $this->mockRuntime->expects(self::any())->method('getCurrentContext')->willReturn($this->mockContext);
         $this->mockTemplateImplementation->expects(self::any())->method('getRuntime')->willReturn($this->mockRuntime);
-        $this->mockView = $this->getAccessibleMock(FluidView::class, [], [], '', false);
+        // onlyMethods([]) mocks nothing in PHPUnit 10+, unlike the old setMethods([]),
+        // so the method configured below has to be listed explicitly
+        $this->mockView = $this->getAccessibleMock(FluidView::class, ['getFusionObject'], [], '', false);
         $this->mockView->expects(self::any())->method('getFusionObject')->willReturn($this->mockTemplateImplementation);
     }
 

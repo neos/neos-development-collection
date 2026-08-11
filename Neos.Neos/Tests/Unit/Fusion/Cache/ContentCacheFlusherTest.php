@@ -25,7 +25,7 @@ class ContentCacheFlusherTest extends UnitTestCase
     #[Test]
     public function theWorkspaceChainWillOnlyEvaluatedIfNeeded()
     {
-        $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
+        $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->onlyMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
         $contentCacheFlusher->expects(self::never())->method('resolveWorkspaceChain');
 
         $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeIdentifier');

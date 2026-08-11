@@ -50,7 +50,7 @@ class NodeTypeManagerTest extends UnitTestCase
 
         $this->mockConfigurationManager = $this->getMockBuilder(ConfigurationManager::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('NodeTypes')->will(self::returnValue($nodeTypesFixtureData));
+        $this->mockConfigurationManager->expects(self::any())->method('getConfiguration')->with('NodeTypes')->willReturn($nodeTypesFixtureData);
         $this->inject($this->nodeTypeManager, 'configurationManager', $this->mockConfigurationManager);
     }
 

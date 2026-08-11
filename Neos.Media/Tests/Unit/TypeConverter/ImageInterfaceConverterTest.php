@@ -107,9 +107,9 @@ class ImageInterfaceConverterTest extends UnitTestCase
     #[Test]
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
-        $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallback(function ($objectType) {
+        $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->willReturnCallback(function ($objectType) {
             return $objectType;
-        }));
+        });
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ImageInterfaceConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
 

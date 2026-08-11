@@ -32,10 +32,10 @@ class RuntimeTest extends UnitTestCase
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
-        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
+        $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => ThrowingHandler::class]]);
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
-        $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($runtimeException);
+        $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->willReturn('Exception Message');
 
         $output = $runtime->render('/foo/bar');
 
@@ -51,7 +51,7 @@ class RuntimeTest extends UnitTestCase
     public function handleRenderingExceptionThrowsException()
     {
         $this->expectException(Exception::class);
-        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
+        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->onlyMethods(['isRegistered', 'get'])->getMock();
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
         $runtime =  new Runtime([], $controllerContext);
@@ -59,8 +59,8 @@ class RuntimeTest extends UnitTestCase
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => $exceptionHandlerSetting]]);
 
-        $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->will(self::returnValue(true));
-        $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->will(self::returnValue(new ThrowingHandler()));
+        $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->willReturn(true);
+        $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->willReturn(new ThrowingHandler());
 
         $runtime->handleRenderingException('/foo/bar', $runtimeException);
     }
@@ -112,8 +112,8 @@ class RuntimeTest extends UnitTestCase
         $this->expectException(\Neos\Flow\Security\Exception::class);
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $securityException = new \Neos\Flow\Security\Exception();
-        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($securityException));
+        $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($securityException);
 
         $runtime->render('/foo/bar');
     }

@@ -96,7 +96,7 @@ class SetDimensionsTest extends UnitTestCase
             }
 
             $mockContentDimensionRepository = $this->getMockBuilder(ContentDimensionRepository::class)->getMock();
-            $mockContentDimensionRepository->expects(self::atLeastOnce())->method('findAll')->will(self::returnValue($configuredDimensionObjects));
+            $mockContentDimensionRepository->expects(self::atLeastOnce())->method('findAll')->willReturn($configuredDimensionObjects);
             $this->inject($transformation, 'contentDimensionRepository', $mockContentDimensionRepository);
         }
 

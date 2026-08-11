@@ -146,7 +146,7 @@ class AssetTest extends AbstractTestCase
         $mockExternalAssetSource = $this->getMockBuilder(AssetSourceInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($asset, 'assetSources', ['test-source' => $mockExternalAssetSource]);
 
-        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->setMethods(['findOneByLocalAssetIdentifier'])->getMock();
+        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->addMethods(['findOneByLocalAssetIdentifier'])->getMock();
         $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
 
         $mockImportedAssetRepository->expects(self::atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);

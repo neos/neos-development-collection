@@ -80,8 +80,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         }
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Packages/Application/Some.Package'));
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->with('Some.Package')->will(self::returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getPackagePath')->willReturn('vfs://Packages/Application/Some.Package');
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with('Some.Package')->willReturn($mockPackage);
 
         $result = $this->nodeTypesStreamWrapper->open($forbiddenPath, 'r', 0, $openedPathAndFilename);
         $this->assertFalse($result);
@@ -106,8 +106,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/NodeTypes/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Foo'));
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getPackagePath')->willReturn('vfs://Foo');
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->willReturn($mockPackage);
 
         $openedPathAndFilename = '';
         self::assertTrue($this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Path', 'r', 0, $openedPathAndFilename));
@@ -125,8 +125,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/NodeTypes/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Foo'));
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getPackagePath')->willReturn('vfs://Foo');
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->willReturn($mockPackage);
 
         $openedPathAndFilename = '';
         self::assertTrue($this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Path', 'r', 0, $openedPathAndFilename));

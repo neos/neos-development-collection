@@ -99,7 +99,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
 
         $nodeType = $this
             ->getMockBuilder(NodeType::class)
-            ->setMethods(['getName', 'getLabel'])
+            ->onlyMethods(['getName', 'getLabel'])
             ->disableOriginalConstructor()
             ->getMock();
         $nodeType
@@ -111,7 +111,7 @@ class NodeHelperTest extends AbstractFusionObjectTestCase
 
         $textNode = $this
             ->getMockBuilder(Node::class)
-            ->setMethods(['hasProperty', 'getProperty', 'getNodeType', 'isAutoCreated', 'getContext'])
+            ->onlyMethods(['hasProperty', 'getProperty', 'getNodeType', 'isAutoCreated', 'getContext'])
             ->disableOriginalConstructor()
             ->getMock();
         $textNode

@@ -33,19 +33,19 @@ class ContentContextFactoryTest extends UnitTestCase
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
         $mockDomain = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();
-        $mockDomain->expects(self::atLeastOnce())->method('getSite')->will(self::returnValue($mockSite));
-        $mockDomainRepository->expects(self::atLeastOnce())->method('findOneByActiveRequest')->will(self::returnValue($mockDomain));
+        $mockDomain->expects(self::atLeastOnce())->method('getSite')->willReturn($mockSite);
+        $mockDomainRepository->expects(self::atLeastOnce())->method('findOneByActiveRequest')->willReturn($mockDomain);
 
         $mockSiteRepository = $this->getMockBuilder(SiteRepository::class)->disableOriginalConstructor()->getMock();
-        $mockSiteRepository->expects(self::any())->method('findFirstOnline')->will(self::returnValue(null));
+        $mockSiteRepository->expects(self::any())->method('findFirstOnline')->willReturn(null);
 
-        $contentContextFactory = $this->getMockBuilder(ContentContextFactory::class)->setMethods([
+        $contentContextFactory = $this->getMockBuilder(ContentContextFactory::class)->onlyMethods([
             'validateContextProperties',
             'mergeDimensionValues',
             'mergeTargetDimensionContextProperties',
             'getIdentifier'
         ])->disableOriginalConstructor()->getMock();
-        $contentContextFactory->expects(self::atLeastOnce())->method('getIdentifier')->will(self::returnValue('abc'));
+        $contentContextFactory->expects(self::atLeastOnce())->method('getIdentifier')->willReturn('abc');
 
         $this->inject($contentContextFactory, 'domainRepository', $mockDomainRepository);
         $this->inject($contentContextFactory, 'siteRepository', $mockSiteRepository);

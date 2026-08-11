@@ -41,7 +41,7 @@ class WorkspaceTest extends UnitTestCase
     {
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
 
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['add'])->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->onlyMethods(['add'])->getMock();
         $mockNodeDataRepository->expects(self::once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -54,12 +54,12 @@ class WorkspaceTest extends UnitTestCase
     #[Test]
     public function getNodeCountCallsRepositoryFunction()
     {
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['countByWorkspace'])->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->onlyMethods(['countByWorkspace'])->getMock();
 
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
-        $mockNodeDataRepository->expects(self::once())->method('countByWorkspace')->with($workspace)->will(self::returnValue(42));
+        $mockNodeDataRepository->expects(self::once())->method('countByWorkspace')->with($workspace)->willReturn(42);
 
         self::assertSame(42, $workspace->getNodeCount());
     }
@@ -86,11 +86,11 @@ class WorkspaceTest extends UnitTestCase
     public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
     {
         $liveWorkspace = new Workspace('live');
-        $workspace = $this->getMockBuilder(Workspace::class)->setMethods(['emitBeforeNodePublishing'])->setConstructorArgs(['some-campaign'])->getMock();
+        $workspace = $this->getMockBuilder(Workspace::class)->onlyMethods(['emitBeforeNodePublishing'])->setConstructorArgs(['some-campaign'])->getMock();
         $workspace->setBaseWorkspace($liveWorkspace);
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($workspace));
+        $mockNode->expects(self::any())->method('getWorkspace')->willReturn($workspace);
 
         $workspace->expects(self::never())->method('emitBeforeNodePublishing');
 
@@ -170,7 +170,7 @@ class WorkspaceTest extends UnitTestCase
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
         $node = $this->createMock(NodeInterface::class);
-        $node->expects(self::any())->method('getWorkspace')->will(self::returnValue($liveWorkspace));
+        $node->expects(self::any())->method('getWorkspace')->willReturn($liveWorkspace);
 
         $nodeDataRepository->expects(self::never())->method('findOneByIdentifier');
 

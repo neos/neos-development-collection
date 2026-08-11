@@ -163,7 +163,6 @@ class AssetVariantGeneratorTest extends UnitTestCase
 
     // ------------------------------------------------------------------------------------------------------------
     // TEST HELPER METHODS
-
     /**
      * @param array $methods
      * @param array $variantPresetsConfiguration
@@ -215,7 +214,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
             function (Image $imageAsset) use ($that) {
                 return $that->getMockBuilder(ImageVariant::class)
                     ->setConstructorArgs([$imageAsset])
-                    ->setMethods(['refresh', 'renderResource'])
+                    ->onlyMethods(['refresh', 'renderResource'])
                     ->getMock();
             }
         );
@@ -230,7 +229,8 @@ class AssetVariantGeneratorTest extends UnitTestCase
     {
         $mock = $this->getMockBuilder(Image::class)
             ->setConstructorArgs([$this->createMock(PersistentResource::class)])
-            ->setMethods(['refresh', 'renderResource', 'getMediaType'])
+            ->onlyMethods(['refresh', 'getMediaType'])
+            ->addMethods(['renderResource'])
             ->getMock();
         $mock->method('getMediaType')->willReturn('image/jpeg');
 
