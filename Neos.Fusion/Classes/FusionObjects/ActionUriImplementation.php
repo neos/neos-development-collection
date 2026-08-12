@@ -16,6 +16,7 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Exception as FusionException;
 
 /**
  * A Fusion ActionUri object
@@ -26,6 +27,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  *  * controller
  *  * action
  *  * arguments
+ *  * queryParameters
  *  * format
  *  * section
  *  * additionalParams
@@ -93,6 +95,17 @@ class ActionUriImplementation extends AbstractFusionObject
     {
         $arguments = $this->fusionValue('arguments');
         return is_array($arguments) ? $arguments : [];
+    }
+
+    /**
+     * Query parameters to add as query string to the generated URL
+     *
+     * @return array
+     */
+    public function getQueryParameters(): array
+    {
+        $queryParameters = $this->fusionValue('queryParameters');
+        return is_array($queryParameters) ? $queryParameters : [];
     }
 
     /**
@@ -164,15 +177,27 @@ class ActionUriImplementation extends AbstractFusionObject
         }
 
         try {
-            return $uriBuilder->uriFor(
+            $uri = $uriBuilder->uriFor(
                 $this->getAction(),
                 $this->getArguments(),
                 $this->getController(),
                 $this->getPackage(),
                 $this->getSubpackage()
             );
+            $queryParameters = $this->getQueryParameters();
+            if ($queryParameters !== []) {
+                if (parse_url($uri, PHP_URL_QUERY) !== null) {
+                    throw new FusionException('"queryParameters" must not be used for Routes with "appendExceedingArguments"', 1782317977);
+                }
+                [$uri, $segment] = array_pad(explode('#', $uri, 2), 2, null);
+                $uri .= '?' . http_build_query($queryParameters, arg_separator: '&');
+                if ($segment !== null) {
+                    $uri .= '#' . $segment;
+                }
+            }
         } catch (\Exception $exception) {
             return $this->runtime->handleRenderingException($this->path, $exception);
         }
+        return $uri;
     }
 }

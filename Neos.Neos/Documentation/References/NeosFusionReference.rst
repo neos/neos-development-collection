@@ -567,6 +567,7 @@ Built a URI to a controller action
 :controller: (string) The controller name (e.g. ``'Registration'``)
 :action: (string) The action name (e.g. ``'new'``)
 :arguments: (array) Arguments to the action by named key
+:queryParameters (array) Parameters to be appended to the URI as query string
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
 :additionalParams: (array) Additional URI query parameters by named key

@@ -9,3 +9,43 @@ actionUri.foo = Neos.Fusion:ActionUri {
   controller = 'Foo'
   action = 'index'
 }
+
+actionUri.withQueryParameters = Neos.Fusion:ActionUri {
+  package = 'Neos.Flow'
+  controller = 'Foo'
+  action = 'index'
+  queryParameters = Neos.Fusion:DataStructure {
+    foo = 'bar'
+    bar = Neos.Fusion:DataStructure {
+      baz = 'foos'
+    }
+  }
+}
+
+actionUri.withSectionAndQueryParameters = Neos.Fusion:ActionUri {
+  package = 'Neos.Flow'
+  controller = 'Foo'
+  action = 'index'
+  section = 'someSection'
+  queryParameters = Neos.Fusion:DataStructure {
+    foo = 'bar'
+  }
+}
+
+actionUri.withExceedingArgumentsAndQueryParameters = Neos.Fusion:ActionUri {
+  package = 'Neos.Flow'
+  controller = 'Foo'
+  action = 'index'
+  arguments = Neos.Fusion:DataStructure {
+    foo = 'bar'
+    bar = Neos.Fusion:DataStructure {
+      baz = 'foos'
+    }
+  }
+  queryParameters = Neos.Fusion:DataStructure {
+    bar = Neos.Fusion:DataStructure {
+      baz = 'overridden'
+      added = true
+    }
+  }
+}

@@ -14,6 +14,7 @@ prototype(Neos.Fusion:ActionUri) {
   subpackage = null
   controller = null
   action = null
+  queryParameters = Neos.Fusion:DataStructure
   format = null
   section = null
   additionalParams = Neos.Fusion:DataStructure
