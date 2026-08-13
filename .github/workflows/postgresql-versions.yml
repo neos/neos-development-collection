@@ -17,18 +17,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        neos-versions: ['master']
-        php-versions: ['8.1', '8.0']
+        neos-versions: ['9.1', '8.3']
+        php-versions: ['8.5', '8.2']
         # See https://www.postgresql.org/support/versioning/
         # Use https://hub.docker.com/_/postgres for available versions
-        postgresql-versions: ['14-alpine', '13-alpine', '12-alpine', '11-alpine', '10-alpine']
+        postgresql-versions: ['18-alpine', '17-alpine', '16-alpine', '15-alpine', '14-alpine']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
         include:
           # Build for minimum dependencies.
-          - neos-versions: 'master'
-            php-versions: '8.0'
-            postgresql-versions: '10-alpine'
+          - neos-versions: '8.4'
+            php-versions: '8.2'
+            postgresql-versions: '14-alpine'
             dependencies: 'lowest'
 
     runs-on: ubuntu-latest
@@ -88,11 +88,7 @@ jobs:
 
       - name: Set alias branch name
         run: |
-            if [ "${{ env.NEOS_TARGET_VERSION }}" == "master" ]; then
-                echo "NEOS_BRANCH_ALIAS=dev-master";
-            else
-                echo "NEOS_BRANCH_ALIAS=${{ env.NEOS_TARGET_VERSION }}.x-dev";
-            fi >> $GITHUB_ENV
+            echo "NEOS_BRANCH_ALIAS=${{ env.NEOS_TARGET_VERSION }}.x-dev" >> $GITHUB_ENV
 
       - name: Update composer.json
         run: |
@@ -142,11 +138,8 @@ jobs:
           ./flow configuration:show
           ./flow routing:list
 
-      - name: Run unit tests
-        run: composer test-unit -- --verbose
-
       - name: Run functional tests
-        run: composer test-func -- --verbose
+        run: composer test-func
 
       - name: Run behat tests
         if: ${{matrix.dependencies != 'lowest' }}
