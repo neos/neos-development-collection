@@ -32,7 +32,7 @@ runs:
         fi
 
     - name: Checkout collection
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         path: ${{ inputs.collection-path }}
 
@@ -45,7 +45,7 @@ runs:
         ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
     - name: Checkout development distribution
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         repository: neos/neos-development-distribution
         ref: ${{ steps.neos.outputs.target-version }}
@@ -60,7 +60,7 @@ runs:
         composer require --no-update neos/neos-development-collection:"dev-build as ${{ steps.neos.outputs.branch-alias }}"
 
     - name: Cache Composer packages
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: |
           ~/.cache/composer
