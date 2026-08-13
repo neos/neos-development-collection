@@ -25,11 +25,7 @@ runs:
       run: |
         TARGET="${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}"
         echo "target-version=${TARGET}" >> "$GITHUB_OUTPUT"
-        if [ "${TARGET}" == "master" ]; then
-          echo "branch-alias=dev-master" >> "$GITHUB_OUTPUT"
-        else
-          echo "branch-alias=${TARGET}.x-dev" >> "$GITHUB_OUTPUT"
-        fi
+        echo "branch-alias=${TARGET}.x-dev" >> "$GITHUB_OUTPUT"
 
     - name: Checkout collection
       uses: actions/checkout@v6
