@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * @deprecated This event will never be emitted, and it is ignored in the core projections. This implementation is just kept for backwards-compatibility
+ * @deprecated Since Neos 9.2 this event will never be emitted, and it is ignored in the core projections. This implementation is just kept for backwards-compatibility
  * @internal
  */
 final readonly class ContentStreamWasClosed implements EventInterface, EmbedsContentStreamId
