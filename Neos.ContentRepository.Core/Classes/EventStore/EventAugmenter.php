@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\EventStore;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\EventStore\Model\Event\CorrelationId;
@@ -16,7 +17,23 @@ use Neos\EventStore\Model\EventStream\ExpectedStreamConstraints;
 use Psr\Clock\ClockInterface;
 
 /**
- * @internal prepares events for commit
+ * Normalizes domain events and adds meta-data
+ *
+ * The {@see EventsToPublish} with the domain events {@see EventInterface} are mapped to
+ * the lower level normalized {@see NormalizedEventsForCommit}
+ *
+ * Events in the event store, store important meta-data:
+ *
+ * * For publishing and rebase they can encode their command
+ *   {@see RebaseableCommand::enrichWithCommand()} (see command handers, cannot be augmented here)
+ *
+ * * For satisfying the original {@see Node::$timestamps} we set {@see InitiatingEventMetadata::INITIATING_TIMESTAMP}
+ *
+ * * For determining the authorship of events we set {@see InitiatingEventMetadata::INITIATING_USER_ID}
+ *
+ * * To correlate events, for event migrations or debugging, we define a correlation id based on the command name
+ *
+ * @internal the publication of events is not API. Only used within command handing in of the content repository.
  */
 final readonly class EventAugmenter
 {
