@@ -28,7 +28,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -185,7 +185,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                         ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                     ));
                     $successFullChanged++;
-                } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExistYet $concurrencyException) {
+                } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExist $concurrencyException) {
                     $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
                 }
             }
@@ -229,7 +229,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                     ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                 ));
                 $successFullChanged++;
-            } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExistYet $concurrencyException) {
+            } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExist $concurrencyException) {
                 $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
             }
         }

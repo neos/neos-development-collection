@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
@@ -40,7 +40,7 @@ final readonly class CommandHandlingDependencies
     {
         $contentStream = $this->contentGraphReadModel->findContentStreamById($contentStreamId);
         if ($contentStream === null) {
-            throw new ContentStreamDoesNotExistYet(sprintf('Failed to find content stream with id "%s"', $contentStreamId->value), 1716902051);
+            throw new ContentStreamDoesNotExist(sprintf('Failed to find content stream with id "%s"', $contentStreamId->value), 1716902051);
         }
         return $contentStream->version;
     }
