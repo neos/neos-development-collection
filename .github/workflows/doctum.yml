@@ -9,7 +9,7 @@ jobs:
   build-api-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Build API documentation
         uses: sudo-bot/action-doctum@v5
@@ -20,7 +20,7 @@ jobs:
           cli-args: "--output-format=github --no-ansi --no-progress --ignore-parse-errors --only-version=${{ github.ref_name }}"
 
       - name: Check out documentation site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: neos/neos.github.io
           path: docs-site
@@ -45,7 +45,7 @@ jobs:
           git commit -m "TASK: Update API docs from ${{ github.ref_name }}"
 
       - name: Push to git
-        uses: ad-m/github-push-action@v0.6.0
+        uses: ad-m/github-push-action@v1
         with:
           github_token: ${{ secrets.NEOS_BOT_TOKEN }}
           repository: neos/neos.github.io
