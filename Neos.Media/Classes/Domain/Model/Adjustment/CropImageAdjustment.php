@@ -13,6 +13,8 @@ namespace Neos\Media\Domain\Model\Adjustment;
  * source code.
  */
 
+use Contao\ImagineSvg\Image as ContaoSvgImage;
+use Contao\ImagineSvg\SvgBox;
 use Doctrine\ORM\Mapping as ORM;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface as ImagineImageInterface;
@@ -255,12 +257,20 @@ class CropImageAdjustment extends AbstractImageAdjustment
             [$newX, $newY, $newWidth, $newHeight] = self::calculateDimensionsByAspectRatio($originalWidth, $originalHeight, $desiredAspectRatio);
 
             $point = new Point($newX, $newY);
-            $box = new Box($newWidth, $newHeight);
+            $box = $this->createBox($image, $newWidth, $newHeight);
         } else {
             $point = new Point($this->x, $this->y);
-            $box = new Box($this->width, $this->height);
+            $box = $this->createBox($image, $this->width, $this->height);
         }
         return $image->crop($point, $box);
+    }
+
+    private function createBox(ImagineImageInterface $image, float $width, float $height): Box|SvgBox
+    {
+        if ($image instanceof ContaoSvgImage) {
+            return new SvgBox((int)round($width), (int)round($height));
+        }
+        return new Box($width, $height);
     }
 
     /**

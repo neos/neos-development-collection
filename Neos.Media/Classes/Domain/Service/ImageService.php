@@ -11,6 +11,7 @@ namespace Neos\Media\Domain\Service;
  * source code.
  */
 
+use Contao\ImagineSvg\Imagine as SvgImagine;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Palette\CMYK;
@@ -21,7 +22,9 @@ use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
+use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
+use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Imagine\Box;
 use Neos\Flow\Annotations as Flow;
@@ -103,17 +106,8 @@ class ImageService
         $additionalOptions = [];
         $adjustmentsApplied = false;
 
-        // TODO: Special handling for SVG should be refactored at a later point.
         if ($originalResource->getMediaType() === 'image/svg+xml') {
-            $originalResourceStream = $originalResource->getStream();
-            $resource = $this->resourceManager->importResource($originalResourceStream, $originalResource->getCollectionName());
-            fclose($originalResourceStream);
-            $resource->setFilename($originalResource->getFilename());
-            return [
-                'width' => null,
-                'height' => null,
-                'resource' => $resource
-            ];
+            return $this->processSvgImage($originalResource, $adjustments);
         }
 
         $resourceUri = $originalResource->createTemporaryLocalCopy();
@@ -215,6 +209,71 @@ class ImageService
     }
 
     /**
+     * Process SVG images with adjustments
+     *
+     * @param PersistentResource $originalResource
+     * @param array<ImageAdjustmentInterface> $adjustments
+     * @return array{width: int|null, height: int|null, resource: PersistentResource}
+     * @throws Exception
+     */
+    protected function processSvgImage(PersistentResource $originalResource, array $adjustments): array
+    {
+        $originalResourceStream = $originalResource->getStream();
+
+        $nonAdjustedResult = [
+            'width' => null,
+            'height' => null,
+            'resource' => $originalResource
+        ];
+
+        if (is_bool($originalResourceStream)) {
+            return $nonAdjustedResult;
+        }
+
+        try {
+            $svgImage = (new SvgImagine())->read($originalResourceStream);
+        } catch (\Exception) {
+            return $nonAdjustedResult;
+        }
+
+        $svgImage = $this->applySvgAdjustments($svgImage, $adjustments);
+        $size = $svgImage->getSize();
+
+        $transformedImageTemporaryPathAndFilename = $this->environment->getPathToTemporaryDirectory()
+            . 'ProcessedImage-' . Algorithms::generateRandomString(13) . '.svg';
+
+        $svgImage->save($transformedImageTemporaryPathAndFilename);
+        $resource = $this->resourceManager->importResource(
+            $transformedImageTemporaryPathAndFilename,
+            $originalResource->getCollectionName()
+        );
+        $resource->setFilename($originalResource->getFilename());
+        unlink($transformedImageTemporaryPathAndFilename);
+
+        return [
+            'width' => $size->getWidth(),
+            'height' => $size->getHeight(),
+            'resource' => $resource,
+        ];
+    }
+
+    /**
+     * Apply supported adjustments to SVG image
+     *
+     * @param ImageInterface $svgImage
+     * @param array<ImageAdjustmentInterface> $adjustments
+     * @return ImageInterface
+     */
+    protected function applySvgAdjustments(ImageInterface $svgImage, array $adjustments): ImageInterface
+    {
+        foreach ($adjustments as $adjustment) {
+            $svgImage = $adjustment->applyToImage($svgImage);
+        }
+
+        return $svgImage;
+    }
+
+    /**
      * @param array $additionalOptions
      * @return array
      * @throws InvalidConfigurationException
@@ -260,9 +319,8 @@ class ImageService
             return $imageSize;
         }
 
-        // TODO: Special handling for SVG should be refactored at a later point.
         if ($resource->getMediaType() === 'image/svg+xml') {
-            $imageSize = ['width' => null, 'height' => null];
+            return $this->getSvgImageSize($resource);
         } else {
             try {
                 $imagineImage = $this->imagineService->read($resource->getStream());
@@ -301,6 +359,28 @@ class ImageService
         }
 
         return $image;
+    }
+
+    /**
+     * Get the size of an SVG image
+     *
+     * @param PersistentResource $resource
+     * @return array{width: int|null, height: int|null}
+     */
+    protected function getSvgImageSize(PersistentResource $resource): array
+    {
+        try {
+            $resourceStream = $resource->getStream();
+            if (is_bool($resourceStream)) {
+                throw new \Exception('the stream of the given resource is not available');
+            }
+
+            $svgImage = (new SvgImagine())->read($resourceStream);
+            $size = $svgImage->getSize();
+            return ['width' => $size->getWidth(), 'height' => $size->getHeight()];
+        } catch (\Exception) {
+            return ['width' => null, 'height' => null];
+        }
     }
 
     /**

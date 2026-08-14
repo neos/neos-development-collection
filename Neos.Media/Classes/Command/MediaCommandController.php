@@ -22,6 +22,8 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\Exception\InvalidQueryException;
+use Neos\Flow\Persistence\Exception\UnknownObjectException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -29,9 +31,11 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
+use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\ImageRepository;
 use Neos\Media\Domain\Repository\ImageVariantRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Domain\Service\AssetService;
@@ -40,6 +44,7 @@ use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\AssetVariantGeneratorException;
+use Neos\Media\Exception\ImageFileException;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
@@ -117,6 +122,9 @@ class MediaCommandController extends CommandController
      * @var AssetVariantGenerator
      */
     protected $assetVariantGenerator;
+
+    #[Flow\Inject]
+    protected ImageRepository $imageRepository;
 
     /**
      * Import resources to asset management
@@ -591,6 +599,54 @@ class MediaCommandController extends CommandController
 
         !$quiet && $this->outputLine();
         !$quiet && $this->outputLine($resultMessage ?? sprintf('Generated %u variants', $generatedVariants));
+    }
+
+    /**
+     * Calculate missing dimensions for SVG assets
+     *
+     * @param bool $force update all svg asset dimensions
+     * @throws InvalidQueryException
+     * @throws ImageFileException
+     * @throws UnknownObjectException
+     */
+    public function refreshSvgDimensionsCommand(bool $force = false): void
+    {
+        $this->outputLine('Looking for SVG Assets without dimensions');
+
+        $queryResult = $this->imageRepository->findAll();
+        $totalCount = $queryResult->count();
+        $this->output->progressStart($totalCount);
+        $updatedCount = 0;
+
+        /** @var Image $image */
+        foreach ($queryResult as $image) {
+            $this->output->progressAdvance(1);
+
+            if (!$this->isSvgImage($image)) {
+                continue;
+            }
+
+            if ($force || $this->hasMissingDimensions($image)) {
+                $updatedCount++;
+                $image->refresh();
+                // the image repository tries magic we need to circumvent
+                $this->persistenceManager->update($image);
+            }
+        }
+
+        $this->output->progressFinish();
+        $this->outputLine();
+        $this->outputLine('Added dimensions to %s SVG Assets', [$updatedCount]);
+    }
+
+    private function isSvgImage(Image $image): bool
+    {
+        return $image->getResource()->getMediaType() === 'image/svg+xml';
+    }
+
+    private function hasMissingDimensions(Image $image): bool
+    {
+        return $image->getWidth() === 0 || $image->getHeight() === 0;
     }
 
     /**
