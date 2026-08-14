@@ -128,7 +128,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         if (!$node instanceof Node) {
             throw new NeosException(sprintf(
                 'The current node must be an instance of Node, given: "%s".',
-                get_debug_type($text)
+                get_debug_type($node)
             ), 1382624087);
         }
 
