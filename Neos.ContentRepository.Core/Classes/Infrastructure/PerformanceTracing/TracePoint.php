@@ -28,7 +28,6 @@ enum TracePoint: string
     case CommandBusHandle = 'CommandBus::handle';
     case EventStoreCommit = 'EventStore::commit';
     case CommandHookOnAfterHandle = 'CommandHook::onAfterHandle';
-    case SubscriptionEngineCatchUpActive = 'SubscriptionEngine::catchUpActive';
     case CatchUpHooksOnBeforeCatchUp = 'CatchUpHooks::onBeforeCatchUp';
     case ProjectionApply = 'Projection::apply';
 
