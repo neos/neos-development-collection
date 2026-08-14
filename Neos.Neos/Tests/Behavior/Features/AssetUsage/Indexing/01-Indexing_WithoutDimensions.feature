@@ -1,7 +1,7 @@
 @flowEntities
 Feature: Build index for existing nodes without dimensions
 
-  Scenario:
+  Background:
     Given using no content dimensions
     And using the following node types:
     """yaml
@@ -53,6 +53,17 @@ Feature: Build index for existing nodes without dimensions
       | workspaceName | "user-workspace" |
     And I am in dimension space point {}
 
+  Scenario: All workspaces are rebased
+    When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-2 | nody-mc-nodeface           | assets       | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+
+
+  Scenario: All workspaces are rebased, with additional assets on the user workspace
     When I am in workspace "user-workspace"
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId           | nodeName | parentNodeAggregateId      | nodeTypeName                                           | initialPropertyValues          |
@@ -84,3 +95,112 @@ Feature: Build index for existing nodes without dimensions
       | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
       | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
 
+  Scenario: User workspace is behind live, with additional assets on the user workspace
+    When I am in workspace "user-workspace"
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId           | nodeName | parentNodeAggregateId      | nodeTypeName                                           | initialPropertyValues          |
+      | sir-nodeward-nodington-iv | bakura   | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"text": "Text Without Asset"} |
+      | sir-nodeward-nodington-v  | quatilde | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assets": ["Asset:asset-2"]}  |
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "user-workspace"           |
+      | nodeAggregateId           | "sir-david-nodenborough"   |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"asset": "Asset:asset-2"} |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-2 | nody-mc-nodeface           | assets       | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+    When I am in workspace "live"
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+    When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+  Scenario: User workspace is behind live, with additional assets on the user workspace - with rebase afterwards
+    When I am in workspace "user-workspace"
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId           | nodeName | parentNodeAggregateId      | nodeTypeName                                           | initialPropertyValues          |
+      | sir-nodeward-nodington-iv | bakura   | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"text": "Text Without Asset"} |
+      | sir-nodeward-nodington-v  | quatilde | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assets": ["Asset:asset-2"]}  |
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "user-workspace"           |
+      | nodeAggregateId           | "sir-david-nodenborough"   |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"asset": "Asset:asset-2"} |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-2 | nody-mc-nodeface           | assets       | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+    When I am in workspace "live"
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+    When the command RebaseWorkspace is executed with payload:
+      | Key           | Value            |
+      | workspaceName | "user-workspace" |
+    And I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+  Scenario: User workspace is behind live, without any additional assets in user workspace
+    When I am in workspace "live"
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+
+    When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |

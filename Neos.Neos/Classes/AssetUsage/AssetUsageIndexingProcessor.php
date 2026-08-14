@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\AssetUsage\Service\AssetUsageIndexingService;
 
@@ -38,7 +39,13 @@ final readonly class AssetUsageIndexingProcessor
         $workspacesDependingOnLive = $allWorkspaces->getDependantWorkspacesRecursively(WorkspaceName::forLive());
 
         $this->dispatchMessage($callback, sprintf('ContentRepository "%s"', $contentRepository->id->value));
+        /** @var Workspace $workspace */
         foreach ([$liveWorkspace, ...$workspacesDependingOnLive] as $workspace) {
+            // We do not need to index workspaces without any changes, as they are already indexed by baseworkspace
+            if (!$workspace->workspaceName->isLive() && !$workspace->hasPublishableChanges()) {
+                continue;
+            }
+
             $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
             $this->dispatchMessage($callback, sprintf('  Workspace: %s', $contentGraph->getWorkspaceName()->value));
 
