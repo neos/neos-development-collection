@@ -37,13 +37,11 @@ jobs:
           cd docs-site
           git config --global user.email "ops@neos.io"
           git config --global user.name "Neos Bot"
-          git status
           if [ -z "$(git status --porcelain)" ]; then
             echo "No changes to commit"
             exit 0
           fi
           git add .
-          git diff --cached --stat
           git commit -m "TASK: Update API docs from ${{ github.ref_name }}" || {
             echo "Commit failed"
             git status
