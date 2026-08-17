@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
+use PHPUnit\Framework\Attributes\Test;
 
 class PropertyCollectionTest extends TestCase
 {
@@ -30,9 +31,7 @@ class PropertyCollectionTest extends TestCase
         $this->mockPropertyConverter = new PropertyConverter($this->mockSerializer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyPropertyCollectionReturnsEmptyArray(): void
     {
         $this->mockSerializer->expects($this->never())->method($this->anything());
@@ -40,9 +39,7 @@ class PropertyCollectionTest extends TestCase
         self::assertSame([], iterator_to_array($collection));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function offsetGetReturnsNullIfPropertyDoesNotExist(): void
     {
         $this->mockSerializer->expects($this->never())->method($this->anything());
@@ -51,9 +48,7 @@ class PropertyCollectionTest extends TestCase
         self::assertFalse(isset($collection['non-existing']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function offsetGetReturnsDeserializedValue(): void
     {
         $this->mockSerializer->expects($this->once())->method('denormalize')->with('some string', 'string', null, [])->willReturn('some deserialized value');
@@ -62,9 +57,7 @@ class PropertyCollectionTest extends TestCase
         self::assertTrue(isset($collection['someProperty']));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deserializedValueMightEvaluateToNull(): void
     {
         $this->mockSerializer->expects($this->once())->method('denormalize')
@@ -90,9 +83,7 @@ class PropertyCollectionTest extends TestCase
         self::assertNull($collection['myImage']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesCanBeIterated(): void
     {
         $this->mockSerializer->expects($this->once())->method('denormalize')->with('some string', 'string', null, [])->willReturn('some deserialized value');
@@ -100,9 +91,7 @@ class PropertyCollectionTest extends TestCase
         self::assertSame(['someProperty' => 'some deserialized value'], iterator_to_array($collection));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function offsetSetThrowsAnException(): void
     {
         $collection = new PropertyCollection(SerializedPropertyValues::createEmpty(), $this->mockPropertyConverter);
@@ -110,9 +99,7 @@ class PropertyCollectionTest extends TestCase
         $collection->offsetSet('foo', 'bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function offsetUnsetThrowsAnException(): void
     {
         $collection = new PropertyCollection(SerializedPropertyValues::createEmpty(), $this->mockPropertyConverter);
@@ -120,9 +107,7 @@ class PropertyCollectionTest extends TestCase
         $collection->offsetUnset('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function serializedReturnsSerializedPropertyValues(): void
     {
         $serializedPropertyValues = SerializedPropertyValues::fromArray(['someProperty' => ['value' => 'some string', 'type' => 'string']]);

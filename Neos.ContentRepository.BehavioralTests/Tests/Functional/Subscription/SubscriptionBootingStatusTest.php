@@ -11,11 +11,12 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionBootingStatusTest extends AbstractSubscriptionEngineTestCase
 {
 
-    /** @test */
+    #[Test]
     public function existingEventStoreEventsAreCaughtUpOnBoot()
     {
         $this->eventStore->setup();
@@ -40,7 +41,7 @@ final class SubscriptionBootingStatusTest extends AbstractSubscriptionEngineTest
         self::assertEquals(ProcessedResult::success(0), $result);
     }
 
-    /** @test */
+    #[Test]
     public function filteringCatchUpBoot()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');

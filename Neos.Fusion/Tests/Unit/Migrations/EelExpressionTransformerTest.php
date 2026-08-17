@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Neos\Fusion\Tests\Unit\Migrations;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Fusion\Migrations\EelExpression\EelExpressionTransformer;
 use PHPUnit\Framework\TestCase;
 
 class EelExpressionTransformerTest extends TestCase
 {
-    public function examples(): iterable
+    public static function examples(): iterable
     {
         yield 'L ' . __LINE__ => [
             fn (string $eelExpression) => str_replace('someVariable', 'myNewVariable', $eelExpression),
@@ -241,9 +242,7 @@ class EelExpressionTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider examples
-     */
+    #[DataProvider('examples')]
     public function testReplacements(\Closure $eelModifier, string $input, string $expectedOutput): void
     {
         self::assertEquals(

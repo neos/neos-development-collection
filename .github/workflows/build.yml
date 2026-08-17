@@ -82,7 +82,7 @@ jobs:
           distribution-path: ${{ env.NEOS_DIST_FOLDER }}
 
       - name: Run unit tests
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
 
   functional-tests:
     permissions:
@@ -153,7 +153,7 @@ jobs:
 
       - name: Run functional tests
         # Postgres skips the CR-specific functional tests (CR is mysql-only in 9.0).
-        run: ${{ matrix.db.engine == 'pgsql' && 'SKIP_CR_POSTGRESQL_TESTS=1' || '' }} bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+        run: ${{ matrix.db.engine == 'pgsql' && 'SKIP_CR_POSTGRESQL_TESTS=1' || '' }} bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"
 
   parallel-tests:
     permissions:

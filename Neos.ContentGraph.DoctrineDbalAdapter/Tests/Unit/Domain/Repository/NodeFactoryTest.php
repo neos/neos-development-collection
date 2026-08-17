@@ -13,10 +13,11 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
+use PHPUnit\Framework\Attributes\Test;
 
 class NodeFactoryTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function nodeAggregatesAreBuiltOnlyWithTheActualOccupiedNodeRows(): void
     {
         $rows = <<<JSON

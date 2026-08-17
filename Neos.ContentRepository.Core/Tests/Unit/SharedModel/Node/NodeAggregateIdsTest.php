@@ -7,12 +7,11 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class NodeAggregateIdsTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function constructWithNumericIds()
     {
         $ids = NodeAggregateIds::fromArray(['123']);
@@ -29,9 +28,7 @@ class NodeAggregateIdsTest extends TestCase
         self::assertTrue($ids->contain(NodeAggregateId::fromString('123')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function jsonRepresentation()
     {
         // FIXME, why do we encode the collection as object and not as list?
