@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\ProtectedContext;
 use Neos\Flow\Exception;
@@ -26,17 +26,16 @@ class RuntimeTest extends UnitTestCase
     /**
      * if the rendering leads to an exception
      * the exception is transformed into 'content' by calling 'handleRenderingException'
-     *
-     * @test
      */
+    #[Test]
     public function renderHandlesExceptionDuringRendering()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
-        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
+        $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => ThrowingHandler::class]]);
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
-        $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($runtimeException);
+        $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->willReturn('Exception Message');
 
         $output = $runtime->render('/foo/bar');
 
@@ -47,13 +46,12 @@ class RuntimeTest extends UnitTestCase
      * exceptions are rendered using the renderer from configuration
      *
      * if this handler throws exceptions, they are not handled
-     *
-     * @test
      */
+    #[Test]
     public function handleRenderingExceptionThrowsException()
     {
         $this->expectException(Exception::class);
-        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
+        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->onlyMethods(['isRegistered', 'get'])->getMock();
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
         $runtime =  new Runtime([], $controllerContext);
@@ -61,15 +59,13 @@ class RuntimeTest extends UnitTestCase
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => $exceptionHandlerSetting]]);
 
-        $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->will(self::returnValue(true));
-        $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->will(self::returnValue(new ThrowingHandler()));
+        $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->willReturn(true);
+        $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->willReturn(new ThrowingHandler());
 
         $runtime->handleRenderingException('/foo/bar', $runtimeException);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateProcessorForEelExpressionUsesProtectedContext()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -89,9 +85,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->_call('evaluateEelExpression', 'q(node).property("title")');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException()
     {
         $this->expectException(\Neos\Fusion\Exception::class);
@@ -112,23 +106,19 @@ class RuntimeTest extends UnitTestCase
         $runtime->evaluate('foo/bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderRethrowsSecurityExceptions()
     {
         $this->expectException(\Neos\Flow\Security\Exception::class);
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $securityException = new \Neos\Flow\Security\Exception();
-        $runtime = $this->getMockBuilder(Runtime::class)->setMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($securityException));
+        $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->setConstructorArgs([[], $controllerContext])->getMock();
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($securityException);
 
         $runtime->render('/foo/bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function runtimeCurrentContextStackWorksSimplePushPop()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
@@ -145,9 +135,7 @@ class RuntimeTest extends UnitTestCase
         self::assertSame([], $runtime->getCurrentContext(), 'Runtime context should be empty again at end.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function runtimeCurrentContextStack3PushesAndPops()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();

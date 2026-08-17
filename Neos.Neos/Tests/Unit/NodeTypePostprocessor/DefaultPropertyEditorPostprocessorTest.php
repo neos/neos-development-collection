@@ -11,7 +11,8 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Neos\Exception;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
@@ -32,9 +33,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         return $configuration;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processConvertsPropertyConfiguration(): void
     {
         $configuration = [
@@ -254,12 +253,10 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processThrowsExceptionIfNoPropertyEditorCanBeResolved(): void
     {
-        $this->expectException(\Neos\Neos\Exception::class);
+        $this->expectException(Exception::class);
 
         $configuration = [
             'properties' => [
@@ -275,9 +272,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processConvertsCreationDialogConfiguration(): void
     {
         $configuration = [
@@ -460,9 +455,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processDoesNotThrowExceptionIfNoCreationDialogEditorCanBeResolved(): void
     {
         $configuration = [

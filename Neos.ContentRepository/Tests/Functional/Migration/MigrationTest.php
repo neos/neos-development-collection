@@ -10,16 +10,17 @@ namespace Neos\ContentRepository\Tests\Functional\Migration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Migration\Domain\Model\Migration;
 use Neos\ContentRepository\Migration\Service\NodeMigration;
-use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
-class MigrationTest extends AbstractNodeTest
+class MigrationTest extends AbstractNodeTestCase
 {
     /**
      * @var NodeTypeManager
@@ -32,7 +33,7 @@ class MigrationTest extends AbstractNodeTest
         $this->nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
     }
 
-    public function migrationDataprovider(): array
+    public static function migrationDataprovider(): array
     {
         return [
             'nodeTypeNoSubTypesShouldMatchType' => [
@@ -232,8 +233,6 @@ class MigrationTest extends AbstractNodeTest
     }
 
     /**
-     * @test
-     * @dataProvider migrationDataprovider
      * @param $migrationConfiguration
      * @param $migratedNodeIdentifier
      * @param $propertyName
@@ -245,6 +244,8 @@ class MigrationTest extends AbstractNodeTest
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\UnknownObjectException
      */
+    #[DataProvider('migrationDataprovider')]
+    #[Test]
     public function migration($migrationConfiguration, $migratedNodeIdentifier, $propertyName, $expectedBefore, $expectedAfter)
     {
         /** @var NodeDataRepository $nodeDataRepository */

@@ -10,13 +10,13 @@ namespace Neos\Neos\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-use Neos\Neos\Tests\Functional\AbstractNodeTest;
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Neos\Tests\Functional\AbstractNodeTestCase;
 
 /**
  * Tests checking correct Uri behavior for Neos nodes.
  */
-class NodeUriTest extends AbstractNodeTest
+class NodeUriTest extends AbstractNodeTestCase
 {
     /**
      * @var string the Nodes fixture
@@ -32,9 +32,8 @@ class NodeUriTest extends AbstractNodeTest
      * Note: You cannot hide a node in a context that doesn't show invisible content and afterwards move it because moving breaks then.
      * The context used in this test therefor needs to be able to show hidden nodes.
      * TODO: Investigate this behavior, currently it executes without problems but the result is wrong.
-     *
-     * @test
      */
+    #[Test]
     public function hiddenNodeGetsNewUriSegmentOnMoveIfUriAlreadyExists()
     {
         $contextProperties = array_merge($this->node->getContext()->getProperties(), ['invisibleContentShown' => true]);
@@ -54,9 +53,7 @@ class NodeUriTest extends AbstractNodeTest
         self::assertEquals('neos-1', $uriPathSegment);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeInNonDefaultDimensionGetsNewUriSegmentOnMoveIfUriAlreadyExists()
     {
         $homeNodeInNonDefaultDimension = $this->getNodeWithContextPath($this->nodeContextPath . '@live;language=de');

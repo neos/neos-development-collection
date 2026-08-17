@@ -10,6 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use Neos\Flow\Utility\Now;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Repository\ContentDimensionRepository;
@@ -29,17 +31,15 @@ class ContextTest extends UnitTestCase
     public function setUp(): void
     {
         $this->contextFactory = new ContextFactory();
-        $this->inject($this->contextFactory, 'now', new \Neos\Flow\Utility\Now());
+        $this->inject($this->contextFactory, 'now', new Now());
         $this->inject($this->contextFactory, 'securityContext', $this->createMock(Context::class));
 
         $mockContentDimensionRepository = $this->createMock(ContentDimensionRepository::class);
-        $mockContentDimensionRepository->expects(self::any())->method('findAll')->will(self::returnValue([]));
+        $mockContentDimensionRepository->expects(self::any())->method('findAll')->willReturn([]);
         $this->inject($this->contextFactory, 'contentDimensionRepository', $mockContentDimensionRepository);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCurrentDateTimeReturnsACurrentDateAndTime()
     {
         $now = new \DateTime();
@@ -51,9 +51,7 @@ class ContextTest extends UnitTestCase
         self::assertEquals($now->getTimestamp(), $currentTime->getTimestamp(), 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setDateTimeAllowsForMockingTheCurrentTime()
     {
         $simulatedCurrentTime = new \DateTime();

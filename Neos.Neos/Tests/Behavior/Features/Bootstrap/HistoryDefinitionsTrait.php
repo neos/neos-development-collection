@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\DBAL\DBALException;
+use PHPUnit\Framework\ExpectationFailedException;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\Neos\Domain\Service\UserService;
@@ -29,7 +31,7 @@ trait HistoryDefinitionsTrait
             $eventRepository = $this->getEventRepository();
             $eventRepository->removeAll();
             $this->getContentRepositoryIntegrationService()->reset();
-        } catch (\Doctrine\DBAL\DBALException $e) {
+        } catch (DBALException $e) {
             // Ignore DB exceptions, because the trait runs before applying migrations in FlowContext
         }
     }
@@ -61,7 +63,7 @@ trait HistoryDefinitionsTrait
                         $this->checkSingleEvent($row, $event, $eventsByInternalId, $unmatchedParentEvents);
                         // no exception thrown so far, so that means there is an $event which fits to the current expectation row $i. Thus, we continue in the next iteration.
                         continue 2;
-                    } catch (\PHPUnit\Framework\ExpectationFailedException $assertionFailed) {
+                    } catch (ExpectationFailedException $assertionFailed) {
                         // do nothing, we just retry the row on the next event.
                     }
                 }

@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource;
 
@@ -56,9 +56,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         ]
     ];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findPresetByUriSegmentWithExistingUriSegmentReturnsPreset()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -68,9 +66,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertEquals(['de_DE', 'de_ZZ', 'mul_ZZ'], $preset['values']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findPresetByUriSegmentWithoutExistingUriSegmentReturnsNull()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -79,9 +75,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertNull($preset);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findPresetByDimensionValuesWithExistingValuesReturnsPreset()
     {
         $source = new ConfigurationContentDimensionPresetSource();
@@ -91,9 +85,7 @@ class ConfigurationContentDimensionPresetSourceTest extends UnitTestCase
         self::assertEquals('deutsch', $preset['uriSegment']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findPresetByDimensionValuesWithoutExistingUriSegmentReturnsNull()
     {
         $source = new ConfigurationContentDimensionPresetSource();

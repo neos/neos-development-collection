@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
 
@@ -30,16 +31,14 @@ class HtmlAugmenterTest extends UnitTestCase
         $this->htmlAugmenter = new HtmlAugmenter();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addAttributesDoesNotAlterHtmlIfAttributesArrayIsEmpty()
     {
         $html = '<p>This is some html</p><p>Without a unique root element</p>';
         self::assertSame($html, $this->htmlAugmenter->addAttributes($html, []));
     }
 
-    public function addAttributesDataProvider()
+    public static function addAttributesDataProvider()
     {
         eval('
             class ClassWithToStringMethod {
@@ -411,7 +410,7 @@ class HtmlAugmenterTest extends UnitTestCase
         ];
     }
 
-    public function invalidAttributesDataProvider()
+    public static function invalidAttributesDataProvider()
     {
         return [
             // invalid attributes
@@ -420,7 +419,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-foo' => (object)[]],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
-                'expectedResult' => '<root>array value ignored</root>',
+                'allowEmpty' => '<root>array value ignored</root>',
             ],
         ];
     }
@@ -432,9 +431,9 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param string $expectedResult
      * @param bool $allowEmpty
      * @param array $exclusiveAttributes
-     * @test
-     * @dataProvider addAttributesDataProvider
      */
+    #[DataProvider('addAttributesDataProvider')]
+    #[Test]
     public function addAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes, $allowEmpty, $expectedResult)
     {
         if ($fallbackTagName === null) {
@@ -450,9 +449,9 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param string $fallbackTagName
      * @param array $exclusiveAttributes
      * @param bool $allowEmpty
-     * @test
-     * @dataProvider invalidAttributesDataProvider
      */
+    #[DataProvider('invalidAttributesDataProvider')]
+    #[Test]
     public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes, $allowEmpty)
     {
         $this->expectException(\Error::class);

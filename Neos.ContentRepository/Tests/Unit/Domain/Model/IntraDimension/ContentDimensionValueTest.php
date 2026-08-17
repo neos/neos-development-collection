@@ -10,7 +10,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model\IntraDimension;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use Neos\ContentRepository\Domain\Model\IntraDimension\ContentDimensionValue;
+use Neos\ContentRepository\Domain\Model\IntraDimension\Exception\InvalidFallbackException;
 use Neos\ContentRepository\Domain\Model\IntraDimension;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\ObjectAccess;
@@ -20,52 +22,44 @@ use Neos\Utility\ObjectAccess;
  */
 class ContentDimensionValueTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithoutFallbackHasDepthZero()
     {
-        $value = new IntraDimension\ContentDimensionValue('test');
+        $value = new ContentDimensionValue('test');
 
         self::assertSame(0, $value->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithFallbackHasDepthOneGreaterThanFallback()
     {
         $testDepth = random_int(0, 100);
-        $fallbackValue = new IntraDimension\ContentDimensionValue('fallback');
+        $fallbackValue = new ContentDimensionValue('fallback');
         ObjectAccess::setProperty($fallbackValue, 'depth', $testDepth, true);
-        $value = new IntraDimension\ContentDimensionValue('test', $fallbackValue);
+        $value = new ContentDimensionValue('test', $fallbackValue);
 
         self::assertSame($testDepth + 1, $value->getDepth());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthReturnsZeroRelativeToSelf()
     {
-        $value = new IntraDimension\ContentDimensionValue('fallback');
+        $value = new ContentDimensionValue('fallback');
 
         self::assertSame(0, $value->calculateFallbackDepth($value));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthReturnsLevelOfAncestryForValidFallback()
     {
         $testLevel = random_int(1, 10);
 
-        $rootFallback = new IntraDimension\ContentDimensionValue('fallback-level0');
+        $rootFallback = new ContentDimensionValue('fallback-level0');
         $currentLevel = 1;
         $previousFallback = $rootFallback;
         $currentFallback = null;
         while ($currentLevel <= $testLevel) {
-            $currentFallback = new IntraDimension\ContentDimensionValue('fallback-level' . $currentLevel, $previousFallback);
+            $currentFallback = new ContentDimensionValue('fallback-level' . $currentLevel, $previousFallback);
             $currentLevel++;
             $previousFallback = $currentFallback;
         }
@@ -73,39 +67,33 @@ class ContentDimensionValueTest extends UnitTestCase
         self::assertSame($testLevel, $currentFallback->calculateFallbackDepth($rootFallback));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthThrowsExceptionForDisconnectedValue()
     {
-        $this->expectException(IntraDimension\Exception\InvalidFallbackException::class);
-        $testValue = new IntraDimension\ContentDimensionValue('test');
-        $disconnectedValue = new IntraDimension\ContentDimensionValue('test2');
+        $this->expectException(InvalidFallbackException::class);
+        $testValue = new ContentDimensionValue('test');
+        $disconnectedValue = new ContentDimensionValue('test2');
 
         $testValue->calculateFallbackDepth($disconnectedValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthThrowsExceptionForVariant()
     {
-        $this->expectException(IntraDimension\Exception\InvalidFallbackException::class);
-        $fallback = new IntraDimension\ContentDimensionValue('fallback');
-        $variant = new IntraDimension\ContentDimensionValue('variant', $fallback);
+        $this->expectException(InvalidFallbackException::class);
+        $fallback = new ContentDimensionValue('fallback');
+        $variant = new ContentDimensionValue('variant', $fallback);
 
         $fallback->calculateFallbackDepth($variant);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function calculateFallbackDepthThrowsExceptionForConnectedButUnreachableValue()
     {
-        $this->expectException(IntraDimension\Exception\InvalidFallbackException::class);
-        $fallback = new IntraDimension\ContentDimensionValue('fallback');
-        $variant1 = new IntraDimension\ContentDimensionValue('variant1', $fallback);
-        $variant2 = new IntraDimension\ContentDimensionValue('variant2', $fallback);
+        $this->expectException(InvalidFallbackException::class);
+        $fallback = new ContentDimensionValue('fallback');
+        $variant1 = new ContentDimensionValue('variant1', $fallback);
+        $variant2 = new ContentDimensionValue('variant2', $fallback);
 
         $variant1->calculateFallbackDepth($variant2);
     }

@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,16 +12,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the RawCollection Fusion object
  *
  */
-class RawCollectionTest extends AbstractFusionObjectTest
+class RawCollectionTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicCollectionWorks()
     {
         $view = $this->buildView();
@@ -29,9 +28,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicCollectionWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
@@ -41,9 +38,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
         self::assertEquals(['Xelement1var','Xelement2var'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyCollectionReturnsEmptyArray()
     {
         $view = $this->buildView();
@@ -52,9 +47,7 @@ class RawCollectionTest extends AbstractFusionObjectTest
         self::assertEquals([], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationInformationIsAddedToCollection()
     {
         $view = $this->buildView();

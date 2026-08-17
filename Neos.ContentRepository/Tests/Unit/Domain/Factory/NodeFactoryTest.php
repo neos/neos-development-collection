@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Factory;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Tests\UnitTestCase;
@@ -49,7 +50,7 @@ class NodeFactoryTest extends UnitTestCase
      */
     public function setUp(): void
     {
-        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->setMethods(['filterNodeByContext'])->getMock();
+        $this->nodeFactory = $this->getMockBuilder(NodeFactory::class)->onlyMethods(['filterNodeByContext'])->getMock();
 
         $this->nodeFactory->expects(self::any())->method('filterNodeByContext')->willReturnArgument(0);
 
@@ -63,9 +64,7 @@ class NodeFactoryTest extends UnitTestCase
         $this->inject($this->nodeFactory, 'objectManager', $this->objectManagerMock);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createFromNodeDataCreatesANodeWithTheGivenContextAndNodeData()
     {
         $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
@@ -83,9 +82,7 @@ class NodeFactoryTest extends UnitTestCase
         self::assertEquals('0068371a-c108-99cb-3aa5-81b8852a2d12', $node->getIdentifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createContextMatchingNodeDataCreatesMatchingContext()
     {
         $dimensionValues = ['language' => ['is']];
@@ -94,7 +91,7 @@ class NodeFactoryTest extends UnitTestCase
         $mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $mockWorkspace = $this->getMockBuilder(Workspace::class)->setMockClassName('MockWorkspace')->disableOriginalConstructor()->getMock();
-        $mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue($workspaceName));
+        $mockWorkspace->expects(self::any())->method('getName')->willReturn($workspaceName);
 
         $mockContextFactory = $this->createMock(ContextFactoryInterface::class);
         $mockContextFactory->expects(self::once())->method('create')->with([
@@ -108,7 +105,7 @@ class NodeFactoryTest extends UnitTestCase
         $this->inject($this->nodeFactory, 'contextFactory', $mockContextFactory);
 
         $mockNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockNodeData->expects(self::any())->method('getWorkspace')->will(self::returnValue($mockWorkspace));
+        $mockNodeData->expects(self::any())->method('getWorkspace')->willReturn($mockWorkspace);
         $mockNodeData->expects(self::any())->method('getDimensionValues')->willReturn($dimensionValues);
 
         $context = $this->nodeFactory->createContextMatchingNodeData($mockNodeData);

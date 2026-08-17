@@ -10,6 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Site;
 
@@ -19,9 +20,7 @@ use Neos\Neos\Domain\Model\Site;
  */
 class SiteTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function aNameCanBeSetAndRetrievedFromTheSite()
     {
         $site = new Site('');
@@ -29,18 +28,14 @@ class SiteTest extends UnitTestCase
         self::assertSame('My cool website', $site->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theDefaultStateOfASiteIsOffline()
     {
         $site = new Site('');
         self::assertSame(Site::STATE_OFFLINE, $site->getState());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theStateCanBeSetAndRetrieved()
     {
         $site = new Site('');
@@ -48,9 +43,7 @@ class SiteTest extends UnitTestCase
         self::assertSame(Site::STATE_ONLINE, $site->getState());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function theSiteResourcesPackageKeyCanBeSetAndRetrieved()
     {
         $site = new Site('');

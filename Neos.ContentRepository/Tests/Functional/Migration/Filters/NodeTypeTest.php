@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Functional\Migration\Filters;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Doctrine\ORM\Query\Expr;
 use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\Flow\Persistence\Doctrine\Query;
@@ -49,7 +50,7 @@ class NodeTypeTest extends FunctionalTestCase
         $this->nodeDataRepository = $this->objectManager->get(NodeDataRepository::class);
     }
 
-    public function getFilterExpressionsDataprovider(): array
+    public static function getFilterExpressionsDataprovider(): array
     {
         return [
             'nodeTypeOnly' => [
@@ -80,14 +81,14 @@ class NodeTypeTest extends FunctionalTestCase
     }
 
     /**
-     * @test
-     * @dataProvider getFilterExpressionsDataprovider
      * @param string $nodeType
      * @param bool $withSubTypes
      * @param bool $exclude
      * @param string $expected
      * @throws \Neos\Flow\Persistence\Exception\InvalidQueryException
      */
+    #[DataProvider('getFilterExpressionsDataprovider')]
+    #[Test]
     public function getFilterExpressions(string $nodeType, bool $withSubTypes, bool $exclude, string $expected)
     {
         $nodeTypeFilter = new NodeTypeFilter();

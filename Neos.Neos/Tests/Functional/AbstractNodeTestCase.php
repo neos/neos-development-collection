@@ -21,7 +21,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 /**
  * Base test case for nodes
  */
-abstract class AbstractNodeTest extends FunctionalTestCase
+abstract class AbstractNodeTestCase extends FunctionalTestCase
 {
     /**
      * @var boolean

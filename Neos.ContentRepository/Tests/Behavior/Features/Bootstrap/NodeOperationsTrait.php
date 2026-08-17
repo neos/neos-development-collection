@@ -445,7 +445,7 @@ trait NodeOperationsTrait
             $workspace = $context->getWorkspace();
 
             /** @var PublishingServiceInterface $publishingService */
-            $publishingService = $this->getObjectManager()->get(\Neos\ContentRepository\Domain\Service\PublishingServiceInterface::class);
+            $publishingService = $this->getObjectManager()->get(PublishingServiceInterface::class);
             $publishingService->discardNodes($publishingService->getUnpublishedNodes($workspace));
 
             $this->objectManager->get(PersistenceManagerInterface::class)->persistAll();

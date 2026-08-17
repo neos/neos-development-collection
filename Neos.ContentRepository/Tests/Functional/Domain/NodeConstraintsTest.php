@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\Domain;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Exception\NodeConstraintException;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -78,9 +78,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $this->inject($this->contextFactory, 'contextInstances', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function movingNodeToWhereItsTypeIsDisallowedThrowsException()
     {
         $this->expectException(NodeConstraintException::class);
@@ -91,9 +89,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $documentNode->moveInto($contentNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function movingNodeToWhereItsSuperTypeIsDisallowedThrowsException()
     {
         $this->expectException(NodeConstraintException::class);
@@ -104,9 +100,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $documentNode->moveInto($contentNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function creatingNodeInChildNodeWithChildNodeConstraintsThrowsException()
     {
         $this->expectException(NodeConstraintException::class);
@@ -117,9 +111,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $childNode->createNode('document', $documentNodeType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsWorks()
     {
         $nodeTypeWithChildNodeAndConstraints = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodesAndConstraints');
@@ -131,9 +123,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         self::assertCount(1, $childNode->getChildNodes());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function childNodeWithChildNodeConstraintsAndNodeTypeConstraintsThrowsException()
     {
         $this->expectException(NodeConstraintException::class);
@@ -145,9 +135,7 @@ class NodeConstraintsTest extends FunctionalTestCase
         $childNode->createNode('text', $textNodeType);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function inheritanceBasedConstraintsWork()
     {
         $testingNodeTypeWithSubnodes = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithSubnodes');

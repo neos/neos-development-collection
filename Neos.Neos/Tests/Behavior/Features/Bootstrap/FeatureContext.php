@@ -9,7 +9,7 @@
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Behat\Behat\Context\Context;
 use Behat\Behat\Definition\Call\Then;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
@@ -54,7 +54,7 @@ require_once(__DIR__ . '/FusionTrait.php');
 /**
  * Features context
  */
-class FeatureContext implements Behat\Behat\Context\Context
+class FeatureContext implements Context
 {
     use FlowContextTrait;
     use NodeOperationsTrait;

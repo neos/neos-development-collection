@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Functional\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Error\Messages\Error;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Property\Exception\TypeConverterException;
@@ -149,9 +149,7 @@ class NodeConverterTest extends FunctionalTestCase
         $this->flushNodeChanges();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromLiveWorkspaceCanBeRetrievedAgainUsingNodeConverter()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -160,9 +158,7 @@ class NodeConverterTest extends FunctionalTestCase
         self::assertSame('Hello World', $headlineNode->getProperty('title'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromPersonalWorkspaceCanBeRetrievedAgainUsingNodeConverter()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -173,9 +169,7 @@ class NodeConverterTest extends FunctionalTestCase
         self::assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeFromGermanDimensionIsFetchedCorrectly()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -184,9 +178,7 @@ class NodeConverterTest extends FunctionalTestCase
         self::assertSame('Hallo Welt', $headlineNode->getProperty('title'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodePropertiesAreSetWhenConverterIsCalledWithInputArray()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();
@@ -200,9 +192,7 @@ class NodeConverterTest extends FunctionalTestCase
         self::assertSame('Brave new world', $headlineNode->getProperty('subtitle'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function settingUnknownNodePropertiesThrowsException()
     {
         $this->expectException(TypeConverterException::class);
@@ -215,9 +205,7 @@ class NodeConverterTest extends FunctionalTestCase
         $this->convert($input);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unknownNodePropertiesAreSkippedIfTypeConverterIsConfiguredLikeThis()
     {
         $this->setupNodeWithShadowNodeInPersonalWorkspace();

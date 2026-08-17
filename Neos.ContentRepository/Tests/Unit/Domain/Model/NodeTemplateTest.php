@@ -10,6 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Model\NodeTemplate;
 
@@ -18,9 +19,7 @@ use Neos\ContentRepository\Domain\Model\NodeTemplate;
  */
 class NodeTemplateTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function setNameWithValidNameUpdatesName()
     {
         $nodeTemplate = new NodeTemplate();
@@ -29,9 +28,7 @@ class NodeTemplateTest extends UnitTestCase
         self::assertEquals('valid-node-name', $nodeTemplate->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setNameWithInvalidNameThrowsException()
     {
         $this->expectException(\InvalidArgumentException::class);

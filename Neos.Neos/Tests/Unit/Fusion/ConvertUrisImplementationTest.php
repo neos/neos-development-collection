@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -26,6 +26,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\Fusion\Core\Runtime;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -83,6 +84,21 @@ class ConvertUrisImplementationTest extends UnitTestCase
      */
     protected $mockCachingHelper;
 
+    /**
+     * @var Uri|MockObject
+     */
+    protected $mockHttpUri;
+
+    /**
+     * @var ServerRequestInterface|MockObject
+     */
+    protected $mockHttpRequest;
+
+    /**
+     * @var ActionRequest|MockObject
+     */
+    protected $mockActionRequest;
+
     public function setUp(): void
     {
         $this->convertUrisImplementation = $this->getAccessibleMock(ConvertUrisImplementation::class, ['fusionValue'], [], '', false);
@@ -90,25 +106,25 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->mockWorkspace = $this->getMockBuilder(Workspace::class)->disableOriginalConstructor()->getMock();
 
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockContext->expects(self::any())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
+        $this->mockContext->expects(self::any())->method('getWorkspace')->willReturn($this->mockWorkspace);
         $this->mockContext->expects(self::any())->method('getWorkspaceName')->willReturnCallback(function () {
             return $this->mockWorkspace->getName();
         });
 
         $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
-        $this->mockNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContext));
+        $this->mockNode->expects(self::any())->method('getContext')->willReturn($this->mockContext);
 
         $this->mockHttpUri = $this->getMockBuilder(Uri::class)->disableOriginalConstructor()->getMock();
-        $this->mockHttpUri->expects(self::any())->method('getHost')->will(self::returnValue('localhost'));
+        $this->mockHttpUri->expects(self::any())->method('getHost')->willReturn('localhost');
 
         $this->mockHttpRequest = $this->getMockBuilder(ServerRequestInterface::class)->disableOriginalConstructor()->getMock();
         $this->mockHttpRequest->expects(self::any())->method('getUri')->willReturn($this->mockHttpUri);
 
         $this->mockActionRequest = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->will(self::returnValue($this->mockHttpRequest));
+        $this->mockActionRequest->expects(self::any())->method('getHttpRequest')->willReturn($this->mockHttpRequest);
 
         $this->mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $this->mockControllerContext->expects(self::any())->method('getRequest')->will(self::returnValue($this->mockActionRequest));
+        $this->mockControllerContext->expects(self::any())->method('getRequest')->willReturn($this->mockActionRequest);
 
         $this->mockLinkingService = $this->createMock(LinkingService::class);
         $this->convertUrisImplementation->_set('linkingService', $this->mockLinkingService);
@@ -117,7 +133,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->_set('cachingHelper', $this->mockCachingHelper);
 
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $this->mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($this->mockControllerContext));
+        $this->mockRuntime->expects(self::any())->method('getControllerContext')->willReturn($this->mockControllerContext);
         $this->convertUrisImplementation->_set('runtime', $this->mockRuntime);
     }
 
@@ -126,7 +142,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation
             ->expects(self::atLeastOnce())
             ->method('fusionValue')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['value', $value],
                 ['node', $node ?: $this->mockNode],
                 ['forceConversion', $forceConversion],
@@ -135,12 +151,10 @@ class ConvertUrisImplementationTest extends UnitTestCase
                 ['absolute', $absolute],
                 ['setNoOpener', $setNoOpener],
                 ['setExternal', $setExternal]
-            ]));
+            ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfValueIsNoString()
     {
         $this->expectException(Exception::class);
@@ -150,9 +164,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateThrowsExceptionIfTheCurrentContextArrayDoesNotContainANode()
     {
         $this->expectException(Exception::class);
@@ -161,26 +173,22 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->evaluate();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesNotModifyTheValueIfItDoesNotContainNodeUris()
     {
         $value = ' this Is some string with line' . chr(10) . ' breaks, special chärß and leading/trailing space  ';
         $this->addValueExpectation($value);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($value, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesNotModifyTheValueIfNotExecutedInLiveWorkspace()
     {
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('not-live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('not-live');
 
         $value = 'This string contains a node URI: node://aeabe76a-551a-495f-a324-ad9a86b2aff7 and two <a href="node://cb2d0e4a-7d2f-4601-981a-f9a01530f53f">node</a> <a href="node://aeabe76a-551a-495f-a324-ad9a86b2aff7">links</a>.';
         $this->addValueExpectation($value);
@@ -189,9 +197,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         self::assertSame($value, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesModifyTheValueIfExecutedInLiveWorkspaceWithTheForceConvertionOptionSet()
     {
         $nodeIdentifier1 = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -199,10 +205,10 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains a node URI: node://' . $nodeIdentifier1 . ' and two <a href="node://' . $nodeIdentifier2 . '">node</a> <a href="node://' . $nodeIdentifier1 . '">links</a>.';
         $this->addValueExpectation($value, null, true);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->will(self::returnCallback(function ($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->willReturnCallback(function ($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
             if ($nodeUri === 'node://' . $nodeIdentifier1) {
                 return 'http://localhost/replaced/uri/01';
             } elseif ($nodeUri === 'node://' . $nodeIdentifier2) {
@@ -210,16 +216,14 @@ class ConvertUrisImplementationTest extends UnitTestCase
             } else {
                 $self->fail('Unexpected node URI "' . $nodeUri . '"');
             }
-        }));
+        });
 
         $expectedResult = 'This string contains a node URI: http://localhost/replaced/uri/01 and two <a href="http://localhost/replaced/uri/02">node</a> <a href="http://localhost/replaced/uri/01">links</a>.';
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateReplacesAllNodeUrisInTheGivenValue()
     {
         $nodeIdentifier1 = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -227,10 +231,10 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains a node URI: node://' . $nodeIdentifier1 . ' and two <a href="node://' . $nodeIdentifier2 . '">node</a> <a href="node://' . $nodeIdentifier1 . '">links</a>.';
         $this->addValueExpectation($value);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->will(self::returnCallback(function ($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->willReturnCallback(function ($nodeUri) use ($self, $nodeIdentifier1, $nodeIdentifier2) {
             if ($nodeUri === 'node://' . $nodeIdentifier1) {
                 return 'http://localhost/replaced/uri/01';
             } elseif ($nodeUri === 'node://' . $nodeIdentifier2) {
@@ -238,7 +242,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             } else {
                 $self->fail('Unexpected node URI "' . $nodeUri . '"');
             }
-        }));
+        });
 
         $expectedResult = 'This string contains a node URI: http://localhost/replaced/uri/01 and two <a href="http://localhost/replaced/uri/02">node</a> <a href="http://localhost/replaced/uri/01">links</a>.';
         $actualResult = $this->convertUrisImplementation->evaluate();
@@ -248,16 +252,15 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This only verifies the current behavior that might be changed in the future (e.g. we could remove unresolved links instead of creating empty href attributes)
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplacesUnresolvableNodeUrisWithAnEmptyString()
     {
         $unknownNodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
         $value = 'This string contains an unresolvable node URI: node://' . $unknownNodeIdentifier . ' and a <a href="node://' . $unknownNodeIdentifier . '">link</a>.';
         $this->addValueExpectation($value);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $expectedResult = 'This string contains an unresolvable node URI:  and a link.';
         $actualResult = $this->convertUrisImplementation->evaluate();
@@ -266,9 +269,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This test checks that targets for external links are correctly replaced
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplaceExternalLinkTargets()
     {
         $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -277,16 +279,16 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains a link to a node: <a href="node://' . $nodeIdentifier . '">node</a> and one to an external url with a target set <a target="top" href="http://www.example.org">example</a> and one without a target <a href="http://www.example.org">example2</a>';
         $this->addValueExpectation($value, null, false, $externalLinkTarget, null);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->will(self::returnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->willReturnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
             if ($nodeUri === 'node://' . $nodeIdentifier) {
                 return 'http://localhost/uri/01';
             } else {
                 $self->fail('Unexpected node URI "' . $nodeUri . '"');
             }
-        }));
+        });
 
         $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a rel="noopener external" target="top" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener external" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
@@ -295,9 +297,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This test checks that targets for resource links are correctly replaced
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplaceResourceLinkTargets()
     {
         $assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
@@ -306,24 +307,22 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains two asset links and an external link: one with a target set <a target="top" href="asset://' . $assetIdentifier . '">example</a> and one without a target <a href="asset://' . $assetIdentifier . '">example2</a> and an external link <a href="http://www.example.org">example3</a>';
         $this->addValueExpectation($value, null, false, null, $resourceLinkTarget);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveAssetUri')->will(self::returnCallback(function ($assetUri) use ($self, $assetIdentifier) {
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveAssetUri')->willReturnCallback(function ($assetUri) use ($self, $assetIdentifier) {
             if ($assetUri !== 'asset://' . $assetIdentifier) {
                 $self->fail('Unexpected asset URI "' . $assetUri . '"');
             }
             return 'http://localhost/_Resources/01';
-        }));
+        });
 
         $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="top" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example2</a> and an external link <a rel="noopener external" href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function disablingSetNoOpenerWorks()
     {
         $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -332,25 +331,23 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains a link to a node: <a href="node://' . $nodeIdentifier . '">node</a> and one to an external url with a target set <a target="top" href="http://www.example.org">example</a> and one without a target <a href="http://www.example.org">example2</a>';
         $this->addValueExpectation($value, null, false, $externalLinkTarget, null, false, false);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->will(self::returnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->willReturnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
             if ($nodeUri === 'node://' . $nodeIdentifier) {
                 return 'http://localhost/uri/01';
             } else {
                 $self->fail('Unexpected node URI "' . $nodeUri . '"');
             }
-        }));
+        });
 
         $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a rel="external" target="top" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="external" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function disablingSetExternalWorks()
     {
         $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
@@ -359,16 +356,16 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains a link to a node: <a href="node://' . $nodeIdentifier . '">node</a> and one to an external url with a target set <a target="top" href="http://www.example.org">example</a> and one without a target <a href="http://www.example.org">example2</a>';
         $this->addValueExpectation($value, null, false, $externalLinkTarget, null, false, true, false);
 
-        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+        $this->mockWorkspace->expects(self::any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->will(self::returnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->willReturnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
             if ($nodeUri === 'node://' . $nodeIdentifier) {
                 return 'http://localhost/uri/01';
             } else {
                 $self->fail('Unexpected node URI "' . $nodeUri . '"');
             }
-        }));
+        });
 
         $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a rel="noopener" target="top" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
@@ -377,9 +374,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
     /**
      * This test checks that targets for resource links are correctly replaced if the a Tag is inside a tag with the name beginning wit a
-     *
-     * @test
      */
+    #[Test]
     public function evaluateReplaceResourceLinkTargetsInsideTag()
     {
         $assetIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff8';
@@ -388,24 +384,22 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'and an external link inside another tag beginning with a <article> test <a href="asset://' . $assetIdentifier . '">example1</a></article>';
         $this->addValueExpectation($value, null, false, null, $resourceLinkTarget);
 
-        $this->mockWorkspace->expects($this->any())->method('getName')->will($this->returnValue('live'));
+        $this->mockWorkspace->expects($this->any())->method('getName')->willReturn('live');
 
         $self = $this;
-        $this->mockLinkingService->expects($this->atLeastOnce())->method('resolveAssetUri')->will($this->returnCallback(function ($assetUri) use ($self, $assetIdentifier) {
+        $this->mockLinkingService->expects($this->atLeastOnce())->method('resolveAssetUri')->willReturnCallback(function ($assetUri) use ($self, $assetIdentifier) {
             if ($assetUri !== 'asset://' . $assetIdentifier) {
                 $self->fail('Unexpected asset URI "' . $assetUri . '"');
             }
             return 'http://localhost/_Resources/01';
-        }));
+        });
 
         $expectedResult = 'and an external link inside another tag beginning with a <article> test <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example1</a></article>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         $this->assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateDoesAddCacheTags()
     {
         $workspaceName = 'live';
@@ -420,8 +414,18 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $this->mockWorkspace->expects(self::any())->method('getName')->willReturn($workspaceName);
         $this->mockCachingHelper->expects(self::any())->method('renderWorkspaceTagForContextNode')->with($workspaceName)->willReturn($workspaceNameHash);
+        $matcher = self::exactly(2);
 
-        $this->mockRuntime->expects(self::exactly(2))->method('addCacheTag')->withConsecutive(['node', $nodeCacheIdentifier], ['asset', $assetCacheIdentifier]);
+        $this->mockRuntime->expects($matcher)->method('addCacheTag')->willReturnCallback(function (...$parameters) use ($matcher, $nodeCacheIdentifier, $assetCacheIdentifier) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('node', $parameters[0]);
+                $this->assertSame($nodeCacheIdentifier, $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('asset', $parameters[0]);
+                $this->assertSame($assetCacheIdentifier, $parameters[1]);
+            }
+        });
 
         $this->convertUrisImplementation->evaluate();
     }

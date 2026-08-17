@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Utility\ObjectAccess;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
@@ -32,7 +33,7 @@ class AttributesImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    public function attributeExamples()
+    public static function attributeExamples()
     {
         return [
             'null' => [null, ''],
@@ -47,17 +48,15 @@ class AttributesImplementationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider attributeExamples
-     */
+    #[DataProvider('attributeExamples')]
+    #[Test]
     public function evaluateTests($properties, $expectedOutput)
     {
         $path = 'attributes/test';
-        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) use ($path, $properties) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($evaluatePath, $that) use ($path, $properties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             return ObjectAccess::getPropertyPath($properties, str_replace('/', '.', $relativePath));
-        }));
+        });
 
         $fusionObjectName = 'Neos.Fusion:Attributes';
         $renderer = new AttributesImplementation($this->mockRuntime, $path, $fusionObjectName);

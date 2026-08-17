@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Eel\FlowQueryOperations\CacheLifetimeOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -18,7 +19,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 /**
  * Testcase for the ContentRepository FlowQuery CacheLifetimeOperation
  */
-class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
+class CacheLifetimeOperationTest extends AbstractQueryOperationsTestCase
 {
     /**
      * @var CacheLifetimeOperation
@@ -56,9 +57,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canEvaluateReturnsTrueIfNodeIsInContext()
     {
         $mockNode = $this->mockNode('node');
@@ -67,7 +66,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         self::assertTrue($result);
     }
 
-    public function nodePropertiesAndLifetime()
+    public static function nodePropertiesAndLifetime()
     {
         return [
             'Minimum in hiddenBeforeDateTime' => [
@@ -124,10 +123,8 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider nodePropertiesAndLifetime
-     */
+    #[DataProvider('nodePropertiesAndLifetime')]
+    #[Test]
     public function evaluateReturnsMinimumOfFutureHiddenDates($nodes, $expectedLifetime)
     {
         $mockFlowQuery = $this->buildFlowQueryWithNodesInContext($nodes);
@@ -149,14 +146,14 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
         $contextValues = [];
         foreach ($nodes as $nodeProperties) {
             $mockNode = $this->createMock(NodeInterface::class);
-            $mockNode->expects(self::any())->method('getHiddenBeforeDateTime')->will(self::returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
-            $mockNode->expects(self::any())->method('getHiddenAfterDateTime')->will(self::returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
+            $mockNode->expects(self::any())->method('getHiddenBeforeDateTime')->willReturn($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null);
+            $mockNode->expects(self::any())->method('getHiddenAfterDateTime')->willReturn($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null);
 
             $contextValues[] = $mockNode;
         }
 
         $mockFlowQuery = $this->getMockBuilder(FlowQuery::class)->disableOriginalConstructor()->getMock();
-        $mockFlowQuery->expects(self::any())->method('getContext')->will(self::returnValue($contextValues));
+        $mockFlowQuery->expects(self::any())->method('getContext')->willReturn($contextValues);
         return $mockFlowQuery;
     }
 }

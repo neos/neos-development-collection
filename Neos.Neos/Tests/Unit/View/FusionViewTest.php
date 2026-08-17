@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -66,13 +66,13 @@ class FusionViewTest extends UnitTestCase
         $this->mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $this->mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(['getContext'])->setConstructorArgs([$mockNode, $this->mockContext])->getMock();
+        $this->mockContextualizedNode = $this->getMockBuilder(Node::class)->onlyMethods(['getContext'])->setConstructorArgs([$mockNode, $this->mockContext])->getMock();
         $mockSiteNode = $this->createMock(TraversableNodeInterface::class);
 
-        $this->mockContext->expects(self::any())->method('getCurrentSiteNode')->will(self::returnValue($mockSiteNode));
-        $this->mockContext->expects(self::any())->method('getDimensions')->will(self::returnValue([]));
+        $this->mockContext->expects(self::any())->method('getCurrentSiteNode')->willReturn($mockSiteNode);
+        $this->mockContext->expects(self::any())->method('getDimensions')->willReturn([]);
 
-        $this->mockContextualizedNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContext));
+        $this->mockContextualizedNode->expects(self::any())->method('getContext')->willReturn($this->mockContext);
 
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
@@ -81,10 +81,10 @@ class FusionViewTest extends UnitTestCase
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $mockFusionService = $this->createMock(FusionService::class);
-        $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($this->mockRuntime));
+        $mockFusionService->expects(self::any())->method('createRuntime')->willReturn($this->mockRuntime);
 
         $this->mockView = $this->getAccessibleMock(FusionView::class, ['getClosestDocumentNode']);
-        $this->mockView->expects(self::any())->method('getClosestDocumentNode')->will(self::returnValue($this->mockContextualizedNode));
+        $this->mockView->expects(self::any())->method('getClosestDocumentNode')->willReturn($this->mockContextualizedNode);
 
         $this->inject($this->mockView, 'controllerContext', $mockControllerContext);
         $this->inject($this->mockView, 'securityContext', $this->mockSecurityContext);
@@ -93,9 +93,7 @@ class FusionViewTest extends UnitTestCase
         $this->mockView->_set('variables', ['value' => $this->mockContextualizedNode]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
         $this->expectException(Exception::class);
@@ -103,9 +101,7 @@ class FusionViewTest extends UnitTestCase
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
         $this->expectException(Exception::class);
@@ -114,9 +110,7 @@ class FusionViewTest extends UnitTestCase
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderPutsSiteNodeInFusionContext()
     {
         $this->setUpMockView();
@@ -124,38 +118,36 @@ class FusionViewTest extends UnitTestCase
         $this->mockView->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderMergesHttpResponseIfOutputIsHttpMessage()
     {
         $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
 
         $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(['getContext'])->setConstructorArgs([$mockNode, $mockContext])->getMock();
+        $mockContextualizedNode = $this->getMockBuilder(Node::class)->onlyMethods(['getContext'])->setConstructorArgs([$mockNode, $mockContext])->getMock();
         $mockSiteNode = $this->createMock(TraversableNodeInterface::class);
 
-        $mockContext->expects(self::any())->method('getCurrentSiteNode')->will(self::returnValue($mockSiteNode));
-        $mockContext->expects(self::any())->method('getDimensions')->will(self::returnValue([]));
+        $mockContext->expects(self::any())->method('getCurrentSiteNode')->willReturn($mockSiteNode);
+        $mockContext->expects(self::any())->method('getDimensions')->willReturn([]);
 
-        $mockContextualizedNode->expects(self::any())->method('getContext')->will(self::returnValue($mockContext));
+        $mockContextualizedNode->expects(self::any())->method('getContext')->willReturn($mockContext);
 
         $mockResponse = new ActionResponse();
 
         $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $mockControllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($mockResponse));
+        $mockControllerContext->expects(self::any())->method('getResponse')->willReturn($mockResponse);
 
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->expects(self::any())->method('render')->will(self::returnValue("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\nMessage body"));
-        $mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($mockControllerContext));
+        $mockRuntime->expects(self::any())->method('render')->willReturn("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\nMessage body");
+        $mockRuntime->expects(self::any())->method('getControllerContext')->willReturn($mockControllerContext);
 
         $mockFusionService = $this->createMock(FusionService::class);
-        $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($mockRuntime));
+        $mockFusionService->expects(self::any())->method('createRuntime')->willReturn($mockRuntime);
 
         $mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
         $view = $this->getAccessibleMock(FusionView::class, ['getClosestDocumentNode']);
-        $view->expects(self::any())->method('getClosestDocumentNode')->will(self::returnValue($mockContextualizedNode));
+        $view->expects(self::any())->method('getClosestDocumentNode')->willReturn($mockContextualizedNode);
 
         $this->inject($view, 'securityContext', $mockSecurityContext);
 

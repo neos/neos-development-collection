@@ -10,7 +10,9 @@ namespace Neos\Neos\Tests\Functional\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Neos\Media\Domain\Repository\AssetRepository;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
@@ -28,7 +30,6 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Exception as NeosException;
-use Neos\Neos\Exception;
 use Neos\Neos\Service\LinkingService;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -140,18 +141,14 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->inject($this->objectManager->get(AssetInterfaceConverter::class), 'resourcesAlreadyConvertedToAssets', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCreatesUriViaGivenNodeObject()
     {
         $targetNode = $this->propertyMapper->convert('/sites/example/home', Node::class);
         $this->assertOutputLinkValid('en/home', $this->linkingService->createNodeUri($this->controllerContext, $targetNode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCreatesUriViaAbsoluteNodePathString()
     {
         $this->assertOutputLinkValid('en/home', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode));
@@ -159,9 +156,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission', $this->baseNode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCreatesUriViaStringStartingWithTilde()
     {
         $this->assertOutputLinkValid('en/home', $this->linkingService->createNodeUri($this->controllerContext, '~', $this->baseNode));
@@ -170,9 +165,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $this->linkingService->createNodeUri($this->controllerContext, '~/home/about-us/mission', $this->baseNode));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCreatesUriViaStringPointingToSubNodes()
     {
         $this->assertOutputLinkValid('en/home/about-us/history', $this->linkingService->createNodeUri($this->controllerContext, '../history', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission')));
@@ -183,9 +176,8 @@ class LinkingServiceTest extends FunctionalTestCase
     /**
      * We empty the TemplateVariableContainer for this test, as it shouldn't be needed for rendering a link to a node
      * identified by ContextNodePath
-     *
-     * @test
      */
+    #[Test]
     public function linkingServiceCreatesUriViaContextNodePathString()
     {
         $this->assertOutputLinkValid('en/home', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home@live'));
@@ -193,7 +185,7 @@ class LinkingServiceTest extends FunctionalTestCase
         $this->assertOutputLinkValid('en/home/about-us/our-mission', $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/about-us/mission@live'));
     }
 
-    public function supportedSchemesDataProvider()
+    public static function supportedSchemesDataProvider()
     {
         return [
             ['node://aeabe76a-551a-495f-a324-ad9a86b2aff7', true],
@@ -202,97 +194,75 @@ class LinkingServiceTest extends FunctionalTestCase
         ];
     }
 
-    /**
-     * @dataProvider supportedSchemesDataProvider
-     * @test
-     */
+    #[DataProvider('supportedSchemesDataProvider')]
+    #[Test]
     public function linkingServiceOnlySupportsNodesAndAssetSchemes($scheme, $match)
     {
         self::assertSame($match, $this->linkingService->hasSupportedScheme($scheme));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCanGetSchemeFromUrl()
     {
         self::assertSame('node', $this->linkingService->getScheme('node://aeabe76a-551a-495f-a324-ad9a86b2aff7'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCanResolveNodeUri()
     {
         self::assertSame('/en/home', $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode, $this->controllerContext));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceResolveNodeUriReturnsNullForUnresolvableNodes()
     {
         self::assertSame(null, $this->linkingService->resolveNodeUri('node://3239baee-3e7f-785c-0853-f4302ef3257x', $this->baseNode, $this->controllerContext));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCanResolveAssetUri()
     {
         self::assertSame('http://neos.test/_Resources/Testing/Persistent/bed9a3e45070e97b921877e2bd9c35ba368beca0/Neos-logo_sRGB_color.pdf', $this->linkingService->resolveAssetUri('asset://1af89e5c-9e23-9a9d-ae15-1d77160cfb57'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceResolveAssetUriReturnsNullForUnresolvableAssets()
     {
         self::assertSame(null, $this->linkingService->resolveAssetUri('asset://89cd85cc-270e-0902-7113-d14ac7539c7x'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceCanConvertUriToObject()
     {
-        $assetRepository = $this->objectManager->get(\Neos\Media\Domain\Repository\AssetRepository::class);
+        $assetRepository = $this->objectManager->get(AssetRepository::class);
         $asset = $assetRepository->findByIdentifier('89cd85cc-270e-0902-7113-d14ac7539c75');
 
         self::assertSame($this->baseNode, $this->linkingService->convertUriToObject('node://3239baee-3e7f-785c-0853-f4302ef32570', $this->baseNode));
         self::assertSame($asset, $this->linkingService->convertUriToObject('asset://89cd85cc-270e-0902-7113-d14ac7539c75'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceThrowsAnExceptionWhenTryingToLinkToANonExistingNode()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(NeosException::class);
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/not-found', $this->baseNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceThrowsAnExceptionWhenItIsGivenAnEmptyString()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(NeosException::class);
         $this->linkingService->createNodeUri($this->controllerContext, '', $this->baseNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceThrowsAnExceptionWhenItIsGivenADifferentObject()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->linkingService->createNodeUri($this->controllerContext, new \stdClass());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceStoresLastLinkedNode()
     {
         $targetNodeA = $this->baseNode;
@@ -303,18 +273,14 @@ class LinkingServiceTest extends FunctionalTestCase
         self::assertSame($targetNodeB, $this->linkingService->getLastLinkedNode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceStoresLastLinkedNodeEvenIfItsAShortcutToAnExternalUri()
     {
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home/shortcuts/shortcut-to-target-uri', $this->baseNode);
         self::assertNotNull($this->linkingService->getLastLinkedNode());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkingServiceUnsetsLastLinkedNodeOnFailure()
     {
         $this->linkingService->createNodeUri($this->controllerContext, '/sites/example/home', $this->baseNode);

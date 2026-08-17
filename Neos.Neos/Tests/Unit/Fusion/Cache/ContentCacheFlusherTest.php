@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\Fusion\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Model\Workspace;
@@ -22,12 +22,10 @@ use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
  */
 class ContentCacheFlusherTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function theWorkspaceChainWillOnlyEvaluatedIfNeeded()
     {
-        $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->setMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
+        $contentCacheFlusher = $this->getMockBuilder(ContentCacheFlusher::class)->onlyMethods(['resolveWorkspaceChain', 'registerChangeOnNodeIdentifier', 'registerChangeOnNodeType'])->disableOriginalConstructor()->getMock();
         $contentCacheFlusher->expects(self::never())->method('resolveWorkspaceChain');
 
         $contentCacheFlusher->expects($this->once())->method('registerChangeOnNodeIdentifier');

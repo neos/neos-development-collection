@@ -10,20 +10,21 @@ namespace Neos\ContentRepository\Tests\Functional\Eel\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\Tests\Functional\AbstractNodeTestCase;
 
 /**
  * Functional test case which tests FlowQuery ClosestOperation
  */
-class ClosestOperationTest extends AbstractNodeTest
+class ClosestOperationTest extends AbstractNodeTestCase
 {
     /**
      * @return array
      */
-    public function closestOperationDataProvider()
+    public static function closestOperationDataProvider()
     {
         return [
             [
@@ -72,10 +73,9 @@ class ClosestOperationTest extends AbstractNodeTest
      *   b3 (TestingNodeTypeWithSubnodes)
      *     b3a (TestingNodeType)
      *     b3b
-     *
-     * @test
-     * @dataProvider closestOperationDataProvider
      */
+    #[DataProvider('closestOperationDataProvider')]
+    #[Test]
     public function closestOperationTests($currentNodePath, $nodeTypeFilter, $expectedNodePath)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);

@@ -19,7 +19,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Abstract base class for the Query Operation tests
  */
-abstract class AbstractQueryOperationsTest extends UnitTestCase
+abstract class AbstractQueryOperationsTestCase extends UnitTestCase
 {
     protected function mockNode(string $nodeAggregateIdentifier): TraversableNodeInterface
     {

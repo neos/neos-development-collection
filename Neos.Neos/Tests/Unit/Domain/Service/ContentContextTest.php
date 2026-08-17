@@ -10,6 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
@@ -32,9 +33,7 @@ class ContentContextTest extends UnitTestCase
         $this->contextFactory = new ContentContextFactory();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCurrentSiteReturnsTheCurrentSite()
     {
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -55,9 +54,7 @@ class ContentContextTest extends UnitTestCase
         self::assertSame($mockSite, $contentContext->getCurrentSite());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCurrentDomainReturnsTheCurrentDomainIfAny()
     {
         $mockDomain = $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock();

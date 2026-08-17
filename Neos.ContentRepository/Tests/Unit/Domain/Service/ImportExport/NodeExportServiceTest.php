@@ -10,7 +10,9 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service\ImportExport;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Flow\Property\PropertyMapper;
+use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Domain\Service\ImportExport\NodeExportService;
@@ -22,29 +24,27 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 class NodeExportServiceTest extends UnitTestCase
 {
     /**
-     * @var Context|\PHPUnit\Framework\MockObject\MockObject
+     * @var Context|MockObject
      */
     protected $mockSecurityContext;
 
     public function setUp(): void
     {
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-        $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->will(self::returnCallback(function ($callback) {
+        $this->mockSecurityContext->expects(self::any())->method('withoutAuthorizationChecks')->willReturnCallback(function ($callback) {
             return $callback->__invoke();
-        }));
+        });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportEmptyListOfNodesCreatesEmptyXml()
     {
-        /** @var NodeExportService|\PHPUnit\Framework\MockObject\MockObject $nodeExportService */
-        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(['findNodeDataListToExport'])->getMock();
+        /** @var NodeExportService|MockObject $nodeExportService */
+        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->onlyMethods(['findNodeDataListToExport'])->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
 
         $nodeDataList = [];
-        $nodeExportService->expects(self::any())->method('findNodeDataListToExport')->will(self::returnValue($nodeDataList));
+        $nodeExportService->expects(self::any())->method('findNodeDataListToExport')->willReturn($nodeDataList);
 
         $xmlWriter = $nodeExportService->export();
         $output = $xmlWriter->outputMemory();
@@ -54,13 +54,11 @@ class NodeExportServiceTest extends UnitTestCase
 		', $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportRootNodeCreatesSingleNode()
     {
-        /** @var NodeExportService|\PHPUnit\Framework\MockObject\MockObject $nodeExportService */
-        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(['findNodeDataListToExport'])->getMock();
+        /** @var NodeExportService|MockObject $nodeExportService */
+        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->onlyMethods(['findNodeDataListToExport'])->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
         $nodeTypeManager = $this->createMock(NodeTypeManager::class);
         $this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
@@ -75,7 +73,7 @@ class NodeExportServiceTest extends UnitTestCase
         );
 
         $nodeDataList = [$nodeData];
-        $nodeExportService->expects(self::any())->method('findNodeDataListToExport')->will(self::returnValue($nodeDataList));
+        $nodeExportService->expects(self::any())->method('findNodeDataListToExport')->willReturn($nodeDataList);
 
         $xmlWriter = $nodeExportService->export();
         $output = $xmlWriter->outputMemory();
@@ -93,13 +91,11 @@ class NodeExportServiceTest extends UnitTestCase
 		', $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function exportNodeWithoutParentSkipsBrokenNode()
     {
-        /** @var NodeExportService|\PHPUnit\Framework\MockObject\MockObject $nodeExportService */
-        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->setMethods(['findNodeDataListToExport'])->getMock();
+        /** @var NodeExportService|MockObject $nodeExportService */
+        $nodeExportService = $this->getMockBuilder(NodeExportService::class)->onlyMethods(['findNodeDataListToExport'])->getMock();
         $this->inject($nodeExportService, 'securityContext', $this->mockSecurityContext);
         $nodeTypeManager = $this->createMock(NodeTypeManager::class);
         $this->inject($nodeExportService, 'nodeTypeManager', $nodeTypeManager);
@@ -126,12 +122,12 @@ class NodeExportServiceTest extends UnitTestCase
         );
 
         $nodeDataList = [$nodeData1, $nodeData2];
-        $nodeExportService->expects(self::any())->method('findNodeDataListToExport')->will(self::returnValue($nodeDataList));
+        $nodeExportService->expects(self::any())->method('findNodeDataListToExport')->willReturn($nodeDataList);
 
-        $mockPropertyMapper = $this->createMock(\Neos\Flow\Property\PropertyMapper::class);
-        $mockPropertyMapper->expects(self::any())->method('convert')->will(self::returnCallback(function ($source) {
+        $mockPropertyMapper = $this->createMock(PropertyMapper::class);
+        $mockPropertyMapper->expects(self::any())->method('convert')->willReturnCallback(function ($source) {
             return $source;
-        }));
+        });
         $this->inject($nodeExportService, 'propertyMapper', $mockPropertyMapper);
 
         $xmlWriter = $nodeExportService->export('/sites/foo');

@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Service\Cache\FirstLevelNodeCache;
 use Neos\Flow\Tests\UnitTestCase;
 
@@ -19,9 +19,7 @@ use Neos\Flow\Tests\UnitTestCase;
  */
 class FirstLevelNodeCacheTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function returnNullForCachedNullValue()
     {
         $nodeIdA = 'node-id-a';
@@ -38,9 +36,7 @@ class FirstLevelNodeCacheTest extends UnitTestCase
         self::assertFalse($valueForNodeIdB);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resetCacheWorksProperly()
     {
         $nodeIdA = 'node-id-a';

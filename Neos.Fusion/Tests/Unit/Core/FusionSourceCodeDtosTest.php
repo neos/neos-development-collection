@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -26,9 +26,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         return $asArray[0];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function pureFactories()
     {
         $code = FusionSourceCode::fromString("a");
@@ -49,9 +47,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertCount(0, $code);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromFilePathFactories()
     {
         vfsStream::setup('fusion', null, [
@@ -72,9 +68,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertCount(0, $code);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function collectionIterableAndCountable()
     {
         $code = FusionSourceCode::fromString("a");
@@ -88,9 +82,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deduplication()
     {
         vfsStream::setup('fusion', null, [
@@ -114,9 +106,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertEquals($code1doubled, $asArray[1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deduplication2()
     {
         vfsStream::setup('fusion', null, [
@@ -149,9 +139,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertEquals($code4, $asArray[3]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function deduplication4()
     {
         vfsStream::setup('fusion', null, [
@@ -182,9 +170,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function union()
     {
         $code1 = FusionSourceCodeCollection::fromString("a");

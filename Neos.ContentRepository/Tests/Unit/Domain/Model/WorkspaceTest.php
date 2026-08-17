@@ -10,7 +10,8 @@ namespace Neos\ContentRepository\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\ContentRepository\Exception\WorkspaceException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
@@ -25,9 +26,7 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
  */
 class WorkspaceTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function aWorkspaceCanBeBasedOnAnotherWorkspace()
     {
         $baseWorkspace = new Workspace('BaseWorkspace');
@@ -37,14 +36,12 @@ class WorkspaceTest extends UnitTestCase
         self::assertSame($baseWorkspace, $workspace->getBaseWorkspace());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode()
     {
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
 
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['add'])->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->onlyMethods(['add'])->getMock();
         $mockNodeDataRepository->expects(self::once())->method('add');
 
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
@@ -54,24 +51,20 @@ class WorkspaceTest extends UnitTestCase
         self::assertInstanceOf(NodeData::class, $workspace->getRootNodeData());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNodeCountCallsRepositoryFunction()
     {
-        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->setMethods(['countByWorkspace'])->getMock();
+        $mockNodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->onlyMethods(['countByWorkspace'])->getMock();
 
         $workspace = $this->getAccessibleMock(Workspace::class, ['dummy'], [], '', false);
         $workspace->_set('nodeDataRepository', $mockNodeDataRepository);
 
-        $mockNodeDataRepository->expects(self::once())->method('countByWorkspace')->with($workspace)->will(self::returnValue(42));
+        $mockNodeDataRepository->expects(self::once())->method('countByWorkspace')->with($workspace)->willReturn(42);
 
         self::assertSame(42, $workspace->getNodeCount());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function publishNodeReturnsIfTheCurrentWorkspaceHasNoBaseWorkspace()
     {
         $targetWorkspace = new Workspace('live');
@@ -88,26 +81,23 @@ class WorkspaceTest extends UnitTestCase
      * Bug NEOS-1769: Content Collections disappear when publishing to other workspace than "live"
      *
      * Under certain circumstances, content collection nodes will be deleted when publishing a document to a workspace which is based on another workspace.
-     *
-     * @test
      */
+    #[Test]
     public function publishNodeReturnsIfTheTargetWorkspaceIsTheSameAsTheSourceWorkspace()
     {
         $liveWorkspace = new Workspace('live');
-        $workspace = $this->getMockBuilder(Workspace::class)->setMethods(['emitBeforeNodePublishing'])->setConstructorArgs(['some-campaign'])->getMock();
+        $workspace = $this->getMockBuilder(Workspace::class)->onlyMethods(['emitBeforeNodePublishing'])->setConstructorArgs(['some-campaign'])->getMock();
         $workspace->setBaseWorkspace($liveWorkspace);
 
         $mockNode = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
-        $mockNode->expects(self::any())->method('getWorkspace')->will(self::returnValue($workspace));
+        $mockNode->expects(self::any())->method('getWorkspace')->willReturn($workspace);
 
         $workspace->expects(self::never())->method('emitBeforeNodePublishing');
 
         $workspace->publishNode($mockNode, $workspace);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function verifyPublishingTargetWorkspaceDoesNotThrowAnExceptionIfTargetWorkspaceIsABaseWorkspace()
     {
         $someBaseWorkspace = new Workspace('live');
@@ -119,9 +109,7 @@ class WorkspaceTest extends UnitTestCase
         self::assertTrue(true);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function verifyPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace()
     {
         $this->expectException(WorkspaceException::class);
@@ -135,7 +123,7 @@ class WorkspaceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validContextNodePaths()
+    public static function validContextNodePaths()
     {
         return [
             ['foo@user-bar'],
@@ -145,10 +133,8 @@ class WorkspaceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider validContextNodePaths
-     */
+    #[DataProvider('validContextNodePaths')]
+    #[Test]
     public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath)
     {
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
@@ -158,7 +144,7 @@ class WorkspaceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidContextNodePaths()
+    public static function invalidContextNodePaths()
     {
         return [
             ['foo@user-bar.html'],
@@ -166,19 +152,15 @@ class WorkspaceTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidContextNodePaths
-     */
+    #[DataProvider('invalidContextNodePaths')]
+    #[Test]
     public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath)
     {
         preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
         self::assertArrayNotHasKey('WorkspaceName', $matches);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function publishNodeWithANodeInTheTargetWorkspaceShouldDoNothing()
     {
         $liveWorkspace = new Workspace('live');
@@ -188,16 +170,14 @@ class WorkspaceTest extends UnitTestCase
         $this->inject($liveWorkspace, 'nodeDataRepository', $nodeDataRepository);
 
         $node = $this->createMock(NodeInterface::class);
-        $node->expects(self::any())->method('getWorkspace')->will(self::returnValue($liveWorkspace));
+        $node->expects(self::any())->method('getWorkspace')->willReturn($liveWorkspace);
 
         $nodeDataRepository->expects(self::never())->method('findOneByIdentifier');
 
         $personalWorkspace->publishNode($node, $liveWorkspace);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isPersonalWorkspaceChecksIfTheWorkspaceNameStartsWithUser()
     {
         $liveWorkspace = new Workspace('live');
