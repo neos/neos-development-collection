@@ -62,13 +62,16 @@ final readonly class AssetUsageIndexingProcessor
 
         /** @var Workspace $workspace */
         foreach ([$liveWorkspace, ...$workspacesDependingOnLive] as $workspace) {
+
+            $this->dispatchMessage($callback, sprintf('  Workspace: %s', $workspace->workspaceName->value));
+
             // We do not need to index workspaces without any changes, as they are already indexed by baseworkspace
             if (!$workspace->workspaceName->isLive() && !$workspace->hasPublishableChanges()) {
+                $this->dispatchMessage($callback, '    ... skipped, no changes to baseworkspace');
                 continue;
             }
 
             $contentGraph = $contentRepository->getContentGraph($workspace->workspaceName);
-            $this->dispatchMessage($callback, sprintf('  Workspace: %s', $contentGraph->getWorkspaceName()->value));
 
             $dimensionSpacePoints = $variationGraph->getDimensionSpacePoints();
 
