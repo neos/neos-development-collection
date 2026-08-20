@@ -55,8 +55,8 @@ Feature: Build index for existing nodes without dimensions
 
   Scenario: All workspaces are rebased
     When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
-
-    Then I expect the AssetUsageService to have the following AssetUsages:
+    Then I expect the last asset usage index to have succeeded
+    And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
       | asset-2 | nody-mc-nodeface           | assets       | live           | {}                        |
@@ -86,8 +86,8 @@ Feature: Build index for existing nodes without dimensions
       | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
 
     When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
-
-    Then I expect the AssetUsageService to have the following AssetUsages:
+    Then I expect the last asset usage index to have succeeded
+    And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
       | asset-2 | nody-mc-nodeface           | assets       | live           | {}                        |
@@ -131,8 +131,8 @@ Feature: Build index for existing nodes without dimensions
       | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
 
     When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
-
-    Then I expect the AssetUsageService to have the following AssetUsages:
+    Then I expect the last asset usage index to have failed
+    And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
       | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
@@ -199,8 +199,8 @@ Feature: Build index for existing nodes without dimensions
       | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
 
     When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
-
-    Then I expect the AssetUsageService to have the following AssetUsages:
+    Then I expect the last asset usage index to have succeeded
+    And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
       | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |

@@ -28,6 +28,8 @@ use PHPUnit\Framework\Assert;
  */
 trait AssetUsageTrait
 {
+    protected $lastIndexWasSuccessful = false;
+
     /**
      * @template T of object
      * @param class-string<T> $className
@@ -49,7 +51,7 @@ trait AssetUsageTrait
     /**
      * @Then I expect the AssetUsageService to have the following AssetUsages:
      */
-    public function iExpectTheAssetUsageServiceToHaveTheFollowingAssetUsages(TableNode $table)
+    public function iExpectTheAssetUsageServiceToHaveTheFollowingAssetUsages(TableNode $table): void
     {
         $assetUsageService = $this->getObject(AssetUsageService::class);
         $assetUsages = iterator_to_array($assetUsageService->findByFilter($this->currentContentRepository->id, AssetUsageFilter::create()));
@@ -79,11 +81,27 @@ trait AssetUsageTrait
     /**
      * @When I run the AssetUsageIndexingProcessor with rootNodeTypeName ":rootNodeTypeName"
      */
-    public function iRunTheAssetUsageIndexingProcessor(string $rootNodeTypeName)
+    public function iRunTheAssetUsageIndexingProcessor(string $rootNodeTypeName): void
     {
-        $this->getObject(AssetUsageIndexingProcessor::class)->buildIndex(
+        $this->lastIndexWasSuccessful = $this->getObject(AssetUsageIndexingProcessor::class)->buildIndex(
             $this->currentContentRepository,
             NodeTypeName::fromString($rootNodeTypeName),
         );
+    }
+
+    /**
+     * @Then I expect the last asset usage index to have succeeded
+     */
+    public function iExpectTheLastAssetUsageIndexToHaveSucceeded(): void
+    {
+        Assert::assertTrue($this->lastIndexWasSuccessful);
+    }
+
+    /**
+     * @Then I expect the last asset usage index to have failed
+     */
+    public function iExpectTheLastAssetUsageIndexToHaveFailed(): void
+    {
+        Assert::assertFalse($this->lastIndexWasSuccessful);
     }
 }

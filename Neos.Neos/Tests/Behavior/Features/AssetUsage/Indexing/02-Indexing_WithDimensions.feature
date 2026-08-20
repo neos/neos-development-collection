@@ -91,8 +91,8 @@ Feature: Build index for existing nodes with dimensions
       | asset-2 | nody-mc-nodeface           | assets       | user-workspace | {"language": "gsw", "market": "EU"} |
 
     When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root"
-
-    Then I expect the AssetUsageService to have the following AssetUsages:
+    Then I expect the last asset usage index to have succeeded
+    And I expect the AssetUsageService to have the following AssetUsages:
       | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint           |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "de", "market": "DE"}  |
       | asset-1 | sir-david-nodenborough     | asset        | live           | {"language": "gsw", "market": "EU"} |
