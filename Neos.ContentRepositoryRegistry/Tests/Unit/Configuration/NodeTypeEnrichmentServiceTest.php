@@ -18,6 +18,7 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\Test;
 
 class NodeTypeEnrichmentServiceTest extends UnitTestCase
 {
@@ -29,9 +30,7 @@ class NodeTypeEnrichmentServiceTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function EnrichNodeTypeLabelsConfig(): void
     {
         $nodeConfiguration = YAML::parse(<<<'YAML'

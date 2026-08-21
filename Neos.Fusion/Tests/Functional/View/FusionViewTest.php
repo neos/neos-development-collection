@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Functional\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
@@ -24,18 +24,14 @@ use Psr\Http\Message\StreamInterface;
  */
 class FusionViewTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewIsUsedForRendering()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
         self::assertEquals('X', $view->render()->getContents());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewUsesGivenPathIfSet()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
@@ -43,9 +39,7 @@ class FusionViewTest extends FunctionalTestCase
         self::assertEquals('Xfoobar', $view->render()->getContents());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewOutputsVariable()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
@@ -53,9 +47,7 @@ class FusionViewTest extends FunctionalTestCase
         self::assertEquals('XHallo Welt', $view->render()->getContents());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewReturnsStreamInterface()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
@@ -65,9 +57,7 @@ class FusionViewTest extends FunctionalTestCase
         self::assertEquals('XHallo Welt', $response->getContents());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewReturnsHttpResponseFromHttpMessagePrototype()
     {
         $view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
@@ -79,9 +69,7 @@ class FusionViewTest extends FunctionalTestCase
         self::assertSame('application/json', $response->getHeaderLine('Content-Type'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionViewCannotRenderNonStringableValue()
     {
         $this->expectException(IllegalEntryFusionPathValueException::class);
@@ -102,8 +90,8 @@ class FusionViewTest extends FunctionalTestCase
     protected function buildView($controllerObjectName, $controllerActionName)
     {
         $request = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
-        $request->expects(self::any())->method('getControllerObjectName')->will(self::returnValue($controllerObjectName));
-        $request->expects(self::any())->method('getControllerActionName')->will(self::returnValue($controllerActionName));
+        $request->expects(self::any())->method('getControllerObjectName')->willReturn($controllerObjectName);
+        $request->expects(self::any())->method('getControllerActionName')->willReturn($controllerActionName);
 
         $view = new FusionView();
         $view->assign('request', $request);

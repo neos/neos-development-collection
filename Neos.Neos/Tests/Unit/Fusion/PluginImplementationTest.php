@@ -10,7 +10,8 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
@@ -92,7 +93,7 @@ class PluginImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function responseHeadersDataProvider(): array
+    public static function responseHeadersDataProvider(): array
     {
         /*
          * Fyi (from christian) Multiple competing headers like that are a broken use case anyways.
@@ -120,10 +121,9 @@ class PluginImplementationTest extends UnitTestCase
 
     /**
      * Test if the response headers of the plugin - set within the plugin action / dispatch - were set into the parent response.
-     *
-     * @dataProvider responseHeadersDataProvider
-     * @test
      */
+    #[DataProvider('responseHeadersDataProvider')]
+    #[Test]
     public function evaluateSetHeaderIntoParent(string $message, array $input, array $expected): void
     {
         $this->pluginImplementation->method('buildPluginRequest')->willReturn($this->mockActionRequest);

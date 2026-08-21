@@ -1,6 +1,9 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,13 +13,12 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for conditional rendering (if)
  */
-class ConditionsTest extends AbstractFusionObjectTest
+class ConditionsTest extends AbstractFusionObjectTestCase
 {
-    public function conditionExamples()
+    public static function conditionExamples()
     {
         return [
             ['conditions/simpleValueTrue', 'Foo'],
@@ -40,10 +42,8 @@ class ConditionsTest extends AbstractFusionObjectTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider conditionExamples
-     */
+    #[DataProvider('conditionExamples')]
+    #[Test]
     public function conditionsWork($path, $expected)
     {
         $view = $this->buildView();
@@ -52,7 +52,7 @@ class ConditionsTest extends AbstractFusionObjectTest
         self::assertSame($expected, $view->render());
     }
 
-    public function valuesForCondition()
+    public static function valuesForCondition()
     {
         return [
             [false, null],
@@ -69,10 +69,8 @@ class ConditionsTest extends AbstractFusionObjectTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider valuesForCondition
-     */
+    #[DataProvider('valuesForCondition')]
+    #[Test]
     public function everythingButFalseIsEvaluated($conditionValue, $expected)
     {
         $view = $this->buildView();
@@ -81,9 +79,7 @@ class ConditionsTest extends AbstractFusionObjectTest
         self::assertSame($expected, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function conditionsInFusionObjectsWithSubEvaluationUsedInProcessorRenderCorrectly()
     {
         $view = $this->buildView();

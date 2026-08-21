@@ -11,10 +11,12 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function catchUpHooksAreExecutedAndCanAccessTheCorrectProjectionsState()
     {
         $this->eventStore->setup();
@@ -75,7 +77,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         $expectOneHandledEvent();
     }
 
-    /** @test */
+    #[Test]
     public function catchUpBeforeAndAfterCatchupAreRunForZeroEvents()
     {
         $this->eventStore->setup();
@@ -104,7 +106,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         self::assertEmpty($this->secondFakeProjection->getState()->findAppliedSequenceNumberValues());
     }
 
-    /** @test */
+    #[Test]
     public function catchUpBeforeAndAfterCatchupAreNotRunIfNoSubscriberMatches()
     {
         $this->eventStore->setup();
@@ -134,7 +136,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         self::assertEmpty($this->secondFakeProjection->getState()->findAppliedSequenceNumberValues());
     }
 
-    /** @test */
+    #[Test]
     public function catchHooksAreOnlyRunForMatchingSubscriber()
     {
         $this->eventStore->setup();
@@ -175,7 +177,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    public function provideValidBatchSizes(): iterable
+    public static function provideValidBatchSizes(): iterable
     {
         yield 'none' => [
             'batchSize' => null,
@@ -217,10 +219,8 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideValidBatchSizes
-     * @test
-     */
+    #[DataProvider('provideValidBatchSizes')]
+    #[Test]
     public function catchUpHooksWithBatching(int|null $batchSize, array $onAfterBatchCompletedInvocations)
     {
         $this->eventStore->setup();
@@ -248,7 +248,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
         ] as $catchUpHookMock) {
             $catchUpHookMock->expects(self::once())->method('onBeforeCatchUp')->with(SubscriptionStatus::BOOTING);
             $catchUpHookMock->expects($i = self::exactly(4))->method('onBeforeEvent')->willReturnCallback(function ($_, EventEnvelope $eventEnvelope) use ($i) {
-                match($i->getInvocationCount()) {
+                match($i->numberOfInvocations()) {
                     1 => [
                         self::assertEquals(1, $eventEnvelope->sequenceNumber->value),
                         self::assertEquals([], $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues())
@@ -268,7 +268,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
                 };
             });
             $catchUpHookMock->expects($i = self::exactly(4))->method('onAfterEvent')->willReturnCallback(function ($_, EventEnvelope $eventEnvelope) use ($i) {
-                match($i->getInvocationCount()) {
+                match($i->numberOfInvocations()) {
                     1 => [
                         self::assertEquals(1, $eventEnvelope->sequenceNumber->value),
                         self::assertEquals([1], $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues())
@@ -288,7 +288,7 @@ final class CatchUpHookTest extends AbstractSubscriptionEngineTestCase
                 };
             });
             $catchUpHookMock->expects($i = self::exactly(\count($onAfterBatchCompletedInvocations)))->method('onAfterBatchCompleted')->willReturnCallback(function () use ($i, $onAfterBatchCompletedInvocations) {
-                self::assertEquals($onAfterBatchCompletedInvocations[$i->getInvocationCount() - 1], $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues());
+                self::assertEquals($onAfterBatchCompletedInvocations[$i->numberOfInvocations() - 1], $this->secondFakeProjection->getState()->findAppliedSequenceNumberValues());
             });
             $catchUpHookMock->expects(self::once())->method('onAfterCatchUp');
         }

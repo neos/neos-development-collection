@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,15 +12,12 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Prototypical Inheritance Test
  */
-class PrototypeInheritanceTest extends AbstractFusionObjectTest
+class PrototypeInheritanceTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function baseClassHasModifiedValue()
     {
         $view = $this->buildView();
@@ -26,9 +25,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
         self::assertEquals('BaseModified', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function subWithOverrideHasOverriddenValue()
     {
         $view = $this->buildView();
@@ -36,9 +33,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
         self::assertEquals('Sub', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function subWithoutOverrideHasModifiedBaseValue()
     {
         $view = $this->buildView();
@@ -46,9 +41,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
         self::assertEquals('BaseModified', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function advancedBaseObjectHasModifiedValue()
     {
         $view = $this->buildView();
@@ -56,9 +49,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
         self::assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function advancedSubWithoutOverrideHasModifiedBaseValue()
     {
         $view = $this->buildView();
@@ -66,9 +57,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
         self::assertEquals('prepend_beforeOverride|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function advancedSubWithOverrideHasModifiedBaseValue()
     {
         $view = $this->buildView();
@@ -76,9 +65,7 @@ class PrototypeInheritanceTest extends AbstractFusionObjectTest
         self::assertEquals('prepend_inSub|value_from_nested_prototype|append_afterOverride', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function contextDependentPrototypesTakeInheritanceIntoAccount()
     {
         $view = $this->buildView();

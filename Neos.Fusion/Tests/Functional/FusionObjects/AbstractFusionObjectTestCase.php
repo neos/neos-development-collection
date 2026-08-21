@@ -22,7 +22,7 @@ use Neos\Fusion\Core\RuntimeFactory;
  * Testcase for the Fusion View
  *
  */
-abstract class AbstractFusionObjectTest extends FunctionalTestCase
+abstract class AbstractFusionObjectTestCase extends FunctionalTestCase
 {
     /**
      * @var ActionRequest

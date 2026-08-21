@@ -17,6 +17,8 @@ use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Cli\Response;
 use Neos\Utility\ObjectAccess;
 use Symfony\Component\Console\Output\BufferedOutput;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\Test;
 
 final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSubscriptionEngineTestCase
 {
@@ -30,7 +32,7 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
 
     protected static bool $strictFakeProjection = false;
 
-    /** @before */
+    #[Before]
     public function injectController(): void
     {
         $this->crController = $this->getObject(CrCommandController::class);
@@ -46,7 +48,7 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
         ObjectAccess::getProperty($this->subscriptionController, 'output', true)->setOutput($this->bufferedOutput);
     }
 
-    /** @test */
+    #[Test]
     public function setupOnEmptyEventStore(): void
     {
         $this->fakeProjection->expects(self::once())->method('setUp');
@@ -64,7 +66,7 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
         self::assertEmpty($this->bufferedOutput->fetch());
     }
 
-    /** @test */
+    #[Test]
     public function setupOnModifiedEventStore(): void
     {
         $this->eventStore->setup();
@@ -99,7 +101,7 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    /** @test */
+    #[Test]
     public function projectionInError(): void
     {
         $this->eventStore->setup();
@@ -140,7 +142,7 @@ final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSu
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
     }
 
-    /** @test */
+    #[Test]
     public function catchupOnAdvancedModifiedEventStore(): void
     {
         $this->fakeProjection->expects(self::once())->method('setUp');
