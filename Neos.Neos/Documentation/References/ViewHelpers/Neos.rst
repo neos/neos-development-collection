@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2026-08-18
+This reference was automatically generated from code on 2026-08-21
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
