@@ -52,7 +52,8 @@ final readonly class AssetUsageIndexingProcessor
 
             if (count($dirtyWorkspacesWithUnpublishedChanges) > 0) {
                 $this->dispatchMessage($callback, "\n!!! Some workspaces are not up to date and have additional unpublished changes. The indexing may produce false asset usages for these cases.");
-                $this->dispatchMessage($callback, "\n!!! Please rebase the corresponding workspaces or publish all pending changes. If you still want to run the index, run it with the 'force' option.");
+                $this->dispatchMessage($callback, "\n!!! Please rebase the corresponding workspaces or publish all pending changes.\n./flow workspace:rebaseoutdated\n./flow workspace:publish <workspace>");
+                $this->dispatchMessage($callback, "\nIf you still want to run the index, run it with the 'force' option.");
                 $this->dispatchMessage($callback, sprintf("\nAffected Workspaces: \n%s\n", implode("\n", array_map(fn ($workspace) => "  - " . $workspace->workspaceName->value, $dirtyWorkspacesWithUnpublishedChanges))));
                 return false;
             }
