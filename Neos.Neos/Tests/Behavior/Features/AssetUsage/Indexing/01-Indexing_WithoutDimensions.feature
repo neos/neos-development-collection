@@ -139,6 +139,53 @@ Feature: Build index for existing nodes without dimensions
       | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
       | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
 
+  Scenario: User workspace is behind live, with additional assets on the user workspace - but running with force
+    When I am in workspace "user-workspace"
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId           | nodeName | parentNodeAggregateId      | nodeTypeName                                           | initialPropertyValues          |
+      | sir-nodeward-nodington-iv | bakura   | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"text": "Text Without Asset"} |
+      | sir-nodeward-nodington-v  | quatilde | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:NodeWithAssetProperties | {"assets": ["Asset:asset-2"]}  |
+
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                      |
+      | workspaceName             | "user-workspace"           |
+      | nodeAggregateId           | "sir-david-nodenborough"   |
+      | originDimensionSpacePoint | {}                         |
+      | propertyValues            | {"asset": "Asset:asset-2"} |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-2 | nody-mc-nodeface           | assets       | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+    When I am in workspace "live"
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "nody-mc-nodeface" |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
+    When I run the AssetUsageIndexingProcessor with rootNodeTypeName "Neos.ContentRepository:Root" with force
+    Then I expect the last asset usage index to have succeeded
+    And I expect the AssetUsageService to have the following AssetUsages:
+      | assetId | nodeAggregateId            | propertyName | workspaceName  | originDimensionSpacePoint |
+      | asset-1 | sir-david-nodenborough     | asset        | live           | {}                        |
+      # This is asset usage is actually false, as it was removed in live. But we can't distinguish between missing events and new events on the workspace.
+      # Running with force acknowledge this.
+      | asset-2 | nody-mc-nodeface           | assets       | user-workspace | {}                        |
+      | asset-3 | sir-nodeward-nodington-iii | text         | live           | {}                        |
+      | asset-2 | sir-nodeward-nodington-v   | assets       | user-workspace | {}                        |
+      | asset-2 | sir-david-nodenborough     | asset        | user-workspace | {}                        |
+
   Scenario: User workspace is behind live, with additional assets on the user workspace - with rebase afterwards
     When I am in workspace "user-workspace"
     And the following CreateNodeAggregateWithNode commands are executed:

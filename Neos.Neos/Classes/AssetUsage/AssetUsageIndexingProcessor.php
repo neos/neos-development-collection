@@ -41,11 +41,11 @@ final readonly class AssetUsageIndexingProcessor
         $this->dispatchMessage($callback, sprintf('ContentRepository "%s"', $contentRepository->id->value));
 
         // Check workspaces first for there state and unpublished changes
-        if($force === false) {
+        if ($force === false) {
             /** @var Workspace $workspace */
             $dirtyWorkspacesWithUnpublishedChanges = [];
-            foreach ([$liveWorkspace, ...$workspacesDependingOnLive] as $workspace) {
-                if (!$workspace->workspaceName->isLive() && $workspace->status === WorkspaceStatus::OUTDATED && $workspace->hasPublishableChanges() === true) {
+            foreach ($workspacesDependingOnLive as $workspace) {
+                if ($workspace->status === WorkspaceStatus::OUTDATED && $workspace->hasPublishableChanges() === true) {
                     $dirtyWorkspacesWithUnpublishedChanges[] = $workspace;
                 }
             }
@@ -53,7 +53,7 @@ final readonly class AssetUsageIndexingProcessor
             if (count($dirtyWorkspacesWithUnpublishedChanges) > 0) {
                 $this->dispatchMessage($callback, "\n!!! Some workspaces are not up to date and have additional unpublished changes. The indexing may produce false asset usages for these cases.");
                 $this->dispatchMessage($callback, "\n!!! Please rebase the corresponding workspaces or publish all pending changes. If you still want to run the index, run it with the 'force' option.");
-                $this->dispatchMessage($callback, sprintf("\nAffected Workspaces: \n%s\n", implode("\n", array_map(fn($workspace) => "  - ".$workspace->workspaceName->value,$dirtyWorkspacesWithUnpublishedChanges))));
+                $this->dispatchMessage($callback, sprintf("\nAffected Workspaces: \n%s\n", implode("\n", array_map(fn ($workspace) => "  - " . $workspace->workspaceName->value, $dirtyWorkspacesWithUnpublishedChanges))));
                 return false;
             }
         }

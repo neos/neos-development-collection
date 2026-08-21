@@ -81,12 +81,21 @@ trait AssetUsageTrait
     /**
      * @When I run the AssetUsageIndexingProcessor with rootNodeTypeName ":rootNodeTypeName"
      */
-    public function iRunTheAssetUsageIndexingProcessor(string $rootNodeTypeName): void
+    public function iRunTheAssetUsageIndexingProcessor(string $rootNodeTypeName, bool $force = false): void
     {
         $this->lastIndexWasSuccessful = $this->getObject(AssetUsageIndexingProcessor::class)->buildIndex(
             $this->currentContentRepository,
             NodeTypeName::fromString($rootNodeTypeName),
+            $force
         );
+    }
+
+    /**
+     * @When I run the AssetUsageIndexingProcessor with rootNodeTypeName ":rootNodeTypeName" with force
+     */
+    public function iRunTheAssetUsageIndexingProcessorWithForce(string $rootNodeTypeName): void
+    {
+        $this->iRunTheAssetUsageIndexingProcessor($rootNodeTypeName, true);
     }
 
     /**
