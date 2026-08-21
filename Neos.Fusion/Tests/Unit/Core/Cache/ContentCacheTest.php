@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\EnvironmentConfiguration;
@@ -21,6 +20,8 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Exception\CacheException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the ContentCache
@@ -30,7 +31,7 @@ class ContentCacheTest extends UnitTestCase
     /**
      * @return array
      */
-    public function tags()
+    public static function tags()
     {
         return [
             ['Everything', 'Everything'],
@@ -43,10 +44,8 @@ class ContentCacheTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @dataProvider tags()
-     * @test
-     */
+    #[DataProvider('tags')]
+    #[Test]
     public function flushByTagSanitizesTagsForCacheFrontend($tag, $sanitizedTag)
     {
         $mockCache = $this->getMockBuilder(StringFrontend::class)->disableOriginalConstructor()->getMock();
@@ -59,17 +58,15 @@ class ContentCacheTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidEntryIdentifierValues()
+    public static function invalidEntryIdentifierValues()
     {
         return [
             'object not implementing CacheAwareInterface' => [['foo' => new \stdClass()]]
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidEntryIdentifierValues
-     */
+    #[DataProvider('invalidEntryIdentifierValues')]
+    #[Test]
     public function createCacheSegmentWithInvalidEntryIdentifierValueThrowsException($entryIdentifierValues)
     {
         $this->expectException(CacheException::class);
@@ -83,24 +80,26 @@ class ContentCacheTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validEntryIdentifierValues()
+    public static function validEntryIdentifierValues()
     {
-        $mockCacheAware = $this->createMock(CacheAwareInterface::class);
         return [
             'string value' => [['foo' => 'Bar']],
             'boolean value' => [['foo' => true]],
             'integer value' => [['foo' => 42]],
-            'object implementing CacheAwareInterface' => [['foo' => $mockCacheAware]],
+            // data providers must be static and cannot build mocks, so the test method
+            // replaces this marker with a CacheAwareInterface mock
+            'object implementing CacheAwareInterface' => [['foo' => '__mock:CacheAwareInterface']],
             'null' => [['foo' => null]]
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider validEntryIdentifierValues
-     */
+    #[DataProvider('validEntryIdentifierValues')]
+    #[Test]
     public function createCacheSegmentWithValidEntryIdentifierValueCreatesIdentifier($entryIdentifierValues)
     {
+        if (($entryIdentifierValues['foo'] ?? null) === '__mock:CacheAwareInterface') {
+            $entryIdentifierValues['foo'] = $this->createMock(CacheAwareInterface::class);
+        }
         $contentCache = new ContentCache();
         $mockSecurityContext = $this->createMock(Context::class);
         $this->inject($contentCache, 'securityContext', $mockSecurityContext);
@@ -108,9 +107,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertNotEmpty($segement);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCacheSegmentWithLifetimeStoresLifetimeAfterTagsInMetadata()
     {
         $contentCache = new ContentCache();
@@ -120,9 +117,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertStringContainsString('Foo,Bar;60' . ContentCache::CACHE_SEGMENT_SEPARATOR_TOKEN, $segment);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processCacheSegmentsSetsLifetimeFromMetadata()
     {
         $contentCache = new ContentCache();
@@ -144,9 +139,7 @@ class ContentCacheTest extends UnitTestCase
         $contentCache->processCacheSegments($segement);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createCacheSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
     {
         $contentCache = new ContentCache();
@@ -174,21 +167,27 @@ class ContentCacheTest extends UnitTestCase
             ['mytag2'],
             86400
         );
-        $mockCache->expects(self::atLeast(2))
-            ->method('set')
-            ->withConsecutive(
-                [self::anything(), $invalidContent, ['mytag1', 'mytag2'], null],
-                [self::anything(), $validContent, ['mytag2'], 86400],
-            );
+        $matcher = self::atLeast(2);
+        $mockCache->expects($matcher)
+            ->method('set')->willReturnCallback(function (...$parameters) use ($matcher, $invalidContent, $validContent) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame($invalidContent, $parameters[1]);
+                    $this->assertSame(['mytag1', 'mytag2'], $parameters[2]);
+                    $this->assertSame(null, $parameters[3]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame($validContent, $parameters[1]);
+                    $this->assertSame(['mytag2'], $parameters[2]);
+                    $this->assertSame(86400, $parameters[3]);
+                }
+            });
 
         $output = $contentCache->processCacheSegments($content);
 
         self::assertSame($invalidContent . $validContent, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createUncachedSegmentAndProcessCacheSegmentsDoesWorkWithCacheSegmentTokensInContent()
     {
         $contentCache = new ContentCache();
@@ -209,9 +208,7 @@ class ContentCacheTest extends UnitTestCase
         self::assertSame($invalidContent, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedSegmentWithExistingCacheEntryReplacesNestedCachedSegments()
     {
         $contentCache = new ContentCache();

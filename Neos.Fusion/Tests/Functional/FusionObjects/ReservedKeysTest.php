@@ -11,21 +11,19 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for reserved Fusion keys
  *
  */
-class ReservedKeysTest extends AbstractFusionObjectTest
+class ReservedKeysTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function usingReservedKeysThrowsException()
     {
         $this->expectException(Exception::class);
@@ -35,9 +33,7 @@ class ReservedKeysTest extends AbstractFusionObjectTest
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nonReservedKeysWorks()
     {
         $view = $this->buildView();

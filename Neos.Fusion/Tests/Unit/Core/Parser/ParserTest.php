@@ -11,11 +11,14 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion;
 use Neos\Fusion\Core\Cache\ParserCache;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class ParserTest extends UnitTestCase
 {
@@ -30,12 +33,12 @@ class ParserTest extends UnitTestCase
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
         $parserCache = $this->getMockBuilder(ParserCache::class)->getMock();
-        $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
-        $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
+        $parserCache->method('cacheForFusionFile')->willReturnCallback(fn ($_, $getValue) => $getValue());
+        $parserCache->method('cacheForDsl')->willReturnCallback(fn ($_, $_2, $getValue) => $getValue());
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
-    public function pathBlockTest(): array
+    public static function pathBlockTest(): array
     {
         return [
             [
@@ -95,7 +98,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function unexpectedBlocksWork(): array
+    public static function unexpectedBlocksWork(): array
     {
         // test of normal objects is already done with the fixtures
         return [
@@ -130,7 +133,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function unsetPathOrSetToNull()
+    public static function unsetPathOrSetToNull()
     {
         yield 'overwrite with boolean value' => [
             <<<'Fusion'
@@ -186,7 +189,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function simplePathToArray(): \Generator
+    public static function simplePathToArray(): \Generator
     {
         yield 'simple string "opened" with meta' => [
             <<<'Fusion'
@@ -229,7 +232,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function overridePaths(): \Generator
+    public static function overridePaths(): \Generator
     {
         yield 'eel expression is overridden by simple type' => [
             <<<'Fusion'
@@ -325,7 +328,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function commentsTest(): array
+    public static function commentsTest(): array
     {
         $obj = function (string $name): array {
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
@@ -384,7 +387,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsWrongComments(): array
+    public static function throwsWrongComments(): array
     {
         return[
             [
@@ -428,7 +431,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function prototypeDeclarationAndInheritance(): array
+    public static function prototypeDeclarationAndInheritance(): array
     {
         return [
             [
@@ -487,9 +490,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function typeConversionOnPhpArrayKeys()
     {
         // as a reminder how php arrays work ^^
@@ -511,7 +512,7 @@ class ParserTest extends UnitTestCase
         self::assertSame('123.456', $asArrayKey('123.456'), 'string float array keys stay strings');
     }
 
-    public function problematicPathIdNames(): \Generator
+    public static function problematicPathIdNames(): \Generator
     {
         yield 'float in quotes as path identifier' => [
             <<<'Fusion'
@@ -601,7 +602,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsOldNamespaceDeclaration(): array
+    public static function throwsOldNamespaceDeclaration(): array
     {
         return [
             [
@@ -619,7 +620,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsGeneralWrongSyntax(): \Generator
+    public static function throwsGeneralWrongSyntax(): \Generator
     {
         yield 'path declaration after opening' => [<<<'Fusion'
             a { b = "hello"
@@ -721,7 +722,7 @@ class ParserTest extends UnitTestCase
             Fusion];
     }
 
-    public function unexpectedCopyAssigment()
+    public static function unexpectedCopyAssigment()
     {
         yield 'copying from undefined path 1' => ['a < b', ['a' => null]];
 
@@ -760,7 +761,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function unexpectedObjectPaths(): array
+    public static function unexpectedObjectPaths(): array
     {
         return [
             ['0 = ""', [0 => '']],
@@ -789,14 +790,14 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function metaObjectPaths(): array
+    public static function metaObjectPaths(): array
     {
         return [
             ['a.@abc = 1', ['a' => ['__meta' => ['abc' => 1]]]],
         ];
     }
 
-    public function nestedObjectPaths(): array
+    public static function nestedObjectPaths(): array
     {
         return [
             ['12f:o:o.ba:r.as.ba:z = 1', ['12f:o:o' => ['ba:r' => ['as' => ['ba:z' => 1]]]]],
@@ -806,7 +807,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function simpleValueAssign(): array
+    public static function simpleValueAssign(): array
     {
         return [
             ['a="b"', ['a' => 'b']],
@@ -835,7 +836,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function eelValueAssign(): \Generator
+    public static function eelValueAssign(): \Generator
     {
         $eel = function (string $exp): array {
             return ['__eelExpression' => $exp, '__value' => null, '__objectType' => null];
@@ -895,7 +896,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function stringAndCharValueAssign(): array
+    public static function stringAndCharValueAssign(): array
     {
         return [
             [<<<'Fusion'
@@ -922,7 +923,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function fusionObjectNameEdgeCases(): array
+    public static function fusionObjectNameEdgeCases(): array
     {
         $obj = function (string $name): array {
             return ['__objectType' => $name, '__value' => null, '__eelExpression' => null];
@@ -940,7 +941,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain(): array
+    public static function weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain(): array
     {
         return [
             ['a = ABC:123'],
@@ -955,7 +956,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function throwsFusionObjectNamesWithoutNamespace(): array
+    public static function throwsFusionObjectNamesWithoutNamespace(): array
     {
         return [
             ['a = Value'],
@@ -973,7 +974,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function weirdDslNames(): \Generator
+    public static function weirdDslNames(): \Generator
     {
         yield 'true as dsl key' => [
             'foo = true`code`',
@@ -1000,7 +1001,7 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    public function dslWithBraceOnFirstLine(): \Generator
+    public static function dslWithBraceOnFirstLine(): \Generator
     {
         yield 'dsl with brace on end of first line' => [
             'foo = dsl1`code {`',
@@ -1009,59 +1010,51 @@ class ParserTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider overridePaths
-     * @dataProvider simplePathToArray
-     * @dataProvider commentsTest
-     * @dataProvider unsetPathOrSetToNull
-     * @dataProvider problematicPathIdNames
-     * @dataProvider metaObjectPaths
-     * @dataProvider eelValueAssign
-     * @dataProvider simpleValueAssign
-     * @dataProvider unexpectedCopyAssigment
-     * @dataProvider unexpectedObjectPaths
-     * @dataProvider nestedObjectPaths
-     * @dataProvider pathBlockTest
-     * @dataProvider stringAndCharValueAssign
-     * @dataProvider prototypeDeclarationAndInheritance
-     * @dataProvider fusionObjectNameEdgeCases
-     */
+    #[DataProvider('overridePaths')]
+    #[DataProvider('simplePathToArray')]
+    #[DataProvider('commentsTest')]
+    #[DataProvider('unsetPathOrSetToNull')]
+    #[DataProvider('problematicPathIdNames')]
+    #[DataProvider('metaObjectPaths')]
+    #[DataProvider('eelValueAssign')]
+    #[DataProvider('simpleValueAssign')]
+    #[DataProvider('unexpectedCopyAssigment')]
+    #[DataProvider('unexpectedObjectPaths')]
+    #[DataProvider('nestedObjectPaths')]
+    #[DataProvider('pathBlockTest')]
+    #[DataProvider('stringAndCharValueAssign')]
+    #[DataProvider('prototypeDeclarationAndInheritance')]
+    #[DataProvider('fusionObjectNameEdgeCases')]
+    #[Test]
     public function itParsesToExpectedAst($fusion, $expectedAst): void
     {
-        $parsedFusionAst = $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        $parsedFusionAst = $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
         self::assertSame($expectedAst, $parsedFusionAst);
     }
 
-    /**
-     * @test
-     * @dataProvider throwsOldNamespaceDeclaration
-     * @dataProvider throwsWrongComments
-     * @dataProvider throwsGeneralWrongSyntax
-     * @dataProvider throwsFusionObjectNamesWithoutNamespace
-     */
+    #[DataProvider('throwsOldNamespaceDeclaration')]
+    #[DataProvider('throwsWrongComments')]
+    #[DataProvider('throwsGeneralWrongSyntax')]
+    #[DataProvider('throwsFusionObjectNamesWithoutNamespace')]
+    #[Test]
     public function itThrowsWhileParsing($fusion): void
     {
-        self::expectException(Fusion\Exception::class);
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        self::expectException(Exception::class);
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
-    /**
-     * @test
-     * @dataProvider weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain
-     * @dataProvider unexpectedBlocksWork
-     */
+    #[DataProvider('weirdFusionObjectNamesParsesBecauseTheOldParserDidntComplain')]
+    #[DataProvider('unexpectedBlocksWork')]
+    #[Test]
     public function itParsesWithoutError($fusion): void
     {
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
         self::assertTrue(true);
     }
 
-    /**
-     * @dataProvider weirdDslNames
-     * @dataProvider dslWithBraceOnFirstLine
-     * @test
-     */
+    #[DataProvider('weirdDslNames')]
+    #[DataProvider('dslWithBraceOnFirstLine')]
+    #[Test]
     public function dslIsRecognizedAndPassed($sourceCode, $expectedDslName, $expectedDslContent)
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
@@ -1072,6 +1065,6 @@ class ParserTest extends UnitTestCase
             ->method('handleDslTranspile')
             ->with($expectedDslName, $expectedDslContent);
 
-        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($sourceCode))->toArray();
+        $parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }
 }

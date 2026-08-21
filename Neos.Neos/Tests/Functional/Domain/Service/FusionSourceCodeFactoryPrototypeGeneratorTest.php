@@ -17,6 +17,7 @@ use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\FusionSourceCodeFactory;
 use Neos\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Yaml\Parser as YamlParser;
 
 /**
@@ -61,13 +62,17 @@ class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
 
     public function tearDown(): void
     {
-        $this->objectManager->setInstance(NodeTypeManager::class, $this->originalNodeTypeManager);
+        // setUp() skips this test before the property is set, and PHPUnit 10+ calls
+        // tearDown() even for tests skipped during setUp().
+        if (isset($this->originalNodeTypeManager)) {
+            $this->objectManager->setInstance(NodeTypeManager::class, $this->originalNodeTypeManager);
+        }
         $this->objectManager->forgetInstance(FusionSourceCodeFactory::class);
         $this->objectManager->forgetInstance(TestablePrototypeGenerator::class);
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function generateFusionForNodeThrowsExceptionForInvalidFusionPrototypeGenerator()
     {
         $this->expectException(Exception::class);
@@ -75,7 +80,7 @@ class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
         $this->factory->createFromNodeTypeDefinitions();
     }
 
-    /** @test */
+    #[Test]
     public function generateFusionForNodeDoesNotUseFusionPrototypeGeneratorWithoutConfiguration()
     {
         $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithoutFusionPrototypeGenerator');
@@ -83,7 +88,7 @@ class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
         self::assertSame(0, $this->testablePrototypeGenerator->getCallCount());
     }
 
-    /** @test */
+    #[Test]
     public function generateFusionForNodeUsesDirectlyConfiguredFusionPrototypeGenerator()
     {
         $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithPrototypeGenerator');
@@ -91,7 +96,7 @@ class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
         self::assertSame(1, $this->testablePrototypeGenerator->getCallCount());
     }
 
-    /** @test */
+    #[Test]
     public function generateFusionForNodeUsesInheritedFusionPrototypeGenerator()
     {
         $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');

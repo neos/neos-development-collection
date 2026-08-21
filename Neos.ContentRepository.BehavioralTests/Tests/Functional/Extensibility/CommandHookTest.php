@@ -72,14 +72,14 @@ class CommandHookTest extends AbstractExtensibilityTestCase
         ];
 
         $this->fakeCommandHook->expects($i = self::exactly(count($testCases)))->method('onBeforeHandle')->willReturnCallback(function (CommandInterface $command) use ($i, $testCases) {
-            $caseIndex = $i->getInvocationCount() - 1;
+            $caseIndex = $i->numberOfInvocations() - 1;
 
             $testCase = $testCases[$caseIndex];
             self::assertEquals($testCase['command'], $command, sprintf('The command at step %s doesnt match as expected', $caseIndex));
             return $testCase['command'];
         });
         $this->fakeCommandHook->expects($i = self::exactly(count($testCases)))->method('onAfterHandle')->willReturnCallback(function (CommandInterface $command, PublishedEvents $events) use ($i, $testCases) {
-            $caseIndex = $i->getInvocationCount() - 1;
+            $caseIndex = $i->numberOfInvocations() - 1;
 
             $testCase = $testCases[$caseIndex];
             self::assertEquals($testCase['command'], $command, sprintf('The command at step %s doesnt match as expected', $caseIndex));
@@ -121,7 +121,7 @@ class CommandHookTest extends AbstractExtensibilityTestCase
     {
         $this->fakeCommandHook->expects(self::exactly(4))->method('onBeforeHandle')->willReturnArgument(0);
         $this->fakeCommandHook->expects($i = self::exactly(4))->method('onAfterHandle')->willReturnCallback(function (CommandInterface $command, PublishedEvents $events) use ($i) {
-            if ($i->getInvocationCount() === 3) {
+            if ($i->numberOfInvocations() === 3) {
                 self::assertInstanceOf(CreateNodeAggregateWithNode::class, $command);
                 self::assertEquals([NodeAggregateWithNodeWasCreated::class], $events->map(fn ($event) => $event::class));
 
@@ -138,7 +138,7 @@ class CommandHookTest extends AbstractExtensibilityTestCase
                         'title' => 'set by hook'
                     ])
                 ));
-            } elseif ($i->getInvocationCount() === 4) {
+            } elseif ($i->numberOfInvocations() === 4) {
                 // recursion passes the via the previous onAfterHandle hook back here:
                 self::assertInstanceOf(SetNodeProperties::class, $command);
 
@@ -171,7 +171,7 @@ class CommandHookTest extends AbstractExtensibilityTestCase
     {
         $this->fakeCommandHook->expects(self::exactly(6))->method('onBeforeHandle')->willReturnArgument(0);
         $this->fakeCommandHook->expects($i = self::exactly(6))->method('onAfterHandle')->willReturnCallback(function (CommandInterface $command, PublishedEvents $events) use ($i) {
-            if ($i->getInvocationCount() === 5) {
+            if ($i->numberOfInvocations() === 5) {
                 self::assertInstanceOf(PublishWorkspace::class, $command);
                 self::assertContains(NodeAggregateWithNodeWasCreated::class, $events->map(fn ($event) => $event::class));
 
@@ -188,7 +188,7 @@ class CommandHookTest extends AbstractExtensibilityTestCase
                         'title' => 'set by hook'
                     ])
                 ));
-            } elseif ($i->getInvocationCount() === 6) {
+            } elseif ($i->numberOfInvocations() === 6) {
                 // recursion passes the via the previous onAfterHandle hook back here:
                 self::assertInstanceOf(SetNodeProperties::class, $command);
 

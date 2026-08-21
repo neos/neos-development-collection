@@ -7,6 +7,7 @@ namespace Neos\Fusion\Tests\Unit\Migrations;
 use Neos\Fusion\Migrations\FusionMigrationTrait;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class FusionMigrationTest extends TestCase
@@ -29,7 +30,7 @@ class FusionMigrationTest extends TestCase
         return 'Neos.Fusion-XXX';
     }
 
-    /** @test */
+    #[Test]
     public function doesNoReplacementsIfPackageDoesNotContainFusionFiles(): void
     {
         $stream = vfsStream::setup('fusion', null, $expectedStructure = [
@@ -67,7 +68,7 @@ class FusionMigrationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function doesNoReplacementsIfNoFusionFilesNeedAdjustments(): void
     {
         $stream = vfsStream::setup('fusion', null, $expectedStructure = [
@@ -104,7 +105,7 @@ class FusionMigrationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function doesReplacementFusionFileOfPackage(): void
     {
         $stream = vfsStream::setup('fusion', null, [
@@ -157,7 +158,7 @@ class FusionMigrationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function doesMultipleReplacementInAllFusionFilesOfPackage(): void
     {
         $stream = vfsStream::setup('fusion', null, [
@@ -225,7 +226,7 @@ class FusionMigrationTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function doesFusionPrototypeNameReplacementInAllFusionFilesOfPackage(): void
     {
         $stream = vfsStream::setup('fusion', null, [

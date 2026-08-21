@@ -11,7 +11,7 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Audio;
@@ -19,6 +19,8 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\AudioRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Fixtures\AssetTypeWithoutRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once __DIR__ . '/../../Fixtures/AssetTypeWithoutRepository.php';
 
@@ -30,7 +32,7 @@ class AssetServiceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function getRepositoryReturnsRepositoryForGivenAssetProvider(): array
+    public static function getRepositoryReturnsRepositoryForGivenAssetProvider(): array
     {
         return [
             [Audio::class, AudioRepository::class],
@@ -42,14 +44,14 @@ class AssetServiceTest extends UnitTestCase
     /**
      * @param $modelClassName
      * @param $expectedRepositoryClassName
-     * @dataProvider getRepositoryReturnsRepositoryForGivenAssetProvider
-     * @test
      */
+    #[DataProvider('getRepositoryReturnsRepositoryForGivenAssetProvider')]
+    #[Test]
     public function getRepositoryReturnsRepositoryForGivenAsset($modelClassName, $expectedRepositoryClassName): void
     {
         $mockAsset = $this->getMockBuilder($modelClassName)->disableOriginalConstructor()->getMock();
 
-        $mockObjectManager = $this->createMock(\Neos\Flow\ObjectManagement\ObjectManagerInterface::class);
+        $mockObjectManager = $this->createMock(ObjectManagerInterface::class);
         $mockObjectManager->expects(self::once())
             ->method('get')
             ->willReturn($this->createMock($expectedRepositoryClassName));

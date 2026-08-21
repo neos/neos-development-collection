@@ -15,39 +15,33 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class NodeTagsTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createEmptyCreatesEmptyInstance(): void
     {
         self::assertSame([], iterator_to_array(NodeTags::createEmpty()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createFailsIfTheSameTagIsContainedInInheritedAndExplicitSet(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         NodeTags::create(SubtreeTags::fromStrings('foo', 'bar'), SubtreeTags::fromStrings('foos', 'bar'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withoutReturnsSameInstanceIfSpecifiedTagIsNotContained(): void
     {
         $tags = NodeTags::create(SubtreeTags::fromStrings('foo', 'bar'), SubtreeTags::fromStrings('baz'));
         self::assertSame($tags, $tags->without(SubtreeTag::fromString('foos')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withoutReturnsInstanceWithoutSpecifiedTag(): void
     {
         $tags = NodeTags::create(SubtreeTags::fromStrings('foo', 'bar'), SubtreeTags::fromStrings('baz'))
@@ -65,10 +59,8 @@ class NodeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider withoutInheritedDataProvider
-     */
+    #[DataProvider('withoutInheritedDataProvider')]
+    #[Test]
     public function withoutInheritedTests(array $tags, array $inheritedTags, array $expectedResult): void
     {
         self::assertSame($expectedResult, NodeTags::create(SubtreeTags::fromStrings(...$tags), SubtreeTags::fromStrings(...$inheritedTags))->withoutInherited()->toStringArray());
@@ -83,10 +75,8 @@ class NodeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider onlyInheritedDataProvider
-     */
+    #[DataProvider('onlyInheritedDataProvider')]
+    #[Test]
     public function onlyInheritedTests(array $tags, array $inheritedTags, array $expectedResult): void
     {
         self::assertSame($expectedResult, NodeTags::create(SubtreeTags::fromStrings(...$tags), SubtreeTags::fromStrings(...$inheritedTags))->onlyInherited()->toStringArray());
@@ -101,10 +91,8 @@ class NodeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider isEmptyDataProvider
-     */
+    #[DataProvider('isEmptyDataProvider')]
+    #[Test]
     public function isEmptyTests(array $tags, array $inheritedTags, bool $expectedResult): void
     {
         self::assertSame($expectedResult, NodeTags::create(SubtreeTags::fromStrings(...$tags), SubtreeTags::fromStrings(...$inheritedTags))->isEmpty());
@@ -119,10 +107,8 @@ class NodeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider countDataProvider
-     */
+    #[DataProvider('countDataProvider')]
+    #[Test]
     public function countTests(array $tags, array $inheritedTags, int $expectedResult): void
     {
         self::assertSame($expectedResult, NodeTags::create(SubtreeTags::fromStrings(...$tags), SubtreeTags::fromStrings(...$inheritedTags))->count());
@@ -137,10 +123,8 @@ class NodeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider containDataProvider
-     */
+    #[DataProvider('containDataProvider')]
+    #[Test]
     public function containTests(array $tags, array $inheritedTags, string $tag, bool $expectedResult): void
     {
         self::assertSame($expectedResult, NodeTags::create(SubtreeTags::fromStrings(...$tags), SubtreeTags::fromStrings(...$inheritedTags))->contain(SubtreeTag::fromString($tag)));
@@ -155,43 +139,33 @@ class NodeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider allDataProvider
-     */
+    #[DataProvider('allDataProvider')]
+    #[Test]
     public function allTests(array $tags, array $inheritedTags, array $expectedResult): void
     {
         self::assertSame($expectedResult, NodeTags::create(SubtreeTags::fromStrings(...$tags), SubtreeTags::fromStrings(...$inheritedTags))->all()->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mapAppliesCallback(): void
     {
         $result = NodeTags::create(SubtreeTags::fromStrings('foo', 'bar'), SubtreeTags::fromStrings('baz'))->map(static fn (SubtreeTag $tag, bool $inherited) => strtoupper($tag->value) . ($inherited ? 'i' : 'e'));
         self::assertSame(['FOOe', 'BARe', 'BAZi'], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toStringArrayReturnsEmptyArrayForEmptySet(): void
     {
         self::assertSame([], NodeTags::createEmpty()->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toStringArrayReturnsTagsAsStrings(): void
     {
         self::assertSame(['foo', 'bar', 'baz'], NodeTags::create(SubtreeTags::fromStrings('foo', 'bar'), SubtreeTags::fromStrings('baz'))->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeIterated(): void
     {
         $result = [];
@@ -201,9 +175,7 @@ class NodeTagsTest extends TestCase
         self::assertSame(['foo', 'bar', 'baz'], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeSerialized(): void
     {
         self::assertSame('{"foo":true,"bar":true,"baz":null}', json_encode(NodeTags::create(SubtreeTags::fromStrings('foo', 'bar'), SubtreeTags::fromStrings('baz'))));

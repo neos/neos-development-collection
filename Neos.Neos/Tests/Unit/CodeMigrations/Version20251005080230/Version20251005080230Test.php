@@ -8,6 +8,8 @@ use Neos\Flow\Core\Migrations\Manager;
 use Neos\Flow\Core\Migrations\Version20251005080230;
 use Neos\Neos\Tests\Unit\CodeMigrations\MigrationFixtureIterator;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class Version20251005080230Test extends TestCase
@@ -17,10 +19,8 @@ class Version20251005080230Test extends TestCase
         yield from MigrationFixtureIterator::createForFilesInDirectory(__DIR__ . '/Fixture', 'fusion.inc');
     }
 
-    /**
-     * @dataProvider fixtures
-     * @test
-     */
+    #[DataProvider('fixtures')]
+    #[Test]
     public function executeMigration(string $fusionInputFile, string $expectedFusionOutputFile): void
     {
         vfsStream::setup('fusion', null, [
@@ -58,10 +58,8 @@ class Version20251005080230Test extends TestCase
         );
     }
 
-    /**
-     * @dataProvider fixtures
-     * @test
-     */
+    #[DataProvider('fixtures')]
+    #[Test]
     public function reExecuteMigrationEmitsNoChanges(string $_, string $migratedFusionFile): void
     {
         vfsStream::setup('fusion', null, [

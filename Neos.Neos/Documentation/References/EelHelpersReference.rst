@@ -13,7 +13,7 @@ Array
 
 Array helpers for Eel contexts
 
-The implementation uses the JavaScript specificiation where applicable, including EcmaScript 6 proposals.
+The implementation uses the JavaScript specification where applicable, including EcmaScript 6 proposals.
 
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
 specification of the JavaScript implementation.
@@ -34,7 +34,7 @@ Concatenate arrays or values to a new array
 Array.every(array, callback)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Check if all elements in an array pass a test given by the calback,
+Check if all elements in an array pass a test given by the callback,
 passing each element and key as arguments
 
 Example::
@@ -243,7 +243,7 @@ Returns an array in reverse order
 Array.set(array, key, value)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Set the specified key in the the array
+Set the specified key in the array
 
 * ``array`` (iterable)
 * ``key`` (string|integer) the key that should be set
@@ -291,7 +291,7 @@ Extract a portion of an indexed array
 Array.some(array, callback)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Check if at least one element in an array passes a test given by the calback,
+Check if at least one element in an array passes a test given by the callback,
 passing each element and key as arguments
 
 Example::
@@ -806,7 +806,7 @@ Math
 
 Math helpers for Eel contexts
 
-The implementation sticks to the JavaScript specificiation including EcmaScript 6 proposals.
+The implementation sticks to the JavaScript specification including EcmaScript 6 proposals.
 
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
 specification of the JavaScript implementation.
@@ -1058,7 +1058,7 @@ Calculate the power of x by y
 Math.random()
 ^^^^^^^^^^^^^
 
-Get a random foating point number between 0 (inclusive) and 1 (exclusive)
+Get a random floating point number between 0 (inclusive) and 1 (exclusive)
 
 That means a result will always be less than 1 and greater or equal to 0, the same way Math.random() works in
 JavaScript.

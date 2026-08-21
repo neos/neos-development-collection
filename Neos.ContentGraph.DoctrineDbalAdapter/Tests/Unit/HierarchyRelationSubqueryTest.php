@@ -13,6 +13,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Dbal\Query\StaticWhereCondition;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class HierarchyRelationSubqueryTest extends TestCase
@@ -24,7 +25,7 @@ class HierarchyRelationSubqueryTest extends TestCase
         $this->tableNames = ContentGraphTableNames::create(ContentRepositoryId::fromString('testing'));
     }
 
-    /** @test */
+    #[Test]
     public function onlyWithSingleLayer()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]));
@@ -57,7 +58,7 @@ class HierarchyRelationSubqueryTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function withSingleDimensionSpacePoint()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1, 3]))
@@ -102,7 +103,7 @@ class HierarchyRelationSubqueryTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function withSingleDimensionSpacePointAndChildNodeAnchor()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1, 3]))
@@ -152,7 +153,7 @@ class HierarchyRelationSubqueryTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function withArbitraryWhereCondition()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]))
@@ -187,7 +188,7 @@ class HierarchyRelationSubqueryTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function withArbitraryPossibleWhereCondition()
     {
         $hierarchyRelationStatement = HierarchyRelationSubquery::create($this->tableNames, ContentStreamLayers::fromArray([1]))

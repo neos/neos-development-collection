@@ -21,6 +21,9 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\TypeConverter\ImageInterfaceConverter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the ImageConverter
@@ -33,17 +36,17 @@ class ImageInterfaceConverterTest extends UnitTestCase
     protected $converter;
 
     /**
-     * @var ReflectionService|\PHPUnit\Framework\MockObject\MockObject
+     * @var ReflectionService|MockObject
      */
     protected $mockReflectionService;
 
     /**
-     * @var PersistenceManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var PersistenceManagerInterface|MockObject
      */
     protected $mockPersistenceManager;
 
     /**
-     * @var ObjectManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var ObjectManagerInterface|MockObject
      */
     protected $mockObjectManager;
 
@@ -63,9 +66,7 @@ class ImageInterfaceConverterTest extends UnitTestCase
         $this->inject($this->converter, 'objectManager', $this->mockObjectManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function checkMetadata()
     {
         self::assertEquals(['string', 'array'], $this->converter->getSupportedSourceTypes());
@@ -76,9 +77,11 @@ class ImageInterfaceConverterTest extends UnitTestCase
     /**
      * @return array
      */
-    public function canConvertFromDataProvider()
+    public static function canConvertFromDataProvider()
     {
-        $dummyResource = $this->createMock(PersistentResource::class);
+        // data providers must be static and cannot build mocks, so the resource is
+        // described by a marker that canConvertFromTests() replaces with a mock
+        $dummyResource = '__mock:PersistentResource';
         return [
             [['resource' => $dummyResource], Image::class, true],
             [['__identity' => 'foo'], Image::class, false],
@@ -87,26 +90,27 @@ class ImageInterfaceConverterTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider canConvertFromDataProvider
      *
      * @param mixed $source
      * @param string $targetType
      * @param boolean $expected
      */
+    #[DataProvider('canConvertFromDataProvider')]
+    #[Test]
     public function canConvertFromTests($source, $targetType, $expected)
     {
+        if (($source['resource'] ?? null) === '__mock:PersistentResource') {
+            $source['resource'] = $this->createMock(PersistentResource::class);
+        }
         self::assertEquals($expected, $this->converter->canConvertFrom($source, $targetType));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function convertFromReturnsNullIfResourcePropertyIsNotConverted()
     {
-        $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->will(self::returnCallback(function ($objectType) {
+        $this->mockObjectManager->expects(self::any())->method('getClassNameByObjectName')->willReturnCallback(function ($objectType) {
             return $objectType;
-        }));
+        });
         $configuration = new PropertyMappingConfiguration();
         $configuration->setTypeConverterOption(ImageInterfaceConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
 

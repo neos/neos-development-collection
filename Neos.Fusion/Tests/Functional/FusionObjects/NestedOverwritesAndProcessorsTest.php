@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,16 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for basic Fusion rendering
  *
  */
-class NestedOverwritesAndProcessorsTest extends AbstractFusionObjectTest
+class NestedOverwritesAndProcessorsTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function overwritingSimpleValueWithProcessorWorks()
     {
         $view = $this->buildView();
@@ -28,9 +27,7 @@ class NestedOverwritesAndProcessorsTest extends AbstractFusionObjectTest
         self::assertEquals('<div class="Xclass processed" tea="green"></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function applyingProcessorToExpressionWorks()
     {
         $view = $this->buildView();
@@ -38,9 +35,7 @@ class NestedOverwritesAndProcessorsTest extends AbstractFusionObjectTest
         self::assertEquals('<div class="Xclass" tea="green infused"></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function applyingProcessorToNonExistingValueWorks()
     {
         $view = $this->buildView();

@@ -15,10 +15,11 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionGetStatusTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function statusOnEmptyDatabase()
     {
         // fully drop the tables so that status has to recover if the subscriptions table is not there

@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,16 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Fusion Template Object
  *
  */
-class TemplateTest extends AbstractFusionObjectTest
+class TemplateTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicFluidTemplateCanBeUsedForRendering()
     {
         $view = $this->buildView();
@@ -28,9 +27,7 @@ class TemplateTest extends AbstractFusionObjectTest
         self::assertEquals('Test Templatefoo', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicFluidTemplateContainsEelVariables()
     {
         $view = $this->buildView();
@@ -38,9 +35,7 @@ class TemplateTest extends AbstractFusionObjectTest
         self::assertEquals('Test Templatefoobar', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customPartialPathCanBeSetOnRendering()
     {
         $view = $this->buildView();
@@ -48,9 +43,7 @@ class TemplateTest extends AbstractFusionObjectTest
         self::assertEquals('Test Template--partial contents', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function customLayoutPathCanBeSetOnRendering()
     {
         $view = $this->buildView();
@@ -58,9 +51,7 @@ class TemplateTest extends AbstractFusionObjectTest
         self::assertEquals('layout start -- Test Template -- layout end', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionExceptionInObjectAccessIsHandledCorrectly()
     {
         $view = $this->buildView();
@@ -68,9 +59,7 @@ class TemplateTest extends AbstractFusionObjectTest
         self::assertStringStartsWith('Test TemplateException while rendering template', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function expressionCanBeOverridenWithSimpleValueForTemplate()
     {
         $view = $this->buildView();

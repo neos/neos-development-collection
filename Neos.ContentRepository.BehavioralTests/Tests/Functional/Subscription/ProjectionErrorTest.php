@@ -22,10 +22,11 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use PHPUnit\Framework\Attributes\Test;
 
 final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function subscriptionErrorLogging()
     {
         $exception = new \RuntimeException('This projection is kaputt.', code: 1031);
@@ -65,7 +66,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function projectionWithErrorCanBeReactivated()
     {
         $this->eventStore->setup();
@@ -83,7 +84,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         // catchup active tries to apply the commited event
         $exception = new \RuntimeException('This projection is kaputt.');
         $this->fakeProjection->expects($i = self::exactly(2))->method('apply')->willReturnCallback(function ($_, EventEnvelope $eventEnvelope) use ($i, $exception) {
-            match($i->getInvocationCount()) {
+            match($i->numberOfInvocations()) {
                 1 => [
                     self::assertEquals(1, $eventEnvelope->sequenceNumber->value),
                     throw $exception
@@ -127,7 +128,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:FakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    /** @test */
+    #[Test]
     public function fixFailedProjectionViaReset()
     {
         $this->eventStore->setup();
@@ -179,7 +180,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    /** @test */
+    #[Test]
     public function irreparableProjection()
     {
         // test ways NOT to fix a projection :)
@@ -271,7 +272,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function projectionWithError()
     {
         $this->eventStore->setup();
@@ -316,7 +317,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function projectionWithErrorAfterSecondEvent()
     {
         $this->eventStore->setup();
@@ -366,7 +367,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function projectionErrorWithMultipleProjectionsInContentRepositoryHandle()
     {
         $this->eventStore->setup();
@@ -411,7 +412,7 @@ final class ProjectionErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function projectionError_stopsEngineAfterFirstBatch()
     {
         $this->eventStore->setup();

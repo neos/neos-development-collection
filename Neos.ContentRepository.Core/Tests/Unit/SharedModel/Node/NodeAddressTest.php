@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class NodeAddressTest extends TestCase
@@ -26,49 +28,45 @@ class NodeAddressTest extends TestCase
     public static function jsonSerialization(): iterable
     {
         yield 'no dimensions' => [
-            'nodeAddress' => NodeAddress::create(
+            NodeAddress::create(
                 ContentRepositoryId::fromString('default'),
                 WorkspaceName::forLive(),
                 DimensionSpacePoint::createWithoutDimensions(),
                 NodeAggregateId::fromString('marcus-heinrichus')
             ),
-            'serialized' => '{"contentRepositoryId":"default","workspaceName":"live","dimensionSpacePoint":[],"aggregateId":"marcus-heinrichus"}'
+            '{"contentRepositoryId":"default","workspaceName":"live","dimensionSpacePoint":[],"aggregateId":"marcus-heinrichus"}'
         ];
 
         yield 'one dimension' => [
-            'nodeAddress' => NodeAddress::create(
+            NodeAddress::create(
                 ContentRepositoryId::fromString('default'),
                 WorkspaceName::fromString('user-mh'),
                 DimensionSpacePoint::fromArray(['language' => 'de']),
                 NodeAggregateId::fromString('79e69d1c-b079-4535-8c8a-37e76736c445')
             ),
-            'serialized' => '{"contentRepositoryId":"default","workspaceName":"user-mh","dimensionSpacePoint":{"language":"de"},"aggregateId":"79e69d1c-b079-4535-8c8a-37e76736c445"}'
+            '{"contentRepositoryId":"default","workspaceName":"user-mh","dimensionSpacePoint":{"language":"de"},"aggregateId":"79e69d1c-b079-4535-8c8a-37e76736c445"}'
         ];
 
         yield 'two dimensions' => [
-            'nodeAddress' => NodeAddress::create(
+            NodeAddress::create(
                 ContentRepositoryId::fromString('second'),
                 WorkspaceName::fromString('user-mh'),
                 DimensionSpacePoint::fromArray(['language' => 'en_US', 'audience' => 'nice people']),
                 NodeAggregateId::fromString('my-node-id')
             ),
-            'serialized' => '{"contentRepositoryId":"second","workspaceName":"user-mh","dimensionSpacePoint":{"language":"en_US","audience":"nice people"},"aggregateId":"my-node-id"}'
+            '{"contentRepositoryId":"second","workspaceName":"user-mh","dimensionSpacePoint":{"language":"en_US","audience":"nice people"},"aggregateId":"my-node-id"}'
         ];
     }
 
-    /**
-     * @dataProvider jsonSerialization
-     * @test
-     */
+    #[DataProvider('jsonSerialization')]
+    #[Test]
     public function serialization(NodeAddress $nodeAddress, string $expected): void
     {
         self::assertEquals($expected, $nodeAddress->toJson());
     }
 
-    /**
-     * @dataProvider jsonSerialization
-     * @test
-     */
+    #[DataProvider('jsonSerialization')]
+    #[Test]
     public function deserialization(NodeAddress $expectedNodeAddress, string $encoded): void
     {
         $nodeAddress = NodeAddress::fromJsonString($encoded);

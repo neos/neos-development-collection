@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,16 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for basic Fusion spread rendering
  *
  */
-class ApplyTest extends AbstractFusionObjectTest
+class ApplyTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueRendering()
     {
         $view = $this->buildView();
@@ -28,9 +27,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('original eel expression', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithSingleSpreadRendering()
     {
         $view = $this->buildView();
@@ -38,9 +35,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('altered eel expression', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithInvalidFusionObjectSpreadRendering()
     {
         $view = $this->buildView();
@@ -48,9 +43,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('original eel expression', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithInvalidExpressionSpreadRendering()
     {
         $view = $this->buildView();
@@ -58,9 +51,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('original eel expression', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueInvalidCyclicExpressionSpreadRendering()
     {
         $view = $this->buildView();
@@ -68,9 +59,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals(null, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithFusionObjectSpreadRendering()
     {
         $view = $this->buildView();
@@ -78,9 +67,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('altered eel expression', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithMultipleSpreadRendering()
     {
         $view = $this->buildView();
@@ -88,9 +75,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('altered eel expression 3', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithMultipleOrderedSpreadRendering()
     {
         $view = $this->buildView();
@@ -98,9 +83,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('altered eel expression to be evaluated last', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithProcessorRendering()
     {
         $view = $this->buildView();
@@ -108,9 +91,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('foo:original eel expression:bar', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function eelValueWithProcessorAndSingleSpreadRendering()
     {
         $view = $this->buildView();
@@ -118,9 +99,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('foo:altered eel expression:bar', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithNonMatchingIfConditionRendering()
     {
         $view = $this->buildView();
@@ -128,9 +107,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals(null, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithNonMatchingIfConditionThatUseSpreadValuesRendering()
     {
         $view = $this->buildView();
@@ -138,9 +115,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals(null, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithNonMatchingIfConditionIfSpreadAltersValueRendering()
     {
         $view = $this->buildView();
@@ -148,9 +123,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals(null, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithNonMatchingIfConditionIfSpreadAltersValueAndEnabledConditionRendering()
     {
         $view = $this->buildView();
@@ -158,9 +131,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('altered value', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function valueWithMatchingIfConditionThatUseSpreadValuesRendering()
     {
         $view = $this->buildView();
@@ -168,9 +139,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('enabled value', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prototypeWithNonMatchingIfConditionRendering()
     {
         $view = $this->buildView();
@@ -178,9 +147,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals(null, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prototypeWithNonMatchingIfConditionThatUseSpreadValuesRendering()
     {
         $view = $this->buildView();
@@ -188,9 +155,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals(null, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function prototypeWithMatchingIfConditionThatUseSpreadValuesRendering()
     {
         $view = $this->buildView();
@@ -198,9 +163,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('enabled value', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nestedPrototypeRendering()
     {
         $view = $this->buildView();
@@ -208,9 +171,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('expression from nested prototypes', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nestedPrototypeOverriddenWithSpreadsRendering()
     {
         $view = $this->buildView();
@@ -218,9 +179,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('i can change this', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function loopWithoutSpreadRendering()
     {
         $view = $this->buildView();
@@ -228,9 +187,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('X1X2X2X3', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function loopWithSpreadRendering()
     {
         $view = $this->buildView();
@@ -238,9 +195,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('X1X2X2X3', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWithTypeAndElementSpreadRendering()
     {
         $view = $this->buildView();
@@ -248,9 +203,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('XValueAppliedViaElementSpread', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function dataStructureWithSpreadRendering()
     {
         $view = $this->buildView();
@@ -265,9 +218,7 @@ class ApplyTest extends AbstractFusionObjectTest
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function joinWithPositionAndSpreadRendering()
     {
         $view = $this->buildView();
@@ -278,9 +229,7 @@ class ApplyTest extends AbstractFusionObjectTest
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWithNestedPropsInApply()
     {
         $view = $this->buildView();
@@ -288,9 +237,7 @@ class ApplyTest extends AbstractFusionObjectTest
         self::assertEquals('::example::', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateLazyPropsWithLastOneSkipped()
     {
         $view = $this->buildView();

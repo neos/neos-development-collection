@@ -11,12 +11,12 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\FusionConfigurationCache;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class FusionConfigurationCacheTest extends UnitTestCase
@@ -51,9 +51,7 @@ class FusionConfigurationCacheTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cacheGetMergedFusionObjectTreeNormalizesCacheIdentifier()
     {
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
@@ -64,9 +62,7 @@ class FusionConfigurationCacheTest extends UnitTestCase
         $this->fusionConfigurationCache->cacheFusionConfigurationBySite($mockSite, fn () => FusionConfiguration::fromArray([]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cacheGetMergedFusionObjectTreeAddsResultToCache()
     {
         $mergedObjectTree = ['some' => 'Fusion tree'];
@@ -82,9 +78,7 @@ class FusionConfigurationCacheTest extends UnitTestCase
         ));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function cacheGetMergedFusionObjectTreeReturnsResultsFromCacheIfExists()
     {
         $mergedObjectTree = ['some' => 'Fusion tree'];

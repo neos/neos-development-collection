@@ -41,6 +41,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test that no DeadlockException like: An exception occurred while executing a query: SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction
@@ -159,9 +160,7 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileANodesArePublishedToLive(): void
     {
         $this->log('1. writing & publishing started');
@@ -207,9 +206,7 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
         Assert::assertGreaterThan(20, $childNodes->count(), 'To few nodes actually published and created');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentPublishAreNotDeadlocked(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {

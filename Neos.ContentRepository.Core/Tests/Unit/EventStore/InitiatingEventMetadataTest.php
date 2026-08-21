@@ -13,13 +13,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class InitiatingEventMetadataTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function enrichEventsWithInitiatingMetadataUsesUtc(): void
     {
         $extracted = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
@@ -41,9 +40,7 @@ class InitiatingEventMetadataTest extends TestCase
         ], $first->eventMetadata?->value);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extractInitiatingMetadata(): void
     {
         $metaData = EventMetadata::fromArray(
@@ -63,9 +60,7 @@ class InitiatingEventMetadataTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function enrichEventsWithInitiatingMetadataUsesUtcWithExistingMetadata(): void
     {
         $extracted = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
@@ -109,8 +104,8 @@ class InitiatingEventMetadataTest extends TestCase
 
     /**
      * Legacy compatibility for old non UTC ATOM timestamps {@see https://github.com/neos/neos-development-collection/pull/5716}
-     * @test
      */
+    #[Test]
     public function getInitiatingTimestampReturnsUtc(): void
     {
         $extracted = InitiatingEventMetadata::getInitiatingTimestamp(EventMetadata::fromArray([

@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,16 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Iteration Fusion object
  *
  */
-class LoopTest extends AbstractFusionObjectTest
+class LoopTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicLoopWorks()
     {
         $view = $this->buildView();
@@ -29,9 +28,7 @@ class LoopTest extends AbstractFusionObjectTest
         self::assertEquals('Xelement1Xelement2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicLoopWorksWithIterator()
     {
         $view = $this->buildView();
@@ -40,9 +37,7 @@ class LoopTest extends AbstractFusionObjectTest
         self::assertEquals('Xelement1Xelement2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicLoopWorksWithIteratorThatDoesNotImplementCount()
     {
         $view = $this->buildView();
@@ -51,9 +46,7 @@ class LoopTest extends AbstractFusionObjectTest
         self::assertEquals('Xelement1Xelement2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicLoopWorksWithGlue()
     {
         $view = $this->buildView();
@@ -62,9 +55,7 @@ class LoopTest extends AbstractFusionObjectTest
         self::assertEquals('Xelement1, Xelement2', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicLoopWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
@@ -74,9 +65,7 @@ class LoopTest extends AbstractFusionObjectTest
         self::assertEquals('Xelement1varXelement2var', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyLoopReturnsEmptyString()
     {
         $view = $this->buildView();
@@ -85,9 +74,7 @@ class LoopTest extends AbstractFusionObjectTest
         self::assertEquals('', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationInformationIsAddedToLoop()
     {
         $view = $this->buildView();

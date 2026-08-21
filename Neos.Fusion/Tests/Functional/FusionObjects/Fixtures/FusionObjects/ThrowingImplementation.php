@@ -11,8 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Fusion;
+use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 class ThrowingImplementation extends AbstractFusionObject
@@ -31,7 +31,7 @@ class ThrowingImplementation extends AbstractFusionObject
     public function evaluate()
     {
         if ($this->getShouldThrow()) {
-            throw new Fusion\Exception('Just testing an exception', 1396557841);
+            throw new Exception('Just testing an exception', 1396557841);
         }
         return 'It depends';
     }

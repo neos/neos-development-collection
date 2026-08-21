@@ -22,6 +22,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaMatcher;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
 
@@ -43,7 +45,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function andCriteriaDataProvider(): \Generator
+    public static function andCriteriaDataProvider(): \Generator
     {
         $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo', true);
         $falseCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'other', true);
@@ -54,10 +56,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'both criteria are false' => [$falseCriterium, $falseCriterium, false];
     }
 
-    /**
-     * @test
-     * @dataProvider andCriteriaDataProvider
-     */
+    #[DataProvider('andCriteriaDataProvider')]
+    #[Test]
     public function andCriteria(PropertyValueCriteriaInterface $criteriaA, PropertyValueCriteriaInterface $criteriaB, $expectation)
     {
 
@@ -78,7 +78,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function negateCriteriaDataProvider(): \Generator
+    public static function negateCriteriaDataProvider(): \Generator
     {
         $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo', true);
         $falseCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'other', true);
@@ -87,10 +87,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'criterium is false' => [$falseCriterium, true];
     }
 
-    /**
-     * @test
-     * @dataProvider negateCriteriaDataProvider
-     */
+    #[DataProvider('negateCriteriaDataProvider')]
+    #[Test]
     public function negateCriteria(PropertyValueCriteriaInterface $criteriaA, $expectation)
     {
         $this->assertSame(
@@ -110,7 +108,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function orCriteriaDataProvider(): \Generator
+    public static function orCriteriaDataProvider(): \Generator
     {
         $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo', true);
         $falseCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'other', true);
@@ -121,10 +119,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'both criteria are false' => [$falseCriterium, $falseCriterium, false];
     }
 
-    /**
-     * @test
-     * @dataProvider orCriteriaDataProvider
-     */
+    #[DataProvider('orCriteriaDataProvider')]
+    #[Test]
     public function orCriteria(PropertyValueCriteriaInterface $criteriaA, PropertyValueCriteriaInterface $criteriaB, $expectation)
     {
         $this->assertSame(
@@ -143,7 +139,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function containsCriteriaDataProvider(): \Generator
+    public static function containsCriteriaDataProvider(): \Generator
     {
         yield 'existing "stringProperty" contains "foo"' => ['stringProperty', 'foo', true, true];
         yield 'existing "stringProperty" contains "Foo" (non case sensitive)' => ['stringProperty', 'Foo', false, true];
@@ -155,10 +151,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'not existing "otherProperty" does not contain "foo"' => ['otherProperty', 'foo', true, false];
     }
 
-    /**
-     * @test
-     * @dataProvider containsCriteriaDataProvider
-     */
+    #[DataProvider('containsCriteriaDataProvider')]
+    #[Test]
     public function containsCriteria(string $propertyName, mixed $propertyValueToExpect, bool $caseSensitive, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -185,7 +179,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function valueStartsWithCriteriaDataProvider(): \Generator
+    public static function valueStartsWithCriteriaDataProvider(): \Generator
     {
         yield 'existing "stringProperty" starts with "f"' => ['stringProperty', 'f', true, true];
         yield 'existing "stringProperty" starts with "foo"' => ['stringProperty', 'foo', true, true];
@@ -197,10 +191,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'not existing "otherProperty" does not start with "foo"' => ['otherProperty', 'foo', true, false];
     }
 
-    /**
-     * @test
-     * @dataProvider valueStartsWithCriteriaDataProvider
-     */
+    #[DataProvider('valueStartsWithCriteriaDataProvider')]
+    #[Test]
     public function valueStartsWithCriteria(string $propertyName, mixed $propertyValueToExpect, bool $caseSensitive, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -227,7 +219,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function valueEndsWithCriteriaDataProvider(): \Generator
+    public static function valueEndsWithCriteriaDataProvider(): \Generator
     {
         yield 'existing "stringProperty" ends with "o"' => ['stringProperty', 'o', true, true];
         yield 'existing "stringProperty" ends with "foo"' => ['stringProperty', 'foo', true, true];
@@ -239,10 +231,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'not existing "otherProperty" does not end with "foo"' => ['otherProperty', 'foo', true, false];
     }
 
-    /**
-     * @test
-     * @dataProvider valueEndsWithCriteriaDataProvider
-     */
+    #[DataProvider('valueEndsWithCriteriaDataProvider')]
+    #[Test]
     public function valueEndsWithCriteria(string $propertyName, mixed $propertyValueToExpect, bool $caseSensitive, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -269,7 +259,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function equalsCriteriaDataProvider(): \Generator
+    public static function equalsCriteriaDataProvider(): \Generator
     {
         yield 'existing "stringProperty" equals "foo"' => ['stringProperty', 'foo', true, true];
         yield 'existing "stringProperty" equals "Foo" (case insensitive)' => ['stringProperty', 'Foo', false, true];
@@ -285,10 +275,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'existing "stringProperty" does not equal true (case insensitive)' => ['stringProperty', true, false, false];
     }
 
-    /**
-     * @test
-     * @dataProvider equalsCriteriaDataProvider
-     */
+    #[DataProvider('equalsCriteriaDataProvider')]
+    #[Test]
     public function equalsCriteria(string $propertyName, mixed $propertyValueToExpect, bool $caseSensitive, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -315,7 +303,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function greaterThanCriteriaDataProvider(): \Generator
+    public static function greaterThanCriteriaDataProvider(): \Generator
     {
         yield 'existing "integerProperty" is greater than 0' => ['integerProperty', 0, true];
         yield 'existing "integerProperty" is greater than 122' => ['integerProperty', 122, true];
@@ -324,10 +312,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'existing "integerProperty" is not greater than 999' => ['integerProperty', 999, false];
     }
 
-    /**
-     * @test
-     * @dataProvider greaterThanCriteriaDataProvider
-     */
+    #[DataProvider('greaterThanCriteriaDataProvider')]
+    #[Test]
     public function greaterThanCriteria(string $propertyName, mixed $propertyValueToExpect, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -352,7 +338,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function greaterThanOrEqualCriteriaDataProvider(): \Generator
+    public static function greaterThanOrEqualCriteriaDataProvider(): \Generator
     {
         yield 'existing "integerProperty" is greater than 0' => ['integerProperty', 0, true];
         yield 'existing "integerProperty" is greater than 122' => ['integerProperty', 122, true];
@@ -361,10 +347,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'existing "integerProperty" is not greater than 999' => ['integerProperty', 999, false];
     }
 
-    /**
-     * @test
-     * @dataProvider greaterThanOrEqualCriteriaDataProvider
-     */
+    #[DataProvider('greaterThanOrEqualCriteriaDataProvider')]
+    #[Test]
     public function greaterThanOrEquelCriteria(string $propertyName, mixed $propertyValueToExpect, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -389,7 +373,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function lessThanCriteriaDataProvider(): \Generator
+    public static function lessThanCriteriaDataProvider(): \Generator
     {
         yield 'existing "integerProperty" is greater than 0' => ['integerProperty', 0, false];
         yield 'existing "integerProperty" is greater than 122' => ['integerProperty', 122, false];
@@ -398,10 +382,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'existing "integerProperty" is not greater than 999' => ['integerProperty', 999, true];
     }
 
-    /**
-     * @test
-     * @dataProvider lessThanCriteriaDataProvider
-     */
+    #[DataProvider('lessThanCriteriaDataProvider')]
+    #[Test]
     public function lessThanCriteria(string $propertyName, mixed $propertyValueToExpect, bool $expectedResult): void
     {
         $this->assertEquals(
@@ -426,7 +408,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         );
     }
 
-    public function lessThanOrEqualCriteriaDataProvider(): \Generator
+    public static function lessThanOrEqualCriteriaDataProvider(): \Generator
     {
         yield 'existing "integerProperty" is greater than 0' => ['integerProperty', 0, false];
         yield 'existing "integerProperty" is greater than 122' => ['integerProperty', 122, false];
@@ -435,10 +417,8 @@ class PropertyValueCriteriaMatcherTest extends TestCase
         yield 'existing "integerProperty" is not greater than 999' => ['integerProperty', 999, true];
     }
 
-    /**
-     * @test
-     * @dataProvider lessThanOrEqualCriteriaDataProvider
-     */
+    #[DataProvider('lessThanOrEqualCriteriaDataProvider')]
+    #[Test]
     public function lessThanOrEqualCriteria(string $propertyName, mixed $propertyValueToExpect, bool $expectedResult): void
     {
         $this->assertEquals(

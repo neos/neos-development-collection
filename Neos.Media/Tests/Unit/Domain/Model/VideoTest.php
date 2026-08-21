@@ -11,19 +11,17 @@ namespace Neos\Media\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Video;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Video model
  */
 class VideoTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function dimensionsDefaultToMinusOneOnConstruct()
     {
         $mockResource = $this->createMock(PersistentResource::class);

@@ -20,6 +20,7 @@ use Neos\EventStore\Model\Event\CausationId;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class DecoratedEventTest extends TestCase
@@ -31,9 +32,7 @@ final class DecoratedEventTest extends TestCase
         $this->mockEvent = $this->getMockBuilder(EventInterface::class)->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createMergesDataOfDecoratedEvent(): void
     {
         $decoratedEvent = DecoratedEvent::create($this->mockEvent, eventId: EventId::fromString('65f16ed8-7ffa-432d-b7bf-4ccd4b22c294'));

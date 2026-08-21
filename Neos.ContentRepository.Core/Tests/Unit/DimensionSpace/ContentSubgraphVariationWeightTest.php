@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -113,11 +114,11 @@ class ContentSubgraphVariationWeightTest extends TestCase
     }
 
     /**
-     * @dataProvider normalizationProvider
      * @param int $weightNormalizationBase
      * @param DimensionSpace\ContentSubgraphVariationWeight $weight
      * @param int $expectedNormalizedWeight
      */
+    #[DataProvider('normalizationProvider')]
     public function testNormalizeCorrectlyCalculatesNormalizedWeight(int $weightNormalizationBase, DimensionSpace\ContentSubgraphVariationWeight $weight, int $expectedNormalizedWeight)
     {
         $this->assertSame($expectedNormalizedWeight, $weight->normalize($weightNormalizationBase));

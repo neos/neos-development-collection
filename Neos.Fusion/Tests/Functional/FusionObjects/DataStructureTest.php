@@ -11,18 +11,16 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Fusion\Exception\MissingFusionImplementationException;
 use Neos\Utility\PositionalArraySorter;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion Dictionary
  */
-class DataStructureTest extends AbstractFusionObjectTest
+class DataStructureTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicOrderingWorks()
     {
         $view = $this->buildView();
@@ -31,9 +29,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals([10 => 'Xtest10', 100 => 'Xtest100'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function positionalOrderingWorks()
     {
         $view = $this->buildView();
@@ -42,9 +38,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['c' => 'Xbefore', 'f' => 'Xmiddle', 'a' => 'Xafter'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function startEndOrderingWorks()
     {
         $view = $this->buildView();
@@ -53,9 +47,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['c' => 'Xbefore', 'f' => 'Xmiddle', 'a' => 'Xafter'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function advancedStartEndOrderingWorks()
     {
         $view = $this->buildView();
@@ -64,9 +56,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['e' => 'Xe', 'd' => 'Xd', 'foobar' => 'Xfoobar', 'f' => 'Xf', 'g' => 'Xg', 100 => 'X100', 'b' => 'Xb', 'a' => 'Xa', 'c' => 'Xc'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ignoredPropertiesWork()
     {
         $view = $this->buildView();
@@ -75,9 +65,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['c' => 'Xbefore', 'a' => 'Xafter'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nestedKeysWithoutObjectTypesRenderAsDataStructure(): void
     {
         $view = $this->buildView();
@@ -85,9 +73,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['keyWithoutType' => ['bar' => ['baz' => 123 ]], 'keyWithType' => 456, 'keyWithValue' => 789], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nestingWithNonExistingChildObjectThrowsException(): void
     {
         $view = $this->buildView();
@@ -98,9 +84,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function untypedChildKeysWorkWithFusionIf(): void
     {
         $view = $this->buildView();
@@ -108,9 +92,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['keyWithoutType' => ['foo' => 123]], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function untypedChildKeysWorkWithFusionProcess(): void
     {
         $view = $this->buildView();
@@ -118,9 +100,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['keyWithoutType' => ['foo' => 123, 0 => 'baz']], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function untypedChildKeysWorkWithFusionEelThisContext(): void
     {
         $view = $this->buildView();
@@ -128,9 +108,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['keyWithoutType' => ['foo' => 123, 'thisFoo' => 123]], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function untypedChildKeysWorkWithFusionPositionSorting(): void
     {
         $view = $this->buildView();
@@ -138,9 +116,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['keyWithoutTypeLast' => ['baz' => 456], 'keyWithoutTypeFirst' => ['foo' => 123]], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetUntypedChildKeysWillRenderAsDataStructure(): void
     {
         $view = $this->buildView();
@@ -148,9 +124,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['buz' => 456, 'keyWithUnsetType' => ['bat' => 123]], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetChildKeyWillNotRender(): void
     {
         $view = $this->buildView();
@@ -159,9 +133,9 @@ class DataStructureTest extends AbstractFusionObjectTest
     }
 
     /**
-     * @test
      * NOTE: This test mainly documents the current behavior. "null1" is removed by the {@see PositionalArraySorter} currently
      */
+    #[Test]
     public function nulledChildKeyWillRenderAsNull(): void
     {
         $view = $this->buildView();
@@ -169,9 +143,7 @@ class DataStructureTest extends AbstractFusionObjectTest
         self::assertEquals(['foo' => 'bar', 'null2' => null], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function appliedNullValueWillRenderAsNull(): void
     {
         $view = $this->buildView();

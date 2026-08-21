@@ -14,20 +14,19 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\RemoveOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the FlowQuery RemoveOperation
  */
-class RemoveOperationTest extends AbstractQueryOperationsTest
+class RemoveOperationTest extends AbstractQueryOperationsTestCase
 {
     public function setUp(): void
     {
         $this->markTestSkipped('fix and re-enable for Neos 9.0');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeAppliedOnceNodesAreInContextOrContextIsEmpty()
     {
         $node = $this->mockNode('nudelsuppe');
@@ -39,9 +38,7 @@ class RemoveOperationTest extends AbstractQueryOperationsTest
         self::assertFalse($operation->canEvaluate([new \stdClass()]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeWillRemoveTheNodeGivenAsSingleArgument()
     {
         $node1 = $this->mockNode('nudelsuppe');
@@ -59,9 +56,7 @@ class RemoveOperationTest extends AbstractQueryOperationsTest
         self::assertNotContains($node2, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeWillRemoveTheNodeGivenAsArrayArgument()
     {
         $node1 = $this->mockNode('nudelsuppe');
@@ -79,9 +74,7 @@ class RemoveOperationTest extends AbstractQueryOperationsTest
         self::assertNotContains($node2, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function removeWillRemoveTheNodeGivenAsFlowQueryArgument()
     {
         $node1 = $this->mockNode('nudelsuppe');

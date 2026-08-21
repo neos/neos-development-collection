@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,12 +13,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Renderer Fusion object
  *
  */
-class RendererTest extends AbstractFusionObjectTest
+class RendererTest extends AbstractFusionObjectTestCase
 {
     public function assertRenderingWorks($path, $expectation)
     {
@@ -26,25 +27,19 @@ class RendererTest extends AbstractFusionObjectTest
         self::assertEquals($expectation, $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usingRendererWorks()
     {
         $this->assertRenderingWorks('renderer/default', 'result_of_renderer_prototyope');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWinsOverType()
     {
         $this->assertRenderingWorks('renderer/withType', 'result_of_type_with_override');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWinsOverRenderPath()
     {
         $this->assertRenderingWorks('renderer/withRenderPath', 'result_of_path_with_override');

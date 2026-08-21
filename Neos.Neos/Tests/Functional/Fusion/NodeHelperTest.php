@@ -19,23 +19,22 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
-use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
+use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTestCase;
 use Neos\Fusion\Tests\Functional\FusionObjects\TestingViewForFusionRuntime;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Fusion NodeLabel helper
  */
-class NodeHelperTest extends AbstractFusionObjectTest
+class NodeHelperTest extends AbstractFusionObjectTestCase
 {
     /**
      * @var Node|MockObject
      */
     protected $textNode;
 
-    /**
-     * @test
-     */
+    #[Test]
     public function defaultNodeLabel()
     {
         $view = $this->buildView();
@@ -46,9 +45,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals('Some title', (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withPropertyFallback()
     {
         $view = $this->buildView();
@@ -59,9 +56,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals('Some text', (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withPrefixOverrideAndPostfix()
     {
         $view = $this->buildView();
@@ -72,9 +67,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals('Hello world how are you', (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypeFallback()
     {
         $view = $this->buildView();
@@ -85,9 +78,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
         self::assertEquals($this->textNode->nodeType->getLabel(), (string)$view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function crop()
     {
         $view = $this->buildView();

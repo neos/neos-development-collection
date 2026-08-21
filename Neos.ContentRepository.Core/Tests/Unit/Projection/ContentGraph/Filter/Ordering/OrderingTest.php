@@ -16,13 +16,13 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\TimestampField;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class OrderingTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function byPropertyTest(): void
     {
         $ordering = Ordering::byProperty(PropertyName::fromString('someProperty'), OrderingDirection::ASCENDING)
@@ -38,9 +38,7 @@ class OrderingTest extends TestCase
         self::assertOrderingEquals($expectedRepresentation, $ordering);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function byPropertyCreatesInstance(): void
     {
         $ordering = Ordering::byTimestampField(TimestampField::LAST_MODIFIED, OrderingDirection::DESCENDING);
@@ -50,9 +48,7 @@ class OrderingTest extends TestCase
         self::assertOrderingEquals($expectedRepresentation, $ordering);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationTest(): void
     {
         $ordering = Ordering::byProperty(PropertyName::fromString('someProperty'), OrderingDirection::ASCENDING)
@@ -62,9 +58,7 @@ class OrderingTest extends TestCase
         self::assertCount(4, iterator_to_array($ordering));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayTest(): void
     {
         $array = [
@@ -80,22 +74,20 @@ class OrderingTest extends TestCase
 
     public static function invalidOrderingArrays(): \Generator
     {
-        yield ['empty array' => []];
-        yield ['empty nested array' => [[]]];
-        yield ['missing type' => [['field' => 'somePropertyName', 'direction' => 'ASCENDING']]];
-        yield ['missing field' => [['type' => 'propertyName', 'direction' => 'ASCENDING']]];
-        yield ['missing direction' => [['type' => 'propertyName', 'field' => 'somePropertyName']]];
-        yield ['invalid type' => [['type' => 'invalid', 'field' => 'somePropertyName', 'direction' => 'ASCENDING']]];
-        yield ['invalid property name' => [['type' => 'propertyName', 'field' => '', 'direction' => 'ASCENDING']]];
-        yield ['invalid timestamp field' => [['type' => 'timestampField', 'field' => 'INVALID', 'direction' => 'ASCENDING']]];
-        yield ['invalid direction' => [['type' => 'propertyName', 'field' => 'propertyName', 'direction' => 'INVALID']]];
-        yield ['unknown element' => [['type' => 'propertyName', 'field' => 'propertyName', 'direction' => 'ASCENDING', 'unknown' => 'element']]];
+        yield 'empty array' => [[]];
+        yield 'empty nested array' => [[[]]];
+        yield 'missing type' => [[['field' => 'somePropertyName', 'direction' => 'ASCENDING']]];
+        yield 'missing field' => [[['type' => 'propertyName', 'direction' => 'ASCENDING']]];
+        yield 'missing direction' => [[['type' => 'propertyName', 'field' => 'somePropertyName']]];
+        yield 'invalid type' => [[['type' => 'invalid', 'field' => 'somePropertyName', 'direction' => 'ASCENDING']]];
+        yield 'invalid property name' => [[['type' => 'propertyName', 'field' => '', 'direction' => 'ASCENDING']]];
+        yield 'invalid timestamp field' => [[['type' => 'timestampField', 'field' => 'INVALID', 'direction' => 'ASCENDING']]];
+        yield 'invalid direction' => [[['type' => 'propertyName', 'field' => 'propertyName', 'direction' => 'INVALID']]];
+        yield 'unknown element' => [[['type' => 'propertyName', 'field' => 'propertyName', 'direction' => 'ASCENDING', 'unknown' => 'element']]];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidOrderingArrays
-     */
+    #[DataProvider('invalidOrderingArrays')]
+    #[Test]
     public function fromArrayThrowsExceptionForInvalidArrays(array $array): void
     {
         $this->expectException(\InvalidArgumentException::class);

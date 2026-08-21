@@ -16,6 +16,7 @@ namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
 
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypeEnrichmentService;
 use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Yaml\Yaml;
 
 class NodeTypeEnrichmentServiceTest extends UnitTestCase
@@ -28,9 +29,7 @@ class NodeTypeEnrichmentServiceTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function EnrichNodeTypeLabelsConfig(): void
     {
         $nodeConfiguration = YAML::parse(<<<'YAML'

@@ -253,7 +253,7 @@ Expected result::
 	<form method="GET" action="...">...</form>
 
 
-**Form with a sepcified encoding type**::
+**Form with a specified encoding type**::
 
 	<f:form action=".." controller="..." package="..." enctype="multipart/form-data">...</f:form>
 
@@ -856,7 +856,7 @@ Expected result::
 	translations for those ids in the current package's "Main" XLIFF file.)
 
 
-**Label translation usign a prefix**::
+**Label translation using a prefix**::
 
 	<f:form.select name="paymentOption" options="{payPal: 'PayPal International Services', visa: 'VISA Card'}" translate="{by: 'id', prefix: 'shop.paymentOptions.'}" />
 

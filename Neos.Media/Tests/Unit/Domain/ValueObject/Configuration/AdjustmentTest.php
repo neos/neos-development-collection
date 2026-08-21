@@ -11,17 +11,18 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\Adjustment;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class AdjustmentTest extends UnitTestCase
 {
     /**
      * @return array
      */
-    public function invalidIdentifiers(): array
+    public static function invalidIdentifiers(): array
     {
         return [
             ['something with spaces'],
@@ -32,36 +33,30 @@ class AdjustmentTest extends UnitTestCase
 
     /**
      * @param $identifier
-     * @dataProvider invalidIdentifiers()
-     * @test
      */
+    #[DataProvider('invalidIdentifiers')]
+    #[Test]
     public function invalidIdentifiersAreRejected($identifier): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new Adjustment($identifier, '');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function adjustmentIdentifierCanBeRetrieved(): void
     {
         $adjustment = new Adjustment('someAdjustment', '');
         self::assertSame('someAdjustment', $adjustment->identifier());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function missingTypeIsRejected(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         Adjustment::fromConfiguration('someAdjustment', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromConfiguration(): void
     {
         $configuration = [

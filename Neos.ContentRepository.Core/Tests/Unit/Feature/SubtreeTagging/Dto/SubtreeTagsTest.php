@@ -4,56 +4,46 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Feature\SubtreeTagging\Dto;
 
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class SubtreeTagsTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function createEmptyCreatesEmptyInstance(): void
     {
         self::assertSame([], iterator_to_array(SubtreeTags::createEmpty()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringsRemovesDuplicates(): void
     {
         self::assertSame(['foo', 'bar'], SubtreeTags::fromStrings('foo', 'bar', 'foo')->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withReturnsSameInstanceIfSpecifiedTagIsContained(): void
     {
         $tags = SubtreeTags::fromStrings('foo', 'bar');
         self::assertSame($tags, $tags->with(SubtreeTag::fromString('foo')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withReturnsNewInstanceForAddedTag(): void
     {
         $tags = SubtreeTags::fromStrings('foo', 'bar');
         self::assertSame(['foo', 'bar', 'baz'], $tags->with(SubtreeTag::fromString('baz'))->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withoutReturnsSameInstanceIfSpecifiedTagIsNotContained(): void
     {
         $tags = SubtreeTags::fromStrings('foo', 'bar');
         self::assertSame($tags, $tags->without(SubtreeTag::fromString('baz')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function withoutReturnsInstanceWithoutSpecifiedTag(): void
     {
         $tags = SubtreeTags::fromStrings('foo', 'bar')
@@ -61,18 +51,14 @@ class SubtreeTagsTest extends TestCase
         self::assertSame(['bar'], $tags->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayFailsIfArrayContainsString(): void
     {
         $this->expectException(\TypeError::class);
         SubtreeTags::fromArray([SubtreeTag::fromString('foo'), 'bar']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayReturnsInstance(): void
     {
         self::assertSame(['foo', 'bar'], SubtreeTags::fromArray([SubtreeTag::fromString('foo'), SubtreeTag::fromString('bar'), SubtreeTag::fromString('foo')])->toStringArray());
@@ -86,10 +72,8 @@ class SubtreeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider isEmptyDataProvider
-     */
+    #[DataProvider('isEmptyDataProvider')]
+    #[Test]
     public function isEmptyTests(array $tags, bool $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags)->isEmpty());
@@ -103,10 +87,8 @@ class SubtreeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider countDataProvider
-     */
+    #[DataProvider('countDataProvider')]
+    #[Test]
     public function countTests(array $tags, int $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags)->count());
@@ -120,10 +102,8 @@ class SubtreeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider containDataProvider
-     */
+    #[DataProvider('containDataProvider')]
+    #[Test]
     public function containTests(array $tags, string $tag, bool $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags)->contain(SubtreeTag::fromString($tag)));
@@ -141,10 +121,8 @@ class SubtreeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider intersectionDataProvider
-     */
+    #[DataProvider('intersectionDataProvider')]
+    #[Test]
     public function intersectionTests(array $tags1, array $tags2, array $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->intersection(SubtreeTags::fromStrings(...$tags2))->toStringArray());
@@ -160,10 +138,8 @@ class SubtreeTagsTest extends TestCase
         yield 'with intersection reversed' => ['tags1' => ['baz', 'bars', 'foo'], 'tags2' => ['foo', 'bar', 'baz'], 'expectedResult' => ['bars']];
     }
 
-    /**
-     * @test
-     * @dataProvider differenceDataProvider
-     */
+    #[DataProvider('differenceDataProvider')]
+    #[Test]
     public function differenceTests(array $tags1, array $tags2, array $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->difference(SubtreeTags::fromStrings(...$tags2))->toStringArray());
@@ -179,10 +155,8 @@ class SubtreeTagsTest extends TestCase
         yield 'equals reversed' => ['tags1' => ['foo', 'bar'], 'tags2' => ['bar', 'foo'], 'expectedResult' => true];
     }
 
-    /**
-     * @test
-     * @dataProvider equalsDataProvider
-     */
+    #[DataProvider('equalsDataProvider')]
+    #[Test]
     public function equalsTests(array $tags1, array $tags2, bool $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->equals(SubtreeTags::fromStrings(...$tags2)));
@@ -198,43 +172,33 @@ class SubtreeTagsTest extends TestCase
     }
 
 
-    /**
-     * @test
-     * @dataProvider mergeDataProvider
-     */
+    #[DataProvider('mergeDataProvider')]
+    #[Test]
     public function mergeTests(array $tags1, array $tags2, array $expectedResult): void
     {
         self::assertSame($expectedResult, SubtreeTags::fromStrings(...$tags1)->merge(SubtreeTags::fromStrings(...$tags2))->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function mapAppliesCallback(): void
     {
         $result = SubtreeTags::fromStrings('foo', 'bar', 'baz')->map(static fn (SubtreeTag $tag) => strtoupper($tag->value));
         self::assertSame(['FOO', 'BAR', 'BAZ'], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toStringArrayReturnsEmptyArrayForEmptySet(): void
     {
         self::assertSame([], SubtreeTags::createEmpty()->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function toStringArrayReturnsTagsAsStrings(): void
     {
         self::assertSame(['foo', 'bar'], SubtreeTags::fromStrings('foo', 'bar')->toStringArray());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeSerialized(): void
     {
         self::assertSame('["foo","bar"]', json_encode(SubtreeTags::fromStrings('foo', 'bar', 'foo')));

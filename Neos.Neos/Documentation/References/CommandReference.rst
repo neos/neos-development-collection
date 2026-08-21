@@ -1177,7 +1177,7 @@ Arguments
 ``neos.flow:schema:validate``
 *****************************
 
-**Validate the given configurationfile againt a schema file**
+**Validate the given configuration file against a schema file**
 
 
 
@@ -1430,9 +1430,9 @@ Options
 ``neos.flow:session:collectgarbage``
 ************************************
 
-**Run garbage collection for sesions.**
+**Run garbage collection for sessions.**
 
-This command will remove session-data and -metadate of outdated sessions
+This command will remove session-data and -metadata of outdated sessions
 identified by lastActivityTimestamp being older than inactivityTimeout
 
 !!! This is usually done automatically after shutdown for the percentage

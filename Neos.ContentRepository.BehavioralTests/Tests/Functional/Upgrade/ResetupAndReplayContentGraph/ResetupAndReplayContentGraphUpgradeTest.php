@@ -16,6 +16,8 @@ use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
 use Neos\ContentRepositoryRegistry\Upgrade\ResetupAndReplayContentGraph\ResetupAndReplayContentGraphUpgrade;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Test;
 
 // FIXME, this test should reside in Neos.ContentRepositoryRegistry, but requires the "AbstractSubscriptionEngineTestCase" which we dont want to depend on when distributing the package, its a dev dependency
 class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngineTestCase
@@ -24,7 +26,7 @@ class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngine
 
     private array $outputLines = [];
 
-    /** @test */
+    #[Test]
     public function resetupAndReplayOnEmptyEventStore()
     {
         $this->fakeProjection->expects(self::exactly(2))->method('setUp');
@@ -63,7 +65,7 @@ class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngine
         $this->expectOkayStatus('contentGraph', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(0));
     }
 
-    /** @test */
+    #[Test]
     public function resetupAndReplayBecauseNewMigrationWouldFail()
     {
         $this->fakeProjection->expects(self::exactly(2))->method('setUp');
@@ -112,7 +114,7 @@ class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngine
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(2));
     }
 
-    /** @test */
+    #[Test]
     public function constraintBeforeReplayIfGraphIsNotUpToDate()
     {
         $this->fakeProjection->expects(self::exactly(2))->method('setUp');
@@ -197,9 +199,7 @@ class ResetupAndReplayContentGraphUpgradeTest extends AbstractSubscriptionEngine
         $this->resetGraphAndSetupUpgrade = $upgrade;
     }
 
-    /**
-     * @after
-     */
+    #[After]
     public function noUnmatchedOutputLines(): void
     {
         $this->assertTheOutputEquals('');

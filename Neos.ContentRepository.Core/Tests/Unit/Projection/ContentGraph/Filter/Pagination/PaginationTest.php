@@ -13,6 +13,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class PaginationTest extends TestCase
@@ -24,37 +26,29 @@ class PaginationTest extends TestCase
         yield ['limit' => -1, 'offset' => 0];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidLimitAndOffsets
-     */
+    #[DataProvider('invalidLimitAndOffsets')]
+    #[Test]
     public function fromLimitAndOffsetChecksConstraints(int $limit, int $offset): void
     {
         $this->expectException(\InvalidArgumentException::class);
         Pagination::fromLimitAndOffset($limit, $offset);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArraySetsLimitIfItIsNotSpecified(): void
     {
         $pagination = Pagination::fromArray(['offset' => 123]);
         self::assertSame(PHP_INT_MAX, $pagination->limit);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArraySetsOffsetIfItIsNotSpecified(): void
     {
         $pagination = Pagination::fromArray(['limit' => 123]);
         self::assertSame(0, $pagination->offset);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArraySetsLimitAndOffsetIfBothAreNotSet(): void
     {
         $pagination = Pagination::fromArray([]);
@@ -62,9 +56,7 @@ class PaginationTest extends TestCase
         self::assertSame(0, $pagination->offset);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayCastsNumericStrings(): void
     {
         $pagination = Pagination::fromArray(['limit' => '12', 'offset' => ' 23 ']);
@@ -74,18 +66,16 @@ class PaginationTest extends TestCase
 
     public static function invalidLimitAndOffsetArrays(): \Generator
     {
-        yield ['no numeric limit' => ['limit' => 'not a number']];
-        yield ['no numeric offset' => ['offset' => 'not a number']];
-        yield ['limit out of range' => ['limit' => 0, 'offset' => 0]];
-        yield ['offset out of range' => ['limit' => 1, 'offset' => -1]];
-        yield ['unknown key' => ['unknown' => 123]];
-        yield ['unknown keys' => ['limid' => 123, 'offsed' => 123]];
+        yield 'no numeric limit' => [['limit' => 'not a number']];
+        yield 'no numeric offset' => [['offset' => 'not a number']];
+        yield 'limit out of range' => [['limit' => 0, 'offset' => 0]];
+        yield 'offset out of range' => [['limit' => 1, 'offset' => -1]];
+        yield 'unknown key' => [['unknown' => 123]];
+        yield 'unknown keys' => [['limid' => 123, 'offsed' => 123]];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidLimitAndOffsetArrays
-     */
+    #[DataProvider('invalidLimitAndOffsetArrays')]
+    #[Test]
     public function fromArrayThrowsExceptionForInvalidArrays(array $array): void
     {
         $this->expectException(\InvalidArgumentException::class);

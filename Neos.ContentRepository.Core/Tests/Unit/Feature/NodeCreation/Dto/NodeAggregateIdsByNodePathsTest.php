@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,8 +29,8 @@ class NodeAggregateIdsByNodePathsTest extends TestCase
 {
     /**
      * @param array<string,NodeAggregateId|null> $expectedNodeAggregateIdsByPath, null if the actual value is not important
-     * @dataProvider subjectProvider
      */
+    #[DataProvider('subjectProvider')]
     public function testCompleteForNodeOfType(NodeAggregateIdsByNodePaths $subject, array $expectedNodeAggregateIdsByPath): void
     {
         $nodeTypeManager = NodeTypeManager::createFromArrayConfiguration(

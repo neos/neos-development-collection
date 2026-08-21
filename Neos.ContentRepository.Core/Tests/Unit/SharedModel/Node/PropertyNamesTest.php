@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
 
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class PropertyNamesTest extends TestCase
@@ -19,10 +21,8 @@ class PropertyNamesTest extends TestCase
         yield 'with intersection reversed' => ['names1' => ['baz', 'bars', 'foo'], 'names2' => ['foo', 'bar', 'baz'], 'expectedResult' => ['bars']];
     }
 
-    /**
-     * @test
-     * @dataProvider differenceDataProvider
-     */
+    #[DataProvider('differenceDataProvider')]
+    #[Test]
     public function getDifference(array $names1, array $names2, array $expectedResult): void
     {
         self::assertSame($expectedResult, array_column(iterator_to_array(PropertyNames::fromArray($names1)->getDifference(PropertyNames::fromArray($names2))), 'value'));

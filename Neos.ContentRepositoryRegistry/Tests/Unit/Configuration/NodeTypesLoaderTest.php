@@ -13,13 +13,13 @@ namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypesLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class NodeTypesLoaderTest extends UnitTestCase
@@ -64,9 +64,7 @@ class NodeTypesLoaderTest extends UnitTestCase
         return $mockPackage;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyPackageList(): void
     {
         $actualResult = $this->nodeTypesLoader->load([], $this->mockApplicationContext);
@@ -110,9 +108,7 @@ class NodeTypesLoaderTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function firstPackage(): void
     {
         $actualResult = $this->nodeTypesLoader->load([$this->mockPackage1], $this->mockApplicationContext);
@@ -180,9 +176,7 @@ class NodeTypesLoaderTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function secondPackage(): void
     {
         $actualResult = $this->nodeTypesLoader->load([$this->mockPackage2], $this->mockApplicationContext);
@@ -238,9 +232,7 @@ class NodeTypesLoaderTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function bothPackages(): void
     {
         $actualResult = $this->nodeTypesLoader->load([$this->mockPackage1, $this->mockPackage2], $this->mockApplicationContext);
@@ -320,9 +312,7 @@ class NodeTypesLoaderTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function bothPackagesReversedOrder(): void
     {
         $actualResult = $this->nodeTypesLoader->load([$this->mockPackage2, $this->mockPackage1], $this->mockApplicationContext);
@@ -404,9 +394,8 @@ class NodeTypesLoaderTest extends UnitTestCase
 
     /**
      * This is a test case for the issue https://github.com/neos/neos-development-collection/issues/3449
-     *
-     * @test
      */
+    #[Test]
     public function nodeTypeCanBeOverriddenFromNodeTypesFolder(): void
     {
         $mockSeoPackage = $this->mockPackage('Neos.Seo');

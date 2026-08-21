@@ -11,10 +11,11 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\TagImplementation;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion Tag object
@@ -32,7 +33,7 @@ class TagImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    public function tagExamples()
+    public static function tagExamples()
     {
         return [
             'default properties' => [[], null, null, '<div></div>'],
@@ -45,14 +46,12 @@ class TagImplementationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider tagExamples
-     */
+    #[DataProvider('tagExamples')]
+    #[Test]
     public function evaluateTests($properties, $attributes, $content, $expectedOutput)
     {
         $path = 'tag/test';
-        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($evaluatePath, $that) use ($properties, $path, $attributes, $content) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'attributes':
@@ -61,7 +60,7 @@ class TagImplementationTest extends UnitTestCase
                     return $content;
             }
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
-        }));
+        });
 
         $fusionObjectName = 'Neos.Fusion:Tag';
         $renderer = new TagImplementation($this->mockRuntime, $path, $fusionObjectName);

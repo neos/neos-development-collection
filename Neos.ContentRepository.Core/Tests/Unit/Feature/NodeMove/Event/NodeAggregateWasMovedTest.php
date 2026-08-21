@@ -21,14 +21,15 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NodeAggregateWasMovedTest extends TestCase
 {
     /**
      * @param array<string,mixed> $payload
-     * @dataProvider eventPayloadProviderWithLegacyNodeMoveMappingsFormat
      */
+    #[DataProvider('eventPayloadProviderWithLegacyNodeMoveMappingsFormat')]
     public function testFromArray(array $payload, NodeAggregateWasMoved $expectedEvent): void
     {
         self::assertEquals($expectedEvent, NodeAggregateWasMoved::fromArray($payload));

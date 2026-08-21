@@ -6,13 +6,12 @@ namespace Neos\Neos\Tests\Unit\Domain\Service\NodeDuplication;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\Domain\Service\NodeDuplication\NodeAggregateIdMapping;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class NodeAggregateIdMappingTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function constructWithNumericIds()
     {
         $ids = NodeAggregateIdMapping::fromArray(['123' => '456']);

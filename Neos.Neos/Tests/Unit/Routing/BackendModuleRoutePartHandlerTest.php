@@ -15,6 +15,8 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Controller\Module\Administration\UsersController;
 use Neos\Neos\Controller\Module\AdministrationController;
 use Neos\Neos\Routing\BackendModuleRoutePartHandler;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Backend Module Route Part Handler
@@ -25,7 +27,7 @@ class BackendModuleRoutePartHandlerTest extends UnitTestCase
     /**
      * Data provider for ... see below
      */
-    public function requestPaths()
+    public static function requestPaths()
     {
         return [
             'empty' => ['', BackendModuleRoutePartHandler::MATCHRESULT_NOSUCHMODULE, null],
@@ -45,10 +47,8 @@ class BackendModuleRoutePartHandlerTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider requestPaths
-     */
+    #[DataProvider('requestPaths')]
+    #[Test]
     public function matchFindsCorrectValues($requestPath, $matchResult, $expectedValue)
     {
         $routePartHandler = new BackendModuleRoutePartHandler();

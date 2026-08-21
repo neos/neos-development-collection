@@ -48,7 +48,7 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
-    protected function onNotSuccessfulTest(\Throwable $t): void
+    protected function onNotSuccessfulTest(\Throwable $t): never
     {
         try {
             $this->log('Start logging exception');

@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,16 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the DebugConsole object
  *
  */
-class DebugConsoleTest extends AbstractFusionObjectTest
+class DebugConsoleTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function debugEmptyValue()
     {
         $view = $this->buildView();
@@ -29,9 +28,7 @@ class DebugConsoleTest extends AbstractFusionObjectTest
         self::assertEquals('<script>console.log("")</script>', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugNull()
     {
         $view = $this->buildView();
@@ -40,9 +37,7 @@ class DebugConsoleTest extends AbstractFusionObjectTest
         self::assertEquals('<script>console.log("")</script>', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugNullWithTitle()
     {
         $view = $this->buildView();
@@ -51,9 +46,7 @@ class DebugConsoleTest extends AbstractFusionObjectTest
         self::assertEquals('<script>console.log("", "Title")</script>', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugObject()
     {
         $view = $this->buildView();
@@ -62,9 +55,7 @@ class DebugConsoleTest extends AbstractFusionObjectTest
         self::assertEquals('<script>console.log({"foo":"bar"})</script>', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugMultipleValues()
     {
         $view = $this->buildView();

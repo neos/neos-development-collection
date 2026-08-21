@@ -13,7 +13,6 @@ namespace Neos\Media\Tests\Functional\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -24,9 +23,11 @@ use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
-class AssetServiceTest extends AbstractTest
+class AssetServiceTest extends AbstractTestCase
 {
     /**
      * @var boolean
@@ -57,7 +58,7 @@ class AssetServiceTest extends AbstractTest
         $this->assetService = $this->objectManager->get(AssetService::class);
     }
 
-    public function replaceAssetResourceDataProvider(): array
+    public static function replaceAssetResourceDataProvider(): array
     {
         return [
             'jpgWithJpg' => [
@@ -80,14 +81,14 @@ class AssetServiceTest extends AbstractTest
     }
 
     /**
-     * @test
-     * @dataProvider replaceAssetResourceDataProvider
      *
      * @param string $replacementFilePath
      * @param array $options
      * @throws IllegalObjectTypeException
      * @throws Exception
      */
+    #[DataProvider('replaceAssetResourceDataProvider')]
+    #[Test]
     public function replaceAssetResource(string $replacementFilePath, array $options): void
     {
         $asset = $this->prepareImportedAsset(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');

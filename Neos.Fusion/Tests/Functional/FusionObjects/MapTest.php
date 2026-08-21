@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,16 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Mapping Fusion object
  *
  */
-class MapTest extends AbstractFusionObjectTest
+class MapTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicMapWorks()
     {
         $view = $this->buildView();
@@ -29,9 +28,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicMapWorksWithIterator()
     {
         $view = $this->buildView();
@@ -40,9 +37,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicMapWorksWithIteratorThatDoesNotImplementCount()
     {
         $view = $this->buildView();
@@ -51,9 +46,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicMapWorksWithContentRenderer()
     {
         $view = $this->buildView();
@@ -62,9 +55,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['Xelement1','Xelement2'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicMapWorksAndPreservesKeys()
     {
         $view = $this->buildView();
@@ -73,9 +64,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['foo' => 'Xelement1', 'bar' => 'Xelement2'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function resultKeysCanBeRendered(): void
     {
         $view = $this->buildView();
@@ -84,9 +73,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['key-element1' => 'value-element1', 'key-element2' => 'value-element2'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicMapWorksAndStillContainsOtherContextVariables()
     {
         $view = $this->buildView();
@@ -96,9 +83,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals(['Xelement1var','Xelement2var'], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyMapReturnsEmptyArray()
     {
         $view = $this->buildView();
@@ -107,9 +92,7 @@ class MapTest extends AbstractFusionObjectTest
         self::assertEquals([], $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function iterationInformationIsAddedToMap()
     {
         $view = $this->buildView();
