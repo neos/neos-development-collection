@@ -285,7 +285,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
           WHEN 'ContentStreamWasRemoved' THEN JSON_VALUE(payload, '$.contentStreamId')
         END
         HAVING removalSequenceNumber < maxForkSequenceNumber
-        ORDER BY sequencenumber;        
+        ORDER BY removalSequenceNumber;        
         SQL);
 
         return array_map(IllegalContentStreamForks::fromRow(...), $rows);
