@@ -6,39 +6,40 @@ namespace Neos\ContentGraph\Tests\Unit;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ContentStreamLayersTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function invalidLayer()
     {
         $this->expectException(\InvalidArgumentException::class);
         ContentStreamLayer::fromInt(0);
     }
 
-    /** @test */
+    #[Test]
     public function invalidLayer2()
     {
         $this->expectException(\InvalidArgumentException::class);
         ContentStreamLayer::fromInt(-1);
     }
 
-    /** @test */
+    #[Test]
     public function invalidEmptyLayers()
     {
         $this->expectException(\InvalidArgumentException::class);
         ContentStreamLayers::fromArray([]);
     }
 
-    /** @test */
+    #[Test]
     public function invalidLayerNumbers()
     {
         $this->expectException(\InvalidArgumentException::class);
         ContentStreamLayers::fromArray([0, -1]);
     }
 
-    /** @test */
+    #[Test]
     public function getRootLayer()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
@@ -48,7 +49,7 @@ class ContentStreamLayersTest extends TestCase
         self::assertSame(1, $layers2->getRootLayer()->value);
     }
 
-    /** @test */
+    #[Test]
     public function getWriteLayer()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
@@ -61,7 +62,7 @@ class ContentStreamLayersTest extends TestCase
         self::assertSame(1, $layers3->getWriteLayer()->value);
     }
 
-    /** @test */
+    #[Test]
     public function getParentReadLayer()
     {
         $layers = ContentStreamLayers::fromArray([1]);
@@ -74,7 +75,7 @@ class ContentStreamLayersTest extends TestCase
         self::assertSame(5, $layers2->getParentReadLayer()->value);
     }
 
-    /** @test */
+    #[Test]
     public function getParentReadLayers()
     {
         $layers = ContentStreamLayers::fromArray([1]);
@@ -91,7 +92,7 @@ class ContentStreamLayersTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function equalsSingle()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
@@ -103,7 +104,7 @@ class ContentStreamLayersTest extends TestCase
         self::assertFalse($layers2->equalsSingle(ContentStreamLayer::fromInt(2)));
     }
 
-    /** @test */
+    #[Test]
     public function contain()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
@@ -116,14 +117,14 @@ class ContentStreamLayersTest extends TestCase
         self::assertFalse($layers2->contain(ContentStreamLayer::fromInt(2)));
     }
 
-    /** @test */
+    #[Test]
     public function toIntArray()
     {
         $layers = ContentStreamLayers::fromArray([3, 6, 1, 5]);
         self::assertSame([1, 3, 5, 6], $layers->toIntArray());
     }
 
-    /** @test */
+    #[Test]
     public function ignoresDuplicates()
     {
         $layers = ContentStreamLayers::fromArray([1, 3, 1, 3]);

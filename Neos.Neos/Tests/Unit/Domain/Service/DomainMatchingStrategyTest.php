@@ -11,10 +11,10 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Service\DomainMatchingStrategy;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Content Service
@@ -22,13 +22,11 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  */
 class DomainMatchingStrategyTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly()
     {
         $mockDomains = [$this->getMockBuilder(Domain::class)->disableOriginalConstructor()->getMock()];
-        $mockDomains[0]->expects(self::any())->method('getHostname')->will(self::returnValue('www.neos.io'));
+        $mockDomains[0]->expects(self::any())->method('getHostname')->willReturn('www.neos.io');
         $expectedDomains = [$mockDomains[0]];
 
         $strategy = new DomainMatchingStrategy();
@@ -36,16 +34,14 @@ class DomainMatchingStrategyTest extends UnitTestCase
         self::assertSame($expectedDomains, $actualDomains);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst()
     {
         $mockDomains = [
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
         ];
 
         $mockDomains[0]->setHostname('neos.io');
@@ -63,13 +59,11 @@ class DomainMatchingStrategyTest extends UnitTestCase
         self::assertSame($expectedDomains, $actualDomains);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getSortedMatchesReturnsNoMatchIfDomainIsLongerThanHostname()
     {
         $mockDomains = [
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
+            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->addMethods(['dummy'])->getMock(),
         ];
 
         $mockDomains[0]->setHostname('flow.neos.io');

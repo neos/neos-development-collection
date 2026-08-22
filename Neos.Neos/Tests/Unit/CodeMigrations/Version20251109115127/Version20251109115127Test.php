@@ -8,6 +8,8 @@ use Neos\Flow\Core\Migrations\Manager;
 use Neos\Flow\Core\Migrations\Version20251109115127;
 use Neos\Neos\Tests\Unit\CodeMigrations\MigrationFixtureIterator;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class Version20251109115127Test extends TestCase
@@ -22,10 +24,8 @@ class Version20251109115127Test extends TestCase
         yield from MigrationFixtureIterator::createForFilesInDirectory(__DIR__ . '/Fixture/Routes', 'yaml.inc');
     }
 
-    /**
-     * @dataProvider settingsFixtures
-     * @test
-     */
+    #[DataProvider('settingsFixtures')]
+    #[Test]
     public function executeSettingsMigration(string $yamlInputFile, string $expectedYamlOutputFile, string $expectedWarnings = ''): void
     {
         vfsStream::setup('yaml', null, [
@@ -61,10 +61,8 @@ class Version20251109115127Test extends TestCase
         );
     }
 
-    /**
-     * @dataProvider routesFixtures
-     * @test
-     */
+    #[DataProvider('routesFixtures')]
+    #[Test]
     public function executeRoutesMigration(string $yamlInputFile, string $expectedYamlOutputFile): void
     {
         vfsStream::setup('yaml', null, [
@@ -102,11 +100,9 @@ class Version20251109115127Test extends TestCase
         self::assertEmpty($migration->getWarnings());
     }
 
-    /**
-     * @dataProvider settingsFixtures
-     * @dataProvider routesFixtures
-     * @test
-     */
+    #[DataProvider('settingsFixtures')]
+    #[DataProvider('routesFixtures')]
+    #[Test]
     public function reExecuteMigrationEmitsNoChanges(string $_, string $migratedYamlFile): void
     {
         vfsStream::setup('yaml', null, [

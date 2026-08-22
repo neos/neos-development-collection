@@ -17,6 +17,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\BlankSitePackageGenerator;
 use Neos\SiteKickstarter\Tests\Unit\Service\Fixtures\NamedSitePackageGenerator;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once __DIR__ . '/Fixtures/NamedSitePackageGenerator.php';
 require_once __DIR__ . '/Fixtures/BlankSitePackageGenerator.php';
@@ -41,14 +42,12 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
         $this->inject($this->sitePackageGeneratorNameService, 'objectManager', $this->mockObjectManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getNameOfSitePackageGeneratorWithName()
     {
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturnCallback(function ($className) {
             return new NamedSitePackageGenerator();
-        }));
+        });
 
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(NamedSitePackageGenerator::class),
@@ -56,14 +55,12 @@ class SitePackageGeneratorNameServiceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getClassNameOfSitePackageGenerator()
     {
-        $this->mockObjectManager->expects(self::any())->method('get')->will(self::returnCallback(function ($className) {
+        $this->mockObjectManager->expects(self::any())->method('get')->willReturnCallback(function ($className) {
             return new BlankSitePackageGenerator();
-        }));
+        });
 
         $this->assertEquals(
             $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator(BlankSitePackageGenerator::class),

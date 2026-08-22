@@ -16,31 +16,26 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\ContentRepository;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ContentRepositoryIdsTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArraySupportsEmptyArray(): void
     {
         $contentRepositoryIds = ContentRepositoryIds::fromArray([]);
         self::assertCount(0, $contentRepositoryIds);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayConvertsStringsToContentRepositoryIds(): void
     {
         $contentRepositoryIds = ContentRepositoryIds::fromArray(['some_cr_id', ContentRepositoryId::fromString('other_cr_id')]);
         self::assertEquals([ContentRepositoryId::fromString('some_cr_id'), ContentRepositoryId::fromString('other_cr_id')], iterator_to_array($contentRepositoryIds));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromArrayThrowsExceptionForInvalidItem(): void
     {
         $this->expectException(\InvalidArgumentException::class);

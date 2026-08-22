@@ -22,12 +22,13 @@ use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for an asset model
  */
-class AssetTest extends AbstractTest
+class AssetTest extends AbstractTestCase
 {
     /**
      * @var boolean
@@ -64,9 +65,7 @@ class AssetTest extends AbstractTest
         $this->tagRepository = $this->objectManager->get(TagRepository::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setTags()
     {
         $tagLabels = ['foo', 'bar'];
@@ -89,9 +88,7 @@ class AssetTest extends AbstractTest
         $this->assertAssetHasTags($asset, $tagLabels);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addTag()
     {
         $asset = $this->buildAssetObject();
@@ -125,9 +122,7 @@ class AssetTest extends AbstractTest
         self::assertCount(0, $expectedTagLabels);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAssetProxyReturnsAssetProxyForLocalAssets()
     {
         $asset = $this->buildAssetObject();
@@ -135,9 +130,7 @@ class AssetTest extends AbstractTest
         $this->assertNotNull($asset->getAssetProxy());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAssetProxyReturnsNullIfAssetSourceIdentifierPointsToNonExistingAssetSource()
     {
         $asset = $this->buildAssetObject();
@@ -145,9 +138,7 @@ class AssetTest extends AbstractTest
         self::assertNull($asset->getAssetProxy());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAssetProxyReturnsNullIfNoCorrespondingImportedAssetExists()
     {
         $asset = $this->buildAssetObject();
@@ -156,7 +147,7 @@ class AssetTest extends AbstractTest
         $mockExternalAssetSource = $this->getMockBuilder(AssetSourceInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($asset, 'assetSources', ['test-source' => $mockExternalAssetSource]);
 
-        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->setMethods(['findOneByLocalAssetIdentifier'])->getMock();
+        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->addMethods(['findOneByLocalAssetIdentifier'])->getMock();
         $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
 
         $mockImportedAssetRepository->expects(self::atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);

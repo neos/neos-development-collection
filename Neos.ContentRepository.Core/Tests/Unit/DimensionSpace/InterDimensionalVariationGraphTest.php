@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace;
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\DimensionSpace;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -666,9 +667,7 @@ class InterDimensionalVariationGraphTest extends TestCase
         self::assertSame(DimensionSpace\VariantType::TYPE_SAME, $this->subject->getVariantType($peer, $peer));
     }
 
-    /**
-     * @dataProvider generalizationSetSampleProvider
-     */
+    #[DataProvider('generalizationSetSampleProvider')]
     public function testGetGeneralizationSetForSet(
         DimensionSpace\DimensionSpacePointSet $specializationSet,
         bool $includeOrigins,
@@ -905,9 +904,7 @@ class InterDimensionalVariationGraphTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider rootReductionSetProvider
-     */
+    #[DataProvider('rootReductionSetProvider')]
     public function testReduceSetToRelativeRoots(
         DimensionSpace\DimensionSpacePointSet $dimensionSpacePointSet,
         DimensionSpace\DimensionSpacePointSet $expectedRelativeRoots

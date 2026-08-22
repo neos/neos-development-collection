@@ -11,17 +11,17 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for an tag repository
  *
  */
-class TagRepositoryTest extends AbstractTest
+class TagRepositoryTest extends AbstractTestCase
 {
     /**
      * @var boolean
@@ -46,9 +46,7 @@ class TagRepositoryTest extends AbstractTest
         $this->tagRepository = $this->objectManager->get(TagRepository::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagsCanBePersisted(): void
     {
         $tag = new Tag('foobar');
@@ -60,9 +58,7 @@ class TagRepositoryTest extends AbstractTest
         self::assertInstanceOf(Tag::class, $this->tagRepository->findAll()->getFirst());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findBySearchTermReturnsFilteredResult(): void
     {
         $tag1 = new Tag('foobar');
@@ -81,9 +77,7 @@ class TagRepositoryTest extends AbstractTest
         self::assertCount(1, $this->tagRepository->findBySearchTerm(' foo '));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parentRemoveRemovesCompleteHierarchy(): void
     {
         $grandchild = new Tag('grandChild');

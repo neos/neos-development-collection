@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,12 +13,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Case Fusion object
  *
  */
-class CaseTest extends AbstractFusionObjectTest
+class CaseTest extends AbstractFusionObjectTestCase
 {
     public function assertMatchingWorks($path)
     {
@@ -29,17 +30,13 @@ class CaseTest extends AbstractFusionObjectTest
         self::assertEquals('Xtestconditionfalse', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function numericMatchingWorks()
     {
         $this->assertMatchingWorks('case/numericMatching');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchingWithDebugModeWorks()
     {
         $view = $this->buildView();
@@ -54,73 +51,55 @@ class CaseTest extends AbstractFusionObjectTest
         self::assertStringContainsString('Xtestconditionfalse', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function positionalMatchingWorks()
     {
         $this->assertMatchingWorks('case/positionalMatching');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderPathWillRenderAbsolutePath()
     {
         $this->assertMatchingWorks('case/renderPath');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderPathWillWinOverType()
     {
         $this->assertMatchingWorks('case/renderPathWillWin');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ignorePropertiesWorks()
     {
         $this->assertMatchingWorks('case/ignoredPropertiesAreIgnored');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usingRendererWorks()
     {
         $this->assertMatchingWorks('case/renderer');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWinsOverType()
     {
         $this->assertMatchingWorks('case/rendererWithType');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWinsOverRenderPath()
     {
         $this->assertMatchingWorks('case/rendererWithRenderPath');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererWorksWithEelAndSimpleTypes()
     {
         $this->assertMatchingWorks('case/rendererWorksWithEelAndSimpleTypes');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function rendererHasAccessToThis()
     {
         $view = $this->buildView();

@@ -11,19 +11,18 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\JoinImplementation;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion Join object
  */
 class JoinImplementationTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateWithEmptyJoinRendersNull()
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
@@ -37,7 +36,7 @@ class JoinImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElements()
+    public static function positionalSubElements()
     {
         return [
             [
@@ -101,7 +100,7 @@ class JoinImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElementsThatShouldFailByInvalidPositions()
+    public static function positionalSubElementsThatShouldFailByInvalidPositions()
     {
         return [
             [
@@ -118,20 +117,20 @@ class JoinImplementationTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider positionalSubElements
      *
      * @param string $message
      * @param array $subElements
      * @param array $expectedKeyOrder
      */
+    #[DataProvider('positionalSubElements')]
+    #[Test]
     public function evaluateRendersKeysSortedByPositionMetaProperty($message, $subElements, $expectedKeyOrder)
     {
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+        $mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($path) use (&$renderedPaths) {
             $renderedPaths[] = $path;
-        }));
+        });
 
         $path = '';
         $fusionObjectName = 'Neos.Fusion:Join';
@@ -145,21 +144,21 @@ class JoinImplementationTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider positionalSubElementsThatShouldFailByInvalidPositions
      *
      * @param string $message
      * @param array $subElements
      * @param array $expectedKeyOrder
      */
+    #[DataProvider('positionalSubElementsThatShouldFailByInvalidPositions')]
+    #[Test]
     public function evaluateRendersKeysSortedByPositionMetaPropertyThatShouldFail($message, $subElements, $expectedKeyOrder)
     {
         try {
             $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-            $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($path) use (&$renderedPaths) {
+            $mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($path) use (&$renderedPaths) {
                 $renderedPaths[] = $path;
-            }));
+            });
 
             $path = '';
             $fusionObjectName = 'Neos.Fusion:Join';

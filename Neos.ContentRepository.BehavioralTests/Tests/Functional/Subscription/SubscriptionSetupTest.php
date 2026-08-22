@@ -14,10 +14,11 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function setupOnEmptyDatabase()
     {
         $this->eventStore->setup();
@@ -63,7 +64,7 @@ final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function filteringSetup()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');
@@ -90,7 +91,7 @@ final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function setupIsInvokedForBootingSubscribers()
     {
         $this->fakeProjection->expects(self::exactly(2))->method('setUp');
@@ -128,7 +129,7 @@ final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::BOOTING, SequenceNumber::none());
     }
 
-    /** @test */
+    #[Test]
     public function setupIsInvokedForPreviouslyActiveSubscribers()
     {
         // Usecase: Setup a content repository and then when the subscribers are active, update to a new patch which requires a setup
@@ -194,7 +195,7 @@ final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    /** @test */
+    #[Test]
     public function failingSetupWillMarkProjectionAsErrored()
     {
         $this->fakeProjection->expects(self::once())->method('setUp')->willThrowException(
@@ -221,7 +222,7 @@ final class SubscriptionSetupTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function failingSetupWillNotRollbackProjection()
     {
         // we cannot wrap the schema creation in transactions as CREATE TABLE would for example lead to an implicit commit

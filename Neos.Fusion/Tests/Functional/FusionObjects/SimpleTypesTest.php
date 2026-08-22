@@ -11,35 +11,29 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Fusion\Exception\MissingFusionImplementationException;
 use Neos\Fusion\Exception\MissingFusionObjectException;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion View
  *
  */
-class SimpleTypesTest extends AbstractFusionObjectTest
+class SimpleTypesTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function valuesCanBeExpressedAsSimpleValueAsEelAsTypoScropt()
     {
         $this->assertMultipleFusionPaths('A simple string value is not a Fusion object', 'simpleTypes/stringAs');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionPropertiesCanContainSimpleValueOrEelOrTypoScropt()
     {
         $this->assertMultipleFusionPaths('A simple value', 'simpleTypes/valueWithNested');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function booleanSimpleTypeWorks()
     {
         $view = $this->buildView();
@@ -49,9 +43,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
         self::assertTrue($view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nullSimpleTypeWorks()
     {
         $view = $this->buildView();
@@ -59,9 +51,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
         self::assertNull($view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processorOnSimpleTypeWorks()
     {
         $view = $this->buildView();
@@ -69,9 +59,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
         self::assertSame('Hello, Foo', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderingObjectWithMissingImplementationThrowsException()
     {
         $this->expectException(MissingFusionImplementationException::class);
@@ -80,9 +68,7 @@ class SimpleTypesTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderingNonExistingPathThrowsException()
     {
         $this->expectException(MissingFusionObjectException::class);

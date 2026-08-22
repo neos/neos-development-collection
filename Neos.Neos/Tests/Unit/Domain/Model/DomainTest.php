@@ -11,10 +11,10 @@ namespace Neos\Neos\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the "Domain" domain model
@@ -22,9 +22,7 @@ use Neos\Neos\Domain\Model\Site;
  */
 class DomainTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain()
     {
         $domain = new Domain();
@@ -32,9 +30,7 @@ class DomainTest extends UnitTestCase
         self::assertSame('neos.io', $domain->getHostname());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setSiteSetsTheSiteTheDomainIsPointingTo()
     {
         /** @var Site $mockSite */

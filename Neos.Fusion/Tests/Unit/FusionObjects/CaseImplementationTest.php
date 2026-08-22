@@ -11,26 +11,25 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\CaseImplementation;
 use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Case object
  */
-class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
+class CaseImplementationTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function ignoredPropertiesShouldNotBeUsedAsMatcher()
     {
         $path = 'page/body/content/main';
         $ignoredProperties = ['nodePath'];
 
         $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
+        $mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($evaluatePath, $that) use ($path, $ignoredProperties) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case '__meta/ignoreProperties':
@@ -39,7 +38,7 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
                     return true;
             }
             return ObjectAccess::getProperty($that, $relativePath, true);
-        }));
+        });
 
         $fusionObjectName = 'Neos.Fusion:Case';
         $renderer = new CaseImplementation($mockRuntime, $path, $fusionObjectName);
@@ -50,7 +49,7 @@ class CaseImplementationTest extends \Neos\Flow\Tests\UnitTestCase
             'condition' => 'true'
         ];
 
-        $mockRuntime->expects(self::once())->method('render')->with('page/body/content/main/default<Neos.Fusion:Matcher>')->will(self::returnValue('rendered matcher'));
+        $mockRuntime->expects(self::once())->method('render')->with('page/body/content/main/default<Neos.Fusion:Matcher>')->willReturn('rendered matcher');
 
         $result = $renderer->evaluate();
 

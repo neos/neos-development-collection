@@ -13,6 +13,7 @@ use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Core\Bootstrap;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,7 +38,7 @@ final class DebugEventProjectionTest extends TestCase
         $this->debugEventProjection->resetState();
     }
 
-    /** @test */
+    #[Test]
     public function fakeProjectionRejectsDuplicateEvents()
     {
         $fakeEventEnvelope = $this->createExampleEventEnvelopeForPosition(
@@ -57,7 +58,7 @@ final class DebugEventProjectionTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function fakeProjectionWithSaboteur()
     {
         $fakeEventEnvelope1 = $this->createExampleEventEnvelopeForPosition(

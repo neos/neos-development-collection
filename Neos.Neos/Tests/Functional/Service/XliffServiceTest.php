@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Functional\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\I18n\Locale;
@@ -21,6 +20,7 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Service\XliffService;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the XliffService
@@ -60,14 +60,14 @@ class XliffServiceTest extends FunctionalTestCase
             ->getMock();
         $mockPackageManager->expects(self::any())
             ->method('getFlowPackages')
-            ->will(self::returnValue($this->packages));
+            ->willReturn($this->packages);
         $mockPackageManager->expects(self::any())
             ->method('getPackage')
             ->with($this->logicalOr(
                 $this->equalTo('Vendor.BasePackage'),
                 $this->equalTo('Vendor.DependentPackage')
             ))
-            ->will(self::returnCallback([$this, 'myCallback']));
+            ->willReturnCallback([$this, 'myCallback']);
         $this->inject($this->xliffService, 'packageManager', $mockPackageManager);
         $this->inject($this->fileProvider, 'packageManager', $mockPackageManager);
 
@@ -131,9 +131,7 @@ class XliffServiceTest extends FunctionalTestCase
         return new Package($packageKey, $composerName, $packagePath);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedJsonRespectsIncludedFiles()
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
@@ -144,9 +142,7 @@ class XliffServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedJsonDoesNotRespectNotIncludedFiles()
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);
@@ -157,9 +153,7 @@ class XliffServiceTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCachedJsonRespectsOverride()
     {
         $translationResult = json_decode($this->xliffService->getCachedJson(new Locale('de')), true);

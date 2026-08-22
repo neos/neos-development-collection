@@ -12,10 +12,14 @@ namespace Neos\Fusion\Tests\Benchmark;
  * source code.
  */
 
+use Neos\Cache\Backend\TransientMemoryBackend;
+use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\RuntimeFactory;
+use Neos\Fusion\FusionObjects\ValueImplementation;
+use Neos\Utility\ObjectAccess;
 
 /**
  * A benchmark to test the Fusion runtime
@@ -91,7 +95,7 @@ class RuntimeBench
             '__prototypes' => [
                 'Neos.Fusion:Value' => [
                     '__meta' => [
-                        'class' => \Neos\Fusion\FusionObjects\ValueImplementation::class
+                        'class' => ValueImplementation::class
                     ]
                 ]
             ]
@@ -100,7 +104,7 @@ class RuntimeBench
 
         // Build an EEL evaluator suitable for benchmarking
         $evaluator = $this->buildEelEvaluator();
-        \Neos\Utility\ObjectAccess::setProperty($this->runtime, 'eelEvaluator', $evaluator, true);
+        ObjectAccess::setProperty($this->runtime, 'eelEvaluator', $evaluator, true);
 
         $this->runtime->pushContextArray([
             'foo' => 'Hello expression!'
@@ -167,8 +171,8 @@ class RuntimeBench
     {
         $evaluator = new CompilingEvaluator();
 
-        $backend = new \Neos\Cache\Backend\TransientMemoryBackend();
-        $frontend = new \Neos\Cache\Frontend\StringFrontend('expressions', $backend);
+        $backend = new TransientMemoryBackend();
+        $frontend = new StringFrontend('expressions', $backend);
         $backend->setCache($frontend);
 
         $evaluator->injectExpressionCache($frontend);

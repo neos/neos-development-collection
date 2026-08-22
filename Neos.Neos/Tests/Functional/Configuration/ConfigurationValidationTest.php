@@ -24,28 +24,21 @@ class ConfigurationValidationTest extends FlowConfigurationValidationTest
      *
      * @var array<string>
      */
-    protected array $contextNames = ['Development', 'Production', 'Testing'];
+    protected static array $contextNames = ['Development', 'Production', 'Testing'];
 
     /**
      * The configuration-types that are validated
      *
      * @var array<string>
      */
-    protected array $configurationTypes = ['Caches', 'Objects', 'Policy', 'Routes', 'Settings', 'NodeTypes'];
-
-    /**
-     * The packages that are searched for schemas
-     *
-     * @var array<string>
-     */
-    protected array $schemaPackageKeys = ['Neos.Flow', 'Neos.Neos', 'Neos.ContentRepository', 'Neos.Fusion'];
+    protected static array $configurationTypes = ['Caches', 'Objects', 'Policy', 'Routes', 'Settings', 'NodeTypes'];
 
     /**
      * The packages that contain the configuration that is validated
      *
      * @var array<string>
      */
-    protected array $configurationPackageKeys = [
+    protected static array $configurationPackageKeys = [
         'Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart',
         'Neos.ContentRepository', 'Neos.Neos', 'Neos.Fusion', 'Neos.Media',
         'Neos.Media.Browser'

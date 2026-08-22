@@ -11,10 +11,11 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\DataStructureImplementation;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -33,9 +34,7 @@ class DataStructureImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateWithEmptyArrayRendersEmptyArray(): void
     {
         $path = 'datastructure/test';
@@ -48,7 +47,7 @@ class DataStructureImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElements(): array
+    public static function positionalSubElements(): array
     {
         return [
             [
@@ -109,10 +108,8 @@ class DataStructureImplementationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider positionalSubElements
-     */
+    #[DataProvider('positionalSubElements')]
+    #[Test]
     public function evaluateRendersKeysSortedByPositionMetaProperty(string $message, array $subElements, array $expectedKeyOrder): void
     {
         $this->mockRuntime->method('evaluate')->willReturnCallback(function ($path) use (&$renderedPaths) {
@@ -132,7 +129,7 @@ class DataStructureImplementationTest extends UnitTestCase
     /**
      * @return array
      */
-    public function positionalSubElementsThatShouldFailByInvalidPositions(): array
+    public static function positionalSubElementsThatShouldFailByInvalidPositions(): array
     {
         return [
             [
@@ -145,11 +142,11 @@ class DataStructureImplementationTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider positionalSubElementsThatShouldFailByInvalidPositions
      *
      * @param array $subElements
      */
+    #[DataProvider('positionalSubElementsThatShouldFailByInvalidPositions')]
+    #[Test]
     public function evaluateThrowsExceptionIfKeysSortedByPositionMetaPropertyContainsInvalidValues(array $subElements): void
     {
         $fusionObjectName = 'Neos.Fusion:DataStructure';

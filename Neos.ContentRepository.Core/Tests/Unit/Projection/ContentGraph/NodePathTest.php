@@ -14,13 +14,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NodePathTest extends TestCase
 {
-    /**
-     * @dataProvider serializedPathProvider
-     */
+    #[DataProvider('serializedPathProvider')]
     public function testDeserialization(
         string $serializedPath,
         bool $expectedEmptyState,
@@ -40,7 +39,7 @@ class NodePathTest extends TestCase
     {
         yield 'nonRoot' => [
             'serializedPath' => 'child/grandchild',
-            'isEmpty' => false,
+            'expectedEmptyState' => false,
             'expectedParts' => [
                 NodeName::fromString('child'),
                 NodeName::fromString('grandchild'),
@@ -50,7 +49,7 @@ class NodePathTest extends TestCase
 
         yield 'root' => [
             'serializedPath' => '',
-            'isEmpty' => true,
+            'expectedEmptyState' => true,
             'expectedParts' => [],
             'expectedLength' => 0
         ];

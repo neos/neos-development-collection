@@ -11,13 +11,16 @@ namespace Neos\Neos\Tests\Unit\ResourceManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\ResourceManagement\NodeTypesStreamWrapper;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests for the NodeTypesStreamWrapper class
@@ -30,7 +33,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
     protected $nodeTypesStreamWrapper;
 
     /**
-     * @var PackageManager|\PHPUnit\Framework\MockObject\MockObject
+     * @var PackageManager|MockObject
      */
     protected $mockPackageManager;
 
@@ -44,9 +47,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         $this->inject($this->nodeTypesStreamWrapper, 'packageManager', $this->mockPackageManager);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openThrowsExceptionForInvalidScheme()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -54,7 +55,7 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         $this->nodeTypesStreamWrapper->open('invalid-scheme://foo/bar', 'r', 0, $openedPathAndFilename);
     }
 
-    public function providePathesToCheckForForbiddenTraversalOutOfPath(): array
+    public static function providePathesToCheckForForbiddenTraversalOutOfPath(): array
     {
         return [
             // pathes that traverse out of package scope
@@ -71,10 +72,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider providePathesToCheckForForbiddenTraversalOutOfPath
-     */
+    #[DataProvider('providePathesToCheckForForbiddenTraversalOutOfPath')]
+    #[Test]
     public function openThrowsExceptionForPathesThatTryToTraverseUpwards(string $forbiddenPath, bool $expectException)
     {
         if ($expectException) {
@@ -82,29 +81,25 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         }
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Packages/Application/Some.Package'));
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->with('Some.Package')->will(self::returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getPackagePath')->willReturn('vfs://Packages/Application/Some.Package');
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with('Some.Package')->willReturn($mockPackage);
 
         $result = $this->nodeTypesStreamWrapper->open($forbiddenPath, 'r', 0, $openedPathAndFilename);
         $this->assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openThrowsExceptionForNonExistingPackages()
     {
         $this->expectException(Exception::class);
         $packageKey = 'Non.Existing.Package';
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->willThrowException(new \Neos\Flow\Package\Exception\UnknownPackageException('Test exception'));
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->willThrowException(new UnknownPackageException('Test exception'));
 
         $openedPathAndFilename = '';
         $this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Some/Path', 'r', 0, $openedPathAndFilename);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function openResolvesPackageKeysUsingThePackageManager()
     {
         $packageKey = 'Some.Package';
@@ -112,8 +107,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/NodeTypes/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Foo'));
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getPackagePath')->willReturn('vfs://Foo');
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->willReturn($mockPackage);
 
         $openedPathAndFilename = '';
         self::assertTrue($this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Path', 'r', 0, $openedPathAndFilename));
@@ -122,8 +117,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
 
     /**
      * This makes sure the code does not see a 40-charatcer package key as a resource hash.
-     * @test
      */
+    #[Test]
     public function openResolves40CharacterLongPackageKeysUsingThePackageManager()
     {
         $packageKey = 'Some.PackageKey.Containing.40.Characters';
@@ -131,8 +126,8 @@ class NodetypesStreamWrapperTest extends UnitTestCase
         file_put_contents('vfs://Foo/NodeTypes/Path', 'fixture');
 
         $mockPackage = $this->createMock(FlowPackageInterface::class);
-        $mockPackage->expects(self::any())->method('getPackagePath')->will(self::returnValue('vfs://Foo'));
-        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->will(self::returnValue($mockPackage));
+        $mockPackage->expects(self::any())->method('getPackagePath')->willReturn('vfs://Foo');
+        $this->mockPackageManager->expects(self::once())->method('getPackage')->with($packageKey)->willReturn($mockPackage);
 
         $openedPathAndFilename = '';
         self::assertTrue($this->nodeTypesStreamWrapper->open('nodetypes://' . $packageKey . '/Path', 'r', 0, $openedPathAndFilename));

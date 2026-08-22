@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -123,18 +123,14 @@ class NodeTypeTest extends TestCase
         ]
     ];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeTypeHasAName()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository.Testing:Text'), [], []);
         self::assertSame('Neos.ContentRepository.Testing:Text', $nodeType->name->value);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeTypeMustHaveDistinctNamesForPropertiesReferences()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Invalid'), [], [
@@ -153,9 +149,7 @@ class NodeTypeTest extends TestCase
         $nodeType->getFullConfiguration();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aNodeTypeMustHaveDistinctNamesForPropertiesReferencesInInheritance()
     {
         $superNodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Super'), [], [
@@ -180,9 +174,7 @@ class NodeTypeTest extends TestCase
         $nodeType->getFullConfiguration();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypesCanHaveAnyNumberOfSuperTypes()
     {
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], []);
@@ -233,27 +225,21 @@ class NodeTypeTest extends TestCase
         self::assertFalse($pageType->isOfType('Neos.ContentRepository.Testing:TimeableContent'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function labelIsEmptyStringByDefault()
     {
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], []);
         self::assertSame('', $baseType->getLabel());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertiesAreEmptyArrayByDefault()
     {
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], []);
         self::assertSame([], $baseType->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasConfigurationReturnsTrueIfSpecifiedConfigurationPathExists()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [
@@ -264,18 +250,14 @@ class NodeTypeTest extends TestCase
         self::assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function hasConfigurationReturnsFalseIfSpecifiedConfigurationPathDoesNotExist()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], []);
         self::assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getConfigurationReturnsTheConfigurationWithTheSpecifiedPath()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [
@@ -286,18 +268,14 @@ class NodeTypeTest extends TestCase
         self::assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getConfigurationReturnsNullIfTheSpecifiedPathDoesNotExist()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], []);
         self::assertNull($nodeType->getConfiguration('some.nonExisting.path'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTypeConfigurationIsMergedTogether()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Text');
@@ -324,8 +302,8 @@ class NodeTypeTest extends TestCase
 
     /**
      * This test asserts that a supertype that has been inherited can be removed on a specific type again.
-     * @test
      */
+    #[Test]
     public function inheritedSuperTypesCanBeRemoved()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
@@ -339,18 +317,14 @@ class NodeTypeTest extends TestCase
         self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isOfTypeReturnsFalseForDirectlyDisabledSuperTypes()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:Shortcut');
         self::assertFalse($nodeType->isOfType('Neos.ContentRepository.Testing:SomeMixin'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isOfTypeReturnsFalseForIndirectlyDisabledSuperTypes()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
@@ -359,8 +333,8 @@ class NodeTypeTest extends TestCase
 
     /**
      * This test asserts that a supertype that has been inherited can be removed by a supertype again.
-     * @test
      */
+    #[Test]
     public function inheritedSuperSuperTypesCanBeRemoved()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubShortcut');
@@ -376,8 +350,8 @@ class NodeTypeTest extends TestCase
 
     /**
      * This test asserts that a supertype that has been inherited can be removed by a supertype again.
-     * @test
      */
+    #[Test]
     public function superTypesRemovedByInheritanceCanBeAddedAgain()
     {
         $nodeType = $this->getNodeType('Neos.ContentRepository.Testing:SubSubSubShortcut');
@@ -395,9 +369,7 @@ class NodeTypeTest extends TestCase
         self::assertSame($expectedProperties, $nodeType->getProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propertyDeclaration()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -426,9 +398,7 @@ class NodeTypeTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyTypeThrowsOnInvalidProperty()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -438,9 +408,7 @@ class NodeTypeTest extends TestCase
         self::assertSame('string', $nodeType->getPropertyType('nonExistent'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPropertyTypeFallback()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -451,9 +419,7 @@ class NodeTypeTest extends TestCase
         self::assertSame('string', $nodeType->getPropertyType('someProperty'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getDefaultValuesForPropertiesIgnoresNullAndUnset()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -474,9 +440,7 @@ class NodeTypeTest extends TestCase
         self::assertSame(['someProperty' => 'lol'], $nodeType->getDefaultValuesForProperties());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function referencesDeclaration()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -499,9 +463,7 @@ class NodeTypeTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function legacyPropertyReferenceDeclaration()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -531,9 +493,7 @@ class NodeTypeTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function legacyPropertyReferencesDeclaration()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -559,9 +519,7 @@ class NodeTypeTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function legacyPropertyReferencesDeclarationMustNotUseConstraintFeatures()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [
@@ -579,9 +537,7 @@ class NodeTypeTest extends TestCase
         $nodeType->getReferences();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function legacyPropertyReferencesDeclarationMustNotUsePropertiesFeatures()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Node'), [], [

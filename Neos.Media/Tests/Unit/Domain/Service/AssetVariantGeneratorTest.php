@@ -11,7 +11,6 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
@@ -23,15 +22,15 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Video;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Exception\AssetVariantGeneratorException;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the Asset Variant Generator
  */
 class AssetVariantGeneratorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getVariantPresetsReturnsConfiguration(): void
     {
         $configuration = [
@@ -58,9 +57,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function variantsAreCreatedAccordingToPreset(): void
     {
         $asset = $this->mockImage();
@@ -70,9 +69,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function noVariantsAreCreatedForUnsupportedAssetTypes(): void
     {
         $assetVariantGenerator = $this->mockAssetVariantGenerator(['createVariant']);
@@ -93,9 +92,9 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws
      */
+    #[Test]
     public function createVariantCreatesVariantAccordingToPreset(): void
     {
         $variantPresetsConfiguration = [
@@ -130,12 +129,12 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\ResourceManagement\Exception
      * @throws \Neos\Media\Exception\AssetVariantGeneratorException
      * @throws \Neos\Media\Exception\ImageFileException
      */
+    #[Test]
     public function createVariantThrowsExceptionOnUnknownAdjustmentType(): void
     {
         $this->expectException(AssetVariantGeneratorException::class);
@@ -165,11 +164,10 @@ class AssetVariantGeneratorTest extends UnitTestCase
 
     // ------------------------------------------------------------------------------------------------------------
     // TEST HELPER METHODS
-
     /**
      * @param array $methods
      * @param array $variantPresetsConfiguration
-     * @return AssetVariantGenerator|\PHPUnit\Framework\MockObject\MockObject
+     * @return AssetVariantGenerator|MockObject
      */
     private function mockAssetVariantGenerator(array $methods, array $variantPresetsConfiguration = [])
     {
@@ -217,7 +215,7 @@ class AssetVariantGeneratorTest extends UnitTestCase
             function (Image $imageAsset) use ($that) {
                 return $that->getMockBuilder(ImageVariant::class)
                     ->setConstructorArgs([$imageAsset])
-                    ->setMethods(['refresh', 'renderResource'])
+                    ->onlyMethods(['refresh', 'renderResource'])
                     ->getMock();
             }
         );
@@ -226,13 +224,14 @@ class AssetVariantGeneratorTest extends UnitTestCase
     }
 
     /**
-     * @return Image|\PHPUnit\Framework\MockObject\MockObject
+     * @return Image|MockObject
      */
     private function mockImage()
     {
         $mock = $this->getMockBuilder(Image::class)
             ->setConstructorArgs([$this->createMock(PersistentResource::class)])
-            ->setMethods(['refresh', 'renderResource', 'getMediaType'])
+            ->onlyMethods(['refresh', 'getMediaType'])
+            ->addMethods(['renderResource'])
             ->getMock();
         $mock->method('getMediaType')->willReturn('image/jpeg');
 

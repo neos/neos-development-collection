@@ -11,7 +11,6 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\Palette\Color\ColorInterface;
@@ -21,6 +20,8 @@ use Imagine\Image\Point;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Crop Image Adjustment
@@ -35,9 +36,7 @@ class CropImageAdjustmentTest extends UnitTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function aspectRatioCanBeSetInsteadOfAbsoluteDimensions(): void
     {
         $imagine = new Imagine();
@@ -50,9 +49,7 @@ class CropImageAdjustmentTest extends UnitTestCase
         self::assertTrue($cropImageAdjustment->canBeApplied($image));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function settingAnAspectRatioRemovesValuesForManualDimensions(): void
     {
         $cropImageAdjustment = new CropImageAdjustment();
@@ -71,9 +68,7 @@ class CropImageAdjustmentTest extends UnitTestCase
         self::assertSame((string)$cropImageAdjustment->getAspectRatio(), '16:9');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function settingManualDimensionsRemovesAspectRatio(): void
     {
         $cropImageAdjustment = new CropImageAdjustment();
@@ -95,9 +90,7 @@ class CropImageAdjustmentTest extends UnitTestCase
         self::assertNull($cropImageAdjustment->getAspectRatio());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeAppliedReturnsFalseIfAspectRatioEqualsOriginalAspectRatio(): void
     {
         $imagine = new Imagine();
@@ -113,7 +106,7 @@ class CropImageAdjustmentTest extends UnitTestCase
     /**
      * @return array
      */
-    public function imageCropByAspectRatioDataProvider(): array
+    public static function imageCropByAspectRatioDataProvider(): array
     {
         return [
             ['16:9', 1600, 1000, 0, 50, 1600, 900],
@@ -123,8 +116,6 @@ class CropImageAdjustmentTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider imageCropByAspectRatioDataProvider
      * @param string $aspectRatio
      * @param int $originalWidth
      * @param int $originalHeight
@@ -133,6 +124,8 @@ class CropImageAdjustmentTest extends UnitTestCase
      * @param int $expectedWidth
      * @param int $expectedHeight
      */
+    #[DataProvider('imageCropByAspectRatioDataProvider')]
+    #[Test]
     public function aspectRatioIsAppliedWithMaximumPossibleClipping(string $aspectRatio, int $originalWidth, int $originalHeight, int $expectedX, int $expectedY, int $expectedWidth, int $expectedHeight): void
     {
         $imagine = new Imagine();
@@ -154,9 +147,7 @@ class CropImageAdjustmentTest extends UnitTestCase
         self::assertSame(100, $image->getColorAt(new Point(0, 0))->getValue(ColorInterface::COLOR_RED));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeAppliedReturnsTrueIfCropClippingIsSmallerThanTheImage(): void
     {
         $imagine = new Imagine();
@@ -172,9 +163,7 @@ class CropImageAdjustmentTest extends UnitTestCase
         self::assertTrue($cropImageAdjustment->canBeApplied($image));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeAppliedReturnsFalseIfCropClippingIsTheFullImage(): void
     {
         $imagine = new Imagine();

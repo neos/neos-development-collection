@@ -35,7 +35,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use PHPUnit\Framework\MockObject\Generator as MockGenerator;
+use PHPUnit\Framework\MockObject\Generator\Generator as MockGenerator;
 
 /**
  * Features context
@@ -136,7 +136,7 @@ class FeatureContext implements Context
     public function theFollowingPersistentResourcesExist(TableNode $resources): void
     {
         foreach ($resources->getHash() as $resourceData) {
-            $mockResource = (new MockGenerator())->getMock(PersistentResource::class, [], [], '', false);
+            $mockResource = (new MockGenerator())->testDouble(PersistentResource::class, true, true, [], [], '', false);
             $mockResource->method('getFilename')->willReturn($resourceData['filename'] ?? 'filename');
             $mockResource->method('getCollectionName')->willReturn($resourceData['collectionName'] ?? 'persistent');
             $mockResource->method('getMediaType')->willReturn($resourceData['mediaType'] ?? 'image/jpeg');

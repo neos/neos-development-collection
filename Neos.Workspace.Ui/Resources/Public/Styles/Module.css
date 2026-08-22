@@ -222,6 +222,7 @@ button .icon:not(:last-child) {
 
   fieldset {
     padding: 0;
+    width: 100%;
   }
 
   legend {
@@ -285,10 +286,18 @@ button .icon:not(:last-child) {
 .neos-control-group {
   textarea,
   select,
-  input[type="text"] {
+  input[type="text"],
+  .radio-extended-label {
     width: 100%;
     max-width: 500px;
   }
+}
+
+p.radio-extended-label {
+  color: var(--textSubtleLight);
+  padding-left: 30px;
+  margin-bottom: 5px;
+  box-sizing: border-box;
 }
 
 /**

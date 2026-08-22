@@ -23,6 +23,8 @@ use Neos\Neos\Domain\Service\UserService as UserDomainService;
 use Neos\Neos\Service\UserService;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Party\Domain\Service\PartyService;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the UserService
@@ -45,22 +47,22 @@ class UserServiceTest extends UnitTestCase
     protected $userDomainService;
 
     /**
-     * @var WorkspaceRepository | \PHPUnit\Framework\MockObject\MockObject
+     * @var WorkspaceRepository|MockObject
      */
     protected $mockWorkspaceRepository;
 
     /**
-     * @var AccountRepository | \PHPUnit\Framework\MockObject\MockObject
+     * @var AccountRepository|MockObject
      */
     protected $mockAccountRepository;
 
     /**
-     * @var PartyService | \PHPUnit\Framework\MockObject\MockObject
+     * @var PartyService|MockObject
      */
     protected $mockPartyService;
 
     /**
-     * @var PartyRepository | \PHPUnit\Framework\MockObject\MockObject
+     * @var PartyRepository|MockObject
      */
     protected $mockPartyRepository;
 
@@ -88,7 +90,7 @@ class UserServiceTest extends UnitTestCase
         $this->mockUserDomainService = $this->getMockBuilder(UserDomainService::class)->getMock();
         $this->inject($this->userService, 'userDomainService', $this->mockUserDomainService);
 
-        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->setMethods(['findOneByName'])->getMock();
+        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->addMethods(['findOneByName'])->getMock();
         $this->inject($this->userService, 'workspaceRepository', $this->mockWorkspaceRepository);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();
@@ -107,28 +109,22 @@ class UserServiceTest extends UnitTestCase
         $this->inject($this->userDomainService, 'partyRepository', $this->mockPartyRepository);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getBackendUserReturnsTheCurrentlyLoggedInUser()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
 
-        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->will(self::returnValue($mockUser));
+        $this->mockUserDomainService->expects(self::atLeastOnce())->method('getCurrentUser')->willReturn($mockUser);
         self::assertSame($mockUser, $this->userService->getBackendUser());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUserReturnsNullForInvalidUser()
     {
         self::assertNull($this->mockUserDomainService->getUser('NonExistantUser'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUsersWillReturnUserOnSecondCall()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();
@@ -137,17 +133,14 @@ class UserServiceTest extends UnitTestCase
         $this->setUpGetUser($mockUser);
 
         $this->mockAccountRepository->expects(self::any())
-            ->method('findByAccountIdentifierAndAuthenticationProviderName')
-            ->will($this->onConsecutiveCalls(null, $mockAccount));
+            ->method('findByAccountIdentifierAndAuthenticationProviderName')->willReturnOnConsecutiveCalls(null, $mockAccount);
 
         $this->userDomainService->getUser('test-user');
 
         self::assertSame($mockUser, $this->userDomainService->getUser('test-user'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getUserReturnsUserForValidUser()
     {
         $mockUser = $this->getMockBuilder(User::class)->disableOriginalConstructor()->getMock();

@@ -11,12 +11,12 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the UserDoesNotExistValidator
@@ -24,9 +24,7 @@ use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
  */
 class UserDoesNotExistValidatorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function validateThrowsExceptionForNonStringValue()
     {
         $this->expectException(InvalidSubjectException::class);
@@ -34,9 +32,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
         $validator->validate(false);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsNoErrorsWithNullAccount()
     {
         $validator = new UserDoesNotExistValidator();
@@ -49,9 +45,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
         self::assertFalse($result->hasErrors());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function validateReturnsAnErrorWithExistingAccount()
     {
         $validator = new UserDoesNotExistValidator();
@@ -65,7 +59,7 @@ class UserDoesNotExistValidatorTest extends UnitTestCase
             ->expects(self::atLeastOnce())
             ->method('getUser')
             ->with('j.doe')
-            ->will(self::returnValue($mockUser));
+            ->willReturn($mockUser);
 
         $result = $validator->validate('j.doe');
 

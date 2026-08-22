@@ -11,6 +11,7 @@ use Neos\ContentRepository\Dbal\Query\AmbiguousParametersGiven;
 use Neos\ContentRepository\Dbal\Query\Parameter;
 use Neos\ContentRepository\Dbal\Query\Parameters;
 use Neos\ContentRepository\Dbal\Query\QueryBuilder;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class QueryBuilderTest extends TestCase
@@ -24,7 +25,7 @@ class QueryBuilderTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function mergeParametersOnEmpty(): void
     {
         self::assertEmpty($this->dbal->getParameters());
@@ -37,7 +38,7 @@ class QueryBuilderTest extends TestCase
         self::assertSame(['myString' => ParameterType::STRING, 'myStringArray' => ArrayParameterType::STRING], $this->dbal->getParameterTypes());
     }
 
-    /** @test */
+    #[Test]
     public function mergeParametersOnSingle(): void
     {
         $this->dbal->setParameter('initialString', 'initialValue');
@@ -51,7 +52,7 @@ class QueryBuilderTest extends TestCase
         self::assertSame(['initialString' => ParameterType::STRING, 'myString' => ParameterType::STRING, 'myStringArray' => ArrayParameterType::STRING], $this->dbal->getParameterTypes());
     }
 
-    /** @test */
+    #[Test]
     public function mergeParametersWithSameDuplicates(): void
     {
         $this->dbal->setParameter('myString', 'abc');
@@ -66,7 +67,7 @@ class QueryBuilderTest extends TestCase
         self::assertSame(['myString' => ParameterType::STRING, 'myStringArray' => ArrayParameterType::STRING], $this->dbal->getParameterTypes());
     }
 
-    /** @test */
+    #[Test]
     public function mergeParametersWithSameNameAndDifferentValue(): void
     {
         $this->dbal->setParameter('myString', 'abc');
@@ -82,7 +83,7 @@ class QueryBuilderTest extends TestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function mergeParametersWithSameNameAndDifferentType(): void
     {
         $this->dbal->setParameter('stringOrInteger', 0, ParameterType::STRING);
@@ -98,7 +99,7 @@ class QueryBuilderTest extends TestCase
         ));
     }
 
-    /** @test */
+    #[Test]
     public function mergeParametersWithSameDuplicatesWithinParameters(): void
     {
         $this->dbal->mergeParameters(Parameters::create(
@@ -112,7 +113,7 @@ class QueryBuilderTest extends TestCase
         self::assertSame(['myString' => ParameterType::STRING, 'myStringArray' => ArrayParameterType::STRING], $this->dbal->getParameterTypes());
     }
 
-    /** @test */
+    #[Test]
     public function parametersCreatedUseLastParameterForDuplicateNames(): void
     {
         // No errors during this deduplication as its more memory consuming and not of great help.

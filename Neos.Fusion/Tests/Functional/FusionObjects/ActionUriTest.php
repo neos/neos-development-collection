@@ -2,6 +2,8 @@
 
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -11,15 +13,12 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the UriBuilder object
  */
-class ActionUriTest extends AbstractFusionObjectTest
+class ActionUriTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function buildRelativeUriToAction()
     {
         $this->registerRoute(

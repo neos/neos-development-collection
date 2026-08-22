@@ -14,6 +14,7 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
+use PHPUnit\Framework\Attributes\Test;
 
 class SimpleTemplateRendererTest extends UnitTestCase
 {
@@ -27,9 +28,7 @@ class SimpleTemplateRendererTest extends UnitTestCase
         $this->simpleTemplateRenderer = new SimpleTemplateRenderer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function replaceSimpleKeyInString()
     {
         $filePath = __DIR__ . '/Fixtures/Templates/simpleString.txt';
@@ -44,9 +43,8 @@ class SimpleTemplateRendererTest extends UnitTestCase
 
     /**
      * Just a test to be sure nothing gets changed if the contextVariables array has no matching key
-     *
-     * @test
      */
+    #[Test]
     public function nothingGetsChangedInString()
     {
         $filePath = __DIR__ . '/Fixtures/Templates/simpleString.txt';

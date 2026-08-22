@@ -28,6 +28,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Helper\CachingHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -35,17 +37,12 @@ use Symfony\Component\Serializer\Serializer;
  */
 class CachingHelperTest extends UnitTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
     /**
      * Provides datasets for testing the CachingHelper::nodeTypeTag method.
      *
      * @return array
      */
-    public function nodeTypeTagDataProvider()
+    public static function nodeTypeTagDataProvider()
     {
         $nodeTypeName1 = 'Neos.Neos:Foo';
         $nodeTypeName2 = 'Neos.Neos:Bar';
@@ -85,15 +82,14 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider nodeTypeTagDataProvider
-     *
      * @param mixed $input
      * @param array $expectedResult
      */
+    #[DataProvider('nodeTypeTagDataProvider')]
+    #[Test]
     public function nodeTypeTagProvidesExpectedResult($input, $expectedResult)
     {
-        $contextNode = $this->createNode(NodeAggregateId::fromString("na"));
+        $contextNode = self::createNode(NodeAggregateId::fromString("na"));
 
         $helper = new CachingHelper();
         $actualResult = $helper->nodeTypeTag($input, $contextNode);
@@ -103,13 +99,13 @@ class CachingHelperTest extends UnitTestCase
     /**
      *
      */
-    public function nodeDataProvider()
+    public static function nodeDataProvider()
     {
         $nodeIdentifier1 = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node1 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier1));
+        $node1 = self::createNode(NodeAggregateId::fromString($nodeIdentifier1));
 
         $nodeIdentifier2 = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
-        $node2 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier2));
+        $node2 = self::createNode(NodeAggregateId::fromString($nodeIdentifier2));
 
         return [
             [$node1, [
@@ -140,12 +136,11 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider nodeDataProvider
-     *
      * @param $nodes
      * @param $expectedResult
      */
+    #[DataProvider('nodeDataProvider')]
+    #[Test]
     public function nodeTagsAreSetupWithWorkspaceAndIdentifier($nodes, $expectedResult)
     {
         $helper = new CachingHelper();
@@ -153,15 +148,13 @@ class CachingHelperTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTagsCanBeInitializedWithAnIdentifierString()
     {
         $helper = new CachingHelper();
 
         $nodeIdentifier = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node = $this->createNode(NodeAggregateId::fromString($nodeIdentifier));
+        $node = self::createNode(NodeAggregateId::fromString($nodeIdentifier));
 
         $actual = $helper->nodeTagForIdentifier($nodeIdentifier, $node);
 
@@ -172,15 +165,13 @@ class CachingHelperTest extends UnitTestCase
         ], $actual);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nodeTagForIdentifierStringWillFallbackToLegacyTagIfNoContextNodeIsGiven()
     {
         $helper = new CachingHelper();
         $identifier = 'some-uuid-identifier';
 
-        $contextNode = $this->createNode(NodeAggregateId::fromString("na"));
+        $contextNode = self::createNode(NodeAggregateId::fromString("na"));
 
         $actual = $helper->nodeTagForIdentifier($identifier, $contextNode);
         self::assertEquals([
@@ -190,13 +181,13 @@ class CachingHelperTest extends UnitTestCase
         ], $actual);
     }
 
-    public function descendantOfDataProvider()
+    public static function descendantOfDataProvider()
     {
         $nodeIdentifier1 = 'ca511a55-c5c0-f7d7-8d71-8edeffc75306';
-        $node1 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier1));
+        $node1 = self::createNode(NodeAggregateId::fromString($nodeIdentifier1));
 
         $nodeIdentifier2 = '7005c7cf-4d19-ce36-0873-476b6cadb71a';
-        $node2 = $this->createNode(NodeAggregateId::fromString($nodeIdentifier2));
+        $node2 = self::createNode(NodeAggregateId::fromString($nodeIdentifier2));
 
 
         return [
@@ -228,12 +219,11 @@ class CachingHelperTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider descendantOfDataProvider
-     *
      * @param $nodes
      * @param $expectedResult
      */
+    #[DataProvider('descendantOfDataProvider')]
+    #[Test]
     public function descendantOfTagsAreSetupWithWorkspaceAndIdentifier($nodes, $expectedResult)
     {
         $helper = new CachingHelper();
@@ -241,7 +231,7 @@ class CachingHelperTest extends UnitTestCase
         self::assertEquals($expectedResult, $actualResult);
     }
 
-    private function createNode(NodeAggregateId $nodeAggregateId): Node
+    private static function createNode(NodeAggregateId $nodeAggregateId): Node
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         return Node::create(

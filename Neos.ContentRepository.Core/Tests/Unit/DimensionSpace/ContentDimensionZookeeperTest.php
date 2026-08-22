@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\DimensionSpace;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 // NOTE: not sure why this is needed
@@ -36,9 +37,7 @@ class ContentDimensionZookeeperTest extends TestCase
         $this->subject = new DimensionSpace\ContentDimensionZookeeper($this->dimensionSource);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getAllowedCombinationsCorrectlyDeterminesAllowedCombinations()
     {
         $allowedCombinations = $this->subject->getAllowedCombinations();

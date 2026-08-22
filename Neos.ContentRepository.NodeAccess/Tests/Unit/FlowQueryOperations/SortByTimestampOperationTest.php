@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\SortByTimestampOperation;
 use Neos\Eel\FlowQuery\FlowQueryException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,9 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SortByTimestampOperationTest extends TestCase
 {
-    /**
-     * @test+
-     */
+    #[Test]
     public function callWithoutArgumentsCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -24,9 +23,7 @@ class SortByTimestampOperationTest extends TestCase
         $operation->evaluate($flowQuery, []);
     }
 
-    /**
-     * @test+
-     */
+    #[Test]
     public function callWithoutWrongTimeStampArgumentsCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -35,9 +32,7 @@ class SortByTimestampOperationTest extends TestCase
         $operation->evaluate($flowQuery, ['erstellt']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidSortDirectionCausesException()
     {
         $this->expectException(FlowQueryException::class);

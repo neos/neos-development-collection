@@ -42,6 +42,7 @@ use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * In Neos 9.0 it occurred that a base workspace change was done without locking and thus the previous content stream was removed twice which is illegal:
@@ -164,9 +165,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileANodesArePublishedToLive(): void
     {
         $this->log('1. change base started');
@@ -199,9 +198,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
         $this->assertEventsAreValid();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentPublishAreNotDeadlocked(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {

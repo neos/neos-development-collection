@@ -12,6 +12,8 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Dbal\DbalSchemaDiff;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class DbalSchemaDiffTest extends TestCase
@@ -37,10 +39,8 @@ class DbalSchemaDiffTest extends TestCase
         yield 'two altered' => [new Schema([$tableSchema1, $tableSchema2]), ['CREATE TABLE some_table (id INTEGER NOT NULL)', 'CREATE TABLE some_other_table (id VARCHAR(255) NOT NULL)'], ['ALTER TABLE some_table ADD COLUMN name VARCHAR(255) NOT NULL', 'ALTER TABLE some_other_table ADD COLUMN name VARCHAR(255) NOT NULL']];
     }
 
-    /**
-     * @test
-     * @dataProvider determineRequiredSqlStatements_dataProvider
-     */
+    #[DataProvider('determineRequiredSqlStatements_dataProvider')]
+    #[Test]
     public function determineRequiredSqlStatements_tests(Schema $schema, array $preTestSqlStatements, array $expectedSqlStatements): void
     {
         foreach ($preTestSqlStatements as $statement) {

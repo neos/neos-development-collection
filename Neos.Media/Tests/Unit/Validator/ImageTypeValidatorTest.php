@@ -11,19 +11,18 @@ namespace Neos\Media\Tests\Unit\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Validator\ImageTypeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the ImageTypeValidator
  */
 class ImageTypeValidatorTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function validatorReturnsErrorsIfGivenValueIsNoImage()
     {
         $validator = new ImageTypeValidator(['allowedTypes' => ['png']]);
@@ -34,7 +33,7 @@ class ImageTypeValidatorTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validatorTestsDataProvider()
+    public static function validatorTestsDataProvider()
     {
         return [
             [['allowedTypes' => ['png']], null, false],
@@ -46,16 +45,16 @@ class ImageTypeValidatorTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider validatorTestsDataProvider
      * @param array $options
      * @param string $actualMediaType
      * @param boolean $supposedToBeValid
      */
+    #[DataProvider('validatorTestsDataProvider')]
+    #[Test]
     public function validatorTests(array $options, $actualMediaType, $supposedToBeValid)
     {
         $image = $this->getMockBuilder(Image::class)->disableOriginalConstructor()->getMock();
-        $image->expects(self::any())->method('getMediaType')->will(self::returnValue($actualMediaType));
+        $image->expects(self::any())->method('getMediaType')->willReturn($actualMediaType);
 
         $validator = new ImageTypeValidator($options);
         $validationResult = $validator->validate($image);

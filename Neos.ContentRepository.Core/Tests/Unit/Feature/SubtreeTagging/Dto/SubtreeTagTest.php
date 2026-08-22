@@ -3,13 +3,12 @@
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\SubtreeTagging\Dto;
 
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class SubtreeTagTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringSupportsUUIDs(): void
     {
         // leading and trailing digits are allowed!
@@ -17,70 +16,54 @@ class SubtreeTagTest extends TestCase
         self::assertSame($uuid, SubtreeTag::fromString($uuid)->value);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringFailsIfStringContainsColon(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         SubtreeTag::fromString('invalid:tag');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringFailsIfStringContainsUpperCaseCharacters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         SubtreeTag::fromString('invalidTag');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringFailsIfStringContainsOnlyNumericCharacters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         SubtreeTag::fromString('12345');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringFailsIfStringContainsOnlyNumericWithLeadingZeroCharacters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         SubtreeTag::fromString('007');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromStringFailsIfStringContainsSpecialCharacters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         SubtreeTag::fromString('invälid');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function equalsReturnsTrueIfTagValuesMatch(): void
     {
         self::assertTrue(SubtreeTag::fromString('some-tag')->equals(SubtreeTag::fromString('some-tag')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function equalsReturnsFalseIfTagValuesDontMatch(): void
     {
         self::assertFalse(SubtreeTag::fromString('some-tag')->equals(SubtreeTag::fromString('some_tag')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeSerialized(): void
     {
         self::assertSame('"some-tag"', json_encode(SubtreeTag::fromString('some-tag')));

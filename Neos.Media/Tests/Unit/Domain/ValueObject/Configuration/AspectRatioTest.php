@@ -13,16 +13,17 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class AspectRatioTest extends UnitTestCase
 {
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function aspectRatioCanBeConvertedToString(): void
     {
         $aspectRatio = new AspectRatio(16, 9);
@@ -30,9 +31,9 @@ class AspectRatioTest extends UnitTestCase
     }
 
     /**
-     * @test
      * @return void
      */
+    #[Test]
     public function aspectRatioCanBeCreatedFromString(): void
     {
         $aspectRatio = AspectRatio::fromString('16:9');
@@ -44,7 +45,7 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validStrings(): array
+    public static function validStrings(): array
     {
         return [
             ['16:9'],
@@ -55,11 +56,11 @@ class AspectRatioTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider validStrings
      * @param string $validString
      * @return void
      */
+    #[DataProvider('validStrings')]
+    #[Test]
     public function validStringIsAccepted(string $validString): void
     {
         $aspectRatio = AspectRatio::fromString($validString);
@@ -69,7 +70,7 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidStrings(): array
+    public static function invalidStrings(): array
     {
         return [
             ['invalid'],
@@ -82,11 +83,11 @@ class AspectRatioTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider invalidStrings
      * @param string $invalidString
      * @return void
      */
+    #[DataProvider('invalidStrings')]
+    #[Test]
     public function invalidStringIsRejected(string $invalidString): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -97,7 +98,7 @@ class AspectRatioTest extends UnitTestCase
     /**
      * @return array
      */
-    public function aspectRatiosAndOrientations(): array
+    public static function aspectRatiosAndOrientations(): array
     {
         return [
             ['4:3', AspectRatio::ORIENTATION_LANDSCAPE],
@@ -110,11 +111,11 @@ class AspectRatioTest extends UnitTestCase
     }
 
     /**
-     * @test
-     * @dataProvider aspectRatiosAndOrientations
      * @param string $aspectRatioAsString
      * @param string $expectedOrientation
      */
+    #[DataProvider('aspectRatiosAndOrientations')]
+    #[Test]
     public function getOrientationReturnsCorrectValue(string $aspectRatioAsString, string $expectedOrientation): void
     {
         $aspectRatio = AspectRatio::fromString($aspectRatioAsString);

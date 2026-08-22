@@ -11,18 +11,19 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for Eel expressions in Fusion
  */
-class ExpressionsTest extends AbstractFusionObjectTest
+class ExpressionsTest extends AbstractFusionObjectTestCase
 {
-    public function expressionExamples()
+    public static function expressionExamples()
     {
         return [
             ['expressions/calculus', 42],
@@ -34,10 +35,8 @@ class ExpressionsTest extends AbstractFusionObjectTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider expressionExamples
-     */
+    #[DataProvider('expressionExamples')]
+    #[Test]
     public function expressionsWork($path, $expected)
     {
         $view = $this->buildView();
@@ -47,11 +46,10 @@ class ExpressionsTest extends AbstractFusionObjectTest
     }
 
     /**
-     * The view and runtime of the AbstractFusionObjectTest
+     * The view and runtime of the AbstractFusionObjectTestCase
      * is not used to make sure the runtime context is empty.
-     *
-     * @test
      */
+    #[Test]
     public function usingEelWorksWithoutSetCurrentContextInRuntime()
     {
         $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString('root = ${"foo"}'));

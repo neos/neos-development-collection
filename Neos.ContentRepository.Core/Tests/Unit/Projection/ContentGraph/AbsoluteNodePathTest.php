@@ -15,13 +15,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AbsoluteNodePathTest extends TestCase
 {
-    /**
-     * @dataProvider patternMatchProvider
-     */
+    #[DataProvider('patternMatchProvider')]
     public function testPatternIsMatchedByString(
         string $serializedPath,
         bool $expectedResult
@@ -65,9 +64,7 @@ class AbsoluteNodePathTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider serializedPathProvider
-     */
+    #[DataProvider('serializedPathProvider')]
     public function testDeserialization(
         string $serializedPath,
         string $expectedRelativePath,

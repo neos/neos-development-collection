@@ -11,7 +11,6 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 use GuzzleHttp\Psr7\Message;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\ProtectedContext;
@@ -25,6 +24,8 @@ use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\ValueImplementation;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -33,15 +34,14 @@ class RuntimeTest extends UnitTestCase
     /**
      * if the rendering leads to an exception
      * the exception is transformed into 'content' by calling 'handleRenderingException'
-     *
-     * @test
      */
+    #[Test]
     public function renderHandlesExceptionDuringRendering()
     {
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
         $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
-        $runtime->expects(self::once())->method('handleRenderingException')->with('foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
+        $runtime->expects(self::once())->method('handleRenderingException')->with('foo/bar', $runtimeException)->willReturn('Exception Message');
 
         $output = $runtime->render('foo/bar');
 
@@ -52,28 +52,25 @@ class RuntimeTest extends UnitTestCase
      * exceptions are rendered using the renderer from configuration
      *
      * if this handler throws exceptions, they are not handled
-     *
-     * @test
      */
+    #[Test]
     public function handleRenderingExceptionThrowsException()
     {
         $this->expectException(Exception::class);
-        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
+        $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->onlyMethods(['isRegistered', 'get'])->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
         $this->inject($runtime, 'objectManager', $objectManager);
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => $exceptionHandlerSetting]]);
 
-        $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->will(self::returnValue(true));
-        $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->will(self::returnValue(new ThrowingHandler()));
+        $objectManager->expects(self::once())->method('isRegistered')->with($exceptionHandlerSetting)->willReturn(true);
+        $objectManager->expects(self::once())->method('get')->with($exceptionHandlerSetting)->willReturn(new ThrowingHandler());
 
         $runtime->handleRenderingException('foo/bar', $runtimeException);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateProcessorForEelExpressionUsesProtectedContext()
     {
         $eelEvaluator = $this->createMock(EelEvaluatorInterface::class);
@@ -92,9 +89,7 @@ class RuntimeTest extends UnitTestCase
         $ref->invoke($runtime, 'foo + "89"');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function evaluateWithCacheModeUncachedAndUnspecifiedContextThrowsException()
     {
         $this->expectException(\Neos\Fusion\Exception::class);
@@ -114,22 +109,18 @@ class RuntimeTest extends UnitTestCase
         $runtime->evaluate('foo/bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderRethrowsSecurityExceptions()
     {
         $this->expectException(\Neos\Flow\Security\Exception::class);
         $securityException = new \Neos\Flow\Security\Exception();
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($securityException));
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($securityException);
 
         $runtime->render('foo/bar');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function runtimeCurrentContextStackWorksSimplePushPop()
     {
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
@@ -145,9 +136,7 @@ class RuntimeTest extends UnitTestCase
         self::assertSame([], $runtime->getCurrentContext(), 'Runtime context should be empty again at end.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function runtimeCurrentContextStack3PushesAndPops()
     {
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::createEmpty());
@@ -177,9 +166,7 @@ class RuntimeTest extends UnitTestCase
         self::assertSame([], $runtime->getCurrentContext(), 'empty at end');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fusionContextIsNotAllowedToOverrideFusionGlobals()
     {
         $this->expectException(\Neos\Fusion\Exception::class);
@@ -200,9 +187,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->evaluate('foo');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function pushContextIsNotAllowedToOverrideFusionGlobals()
     {
         $this->expectException(\Neos\Fusion\Exception::class);
@@ -212,9 +197,7 @@ class RuntimeTest extends UnitTestCase
         $runtime->pushContext('request', 'anything');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function renderResponseIsNotAllowedToOverrideFusionGlobals()
     {
         $this->expectException(\Neos\Fusion\Exception::class);
@@ -230,9 +213,8 @@ class RuntimeTest extends UnitTestCase
      * Currently Neos.Fusion.Form overrides the request, and we need to keep this behaviour.
      *
      * {@link https://github.com/neos/fusion-form/blob/224a26afe11f182e6fc5d4bb27ce3f8d0f981ba2/Classes/Runtime/FusionObjects/RuntimeFormImplementation.php#L103}
-     *
-     * @test
      */
+    #[Test]
     public function pushContextArrayIsAllowedToOverrideFusionGlobals()
     {
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
@@ -244,7 +226,7 @@ class RuntimeTest extends UnitTestCase
     {
         yield 'simple string' => [
             'rawValue' => 'my string',
-            'streamContents' => 'my string'
+            'expectedStreamContents' => 'my string'
         ];
 
         yield 'string cast object (\Stringable)' => [
@@ -254,21 +236,21 @@ class RuntimeTest extends UnitTestCase
                     return 'my string karsten';
                 }
             },
-            'streamContents' => 'my string karsten'
+            'expectedStreamContents' => 'my string karsten'
         ];
 
         yield 'empty string' => [
             'rawValue' => '',
-            'streamContents' => ''
+            'expectedStreamContents' => ''
         ];
 
         yield 'null value' => [
             'rawValue' => null,
-            'streamContents' => ''
+            'expectedStreamContents' => ''
         ];
     }
 
-    public function renderResponseExamples(): iterable
+    public static function renderResponseExamples(): iterable
     {
         yield 'stringified http response string is upcasted' => [
             'rawValue' => <<<'TEXT'
@@ -280,7 +262,7 @@ class RuntimeTest extends UnitTestCase
             <head></head>
             <body>Hello World</body>
             TEXT,
-            'response' => <<<'TEXT'
+            'expectedHttpResponseString' => <<<'TEXT'
             HTTP/1.1 418 OK
             Content-Type: text/html
             X-MyCustomHeader: marc
@@ -292,10 +274,8 @@ class RuntimeTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider renderStreamExamples
-     */
+    #[DataProvider('renderStreamExamples')]
+    #[Test]
     public function renderEntryPathStream(mixed $rawValue, string $expectedStreamContents)
     {
         $runtime = $this->getMockBuilder(Runtime::class)
@@ -313,10 +293,8 @@ class RuntimeTest extends UnitTestCase
         self::assertSame($expectedStreamContents, $response->getContents());
     }
 
-    /**
-     * @test
-     * @dataProvider renderResponseExamples
-     */
+    #[DataProvider('renderResponseExamples')]
+    #[Test]
     public function renderEntryPathResponse(mixed $rawValue, string $expectedHttpResponseString)
     {
         $runtime = $this->getMockBuilder(Runtime::class)
@@ -337,15 +315,15 @@ class RuntimeTest extends UnitTestCase
     public static function renderResponseIllegalValueExamples(): iterable
     {
         yield 'array' => [
-            'rawValue' => ['my' => 'array', 'with' => 'values']
+            'illegalValue' => ['my' => 'array', 'with' => 'values']
         ];
 
         yield '\stdClass' => [
-            'rawValue' => (object)[]
+            'illegalValue' => (object)[]
         ];
 
         yield '\JsonSerializable' => [
-            'rawValue' => new class () implements \JsonSerializable {
+            'illegalValue' => new class () implements \JsonSerializable {
                 public function jsonSerialize(): mixed
                 {
                     return 123;
@@ -354,19 +332,17 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield 'any class' => [
-            'rawValue' => new class () {
+            'illegalValue' => new class () {
             }
         ];
 
         yield 'boolean' => [
-            'rawValue' => false
+            'illegalValue' => false
         ];
     }
 
-    /**
-     * @dataProvider renderResponseIllegalValueExamples
-     * @test
-     */
+    #[DataProvider('renderResponseIllegalValueExamples')]
+    #[Test]
     public function renderResponseThrowsIfNotStringable(mixed $illegalValue)
     {
         $this->expectException(IllegalEntryFusionPathValueException::class);

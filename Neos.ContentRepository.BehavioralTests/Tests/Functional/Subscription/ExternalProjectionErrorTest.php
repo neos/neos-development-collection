@@ -14,6 +14,8 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionError;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Note that this test only documents the current state, there were ideas to guarantee exactly once delivery for external projections
@@ -25,7 +27,7 @@ final class ExternalProjectionErrorTest extends AbstractSubscriptionEngineTestCa
 {
     public static Connection $secondConnection;
 
-    /** @before */
+    #[Before]
     public function injectExternalFakeProjection(): void
     {
         $entityManager = $this->getObject(EntityManagerInterface::class);
@@ -49,7 +51,7 @@ final class ExternalProjectionErrorTest extends AbstractSubscriptionEngineTestCa
         self::$secondConnection->close();
     }
 
-    /** @test */
+    #[Test]
     public function externalProjectionIsNotRolledBackAfterError()
     {
         $this->eventStore->setup();

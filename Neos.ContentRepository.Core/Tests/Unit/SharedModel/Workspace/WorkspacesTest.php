@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\Model\Event\Version;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WorkspacesTest extends TestCase
@@ -19,8 +20,8 @@ class WorkspacesTest extends TestCase
     {
         yield 'empty workspaces' => [
             'workspaces' => [],
-            'parameter' => 'random',
-            'baseWorkspaces' => [],
+            'requestedWorkspaceName' => 'random',
+            'expectedBaseWorkspaceNames' => [],
         ];
 
         yield 'not in set' => [
@@ -28,16 +29,16 @@ class WorkspacesTest extends TestCase
                 self::workspace('a', null),
                 self::workspace('b', 'a'),
             ],
-            'parameter' => 'random',
-            'baseWorkspaces' => [],
+            'requestedWorkspaceName' => 'random',
+            'expectedBaseWorkspaceNames' => [],
         ];
 
         yield 'base not in set (b) -> ~a~' => [
             'workspaces' => [
                 self::workspace('b', 'a'),
             ],
-            'parameter' => 'b',
-            'baseWorkspaces' => [],
+            'requestedWorkspaceName' => 'b',
+            'expectedBaseWorkspaceNames' => [],
         ];
 
         yield 'one deep (b) -> a' => [
@@ -45,8 +46,8 @@ class WorkspacesTest extends TestCase
                 self::workspace('a', null),
                 self::workspace('b', 'a'),
             ],
-            'parameter' => 'b',
-            'baseWorkspaces' => ['a'],
+            'requestedWorkspaceName' => 'b',
+            'expectedBaseWorkspaceNames' => ['a'],
         ];
 
         yield 'recursive (d) -> c -> b -> a' => [
@@ -56,8 +57,8 @@ class WorkspacesTest extends TestCase
                 self::workspace('c', 'b'),
                 self::workspace('d', 'c'),
             ],
-            'parameter' => 'd',
-            'baseWorkspaces' => ['a', 'b', 'c'],
+            'requestedWorkspaceName' => 'd',
+            'expectedBaseWorkspaceNames' => ['a', 'b', 'c'],
         ];
 
         yield 'recursive, exclude descendants d -> (c) -> b -> a' => [
@@ -67,8 +68,8 @@ class WorkspacesTest extends TestCase
                 self::workspace('c', 'b'),
                 self::workspace('d', 'c'),
             ],
-            'parameter' => 'c',
-            'baseWorkspaces' => ['a', 'b'],
+            'requestedWorkspaceName' => 'c',
+            'expectedBaseWorkspaceNames' => ['a', 'b'],
         ];
 
         yield 'recursive, exclude descendants and other chains d -> (c) -> b -> a && f -> e -> b -> a && g -> a && y -> z' => [
@@ -86,8 +87,8 @@ class WorkspacesTest extends TestCase
                 self::workspace('z', null),
                 self::workspace('y', 'z'),
             ],
-            'parameter' => 'c',
-            'baseWorkspaces' => ['a', 'b']
+            'requestedWorkspaceName' => 'c',
+            'expectedBaseWorkspaceNames' => ['a', 'b']
         ];
     }
 
@@ -95,9 +96,9 @@ class WorkspacesTest extends TestCase
     {
         yield 'empty workspaces' => [
             'workspaces' => [],
-            'parameter' => 'random',
-            'immediatelyDepending' => [],
-            'recursiveDependingpaces' => [],
+            'requestedWorkspaceName' => 'random',
+            'expectedImmediatelyDepending' => [],
+            'expectedRecursiveDepending' => [],
         ];
 
         yield 'not in set' => [
@@ -105,9 +106,9 @@ class WorkspacesTest extends TestCase
                 self::workspace('a', null),
                 self::workspace('b', 'a'),
             ],
-            'parameter' => 'random',
-            'immediatelyDepending' => [],
-            'recursiveDependingpaces' => [],
+            'requestedWorkspaceName' => 'random',
+            'expectedImmediatelyDepending' => [],
+            'expectedRecursiveDepending' => [],
         ];
 
         yield 'one deep b -> (a)' => [
@@ -115,9 +116,9 @@ class WorkspacesTest extends TestCase
                 self::workspace('a', null),
                 self::workspace('b', 'a'),
             ],
-            'parameter' => 'a',
-            'immediatelyDepending' => ['b'],
-            'recursiveDependingpaces' => ['b'],
+            'requestedWorkspaceName' => 'a',
+            'expectedImmediatelyDepending' => ['b'],
+            'expectedRecursiveDepending' => ['b'],
         ];
 
         yield 'recursive d -> c -> b -> (a)' => [
@@ -127,9 +128,9 @@ class WorkspacesTest extends TestCase
                 self::workspace('c', 'b'),
                 self::workspace('d', 'c'),
             ],
-            'parameter' => 'a',
-            'immediatelyDepending' => ['b'],
-            'recursiveDepending' => ['b', 'c', 'd'],
+            'requestedWorkspaceName' => 'a',
+            'expectedImmediatelyDepending' => ['b'],
+            'expectedRecursiveDepending' => ['b', 'c', 'd'],
         ];
 
         yield 'recursive, exclude bases d -> c -> (b) -> a' => [
@@ -139,9 +140,9 @@ class WorkspacesTest extends TestCase
                 self::workspace('c', 'b'),
                 self::workspace('d', 'c'),
             ],
-            'parameter' => 'b',
-            'immediatelyDepending' => ['c'],
-            'recursiveDepending' => ['c', 'd'],
+            'requestedWorkspaceName' => 'b',
+            'expectedImmediatelyDepending' => ['c'],
+            'expectedRecursiveDepending' => ['c', 'd'],
         ];
 
         yield 'recursive, exclude descendants and other chains d -> c -> (b) -> a && f -> e -> (b) -> a && g -> a && y -> z' => [
@@ -159,15 +160,13 @@ class WorkspacesTest extends TestCase
                 self::workspace('z', null),
                 self::workspace('y', 'z'),
             ],
-            'parameter' => 'b',
-            'immediatelyDepending' => ['c', 'e'],
-            'recursiveDepending' => ['c', 'e', 'd', 'f']
+            'requestedWorkspaceName' => 'b',
+            'expectedImmediatelyDepending' => ['c', 'e'],
+            'expectedRecursiveDepending' => ['c', 'e', 'd', 'f']
         ];
     }
 
-    /**
-     * @dataProvider provideGetDependantWorkspacesExamples
-     */
+    #[DataProvider('provideGetDependantWorkspacesExamples')]
     public function testGetDependantWorkspaces(array $workspaces, string $requestedWorkspaceName, array $expectedImmediatelyDepending, array $expectedRecursiveDepending): void
     {
         $workspaces =  Workspaces::fromArray($workspaces);
@@ -185,9 +184,7 @@ class WorkspacesTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provideGetBaseWorkspacesExamples
-     */
+    #[DataProvider('provideGetBaseWorkspacesExamples')]
     public function testGetBaseWorkspaces(array $workspaces, string $requestedWorkspaceName, array $expectedBaseWorkspaceNames): void
     {
         $actual = Workspaces::fromArray($workspaces)->getBaseWorkspaces(WorkspaceName::fromString($requestedWorkspaceName));
@@ -198,9 +195,7 @@ class WorkspacesTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider rootWorkspaceSampleProvider
-     */
+    #[DataProvider('rootWorkspaceSampleProvider')]
     public function testGetRootWorkspaces(Workspaces $workspaces, array $expectedRootWorkspaceNames): void
     {
         Assert::assertEquals(
