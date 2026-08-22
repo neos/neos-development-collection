@@ -54,7 +54,7 @@ runs:
         git -C ../${{ inputs.collection-path }} checkout -b build
         composer config repositories.neos '{ "type": "path", "url": "../${{ inputs.collection-path }}", "options": { "symlink": false } }'
         composer require --no-update neos/neos-development-collection:"dev-build as ${{ steps.neos.outputs.branch-alias }}"
-
+        composer require --no-update neos/eventstore-doctrineadapter:"dev-feature/implement-locking-for-foreing-stream-constraints as 3.1"
     - name: Cache Composer packages
       uses: actions/cache@v6
       with:
