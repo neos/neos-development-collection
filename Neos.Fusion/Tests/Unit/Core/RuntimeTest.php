@@ -40,7 +40,7 @@ class RuntimeTest extends UnitTestCase
     {
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($runtimeException);
         $runtime->expects(self::once())->method('handleRenderingException')->with('foo/bar', $runtimeException)->willReturn('Exception Message');
 
         $output = $runtime->render('foo/bar');
