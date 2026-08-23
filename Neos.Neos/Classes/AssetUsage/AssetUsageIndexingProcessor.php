@@ -42,8 +42,8 @@ final readonly class AssetUsageIndexingProcessor
 
         // Check workspaces first for there state and unpublished changes
         if ($force === false) {
-            /** @var Workspace $workspace */
             $dirtyWorkspacesWithUnpublishedChanges = [];
+            /** @var Workspace $workspace */
             foreach ($workspacesDependingOnLive as $workspace) {
                 if ($workspace->status === WorkspaceStatus::OUTDATED && $workspace->hasPublishableChanges() === true) {
                     $dirtyWorkspacesWithUnpublishedChanges[] = $workspace;
