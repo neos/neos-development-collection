@@ -63,7 +63,6 @@ final readonly class AssetUsageIndexingProcessor
 
         /** @var Workspace $workspace */
         foreach ([$liveWorkspace, ...$workspacesDependingOnLive] as $workspace) {
-
             $this->dispatchMessage($callback, sprintf('  Workspace: %s', $workspace->workspaceName->value));
 
             // We do not need to index workspaces without any changes, as they are already indexed by baseworkspace
