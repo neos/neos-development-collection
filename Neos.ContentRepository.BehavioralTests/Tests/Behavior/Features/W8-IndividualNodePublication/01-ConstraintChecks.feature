@@ -85,8 +85,8 @@ Feature: Workspace publication - complex chained functionality
       | newContentStreamId | "user-cs-id-rebased"                                                              |
     Then the last command should have thrown the WorkspaceRebaseFailed exception with:
       | SequenceNumber | Event                 | Exception                          |
-      | 13             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
       | 14             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
+      | 15             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
 
   Scenario: Vary to generalization, then publish only the child node so that an exception is thrown. Ensure that the workspace recovers from this
     When the command CreateNodeVariant is executed with payload:

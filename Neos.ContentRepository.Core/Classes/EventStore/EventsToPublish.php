@@ -94,19 +94,4 @@ final readonly class EventsToPublish
             $this->expectedStreamConstraints
         );
     }
-
-    public function withExpectedVersionForStream(StreamName $streamName, ExpectedVersion $expectedVersion): self
-    {
-        $expectedStreamConstraint = $expectedVersion->toExpectedStreamConstraint($streamName);
-        if ($expectedStreamConstraint === null) {
-            return $this;
-        }
-
-        return new self(
-            $this->eventsForStreams,
-            $this->expectedStreamConstraints->withAppended(
-                $expectedStreamConstraint
-            )
-        );
-    }
 }

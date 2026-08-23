@@ -208,7 +208,7 @@ Feature: Publishing individual nodes (basics)
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                    |
     Then the last command should have thrown the WorkspaceRebaseFailed exception with:
       | SequenceNumber | Event            | Exception              |
-      | 14             | SubtreeWasTagged | SubtreeIsAlreadyTagged |
+      | 15             | SubtreeWasTagged | SubtreeIsAlreadyTagged |
 
   Scenario: It is possible to publish all nodes
     When the command PublishIndividualNodesFromWorkspace is executed with payload:

@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\EventStore;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamVersionWasAdvanced;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -75,6 +76,7 @@ final readonly class EventNormalizer
             ContentStreamWasClosed::class,
             ContentStreamWasCreated::class,
             ContentStreamWasForked::class,
+            ContentStreamVersionWasAdvanced::class,
             ContentStreamWasReopened::class,
             ContentStreamWasRemoved::class,
             DimensionShineThroughWasAdded::class,

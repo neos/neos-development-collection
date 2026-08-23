@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\Feature;
 use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamVersionWasAdvanced;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
@@ -47,8 +48,12 @@ trait ContentStreamHandling
             ExpectedVersion::NO_STREAM()
         );
         if ($requireSourceContentStreamVersion) {
-            $eventsToPublish = $eventsToPublish->withExpectedVersionForStream(
+            $eventsToPublish = $eventsToPublish->withEventsForStreamAndExpectedVersion(
                 ContentStreamEventStreamName::fromContentStreamId($sourceContentStreamId)->getEventStreamName(),
+                DecoratedEvent::create(
+                    new ContentStreamVersionWasAdvanced($sourceContentStreamId),
+                    metadata: ['debug_reason' => sprintf('Forked new content stream %s at version %d', $newContentStreamId->value, $sourceContentStreamVersion->value)]
+                ),
                 ExpectedVersion::fromVersion($sourceContentStreamVersion)
             );
         }
