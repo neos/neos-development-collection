@@ -90,7 +90,7 @@ class UserServiceTest extends UnitTestCase
         $this->mockUserDomainService = $this->getMockBuilder(UserDomainService::class)->getMock();
         $this->inject($this->userService, 'userDomainService', $this->mockUserDomainService);
 
-        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->addMethods(['findOneByName'])->getMock();
+        $this->mockWorkspaceRepository = $this->createMock(WorkspaceRepository::class);
         $this->inject($this->userService, 'workspaceRepository', $this->mockWorkspaceRepository);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();

@@ -15,7 +15,6 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
  */
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Persistence\Repository;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
@@ -147,11 +146,20 @@ class AssetTest extends AbstractTestCase
         $mockExternalAssetSource = $this->getMockBuilder(AssetSourceInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($asset, 'assetSources', ['test-source' => $mockExternalAssetSource]);
 
-        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->addMethods(['findOneByLocalAssetIdentifier'])->getMock();
-        $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
+        // ImportedAssetRepository is final and cannot be doubled, so this records the lookup itself.
+        $importedAssetRepository = new class () {
+            public array $lookedUpIdentifiers = [];
 
-        $mockImportedAssetRepository->expects(self::atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
+            public function findOneByLocalAssetIdentifier(string $localAssetIdentifier)
+            {
+                $this->lookedUpIdentifiers[] = $localAssetIdentifier;
+                return null;
+            }
+        };
+        $this->inject($asset, 'importedAssetRepository', $importedAssetRepository);
+
         self::assertNull($asset->getAssetProxy());
+        self::assertSame([$asset->getIdentifier()], $importedAssetRepository->lookedUpIdentifiers);
     }
 
     /**
