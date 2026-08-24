@@ -217,7 +217,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
-        $this->createContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
+        $this->createForkedContentStream($event->newContentStreamId, $event->sourceContentStreamId, $event->versionOfSourceContentStream);
 
         $sourceContentStreamLayers = $this->contentStreamLayerFinder->getContentStreamLayers($event->sourceContentStreamId);
 

@@ -14,15 +14,46 @@ use Neos\EventStore\Model\Event\Version;
  */
 trait ContentStream
 {
-    private function createContentStream(ContentStreamId $contentStreamId, ?ContentStreamId $sourceContentStreamId = null, ?Version $sourceVersion = null): void
+    private function createContentStream(ContentStreamId $contentStreamId): void
     {
         $this->dbal->insert($this->tableNames->contentStream(), [
             'id' => $contentStreamId->value,
             'version' => 0,
-            'sourceContentStreamId' => $sourceContentStreamId?->value,
-            'sourceContentStreamVersion' => $sourceVersion?->value,
-            'publishableEvents' => 0
+            'publishableEvents' => 0,
+            'sourceContentStreamId' => null,
+            'sourceContentStreamVersion' => null,
+            'sourcePublishableEvents' => null,
         ]);
+    }
+
+    private function createForkedContentStream(ContentStreamId $contentStreamId, ContentStreamId $sourceContentStreamId, Version $sourceVersion): void
+    {
+        $this->dbal->executeStatement(
+            <<<SQL
+            INSERT INTO {$this->tableNames->contentStream()} (
+              id,
+              version,
+              sourceContentStreamId,
+              sourceContentStreamVersion,
+              publishableEvents,
+              sourcePublishableEvents
+            )
+            SELECT
+              :id,
+              0 as version,
+              :sourceContentStreamId,
+              :sourceContentStreamVersion,
+              0 as publishableEvents,
+              c.publishableEvents as sourcePublishableEvents
+            FROM {$this->tableNames->contentStream()} c
+              WHERE c.id = :sourceContentStreamId
+            SQL,
+            [
+                'id' => $contentStreamId->value,
+                'sourceContentStreamId' => $sourceContentStreamId->value,
+                'sourceContentStreamVersion' => $sourceVersion->value,
+            ]
+        );
     }
 
     private function removeContentStream(ContentStreamId $contentStreamId): void

@@ -133,6 +133,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId', $platform)->setNotnull(false),
             (new Column('sourceContentStreamVersion', Type::getType(Types::INTEGER)))->setNotnull(false),
             (new Column('publishableEvents', Type::getType(Types::INTEGER)))->setNotnull(true),
+            (new Column('sourcePublishableEvents', Type::getType(Types::INTEGER)))->setNotnull(false),
         ]);
 
         return $contentStreamTable
