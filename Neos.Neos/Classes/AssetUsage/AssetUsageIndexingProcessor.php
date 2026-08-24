@@ -40,7 +40,7 @@ final readonly class AssetUsageIndexingProcessor
 
         $this->dispatchMessage($callback, sprintf('ContentRepository "%s"', $contentRepository->id->value));
 
-        // Check workspaces first for there state and unpublished changes
+        // Check workspaces first for their state and unpublished changes
         if ($force === false) {
             $dirtyWorkspacesWithUnpublishedChanges = [];
             /** @var Workspace $workspace */
@@ -99,6 +99,7 @@ final readonly class AssetUsageIndexingProcessor
 
                     $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($childNode->nodeTypeName);
                     if ($nodeType === null) {
+                        $this->dispatchMessage($callback, sprintf('    ERROR: NodeType (%s) does not exist.', $childNode->nodeTypeName->value));
                         return false;
                     }
                     $this->assetUsageIndexingService->updateIndex($contentRepository->id, $childNode, $nodeType, $allWorkspaces);
