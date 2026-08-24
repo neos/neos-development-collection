@@ -152,3 +152,47 @@ Feature: Create node aggregate with node without dimensions
       | nody-mc-nodeface           | asset-2 | assets       | live           | {}                        |
       | nody-mc-nodeface           | asset-3 | assets       | live           | {}                        |
       | sir-nodeward-nodington-iii | asset-3 | text         | live           | {}                        |
+
+  Scenario: Removes the first asset entry from an assets array in the live workspace
+    Given I am in workspace "live"
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                         |
+      | workspaceName             | "live"                        |
+      | nodeAggregateId           | "nody-mc-nodeface"            |
+      | originDimensionSpacePoint | {}                            |
+      | propertyValues            | {"assets": ["Asset:asset-3"]} |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | nodeAggregateId            | assetId | propertyName | workspaceName | originDimensionSpacePoint |
+      | sir-david-nodenborough     | asset-1 | asset        | live          | {}                        |
+      | nody-mc-nodeface           | asset-3 | assets       | live          | {}                        |
+      | sir-nodeward-nodington-iii | asset-3 | text         | live          | {}                        |
+
+  Scenario: Removes the last asset entry from an assets array in the live workspace
+    Given I am in workspace "live"
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                         |
+      | workspaceName             | "live"                        |
+      | nodeAggregateId           | "nody-mc-nodeface"            |
+      | originDimensionSpacePoint | {}                            |
+      | propertyValues            | {"assets": ["Asset:asset-2"]} |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | nodeAggregateId            | assetId | propertyName | workspaceName | originDimensionSpacePoint |
+      | sir-david-nodenborough     | asset-1 | asset        | live          | {}                        |
+      | nody-mc-nodeface           | asset-2 | assets       | live          | {}                        |
+      | sir-nodeward-nodington-iii | asset-3 | text         | live          | {}                        |
+
+  Scenario: Removes all asset entries from an assets array in the live workspace
+    Given I am in workspace "live"
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value              |
+      | workspaceName             | "live"             |
+      | nodeAggregateId           | "nody-mc-nodeface" |
+      | originDimensionSpacePoint | {}                 |
+      | propertyValues            | {"assets": []}     |
+
+    Then I expect the AssetUsageService to have the following AssetUsages:
+      | nodeAggregateId            | assetId | propertyName | workspaceName | originDimensionSpacePoint |
+      | sir-david-nodenborough     | asset-1 | asset        | live          | {}                        |
+      | sir-nodeward-nodington-iii | asset-3 | text         | live          | {}                        |
