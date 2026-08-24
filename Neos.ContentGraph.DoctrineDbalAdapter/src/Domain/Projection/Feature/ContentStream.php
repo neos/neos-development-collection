@@ -21,7 +21,7 @@ trait ContentStream
             'version' => 0,
             'sourceContentStreamId' => $sourceContentStreamId?->value,
             'sourceContentStreamVersion' => $sourceVersion?->value,
-            'hasChanges' => 0
+            'publishableEvents' => 0
         ]);
     }
 
@@ -32,16 +32,22 @@ trait ContentStream
         ]);
     }
 
-    private function updateContentStreamVersion(ContentStreamId $contentStreamId, Version $version, bool $markAsDirty): void
+    private function updateContentStreamVersion(ContentStreamId $contentStreamId, Version $version, bool $isPublishableEvent): void
     {
-        $updatePayload = [
-            'version' => $version->value,
-        ];
-        if ($markAsDirty) {
-            $updatePayload['hasChanges'] = 1;
+        if ($isPublishableEvent) {
+            $this->dbal->executeStatement(
+                "UPDATE {$this->tableNames->contentStream()} SET version=:version, publishableEvents=publishableEvents+1 WHERE id=:id",
+                [
+                    'version' => $version->value,
+                    'id' => $contentStreamId->value,
+                ]
+            );
+        } else {
+            $this->dbal->update($this->tableNames->contentStream(), [
+                'version' => $version->value,
+            ], [
+                'id' => $contentStreamId->value,
+            ]);
         }
-        $this->dbal->update($this->tableNames->contentStream(), $updatePayload, [
-            'id' => $contentStreamId->value,
-        ]);
     }
 }
