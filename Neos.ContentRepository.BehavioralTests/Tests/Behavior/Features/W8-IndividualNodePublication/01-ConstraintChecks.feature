@@ -111,7 +111,7 @@ Feature: Workspace publication - complex chained functionality
       | newContentStreamId | "user-cs-id-rebased"                                                                                             |
     Then the last command should have thrown the PartialWorkspaceRebaseFailed exception with:
       | SequenceNumber | Event                               | Exception                                             |
-      | 13             | NodeGeneralizationVariantWasCreated | NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint |
+      | 14             | NodeGeneralizationVariantWasCreated | NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint |
 
     When the command PublishWorkspace is executed with payload:
       | Key                | Value                          |
@@ -147,4 +147,4 @@ Feature: Workspace publication - complex chained functionality
        | newContentStreamId | "user-cs-id-rebased"                                                                       |
      Then the last command should have thrown the PartialWorkspaceRebaseFailed exception with:
        | SequenceNumber | Event                 | Exception                          |
-       | 11             | NodeAggregateWasMoved | NodeAggregateCurrentlyDoesNotExist |
+       | 12             | NodeAggregateWasMoved | NodeAggregateCurrentlyDoesNotExist |

@@ -73,7 +73,7 @@ Feature: Workspace discarding - complex chained functionality
       | newContentStreamId | "user-cs-id-rebased"                                                                                                                                                                                                                         |
     Then the last command should have thrown the PartialWorkspaceRebaseFailed exception with:
       | SequenceNumber | Event                               | Exception                                             |
-      | 11             | NodeGeneralizationVariantWasCreated | NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint |
+      | 12             | NodeGeneralizationVariantWasCreated | NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint |
 
     When the command DiscardWorkspace is executed with payload:
       | Key                | Value                          |

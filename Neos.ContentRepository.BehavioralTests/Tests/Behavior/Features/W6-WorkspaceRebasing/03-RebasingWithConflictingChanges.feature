@@ -101,7 +101,7 @@ Feature: Workspace rebasing - conflicting changes
     Then I expect the content stream "user-cs-two-rebased" to not exist
     Then the last command should have thrown the WorkspaceRebaseFailed exception with:
       | SequenceNumber | Event                 | Exception                          |
-      | 13             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
+      | 15             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
 
     When the command RebaseWorkspace is executed with payload:
       | Key                         | Value                 |

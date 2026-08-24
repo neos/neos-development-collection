@@ -147,7 +147,7 @@ Feature: Workspace discarding - basic functionality
       | rebasedContentStreamId | "user-cs-two-rebased" |
     Then the last command should have thrown the WorkspaceRebaseFailed exception with:
       | SequenceNumber | Event                 | Exception                          |
-      | 13             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
+      | 16             | NodePropertiesWereSet | NodeAggregateCurrentlyDoesNotExist |
 
     Then workspace user-ws-two has status OUTDATED
 
