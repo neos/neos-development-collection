@@ -71,6 +71,15 @@ trait CRTestSuiteTrait
     use ProjectionIntegrityViolationDetectionTrait;
 
     /**
+     * Hack PHPUnit assertion support, see https://github.com/Behat/Behat/issues/1618
+     * @BeforeSuite
+     */
+    public static function initPhpunit(): void
+    {
+        (new \PHPUnit\TextUI\Configuration\Builder())->build([]);
+    }
+
+    /**
      * @BeforeScenario
      * @throws \Exception
      */
