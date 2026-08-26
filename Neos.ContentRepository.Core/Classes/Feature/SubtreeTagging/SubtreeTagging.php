@@ -26,7 +26,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception\SubtreeIsAlreadyTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception\SubtreeIsNotTagged;
-use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -39,9 +38,8 @@ trait SubtreeTagging
 
     private function handleTagSubtree(TagSubtree $command): EventsToPublish
     {
-        $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate($contentGraph, $command->nodeAggregateId);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -71,7 +69,7 @@ trait SubtreeTagging
             ),
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
@@ -84,9 +82,8 @@ trait SubtreeTagging
 
     public function handleUntagSubtree(UntagSubtree $command): EventsToPublish
     {
-        $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = ExpectedVersion::fromVersion($this->commandHandlingDependencies->getContentStreamVersion($contentGraph->getContentStreamId()));
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -119,7 +116,7 @@ trait SubtreeTagging
             )
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             RebaseableCommand::enrichWithCommand($command, $events),
             $expectedVersion

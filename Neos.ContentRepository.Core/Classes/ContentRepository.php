@@ -20,15 +20,8 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\EventStore\Events as DomainEvents;
-use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\EventStore\InitiatingEventMetadata;
-use Neos\ContentRepository\Core\EventStore\PublishedEvents;
+use Neos\ContentRepository\Core\EventStore\EventAugmenter;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
-use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Feature\Security\Exception\AccessDenied;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\TracePoint;
@@ -46,10 +39,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Exception\ConcurrencyException;
-use Neos\EventStore\Model\Event\CorrelationId;
-use Neos\EventStore\Model\Events;
-use Psr\Clock\ClockInterface;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -70,13 +59,12 @@ final class ContentRepository
         public readonly ContentRepositoryId $id,
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
-        private readonly EventNormalizer $eventNormalizer,
+        private readonly EventAugmenter $eventAugmenter,
         private readonly SubscriptionEngine $subscriptionEngine,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly AuthProviderInterface $authProvider,
-        private readonly ClockInterface $clock,
         private readonly ContentGraphReadModelInterface $contentGraphReadModel,
         private readonly CommandHookInterface $commandHook,
         private readonly ProjectionStates $projectionStates,
@@ -102,61 +90,18 @@ final class ContentRepository
             if (!$privilege->granted) {
                 throw AccessDenied::becauseCommandIsNotGranted($command, $privilege->getReason());
             }
-            $toPublish = $this->commandBus->handle($command);
+            $eventsToPublish = $this->commandBus->handle($command);
             $this->performanceTracer?->mark(TracePoint::CommandBusHandle);
 
-            $correlationId = CorrelationId::fromString(sprintf('%s_%s', substr($command::class, strrpos($command::class, '\\') + 1, 20), bin2hex(random_bytes(9))));
+            $correlationId = $this->eventAugmenter->correlationIdForCommandClass($command::class);
 
-            // simple case
-            if ($toPublish instanceof EventsToPublish) {
-                $this->eventStore->commit($toPublish->streamName, $this->enrichAndNormalizeEvents($toPublish->events, $correlationId), $toPublish->expectedVersion);
-                $this->performanceTracer?->mark(TracePoint::EventStoreCommit);
-                $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-                // SubscriptionEngine is tracing automatically; so we do not need to add this here
-                if ($fullCatchUpResult->hadErrors()) {
-                    throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
-                }
-                $additionalCommands = $this->commandHook->onAfterHandle($command, $toPublish->events->toInnerEvents());
-                foreach ($additionalCommands as $additionalCommand) {
-                    $this->handle($additionalCommand);
-                }
-                $this->performanceTracer?->mark(TracePoint::CommandHookOnAfterHandle);
-                return;
-            }
+            $this->eventStore->commitAll($this->eventAugmenter->augmentAndNormalizeEventsToPublish($eventsToPublish, $correlationId));
 
-            // control-flow aware command handling via generator
-            $publishedEvents = PublishedEvents::createEmpty();
-            try {
-                foreach ($toPublish as $eventsToPublish) {
-                    try {
-                        $this->eventStore->commit($eventsToPublish->streamName, $this->enrichAndNormalizeEvents($eventsToPublish->events, $correlationId), $eventsToPublish->expectedVersion);
-                        $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['streamName' => $eventsToPublish->streamName->value, 'cnt' => $eventsToPublish->events->count()]);
-                        $publishedEvents = $publishedEvents->withAppendedEvents($eventsToPublish->events->toInnerEvents());
-                    } catch (ConcurrencyException $concurrencyException) {
-                        // we pass the exception into the generator (->throw), so it could be try-caught and reacted upon:
-                        //
-                        //   try {
-                        //      yield new EventsToPublish(...);
-                        //   } catch (ConcurrencyException $e) {
-                        //      yield $this->reopenContentStream();
-                        //      throw $e;
-                        //   }
-                        $yieldedErrorStrategy = $toPublish->throw($concurrencyException);
-                        if ($yieldedErrorStrategy instanceof EventsToPublish) {
-                            $this->eventStore->commit($yieldedErrorStrategy->streamName, $this->enrichAndNormalizeEvents($yieldedErrorStrategy->events, $correlationId), $yieldedErrorStrategy->expectedVersion);
-                            $this->performanceTracer?->mark(TracePoint::EventStoreCommit);
-                        }
-                        throw $concurrencyException;
-                    }
-                }
-            } finally {
-                // We always NEED to catchup even if there was an unexpected ConcurrencyException to make sure previous commits are handled.
-                // Technically it would be acceptable for the catchup to fail here (due to hook errors) because all the events are already persisted.
-                $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
-                $this->performanceTracer?->mark(TracePoint::SubscriptionEngineCatchUpActive);
-                if ($fullCatchUpResult->hadErrors()) {
-                    throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
-                }
+            $publishedEvents = $eventsToPublish->eventsForStreams->toPublishedEvents();
+            $this->performanceTracer?->mark(TracePoint::EventStoreCommit, ['cnt' => $publishedEvents->count()]);
+            $fullCatchUpResult = $this->subscriptionEngine->catchUpActive(); // NOTE: we don't batch here, to ensure the catchup is run completely and any errors don't stop it.
+            if ($fullCatchUpResult->hadErrors()) {
+                throw CatchUpHadErrors::createFromErrors($fullCatchUpResult->errors);
             }
             $additionalCommands = $this->commandHook->onAfterHandle($command, $publishedEvents);
             foreach ($additionalCommands as $additionalCommand) {
@@ -236,22 +181,5 @@ final class ContentRepository
     public function getContentDimensionSource(): ContentDimensionSourceInterface
     {
         return $this->contentDimensionSource;
-    }
-
-    private function enrichAndNormalizeEvents(DomainEvents $events, CorrelationId $correlationId): Events
-    {
-        $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
-        $initiatingTimestamp = $this->clock->now();
-
-        $eventsWithMetaData = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
-            $events,
-            $initiatingUserId,
-            $initiatingTimestamp
-        );
-
-        return Events::fromArray($eventsWithMetaData->map(function (EventInterface|DecoratedEvent $event) use ($correlationId) {
-            $decoratedEvent = DecoratedEvent::create($event, correlationId: $correlationId);
-            return $this->eventNormalizer->normalize($decoratedEvent);
-        }));
     }
 }

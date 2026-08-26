@@ -59,11 +59,8 @@ Feature: Rebase disable a node aggregate
       | rebasedContentStreamId      | "user-cs-identifier-new" |
       | rebaseErrorHandlingStrategy | "force"                  |
 
-    Then I expect exactly 4 events to be published on stream with prefix "ContentStream:user-cs-identifier-new"
-    And event at index 3 is of type "ContentStreamWasReopened" with payload:
-      | Key                          | Expected                 |
-      | contentStreamId              | "user-cs-identifier-new" |
-    And event at index 2 is of type "SubtreeWasTagged" with payload:
+    Then I expect exactly 2 events to be published on stream with prefix "ContentStream:user-cs-identifier-new"
+    And event at index 1 is of type "SubtreeWasTagged" with payload:
       | Key                          | Expected                 |
       | contentStreamId              | "user-cs-identifier-new" |
       | nodeAggregateId              | "sir-david-nodenborough" |
@@ -93,11 +90,8 @@ Feature: Rebase disable a node aggregate
       | rebasedContentStreamId      | "user-cs-identifier-new" |
       | rebaseErrorHandlingStrategy | "force"                  |
 
-    Then I expect exactly 4 events to be published on stream with prefix "ContentStream:user-cs-identifier-new"
-    And event at index 3 is of type "ContentStreamWasReopened" with payload:
-      | Key                          | Expected                 |
-      | contentStreamId              | "user-cs-identifier-new" |
-    And event at index 2 is of type "SubtreeWasUntagged" with payload:
+    Then I expect exactly 2 events to be published on stream with prefix "ContentStream:user-cs-identifier-new"
+    And event at index 1 is of type "SubtreeWasUntagged" with payload:
       | Key                          | Expected                 |
       | contentStreamId              | "user-cs-identifier-new" |
       | nodeAggregateId              | "succeeding-nodenborough" |

@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -150,8 +154,18 @@ trait PendingChangesTrait
         Assert::assertEquals($sourceWorkspace->baseWorkspaceName, $actualResult->targetWorkspaceName);
         Assert::assertEquals($expectedCount, $actualResult->numberOfPublishedChanges);
 
-        /** @var \Neos\ContentRepository\Core\EventStore\EventNormalizer $eventNormaliser */
-        $eventNormaliser = \Neos\Utility\ObjectAccess::getProperty($this->currentContentRepository, 'eventNormalizer', true);
+        // HACK to access the $eventNormalizer
+        $crInternalsAccess = new class () implements ContentRepositoryServiceFactoryInterface {
+            public EventNormalizer|null $eventNormalizer;
+            public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
+            {
+                $this->eventNormalizer = $serviceFactoryDependencies->eventNormalizer;
+                return new class () implements ContentRepositoryServiceInterface {
+                };
+            }
+        };
+        $this->getContentRepositoryService($crInternalsAccess);
+        $eventNormaliser = $crInternalsAccess->eventNormalizer;
 
         $targetWorkspace = $this->currentContentRepository->findWorkspaceByName($sourceWorkspace->baseWorkspaceName);
 

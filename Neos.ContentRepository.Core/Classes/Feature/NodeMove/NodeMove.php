@@ -34,7 +34,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSib
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
@@ -73,7 +72,6 @@ trait NodeMove
     ): void;
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
@@ -84,8 +82,7 @@ trait NodeMove
         MoveNodeAggregate $command,
     ): EventsToPublish {
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $contentStreamId = $this->requireContentStream($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -181,7 +178,7 @@ trait NodeMove
         $events = Events::with(
             new NodeAggregateWasMoved(
                 $command->workspaceName,
-                $contentStreamId,
+                $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newParentNodeAggregateId,
                 $this->resolveInterdimensionalSiblingsForMove(
@@ -199,10 +196,10 @@ trait NodeMove
         );
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
+            $contentGraph->getContentStreamId()
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStreamName->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,

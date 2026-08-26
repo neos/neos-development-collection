@@ -271,20 +271,14 @@ Feature: Publishing individual nodes (basics)
       | contentStreamId               | "cs-identifier"                                         |
       | nodeAggregateId               | "sir-nodeward-nodington-iii"                            |
 
-    Then I expect exactly 4 events to be published on stream "ContentStream:user-cs-identifier-remaining"
+    Then I expect exactly 2 events to be published on stream "ContentStream:user-cs-identifier-remaining"
     And event at index 0 is of type "ContentStreamWasForked" with payload:
       | Key                           | Expected                                                |
       | newContentStreamId            | "user-cs-identifier-remaining"                          |
-    And event at index 1 is of type "ContentStreamWasClosed" with payload:
-      | Key                           | Expected                                                |
-      | contentStreamId               | "user-cs-identifier-remaining"                          |
-    And event at index 2 is of type "NodePropertiesWereSet" with payload:
+    And event at index 1 is of type "NodePropertiesWereSet" with payload:
       | Key                           | Expected                                                |
       | contentStreamId               | "user-cs-identifier-remaining"                          |
       | nodeAggregateId               | "nody-mc-nodeface"                                      |
-    And event at index 3 is of type "ContentStreamWasReopened" with payload:
-      | Key                           | Expected                                                |
-      | contentStreamId               | "user-cs-identifier-remaining"                          |
 
   Scenario: Partial publish keeps remaining changes if nothing matches (and the workspace is outdated)
     And the command SetNodeProperties is executed with payload:

@@ -41,16 +41,6 @@ Feature: Change node name
       | newNodeName     | "new-name"               |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
-  Scenario: Try to rename a node aggregate in a workspace whose content stream is closed:
-    When the event ContentStreamWasClosed was published with payload:
-      | Key             | Value           |
-      | contentStreamId | "cs-identifier" |
-    When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
-      | Key             | Value                    |
-      | nodeAggregateId | "sir-david-nodenborough" |
-      | newNodeName     | "new-name"               |
-    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
-
   Scenario: Try to rename a non-existing node aggregate
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
       | Key             | Value            |

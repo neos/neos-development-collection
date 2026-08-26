@@ -50,17 +50,6 @@ Feature: Create node variant
       | targetOrigin    | {"market":"DE", "language":"de"}  |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
-  Scenario: Try to create a variant in a workspace that does not exist
-    When the event ContentStreamWasClosed was published with payload:
-      | Key             | Value           |
-      | contentStreamId | "cs-identifier" |
-    And the command CreateNodeVariant is executed with payload and exceptions are caught:
-      | Key             | Value                             |
-      | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
-      | targetOrigin    | {"market":"DE", "language":"de"}  |
-    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
-
   Scenario: Try to create a variant in a node aggregate that currently does not exist
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key             | Value                             |

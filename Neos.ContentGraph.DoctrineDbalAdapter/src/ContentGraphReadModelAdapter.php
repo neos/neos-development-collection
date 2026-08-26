@@ -106,7 +106,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
     {
         $contentStreamByIdStatement = <<<SQL
             SELECT
-                id, sourceContentStreamId, version, closed
+                id, sourceContentStreamId, version
             FROM
                 {$this->tableNames->contentStream()}
             WHERE
@@ -191,7 +191,6 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
             ContentStreamId::fromString($row['id']),
             isset($row['sourceContentStreamId']) ? ContentStreamId::fromString($row['sourceContentStreamId']) : null,
             Version::fromInteger((int)$row['version']),
-            (bool)$row['closed'],
         );
     }
 }

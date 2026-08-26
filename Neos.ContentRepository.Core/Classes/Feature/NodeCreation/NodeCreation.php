@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -126,13 +125,11 @@ trait NodeCreation
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
@@ -218,7 +215,7 @@ trait NodeCreation
             null
         ));
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand($command, Events::fromArray($events)),
@@ -255,7 +252,6 @@ trait NodeCreation
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      * @return array<EventInterface>
      */

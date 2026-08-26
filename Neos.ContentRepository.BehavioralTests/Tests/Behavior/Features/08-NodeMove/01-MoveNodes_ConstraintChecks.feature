@@ -57,17 +57,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | relationDistributionStrategy | "scatter"                |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
-  Scenario: Try to move a node in a workspace whose content stream is closed:
-    When the event ContentStreamWasClosed was published with payload:
-      | Key             | Value           |
-      | contentStreamId | "cs-identifier" |
-    When the command MoveNodeAggregate is executed with payload and exceptions are caught:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | dimensionSpacePoint          | {"example": "source"}    |
-      | relationDistributionStrategy | "scatter"                |
-    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
-
   Scenario: Try to move a non-existing node aggregate:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                 |

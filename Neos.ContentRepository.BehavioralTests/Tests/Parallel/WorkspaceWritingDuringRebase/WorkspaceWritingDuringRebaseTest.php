@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingS
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -212,11 +211,7 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
         if ($actualException === null) {
             Assert::fail(sprintf('No exception was thrown. Mutated Node: %s', json_encode($node?->properties->serialized())));
         }
-
-        Assert::assertThat($actualException, self::logicalOr(
-            self::isInstanceOf(ContentStreamIsClosed::class),
-            self::isInstanceOf(ConcurrencyException::class), // todo is only thrown theoretical? but not during tests here ...
-        ));
+        self::assertInstanceOf(ConcurrencyException::class, $actualException);
 
         Assert::assertSame('title-original', $node?->getProperty('title'));
     }

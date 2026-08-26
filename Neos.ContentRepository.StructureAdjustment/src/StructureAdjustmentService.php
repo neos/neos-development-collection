@@ -28,7 +28,7 @@ use Neos\ContentRepository\StructureAdjustment\Adjustment\UnknownNodeTypeAdjustm
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Event\Version;
-use Neos\EventStore\Model\Events as NormalisedEvents;
+use Neos\EventStore\Model\Events as NormalizedEvents;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Psr\Clock\ClockInterface;
 
@@ -139,7 +139,7 @@ final class StructureAdjustmentService implements ContentRepositoryServiceInterf
         // set correlation id and add debug metadata
         $correlationId = CorrelationId::fromString(sprintf('StructureAdjustment_%s', bin2hex(random_bytes(9))));
         $isFirstEvent = true;
-        $normalizedEvents = NormalisedEvents::fromArray($events->map(function (EventInterface|DecoratedEvent $event) use (
+        $normalizedEvents = NormalizedEvents::fromArray($events->map(function (EventInterface|DecoratedEvent $event) use (
             &$isFirstEvent,
             $correlationId,
             $adjustment

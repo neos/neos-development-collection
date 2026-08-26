@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\EventStore;
+
+use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
+use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
+use Neos\EventStore\Model\Event\CorrelationId;
+use Neos\EventStore\Model\Events as NormalizedEvents;
+use Neos\EventStore\Model\EventsForCommit as NormalizedEventsForCommit;
+use Neos\EventStore\Model\EventsForStream as NormalizedEventsForStream;
+use Neos\EventStore\Model\EventsForStreams as NormalizedEventsForStreams;
+use Neos\EventStore\Model\EventStream\ExpectedStreamConstraints;
+use Psr\Clock\ClockInterface;
+
+/**
+ * Normalizes domain events and adds meta-data
+ *
+ * The {@see EventsToPublish} with the domain events {@see EventInterface} are mapped to
+ * the lower level normalized {@see NormalizedEventsForCommit}
+ *
+ * Events in the event store, store important meta-data:
+ *
+ * * For publishing and rebase they can encode their command
+ *   {@see RebaseableCommand::enrichWithCommand()} (see command handers, cannot be augmented here)
+ *
+ * * For satisfying the original {@see Node::$timestamps} we set {@see InitiatingEventMetadata::INITIATING_TIMESTAMP}
+ *
+ * * For determining the authorship of events we set {@see InitiatingEventMetadata::INITIATING_USER_ID}
+ *
+ * * To correlate events, for event migrations or debugging, we define a correlation id based on the command name
+ *
+ * @internal the publication of events is not API. Only used within command handing in of the content repository.
+ */
+final readonly class EventAugmenter
+{
+    public function __construct(
+        private EventNormalizer $eventNormalizer,
+        private ClockInterface $clock,
+        private AuthProviderInterface $authProvider,
+    ) {
+    }
+
+    /**
+     * @param class-string<CommandInterface> $commandClassName
+     */
+    public function correlationIdForCommandClass(string $commandClassName): CorrelationId
+    {
+        return CorrelationId::fromString(sprintf('%s_%s', substr($commandClassName, strrpos($commandClassName, '\\') + 1, 20), bin2hex(random_bytes(9))));
+    }
+
+    public function augmentAndNormalizeEventsToPublish(EventsToPublish $eventsToPublish, CorrelationId $correlationId): NormalizedEventsForCommit
+    {
+        $initiatingUserId = $this->authProvider->getAuthenticatedUserId() ?? UserId::forSystemUser();
+        $initiatingTimestamp = $this->clock->now();
+
+        $normalizedEventsForStreams = [];
+
+        foreach ($eventsToPublish->eventsForStreams as $eventsForStream) {
+            $normalizedEventsForStreams[] = NormalizedEventsForStream::create(
+                streamName: $eventsForStream->streamName,
+                events: $this->enrichAndNormalizeEvents($eventsForStream->events, $initiatingUserId, $initiatingTimestamp, $correlationId)
+            );
+        }
+
+        return NormalizedEventsForCommit::create(
+            NormalizedEventsForStreams::create(...$normalizedEventsForStreams),
+            ExpectedStreamConstraints::create(...$eventsToPublish->expectedStreamConstraints)
+        );
+    }
+
+    private function enrichAndNormalizeEvents(Events $events, UserId $initiatingUserId, \DateTimeImmutable $initiatingTimestamp, CorrelationId $correlationId): NormalizedEvents
+    {
+        $eventsWithMetaData = InitiatingEventMetadata::enrichEventsWithInitiatingMetadata(
+            $events,
+            $initiatingUserId,
+            $initiatingTimestamp
+        );
+
+        return NormalizedEvents::fromArray($eventsWithMetaData->map(function (EventInterface|DecoratedEvent $event) use ($correlationId) {
+            $decoratedEvent = DecoratedEvent::create($event, correlationId: $correlationId);
+            return $this->eventNormalizer->normalize($decoratedEvent);
+        }));
+    }
+}

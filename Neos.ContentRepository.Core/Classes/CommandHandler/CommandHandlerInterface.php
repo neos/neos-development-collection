@@ -16,13 +16,5 @@ interface CommandHandlerInterface
 {
     public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool;
 
-    /**
-     * "simple" command handlers return EventsToPublish directly
-     *
-     * For the case of the workspace command handler that need to publish to many streams and "close" the content-stream directly,
-     * it's allowed to yield the events to interact with the control flow of event publishing.
-     *
-     * @return EventsToPublish|\Generator<int, EventsToPublish>
-     */
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish|\Generator;
+    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish;
 }

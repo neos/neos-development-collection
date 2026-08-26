@@ -29,8 +29,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
@@ -56,7 +54,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -67,25 +64,6 @@ trait ConstraintChecks
     use NodeTypeConstraintChecks;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
-
-    /**
-     * @throws ContentStreamDoesNotExistYet
-     */
-    protected function requireContentStream(
-        WorkspaceName $workspaceName,
-    ): ContentStreamId {
-        $contentStreamId = $this->commandHandlingDependencies->getContentGraph($workspaceName)->getContentStreamId();
-        $isContentStreamClosed = $this->commandHandlingDependencies->isContentStreamClosed($contentStreamId);
-
-        if ($isContentStreamClosed) {
-            throw new ContentStreamIsClosed(
-                'Content stream "' . $contentStreamId->value . '" is closed.',
-                1710260081
-            );
-        }
-
-        return $contentStreamId;
-    }
 
     /**
      * @param DimensionSpacePoint $dimensionSpacePoint
@@ -549,7 +527,6 @@ trait ConstraintChecks
     protected function getExpectedVersionOfContentStream(
         ContentStreamId $contentStreamId,
     ): ExpectedVersion {
-
         return ExpectedVersion::fromVersion(
             $this->commandHandlingDependencies->getContentStreamVersion($contentStreamId)
         );

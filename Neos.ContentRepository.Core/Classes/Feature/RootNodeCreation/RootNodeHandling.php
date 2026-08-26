@@ -38,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
@@ -66,7 +65,6 @@ trait RootNodeHandling
     /**
      * @param CreateRootNodeAggregateWithNode $command
      * @return EventsToPublish
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
@@ -74,7 +72,6 @@ trait RootNodeHandling
     private function handleCreateRootNodeAggregateWithNode(
         CreateRootNodeAggregateWithNode $command,
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName);
         $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
         $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireProjectedNodeAggregateToNotExist(
@@ -126,7 +123,7 @@ trait RootNodeHandling
         }
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId());
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
@@ -232,7 +229,7 @@ trait RootNodeHandling
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
             $contentGraph->getContentStreamId()
         );
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
@@ -243,7 +240,6 @@ trait RootNodeHandling
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      * @return array<EventInterface>
      */

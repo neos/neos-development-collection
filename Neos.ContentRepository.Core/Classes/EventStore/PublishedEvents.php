@@ -32,6 +32,18 @@ final readonly class PublishedEvents implements \IteratorAggregate, \Countable
         return new self(...$events);
     }
 
+    public static function merge(self ...$publishedEvents): self
+    {
+        return new self(
+            ...array_merge(
+                ...array_values(array_map(
+                    fn (self $instance) => $instance->items,
+                    $publishedEvents,
+                )),
+            ),
+        );
+    }
+
     public static function createEmpty(): self
     {
         return new self();

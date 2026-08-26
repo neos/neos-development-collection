@@ -76,18 +76,6 @@ Feature: Change node aggregate type - basic error cases
       | strategy        | "happypath"                                       |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
-  Scenario: Try to change the node aggregate type in a workspace whose content stream is closed
-    When the event ContentStreamWasClosed was published with payload:
-      | Key             | Value           |
-      | contentStreamId | "cs-identifier" |
-    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
-      | Key             | Value                                             |
-      | workspaceName   | "live"                                            |
-      | nodeAggregateId | "sir-david-nodenborough"                          |
-      | newNodeTypeName | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
-      | strategy        | "happypath"                                       |
-    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
-
   Scenario: Try to change the type on a non-existing node aggregate
     When the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
       | Key             | Value                                             |
