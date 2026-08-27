@@ -61,6 +61,7 @@
 				<tr>
 					<th>{neos:backend.translate(id: 'userSettings.accounts.username', source: 'Modules', package: 'Neos.Neos')}</th>
 					<th>{neos:backend.translate(id: 'userSettings.accounts.roles', source: 'Modules', package: 'Neos.Neos')}</th>
+					<th>{neos:backend.translate(id: 'userSettings.accounts.expirationDate', value: 'Expiration Date', source: 'Modules', package: 'Neos.Neos')}</th>
 					<th>{neos:backend.translate(id: 'userSettings.accounts.authenticationProvider', source: 'Modules', package: 'Neos.Neos')}</th>
 					<th></th>
 				</tr>
@@ -70,6 +71,13 @@
 					<tr>
 						<td><i class="fas fa-user icon-white"></i>{account.accountIdentifier}</td>
 						<td><f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" /></td>
+						<td>
+							<f:if condition="{account.expirationDate}"><f:then>
+								<f:format.date date="{account.expirationDate}" localeFormatType="dateTime" localeFormatLength="medium" forceLocale="{neos:backend.interfaceLanguage()}"/>
+							</f:then><f:else>
+								-
+							</f:else></f:if>
+						</td>
 						<td><span title="{account.authenticationProviderName}"><neos:backend.authenticationProviderLabel identifier="{account.authenticationProviderName}"/></span></td>
 						<td class="neos-action">
 							<div class="neos-pull-right">
