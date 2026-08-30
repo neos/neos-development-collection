@@ -351,11 +351,42 @@ trait GenericCommandExecutionAndEventPublication
     /**
      * @When the following :shortCommandName commands are executed:
      */
-    public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(string $shortCommandName, TableNode $table): void
+    public function theFollowingCommandsAreExecuted(string $shortCommandName, TableNode $table): void
     {
-        foreach ($table->getHash() as $row) {
+        $hash = $table->getHash();
+        if ($hash === []) {
+            Assert::fail(sprintf('Cannot handle %s without any arguments', $shortCommandName));
+        }
+        if (count($hash) === 1) {
+            $singleCommandArguments = $hash[0];
+            $joined = str_replace("\n", "\n    ", $this->prettyFormatCommandPayload($singleCommandArguments));
+
+            Assert::fail(<<<EOF
+            For single exececuted commands please use the simple version for readability:
+
+              And the command $shortCommandName is executed with payload:
+                $joined
+            
+            EOF);
+        }
+        foreach ($hash as $row) {
             $this->handleCommand(self::resolveShortCommandName($shortCommandName), $row);
         }
+    }
+
+    private function prettyFormatCommandPayload(array $commandArguments): string
+    {
+        $keys = ['Key', ...array_keys($commandArguments)];
+        $values = ['Value', ...array_map(
+            fn(string $value) => str_starts_with($value, '{') || str_starts_with($value, '[') ? $value : json_encode($value),
+            array_values($commandArguments)
+        )];
+        $maxKeyLength = max(array_map('strlen', $keys));
+        $maxValueLength = max(array_map('strlen', $values));
+
+        $concatenated = array_map(fn ($key, $value) => sprintf('| %s | %s |', str_pad($key, $maxKeyLength), str_pad($value, $maxValueLength)), $keys, $values);
+
+        return join("\n", $concatenated);
     }
 
     /**
