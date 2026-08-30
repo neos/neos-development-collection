@@ -16,6 +16,8 @@ prototype(Neos.Fusion:ActionUri) {
   action = null
   format = null
   section = null
+  routingArguments = Neos.Fusion:DataStructure
+  queryParameters = Neos.Fusion:DataStructure
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
   argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
