@@ -500,9 +500,6 @@ Neos:
                 fusionPathPatterns: ['resource://Neos.Neos/Private/Fusion/Error/Root.fusion']
                 enableContentCache: false
                 templatePathAndFilename: ~
-      debugger:
-        ignoredClasses:
-          Neos\\Neos\\Domain\\Service\\ContentContextFactory: true
 
     package:
       packagesPathByType:
