@@ -54,6 +54,7 @@ trait CRTestSuiteTrait
     use NodeTraversalTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
+    use GraphStateTrait;
     use GenericCommandExecutionAndEventPublication;
 
     use ContentStreamClosing;

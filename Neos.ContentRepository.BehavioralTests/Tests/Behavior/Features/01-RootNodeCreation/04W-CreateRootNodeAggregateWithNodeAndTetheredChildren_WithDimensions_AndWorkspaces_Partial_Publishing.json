@@ -1,0 +1,788 @@
+{
+    "lady-eleonode-rootford": {
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "node": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "2ca4fae2f65267c94c85602df0cbb728": {
+            "node": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peerSpec"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peerSpec"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "child-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nody-mc-nodeface": {
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "source"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "source"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "2ca4fae2f65267c94c85602df0cbb728": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peerSpec"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peerSpec"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository.Testing:RootWithTetheredChildNodes",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peerSpec"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "classification": "tethered",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                        "properties": {
+                            "addedProperties": {
+                                "text": {
+                                    "value": "my sub sub default",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "grandchild-node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nodimus-prime": {
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "node": {
+                "_discriminator": "nodimus-prime",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodimus-prime",
+                "originDimensionSpacePoint": {
+                    "example": "source"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "grandchild-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "source"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "nodimus-prime",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodimus-prime",
+                "originDimensionSpacePoint": {
+                    "example": "source"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "grandchild-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "source"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "nodimus-prime",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodimus-prime",
+                "originDimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "grandchild-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        },
+        "2ca4fae2f65267c94c85602df0cbb728": {
+            "node": {
+                "_discriminator": "nodimus-prime",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peerSpec"
+                },
+                "aggregateId": "nodimus-prime",
+                "originDimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "grandchild-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peerSpec"
+                },
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        }
+    }
+}

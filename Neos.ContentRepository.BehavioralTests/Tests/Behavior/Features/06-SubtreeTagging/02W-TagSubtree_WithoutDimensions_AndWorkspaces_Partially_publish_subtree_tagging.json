@@ -1,0 +1,96 @@
+{
+    "lady-eleonode-rootford": {
+        "d751713988987e9331980363e24189ce": {
+            "children": {
+                "nodes": [
+                    "preceding-nodenborough",
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "succeeding-nodenborough"
+                ]
+            }
+        }
+    },
+    "preceding-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "succeeding-nodenborough"
+                ]
+            },
+            "references": {
+                "references": [
+                    {
+                        "node": {
+                            "_discriminator": "sir-david-nodenborough",
+                            "tags": {
+                                "my-tag": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "sir-david-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nody-mc-nodeface": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            }
+        }
+    },
+    "succeeding-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "preceding-nodenborough"
+                ]
+            }
+        }
+    }
+}

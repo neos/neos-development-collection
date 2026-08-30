@@ -1,0 +1,22 @@
+{
+    "lady-eleonode-rootford": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        }
+    }
+}
