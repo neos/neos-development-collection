@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceNames;
 use Neos\Flow\Annotations\Scope;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
@@ -120,10 +121,9 @@ final class AssetUsageRepository
     }
 
     /**
-     * @param WorkspaceName[] $workspaceNames
      * @return array<AssetUsage>
      */
-    public function findUsageForNodeInWorkspaces(ContentRepositoryId $contentRepositoryId, Node $node, array $workspaceNames): array
+    public function findUsageForNodeInWorkspaces(ContentRepositoryId $contentRepositoryId, Node $node, WorkspaceNames $workspaceNames): array
     {
         $sql = <<<SQL
             SELECT * FROM {$this->getTableName()}
@@ -138,7 +138,7 @@ final class AssetUsageRepository
             'contentRepositoryId' => $contentRepositoryId->value,
             'nodeAggregateId' => $node->aggregateId->value,
             'originDimensionSpacePointHash' => $node->dimensionSpacePoint->hash,
-            'workspaceNames' => array_map(fn ($workspaceName) => $workspaceName->value, $workspaceNames),
+            'workspaceNames' => $workspaceNames->toStringArray(),
         ], [
             'propertyNames' => Connection::PARAM_STR_ARRAY,
             'workspaceNames' => Connection::PARAM_STR_ARRAY,
@@ -226,16 +226,13 @@ final class AssetUsageRepository
         ]);
     }
 
-    /**
-     * @param WorkspaceName[] $workspaceNames
-     */
     public function removeAssetUsagesForNodeAggregateIdAndDimensionSpacePointWithAssetOnPropertyInWorkspaces(
         ContentRepositoryId $contentRepositoryId,
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePoint $dimensionSpacePoint,
         string $propertyName,
         string $assetId,
-        array $workspaceNames
+        WorkspaceNames $workspaceNames
     ): void {
         $sql = <<<SQL
                 DELETE FROM {$this->getTableName()}
@@ -251,7 +248,7 @@ final class AssetUsageRepository
             'contentRepositoryId' => $contentRepositoryId->value,
             'nodeAggregateId' => $nodeAggregateId->value,
             'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'workspaceNames' => array_map(fn ($workspaceName) => $workspaceName->value, $workspaceNames),
+            'workspaceNames' => $workspaceNames->toStringArray(),
             'propertyName' => $propertyName,
             'assetId' => $assetId,
         ], [

@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceNames;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\Flow\Annotations\Scope;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
@@ -55,14 +56,14 @@ final class AssetUsageIndexingService
             throw WorkspaceDoesNotExist::butWasSupposedTo($node->workspaceName);
         }
 
-        $workspaceBases = $allWorkspaces->getBaseWorkspaces($node->workspaceName)->map(fn (Workspace $workspace) => $workspace->workspaceName);
-        $workspaceDependents = $allWorkspaces->getDependantWorkspacesRecursively($node->workspaceName)->map(fn (Workspace $workspace) => $workspace->workspaceName);
+        $workspaceBases = WorkspaceNames::fromWorkspaces($allWorkspaces->getBaseWorkspaces($node->workspaceName));
+        $workspaceDependents = WorkspaceNames::fromWorkspaces($allWorkspaces->getDependantWorkspacesRecursively($node->workspaceName));
 
         // 1. Get all asset usages of given node.
         $assetIdsByPropertyOfNode = $this->getAssetIdsByProperty($nodeType, $node->properties);
 
         // 2. Get all existing asset usages of ancestor workspaces.
-        $assetUsagesInAncestorWorkspaces = $this->assetUsageRepository->findUsageForNodeInWorkspaces($contentRepositoryId, $node, [$node->workspaceName, ...$workspaceBases]);
+        $assetUsagesInAncestorWorkspaces = $this->assetUsageRepository->findUsageForNodeInWorkspaces($contentRepositoryId, $node, WorkspaceNames::create($node->workspaceName)->merge($workspaceBases));
 
         // 3a. Filter only asset usages of given node, which are NOT already in place in ancestor workspaces. This way we get new asset usages in this particular workspace.
         $propertiesAndAssetIdsNotExistingInAncestors = [];
@@ -141,7 +142,7 @@ final class AssetUsageIndexingService
                     $node->dimensionSpacePoint,
                     $propertyName,
                     $assetIdAndOriginalAssetId->assetId,
-                    [$node->workspaceName]
+                    WorkspaceNames::create($node->workspaceName)
                 );
             }
         }
