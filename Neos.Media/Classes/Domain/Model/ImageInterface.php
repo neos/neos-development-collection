@@ -35,14 +35,14 @@ interface ImageInterface extends ResourceBasedInterface
     /**
      * Width of the image in pixels
      *
-     * @return integer
+     * @return integer|null
      */
     public function getWidth();
 
     /**
      * Height of the image in pixels
      *
-     * @return integer
+     * @return integer|null
      */
     public function getHeight();
 
