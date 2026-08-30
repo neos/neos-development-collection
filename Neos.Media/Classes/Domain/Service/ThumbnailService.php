@@ -198,7 +198,8 @@ class ThumbnailService
             $presetConfiguration['allowUpScaling'] ?? false,
             $async,
             $presetConfiguration['quality'] ?? null,
-            $presetConfiguration['format'] ?? null
+            $presetConfiguration['format'] ?? null,
+            $presetConfiguration['additionalOptions'] ?? []
         );
     }
 
@@ -224,7 +225,8 @@ class ThumbnailService
             $configuration->isUpScalingAllowed(),
             $configuration->isAsync(),
             $configuration->getQuality(),
-            $targetFormat
+            $targetFormat,
+            $configuration->getAdditionalOptions()
         );
         return $configuration;
     }
