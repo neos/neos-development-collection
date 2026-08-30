@@ -13,12 +13,17 @@ namespace Neos\Media\Domain\Model\ThumbnailGenerator;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
+use Neos\Media\Domain\Model\Adjustment\ResizeDimensionCalculator;
 use Neos\Media\Domain\Model\Adjustment\QualityImageAdjustment;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
+use Neos\Media\Domain\Model\Dto\PreliminaryCropSpecification;
+use Neos\Media\Domain\Model\FocalPointSupportInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Service\ImageService;
 use Neos\Media\Exception;
+use Neos\Media\Imagine\Box;
 
 /**
  * A system-generated preview version of an Image
@@ -76,6 +81,46 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
                 )
             ];
 
+            $asset = $thumbnail->getOriginalAsset();
+            $preliminaryCropSpecification = null;
+            if ($asset instanceof FocalPointSupportInterface && $asset->hasFocalPoint()) {
+                // in case we have a focal point we calculate the target dimension and add an
+                // preliminary crop to ensure that the focal point stays inside the final image
+                // while beeing as central as possible
+
+                $originalFocalPoint = $asset->getFocalPoint();
+                $originalDimensions = new Box($asset->getWidth(), $asset->getHeight());
+                $requestedDimensions = ResizeDimensionCalculator::calculateRequestedDimensions(
+                    originalDimensions: $originalDimensions,
+                    width: $thumbnail->getConfigurationValue('width'),
+                    maximumWidth: $thumbnail->getConfigurationValue('maximumWidth'),
+                    height: $thumbnail->getConfigurationValue('height'),
+                    maximumHeight: $thumbnail->getConfigurationValue('maximumHeight'),
+                    ratioMode: $thumbnail->getConfigurationValue('ratioMode'),
+                    allowUpScaling: $thumbnail->getConfigurationValue('allowUpScaling'),
+                );
+
+                $preliminaryCropSpecification = ResizeDimensionCalculator::calculatePreliminaryCropSpecification(
+                    originalDimensions: $originalDimensions,
+                    originalFocalPoint: $originalFocalPoint,
+                    targetDimensions: $requestedDimensions,
+                );
+
+                $adjustments = array_merge(
+                    [
+                        new CropImageAdjustment(
+                            [
+                                'x' => $preliminaryCropSpecification->cropOffset->getX(),
+                                'y' => $preliminaryCropSpecification->cropOffset->getY(),
+                                'width' => $preliminaryCropSpecification->cropDimensions->getWidth(),
+                                'height' => $preliminaryCropSpecification->cropDimensions->getHeight(),
+                            ]
+                        )
+                    ],
+                    $adjustments
+                );
+            }
+
             $targetFormat = $thumbnail->getConfigurationValue('format');
             $processedImageInfo = $this->imageService->processImage($thumbnail->getOriginalAsset()->getResource(), $adjustments, $targetFormat);
 
@@ -83,6 +128,11 @@ class ImageThumbnailGenerator extends AbstractThumbnailGenerator
             $thumbnail->setWidth($processedImageInfo['width']);
             $thumbnail->setHeight($processedImageInfo['height']);
             $thumbnail->setQuality($processedImageInfo['quality']);
+
+            if ($preliminaryCropSpecification instanceof PreliminaryCropSpecification) {
+                $thumbnail->setFocalPointX($preliminaryCropSpecification->focalPoint->getX());
+                $thumbnail->setFocalPointY($preliminaryCropSpecification->focalPoint->getY());
+            }
         } catch (\Exception $exception) {
             $message = sprintf('Unable to generate thumbnail for the given image (filename: %s, SHA1: %s)', $thumbnail->getOriginalAsset()->getResource()->getFilename(), $thumbnail->getOriginalAsset()->getResource()->getSha1());
             throw new Exception\NoThumbnailAvailableException($message, 1433109654, $exception);

@@ -33,9 +33,10 @@ use Neos\Utility\TypeHandling;
  *
  * @Flow\Entity
  */
-class ImageVariant extends Asset implements AssetVariantInterface, ImageInterface
+class ImageVariant extends Asset implements AssetVariantInterface, ImageInterface, FocalPointSupportInterface
 {
     use DimensionsTrait;
+    use FocalPointTrait;
 
     /**
      * @var ImageService

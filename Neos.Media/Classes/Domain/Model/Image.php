@@ -26,9 +26,10 @@ use Neos\Media\Exception\ImageFileException;
  *
  * @Flow\Entity
  */
-class Image extends Asset implements ImageInterface, VariantSupportInterface
+class Image extends Asset implements ImageInterface, VariantSupportInterface, FocalPointSupportInterface
 {
     use DimensionsTrait;
+    use FocalPointTrait;
 
     /**
      * @var Collection<\Neos\Media\Domain\Model\ImageVariant>
