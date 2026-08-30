@@ -29,8 +29,10 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\Mvc\Routing\DynamicRoutePartInterface;
 use Neos\Flow\Mvc\Routing\ParameterAwareRoutePartInterface;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
+use Neos\Flow\Security\Context;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
@@ -165,6 +167,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     #[Flow\Inject]
     protected SiteRepository $siteRepository;
 
+    #[Flow\Inject]
+    protected Context $securityContext;
+
     /**
      * Incoming URLs
      *
@@ -205,9 +210,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             )
         );
         $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint;
-        // TODO Validate for full context
-        // TODO validate dsp == complete (ContentDimensionZookeeper::getAllowedDimensionSubspace()->contains()...)
-        // if incomplete -> no match + log
 
         $contentRepository = $this->contentRepositoryRegistry->get($resolvedSite->getConfiguration()->contentRepositoryId);
 
@@ -223,7 +225,20 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
                 return false;
             }
         } catch (NodeNotFoundException $exception) {
-            // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
+            // if there are fundamental errors with your dimension config (mismatch between database and settings), people only see a 404 - which is a problem because it
+            // is not possible for people to analyze this further. This is why in the error case, we check whether the root node exists in the expected DimensionSpacePoint, because
+            // this way, we can give some hints on what to do.
+            $this->securityContext->withoutAuthorizationChecks(function () use ($exception, $dimensionSpacePoint, $contentRepository) {
+                $sitesNodeAggregate = $contentRepository->getContentGraph(WorkspaceName::forLive())->findRootNodeAggregateByType(NodeTypeNameFactory::forSites());
+                if ($sitesNodeAggregate === null) {
+                    throw new NodeNotFoundException('No Sites Node found in the Content Graph. Please run the setup tool at /setup, which describes the steps to import a site.', 1762418159, $exception);
+                }
+                if (!$sitesNodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
+                    throw new NodeNotFoundException('The Neos.Neos:Sites root node does not cover the resolved dimension space point ' . $dimensionSpacePoint->toJson() . ". This can happen for the following reasons: \n - 1. dimension config in Neos.ContentRepositoryRegistry does not match site dimension routing configuration in Neos.Neos.sites \n - 2. configured dimension configuration does not match the dimensions in the database.\n\n To debug this further, see https://docs.neos.io/guide/content-repository/content-dimensions/migrating-dimension-config or run the setup tool at /setup, which contains further diagnostics.", 1762418208, $exception);
+                }
+            });
+
+            // we silently swallow the remaining Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
             return false;
         }
@@ -437,8 +452,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         $allowedNodeTypeName = $this->options['nodeType'] ?? null;
         if (
             $allowedNodeTypeName && !$nodeTypeManager
-            ->getNodeType($nodeInfo->getNodeTypeName())
-            ?->isOfType($allowedNodeTypeName)
+                ->getNodeType($nodeInfo->getNodeTypeName())
+                ?->isOfType($allowedNodeTypeName)
         ) {
             return false;
         }
