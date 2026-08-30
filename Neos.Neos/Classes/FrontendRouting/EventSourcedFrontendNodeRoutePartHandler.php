@@ -223,6 +223,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
                 return false;
             }
         } catch (NodeNotFoundException $exception) {
+            if (
+                !$contentRepository->getVariationGraph()->getDimensionSpacePoints()->contains($dimensionSpacePoint)
+            ) {
+                // initialise variation graph for non-happy case to improve errors if configuration was faulty
+                throw new \RuntimeException(sprintf('Resolved (default) dimension %s for route path "%s" is not a valid combination', $dimensionSpacePoint->toJson(), $dimensionResolvingResult->remainingUriPath), 1743334596);
+            }
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
             return false;
