@@ -77,7 +77,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     When The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Resolve from node lower in the tree
-    When I am on URL "/david-nodenborough/earl-document"
     Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
     And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"

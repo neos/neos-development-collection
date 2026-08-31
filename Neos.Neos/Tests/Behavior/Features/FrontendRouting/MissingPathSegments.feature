@@ -76,7 +76,6 @@ Feature: Routing functionality if path segments are missing like during tethered
     When The URL "/sir-david-nodenborough/earl-o-documentbourgh" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Resolve from node lower in the tree
-    When I am on URL "/sir-david-nodenborough/earl-o-documentbourgh"
     Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
     And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/sir-david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/sir-david-nodenborough/earl-o-documentbourgh"
