@@ -69,7 +69,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     When The URL "/" should match the node "shernode-homes" in dimension "{}"
 
   Scenario: Resolve nodes correctly from homepage
-    When I am on URL "/"
     Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
     And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
@@ -89,7 +88,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
 
@@ -99,7 +97,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     Only a new php runtime with an already setup'd cr can guarantee that the caches are flushed correctly, or your brain!
 
     # before changing assert previous values and have cache triggerd.
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
@@ -108,7 +105,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
 
@@ -124,7 +120,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
 
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
 
