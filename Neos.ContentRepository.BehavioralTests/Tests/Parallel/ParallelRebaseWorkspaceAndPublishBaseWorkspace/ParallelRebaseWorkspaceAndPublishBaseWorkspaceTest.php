@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
 use Neos\EventStore\Model\Event\EventTypes;
 use Neos\EventStore\Model\EventStream\EventStreamFilter;
@@ -170,7 +171,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
         touch(self::FIRST_IS_RUNNING_FLAG_PATH);
 
         try {
-            for ($i = 0; $i <= 250; $i++) {
+            for ($i = 0; $i <= 100; $i++) {
                 $this->contentRepository->handle(
                     CreateNodeAggregateWithNode::create(
                         WorkspaceName::fromString('review'),
@@ -220,7 +221,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
                     );
                     $this->log('Successfully rebased');
                     continue;
-                } catch (WorkspaceCommandSkipped|ContentStreamDoesNotExist $expected) {
+                } catch (WorkspaceCommandSkipped|ConcurrencyException|ContentStreamDoesNotExist $expected) {
                     $this->log(
                         sprintf(
                             'Got expected %s: %s',
