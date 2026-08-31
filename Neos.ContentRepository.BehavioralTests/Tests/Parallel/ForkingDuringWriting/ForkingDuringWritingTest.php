@@ -188,7 +188,7 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
 
         $this->log('2. forking started');
 
-        $successFullCreated = 0;
+        $successfulCreated = 0;
         for ($i = 0; $i <= 200; $i++) {
             try {
                 $this->contentRepository->handle(CreateWorkspace::create(
@@ -196,19 +196,19 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
                     WorkspaceName::forLive(),
                     ContentStreamId::fromString('user-test-cs-' . $i)
                 ));
-                $successFullCreated++;
+                $successfulCreated++;
             } catch (ConcurrencyException $concurrencyException) {
                 // Expected version: [ContentStream:live-cs-id equals 7], actual version: 13. All: [[no ContentStream:user-test-cs-1], [ContentStream:live-cs-id equals 7], [no Workspace:user-test-1]]
                 $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
             }
         }
 
-        $this->log(sprintf('2. forking %d workspaces finished', $successFullCreated));
+        $this->log(sprintf('2. forking %d workspaces finished', $successfulCreated));
 
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        Assert::assertGreaterThanOrEqual(10, $successFullCreated, 'Too few workspace of 200 attempts were created');
+        Assert::assertGreaterThanOrEqual(10, $successfulCreated, 'Too few workspace of 200 attempts were created');
         $workspaces = $this->contentRepository->findWorkspaces();
-        Assert::assertCount($successFullCreated, $workspaces->getDependantWorkspaces(WorkspaceName::forLive()));
+        Assert::assertCount($successfulCreated, $workspaces->getDependantWorkspaces(WorkspaceName::forLive()));
     }
 }
