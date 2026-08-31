@@ -1,0 +1,1116 @@
+`9.2.0-beta3 (2026-08-31) <https://github.com/neos/neos-development-collection/releases/tag/9.2.0-beta3>`_
+==========================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Atomic events (`commitAll`) and simplifies locking (removes content stream closing) <https://github.com/neos/neos-development-collection/pull/5830>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5827 <https://github.com/neos/neos-development-collection/issues/5827>`_ 
+Includes/Requires: https://github.com/neos/neos-development-collection/pull/5945
+
+See elaboration of issue as to WHY :)
+
+Later to be used as foundation to fix https://github.com/neos/neos-development-collection/pull/5830 via the use of
+
+```php
+$eventsToPublish->withExpectedVersionForStream(
+  'ContentStream:review-cs',
+  ExpectedVersion::fromVersion(12)
+);
+```
+
+Needs event-store core adjustment
+- https://github.com/neos/eventstore/pull/28
+- https://github.com/neos/eventstore-doctrineadapter/pull/30
+- https://github.com/neos/eventstore-doctrineadapter/pull/38
+- https://github.com/neos/eventstore/pull/35
+
+
+### History
+
+Originally the event publication in the workspace command handler was obscured via recursions.
+With https://github.com/neos/neos-development-collection/pull/5315 Neos 9 - as released today - was refactored to transparently return all events to publish back to the ``ContentRepository::handle()`` instead of publishing some events one-selves.
+
+That change as an absolute required step at the time but ironically only showed the real problem at hand - that there are absolutely no guarantees for 100% concurrency safety.
+
+At that time we did not realise this fully and its implication but rather attempt to implement a remediation strategy in case the event store rejected some events where its now absolutely required to commit a final event before still aborting  to restore the state.
+
+We called that "control-flow-aware" command handler and the ``WorkspaceCommandHandler`` was the one only needing that.
+
+For more detail's see also Publish V3 which is the implementation shipped for Neos 9.0 and 9.1 https://github.com/neos/neos-development-collection/pull/5301
+
+### Advantages of returning all events to publish from the command handlers
+
+A primitive implementation of event sourcing might just go ahead and use the event-store and their event-normaliser to normalise and commit the events directly from within the command handler.
+This is not wrong but the Neos CR as of now returns all events bravely from their command handlers for later commit.
+
+This brings following advantages:
+- We ensure that a command-handler evaluates a command to exactly one batch of events
+- We ensure that commands are never a noop but rather enforce the convention of throwing exception like ``WorkspaceCommandSkipped``
+- We can enrich all the events with meta-data which can thus never be forgotten - adding userId, timeStamp but also the correlationId based on the actual command - not their possibly serialised counter-form
+- We can add performance time markers to time correctly how long the computation to calculate the events costed separately of their commit
+- The command-hook ``onAfterHandle()`` expects to receive all ``PublishedEvents`` of the command and can do so safely without us looking back into the event-store and possibly encountering simultaneous events written from foreign streams 
+
+### Removes now obsolete content stream closing
+
+Content stream closing was introduced to fix https://github.com/neos/neos-development-collection/issues/4680. The closing was required at that time as commands referenced a contentStreamId to write on instead of a workspaceName which exactly produced this race condition. Also old content streams were at that time not immediately cleaned up with ``ContentStreamWasRemoved`` allowing to write inaccessible content.
+
+The above mentioned Publishing V3 introduces here bit more stability but also a little chaos see https://github.com/neos/neos-development-collection/pull/5342 and even later https://github.com/neos/neos-development-collection/pull/5829 - content stream closing did not turn out to be the best idea.
+
+Now if we were to commit all events at once where the last event in the batch is the content stream removal event asserting that no new events occurred on the stream and that the stream is afterwards closed/removed, we do not longer run into this problem. 
+
+**Needs ``cr:setup``** ⚠️ 
+
+The database schema was adjusted to drop the ``closed`` column in the content stream table.
+Failing to drop it before catching up new events results in:
+
+> General error: 1364 Field 'closed' doesn't have a default value   
+
+### Herby (re)-fixed bugs
+
+1.) ANY previously possible invalid content stream closed state
+
+The latest patches of 9.0 and 9.1 fixes (TM) a long standing bug where content streams were left closed after the transaction had a failure.
+Now we categorically exclude this kind of problem.
+
+2.) 9.2-dev introduces more constraint checks for workspaces https://github.com/neos/neos-development-collection/pull/5488
+
+This looks good in theory in first sight and definitely prevents race-conditions but also has the side-effect that due to the new constraint checks a later batch of events _could_ now fail in a race condition.
+A possible failure was not anticipated in that pr leading during publishing possible to a new kind of but where a content stream is left closed.
+
+See comment https://github.com/neos/neos-development-collection/pull/5488#discussion_r3620484369 for more details
+
+Now fixed because we commit all events at once and we dont need to think of recovery strategies of partially committed events.
+
+3.) No prune-able content streams after race-condition in workspace creation
+
+Workspace creation was made thread-safe via https://github.com/neos/neos-development-collection/pull/5860.
+But as before two events were committed where the second event could fail in a race condition we had to catch the concurrency exception and revert the first committed ``ContentStreamWasForked`` by removing that content stream appending an ``ContentStreamWasRemoved`` event. Instead these two events are rather obsolete and should not be needed to be emitted.
+
+Because we commit a batch of events now where either all constraints pass or the whole batch is rejected we no longer phase this weirdness.
+
+4.) Adjust parallel test of ``ChangeBaseWorkspace`` to ignore ``ContentStreamDoesNotExist`` exception
+
+see https://github.com/neos/neos-development-collection/pull/5888#issuecomment-4803436419
+
+5.) Unexpected not yet discovered race-conditions
+
+Using an atomic ``commitAll()`` is the safer bet for every scenario. The events are calculated first based on the current state and later only we commit the batch of events and even later do the catchup. All thinkable scenarios where only partial events might get committed due to $any reason like even a well meant bugfix (see 2) are solved for now and the future (TM).
+
+### Foundation for a race condition safe ``ContentStreamWasForked`` event
+
+Emitting fork events is not safe during parallel executions: https://github.com/neos/neos-development-collection/pull/5830
+
+Before the introduction of the eventstore's ``commitAll()`` and the possibility to use the new API ``Neos\\EventStore\\Model\\EventsForCommit::withExpectedVersionForStream()`` it was also not possible to express the guarantees needed.
+
+Now with the refactoring here and the foundations introducing the ``EventsToPublish`` with the same ability we can in a future PR solve this race-condition:
+
+https://github.com/neos/neos-development-collection/pull/5946
+
+---------
+
+TODO:
+- [x] fix parallel tests
+- [x] ensure parallelism does not make `#5869 <https://github.com/neos/neos-development-collection/issues/5869>`_worse (e.g. parallel tests should not corrupt graph but aborting the simulation is O K)
+
+
+* Packages: ``Fusion`` ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`FEATURE: New command `./flow crupgrade:eventsstatus` to check which event migrations are available <https://github.com/neos/neos-development-collection/pull/5930>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+With yet another event migration for the Neos 9.2 upgrade (https://github.com/neos/neos-development-collection/pull/5927) it will be hard to explain when to use what and where.
+
+Thus i propose a little feature to allow to check the event migration status based on the projects events.
+
+### Example
+
+```
+./flow crupgrade:eventsstatus
+
+Optional migrations:
+ - Adjust event time stamps and node dates to UTC
+   Run ./flow crupgrade:eventsrecordedattoutc
+
+Required migrations (in order):
+ - Deduplicate parallel base workspace changes
+   Run ./flow crupgrade:eventsdeduplicatebaseworkspacechanges
+
+Note use --dry-run with the upgrades for further details
+Found 1 required and 1 optional event upgrades available
+```
+
+* Packages: ``ContentRepository.Core`` ``ContentRepositoryRegistry``
+
+`FEATURE: New 9.2 webp only login image <https://github.com/neos/neos-development-collection/pull/5923>`_
+---------------------------------------------------------------------------------------------------------
+
+Add new login wallpaper as per voting
+    
+https://discuss.neos.io/t/neos-9-2-login-wallpaper/7205/3
+    
+i allowed myself to extend the size to 3000px and use 300kb to capture more of this magnificent image
+
+Previously we had TWO 2500px files of ~200kb because we were also storing the JPG
+Now we now only store the webp in this repository
+
+-----
+
+
+Revert JPG login compatibility layer
+    
+introduced in 2021 as not available in the base line
+
+https://github.com/neos/neos-development-collection/pull/3415
+
+now its available https://caniuse.com/webp
+
+* Packages: ``Neos``
+
+`FEATURE: Improve MySQL projection performance by more than factor 8 <https://github.com/neos/neos-development-collection/pull/5902>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+### This PR is part **3** of the series Content Stream Layers
+
+**This is part of a big concept update which heavily speeds up Neos 9.2+, by removing the full copy of Hierarchy Relations, and replacing it with so-called "hierarchy layers".**. This functionality needs MULTIPLE pull requests to form a consistent state:
+
+- `#5776 <https://github.com/neos/neos-development-collection/issues/5776>`_for base implementation and functioning concept (still SLOW on big sites)
+-  `#5874 <https://github.com/neos/neos-development-collection/issues/5874>`_for heavy performance optimizations (tested with > 150k nodes), but still slow with subtree tagging
+  - initial prototype and measurement for performance optimizations was `#5873 <https://github.com/neos/neos-development-collection/issues/5873>`_
+- **💪💪THIS PR💪💪** `#5902 <https://github.com/neos/neos-development-collection/issues/5902>`_for heavy performance optimizations with MySQL
+- `#5879 <https://github.com/neos/neos-development-collection/issues/5879>`_for rewritten and performant subtree tagging in PHP
+
+---
+
+This is an optimization for Content Stream Layers for Neos 9.2
+
+The following numbers are measured locally on MYSQL 8.0:
+
+before this change, replay on neos.io (locally) took 7 minutes
+for the first ~35.000 events: replayed ~83 events per second
+
+After this change, replay on neos.io (locally) took 10 minutes
+for the first ~450.000 events, and 20 minutes for the
+first ~780.000 events: replayed ~650 events per second
+
+The change itself lives only in https://github.com/neos/neos-development-collection/pull/5902/changes/`d851c65c9c56aadd4aa68c130ea05f8bad7f6981 <https://github.com/neos/neos-development-collection/commit/d851c65c9c56aadd4aa68c130ea05f8bad7f6981>`_ -> **see this file for detail explanations**
+
+
+## Performance Measurement Mariadb (10.11) - neos.io
+
+note: the numbers are NOT comparable with the mysql numbers directly, but just relative to each other.
+
+- WITHOUT this change/pr (including PHP based subtree tagging): 183.000 events / 10 minutes: 305 evt/s.
+- WITH this change/pr (including PHP based subtree tagging): 181.000 events / 10 minutes: 301 evt/s.
+- **Summary: same as before**
+
+## Performance Measurement Mysql (10.11) - neos.io
+
+- WITHOUT this change/pr (including PHP based subtree tagging): 115.000 events/9 mins (then aborted, because so slow): 212 event/second; ❗ glacially slow events
+- WITH this change/pr (including PHP based subtree tagging): 
+  - 214.000 events/7 mins: 509 evt/s
+  - 305.000 events/10 mins: 508 evt/s
+  - 520.000 events/17 mins: 509 evt/s
+  - 900.000 events/32 mins: 468 evt/s
+  - 1.070.000 events / 45 mins: 396 evt/s
+  - 1.230.000 events / 49 mins: 418 evt/s
+  - 1.328.000 events / 53 mins: 417 evt/s
+- **Summary: this is quick and workable :) WAY better than before**
+
+
+## Concept
+
+### Original Query, now replaced: MAX(...) GROUP BY id in a derived table
+ 
+This approach was fast in MariaDB but slow in MySQL.
+ 
+The approach explained step by step:
+ 
+1) We essentially want to run ``SELECT MAX(contentstreamlayer) WHERE id = ... AND contentstreamlayer IN (:contentStreamLayers)``
+ once per id, but more efficiently. To resolve a whole set of ids in one query, we turn the per-id MAX into a grouped one:
+ 
+```sql
+ SELECT id, MAX(contentstreamlayer) AS contentstreamlayer
+       FROM {hierarchyRelation()}
+       WHERE contentstreamlayer IN (:contentStreamLayers)
+       GROUP BY id
+ ```
+This yields one (id, winning-layer) pair per id.
+ 
+2) That pair only tells us which layer wins (for a given id); we still need the full row ``h.*``. Selecting any other columns
+ is undefined behavior and forbidden in strict mode via only_full_group_by. Thus treat the grouped result as a derived table
+ ``readHierarchy`` and INNER JOIN the original table back onto it, matching on (id, winning-layer).
+ The INNER JOIN also drops any id that had no row in the allowed layers.
+ 
+WHY IT WAS REPLACED: MySQL cannot optimize this. The derived table ``readHierarchy`` has ``GROUP BY id``, and MySQL
+has no way to push the outer join key (id) into a grouped derived table, so it materializes the full grouped
+result for every lookup.
+ 
+ 
+### This PR: anti-join via NOT EXISTS
+ 
+Restating Attempt 1 mathematically, with L = the allowed layers (:contentStreamLayers):
+- for each id, compute m(id) = MAX{ layer : layer ∈ L }
+- keep row h where h.id = id AND h.layer = m(id)         -- i.e. the greatest layer per id
+- in symbols: h.layer ∈ L  ∧  h.layer = max{ layer ∈ L for id }
+ 
+This is equivalent to: "no row of the same id has a layer in L strictly greater than h.layer", i.e.
+ 
+h.layer ∈ L  ∧  ¬∃ same-id row with (layer ∈ L ∧ layer > h.layer)
+ 
+which is exactly an anti-join (NOT EXISTS):
+ 
+```sql
+SELECT h.* FROM hr h
+   WHERE h.layer IN L [AND id-prefilter]
+     AND NOT EXISTS (
+         -- exists a row with same id and bigger layer? -> then the current row is NOT the highest
+         -- layer and we DISCARD it.
+         SELECT 1 FROM hr hWin
+         WHERE hWin.id = h.id AND hWin.layer IN L AND hWin.layer > h.layer)
+```
+ 
+The NOT EXISTS form stays flat and mergeable, lets the optimizer push predicates and use the
+``UNIQ_id_layer (id, contentstreamlayer)`` index, and avoids materialization on both MySQL and MariaDB.
+
+## ToDos
+
+- [x] Behavioral tests still work
+- [x] Performance of MYSQL replay (with neos.io)
+- [x] Performance or Mariadb replay (with neos.io) 
+- [x] manual test: neos.io works snappy
+
+* Resolves: `#5898 <https://github.com/neos/neos-development-collection/issues/5898>`_
+
+* Packages: ``ContentGraph.DoctrineDbalAdapter``
+
+`FEATURE: Major Performance-improvements in big Sites by Hierarchy-relation Pre-filtering + Declarative Value Object Query-building <https://github.com/neos/neos-development-collection/pull/5874>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### This PR is part **2** of the series Content Stream Layers
+
+**This is part of a big concept update which heavily speeds up Neos 9.2+, by removing the full copy of Hierarchy Relations, and replacing it with so-called "hierarchy layers".**. This functionality needs MULTIPLE pull requests to form a consistent state:
+
+- `#5776 <https://github.com/neos/neos-development-collection/issues/5776>`_for base implementation and functioning concept (still SLOW on big sites)
+-  **💪💪THIS PR💪💪** `#5874 <https://github.com/neos/neos-development-collection/issues/5874>`_for heavy performance optimizations (tested with > 150k nodes), but still slow with subtree tagging
+  - initial prototype and measurement for performance optimizations was `#5873 <https://github.com/neos/neos-development-collection/issues/5873>`_
+- `#5902 <https://github.com/neos/neos-development-collection/issues/5902>`_for heavy performance optimizations with MySQL
+- `#5879 <https://github.com/neos/neos-development-collection/issues/5879>`_for rewritten and performant subtree tagging in PHP
+
+---
+
+### The new real Value Object Queries and the little Framework glue 
+
+Before in 9.0 fetching the hierarchies for a content stream was simple as the hierarchy relations contained a content stream column:
+
+```php
+->innerJoin('pn', $this->tableNames->hierarchyRelation(), 'ph')
+->where('ph.contentstreamid = :contentStreamId')
+->setParameter('contentStreamId', $contentStreamId->value)
+```
+
+Now the introduction of hierarchy layers requires us to now write a subquery. As the subquery is complex and often times reused a Query Value object in form of a "HierarchyRelationStatement" (here renamed) was introduced.
+
+We see this silently still requires some content stream information - now as part of the layers int array to be present in the bound parameters. But this is in-transparent in the following form:
+
+```php
+->innerJoin('pn', $this->hierarchyRelationStatement->toSql(), 'ph')
+->setParameter('contentStreamLayers', $contentStreamLayers->toIntArray(), ArrayParameterType::INTEGER)
+```
+
+This PR introduces framework code and an advanced Hierarchy relation subquery object which encapsulates bound parameters itself and the sql to be able to use that as:
+
+```php
+->innerJoinTableSubquery('pn', $this->subqueries->forHierarchyRelation($contentStreamLayers), 'ph')
+```
+
+internally we will be using a ``Neos\\ContentRepository\\Dbal\\Query\\QueryBuilder`` which just extends the ``DBALQueryBuilder`` by adding
+
+```php
+public function innerJoinTableSubquery(string $fromAlias, SqlTableSubqueryInterface $tableSubquery, ...);
+```
+
+a subquery is an object which provides its parameters and types as well as its sql
+
+```php
+/**
+ * Represents a SQL "table_factor"
+ *
+ * To be used inside FROM and JOIN "table_references"
+ *
+ *     SELECT *
+ *       FROM {$sqlTableFactor->toSql()}
+ *
+ *     SELECT *
+ *       FROM my_table
+ *       JOIN {$sqlTableFactor->toSql()} ON a = b
+ *
+ * @internal
+ */
+interface SqlTableSubqueryInterface
+{
+    public function getParameters(): Parameters;
+
+    /**
+     * Returned SQL must be valid in syntax
+     *
+     *     table_subquery
+     *
+     * {@link https://mariadb.com/docs/server/reference/sql-statements/data-manipulation/selecting-data/joins/join-syntax}
+     */
+    public function toSql(): string;
+}
+```
+
+now inside of ``innerJoinTableSubquery()`` we can merge the parameters and do the join in a single step.
+
+### The actual performance optimisations
+
+Because the subquery can now contain all parameters it needs and is fully encapsulated we can start adding all the performance optimisation logic we need from `#5873 <https://github.com/neos/neos-development-collection/issues/5873>``_ in a speaking manner like ``$hierarchyRelationQuery->withDimensionSpacePoint($dimensionSpacepoint)``  or  ``withDimensionSpacePoints()``  or ``withParentNodeAnchor()`  etc.
+
+Internally the ``HierarchyRelationSubquery``  can decide to use sebastians's pre-filtering while keeping our code easy to read and without any dangerous repetitions.
+
+### Bargain. Further abstracted queries vs plain SQL
+
+There were times i was convinced even the doctrine query builder is in our way and we want to write the queries in pure SQL. But that is highly unpractical and we _where_ at this point years ago and the content repository was refactored to use the query builder and later more abstractions like the node query builder were introduced. So i cant help to agree that we need a chain-able query building that allows to composite parts. Currently that makes - especially CTE queries - as well as probably even every simple query no easy to manually transpose to SQL. I usually debug their concatenated SQL.
+
+So the herby introduced _further_ abstraction instead going back to the roots is a commitment to the full shift of abstracted query building and move away from pure SQL. But the part that convinced me is not just done for aesthetic reasons - no it allows some serious performance improvements under the hood without any our by doing.
+
+A manual explicit approach to the same optimisations would require the calling site to add an additional pre filtering where clause via ``withPossibleWhereCondition()``.
+
+In the original commit https://github.com/neos/neos-development-collection/pull/5873/changes/`5e286d9cc6f98c60faebab9a7534f1d713c563ca <https://github.com/neos/neos-development-collection/commit/5e286d9cc6f98c60faebab9a7534f1d713c563ca>`_ it can be seen how this quickly escalated and how many duplications arose.
+
+**Before**
+
+```php
+$hierarchyQuery = $this->hierarchyRelationQuery
+    ->withWhereCondition('h.dimensionspacepointhash = :dimensionSpacePointHash')
+    ->withPossibleWhereCondition('h.dimensionspacepointhash = :dimensionSpacePointHash AND childnodeanchor = :parentNodeAnchorPoint')
+
+$sqlStatement = <<<SQL
+SELECT *
+  FROM {$query->toSql()}
+WHERE h.childnodeanchor = :parentNodeAnchorPoint
+SQL;
+
+$this->fetchAssociative(
+    $sqlStatement,
+    ['contentStreamLayers' => ..., 'dimensionspacepointhash' => ..., 'parentNodeAnchorPoint' => ...],
+    ['contentStreamLayers' => ArrayParameterType::STRING],
+);
+```
+
+**After**
+
+```php
+$hierarchyQuery = $this->hierarchyRelationQuery
+    ->withDimensionSpacePoint($dimensionSpacePoint)
+    ->withParentNodeAnchor($parentNodeAnchor)
+
+$sqlStatement = <<<SQL
+SELECT *
+  FROM {$query->toSql()}
+SQL;
+
+$this->fetchAssociative(
+    $sqlStatement,
+    $hierarchyQuery->getParameters()->toDbalValues(),
+    $hierarchyQuery->getParameters()->toDbalTypes(),
+);
+```
+
+The further abstraction is to those who know SQL and want to fully understand the queries and optimise them possibly a little in way but for those cases the SQL queries must be extracted from the query log or via debug. It might come in handy - for the query log, and also for the db performance schemas - to allow to identify a query uniquely but a comment.
+
+Any further optimisations we might found out should then rather profit again from this new declarative approach as because we just define what we want to query we are not interested in its exact implementation. For example we can remove the inner pre-filtering again or move the outer ``WHERE`` clauses from the subquery out into the main query to filter the hierarchies matched on that alias.
+
+TODO:
+- [x] Solve all todos
+- [x] Throw if parameters are merged and ambiguous
+- [ ] ~Provide utility to use Parameters for direct plain queries and merge two sets of parameters.~
+- [x] Go through my review comments
+- [ ] Ask Bernard if ``findParentNode`` is still safe
+- [x] Apply node id prefiltering to more queries
+- [x] Run bernards performance tests
+
+* Packages: ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.Dbal``
+
+`FEATURE: Content graph hierarchy layers / Copy hierarchies on write / Instant forks <https://github.com/neos/neos-development-collection/pull/5776>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### This PR is part **1** of the series Content Stream Layers
+
+**This is part of a big concept update which heavily speeds up Neos 9.2+, by removing the full copy of Hierarchy Relations, and replacing it with so-called "hierarchy layers".**. This functionality needs MULTIPLE pull requests to form a consistent state:
+
+- 1️⃣ **💪💪THIS PR💪💪** `#5776 <https://github.com/neos/neos-development-collection/issues/5776>`_
+  - for base implementation and functioning concept (still SLOW on big sites)
+- 2️⃣  `#5874 <https://github.com/neos/neos-development-collection/issues/5874>`_
+  - for heavy performance optimizations (tested with > 150k nodes), but still slow with subtree tagging
+- 3️⃣  `#5902 <https://github.com/neos/neos-development-collection/issues/5902>`_
+  - for heavy performance optimizations with MySQL
+- 4️⃣  `#5879 <https://github.com/neos/neos-development-collection/issues/5879>`_
+  - for rewritten and performant subtree tagging in PHP
+
+---
+
+Includes https://github.com/neos/neos-development-collection/pull/5735
+~Requires https://github.com/neos/neos-development-collection/pull/5838~
+
+Ultimate lifesaver?
+
+## Documentation of Content Stream Layers
+
+Given following state of nodes and hierarchies. (Dimensions are not drawn out as they don't change the concept).
+
+<img width="926" height="821" alt="image" src="https://github.com/user-attachments/assets/9b0f5a10-dd23-43e4-a12a-722a00595842" />
+
+Currently, the stored data for the state would contain two independent sets of hierarchies and a shared amount of Nodes. The Nodes are modified by copy on write already to reduce data-size. In the example of modifying Node ``a`` in the ``user-cs`` we can see that a copy from Node Row ``2`` to ``5`` was made with the modifications applied.
+
+<img width="1232" height="843" alt="image" src="https://github.com/user-attachments/assets/4c67c184-8b88-4351-9330-eb13f69874a3" />
+
+Content stream layers are a fully graph adapter specific implementation detail. The ``Neos.ContentGraph.DoctrineDbalAdapter`` uses them to avoid copying all hierarchies for the ``user-cs``. Instead forking a new content stream from ``cs-live`` only adds a new content stream layer and determines which layers are considered for reading.
+
+If we go back in time the hierarchies for the live content stream will initially be the same as if content stream ids were used in the hierarchy table
+
+<img width="1317" height="723" alt="image" src="https://github.com/user-attachments/assets/dd729ed4-4fcb-43dd-a27b-76eebf49cb5e" />
+
+
+With the addition of a new content stream we see the optimisation in play. Only new layers are assigned but no hierarchies copied
+
+
+<img width="1455" height="855" alt="image" src="https://github.com/user-attachments/assets/079d7c51-79f8-428b-adde-8e4fe969edb0" />
+
+
+Now applying the changes to the graph for the live an user content stream independently will show the following data.
+
+<img width="1181" height="801" alt="image" src="https://github.com/user-attachments/assets/1598f829-d78f-478f-b7d4-658039ec3674" />
+
+Reading takes the edge/hierarchy id into account which is unique for its lifespan.
+
+<img width="1403" height="841" alt="image" src="https://github.com/user-attachments/assets/161d1f26-16c9-4c8c-a173-69bbac23c22d" />
+
+
+Creating a new content stream via fork assigns all layers from the base content stream to the new content stream as well as assigns both content streams an own new layer used for writing:
+
+<img width="1348" height="863" alt="image" src="https://github.com/user-attachments/assets/efa914cf-7372-4f55-8cdc-9326e103c411" />
+
+There are optimisations in place to keep the number of layers as low as possible. Projection integrity violation detection validates this. A content stream is by maximum as many times segmented as there are directly depending content streams. At minimum a content stream is has 2 layers if all depending content streams where created at the same time without modifications on live interrupting
+
+<img width="1607" height="1202" alt="image" src="https://github.com/user-attachments/assets/9d0639e2-6bc5-4d3b-bd23-0354c38704d0" />
+
+
+### Caveats
+
+Certain operations that affect lots of hierarchy entries will become copy-fork-like and thus slow. That includes for example moving a dimension space point or removing the site node. We can safely assume that this is a good bargain as these actions are not carried out by an end-user of Neos.
+
+**Upgrade instructions**
+
+With content stream layers _more_ hierarchy information is stored in the database as we also partially keep its history. The current flattened hierarchy view does not allow to migrate the data to layers but by reapplying all events we can!
+
+```sh
+./flow cr:replay contentGraph
+```
+
+**Review instructions**
+
+TODO:
+- [x] Figure out why ``WorkspacePublicationDuringWritingTest`` parallel test is slower locally and totally does not work in CI. Revert https://github.com/neos/neos-development-collection/pull/5776/commits/`6b1ec95c5c519b1408eb19d5c8ef810b12b98041 <https://github.com/neos/neos-development-collection/commit/6b1ec95c5c519b1408eb19d5c8ef810b12b98041>`_
+- [x] Test together with https://github.com/neos/neos-development-collection/pull/5813
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepositoryRegistry``
+
+`FEATURE: Replay throughput profiling chart via a PerformanceTracer <https://github.com/neos/neos-development-collection/pull/5872>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Opt-in PerformanceTracer that charts replay/catchup throughput (events/s over time) to an SVG — a before/after aid for CR adjustments and then measuring ``./flow subscription:replay``.
+Wired through the existing tracer factory/settings.
+
+- introduced ``TracePoint`` enum for (optional) type-safe span/mark names
+  - !!! BREAKING for existing Tracer implementations (i.e. Plumber)
+- Pluggable SQL probes drawn as their own charts (one probe = one chart; UNION/GROUP BY = multiple lines) to correlate throughput with e.g. table growth
+- incremental SVG writing so one can already inspect the chart during replay
+
+**This was developed for finding the performance issues in https://github.com/neos/neos-development-collection/pull/5776**
+
+## Configuration
+
+```yaml
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        performanceTracer:
+          factoryObjectName: Neos\\ContentRepositoryRegistry\\Factory\\PerformanceTracer\\ReplayThroughputTracerFactory
+          options:
+            fileName: '%FLOW_PATH_DATA%Logs/ContentRepositoryThroughput.svg'
+            # minimum wall-time between samples; sub-second values (e.g. 0.1) are allowed
+            sampleIntervalSeconds: 2.0
+            sqlProbes:
+              'nodes-and-relations': |
+                SELECT 'nodes', COUNT(*) FROM cr_default_p_graph_node
+                UNION
+                SELECT 'hierarchy relations', COUNT(*) FROM cr_default_p_graph_hierarchyrelation
+              'contentstream-count': |
+                SELECT COUNT(*) FROM cr_default_p_graph_contentstream
+              'referencerelation-count': |
+                SELECT COUNT(*) FROM cr_default_p_graph_referencerelation
+
+```
+
+## Example chart
+
+<img width="1000" height="1250" alt="ContentRepositoryThroughput" src="https://github.com/user-attachments/assets/f6fc3f4d-7408-4f0e-aa02-94305875a7f7" />
+
+* Packages: ``Neos`` ``ContentRepositoryRegistry``
+
+`FEATURE: Workspace module with role assignments <https://github.com/neos/neos-development-collection/pull/5441>`_
+------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/neos-development-collection/pull/5132 by reintroducing the WIP role editing which was reverted via https://github.com/neos/neos-development-collection/pull/5132/commits/`4aed44146bf8de69d6b0809c77b6e110d2409712 <https://github.com/neos/neos-development-collection/commit/4aed44146bf8de69d6b0809c77b6e110d2409712>`_
+
+- [x] Implement ACL configuration dialogs
+- [x] Improve layout and styling
+- [x] Make sure all titles, labels and texts are correct
+- [x] Allow simple ACL selection in workspace creation dialog with hint to further configuration possibilities afterward
+- [x] Check remaining todos
+  - [x] User group constraint error
+- [x] Removing own user role of a private workspace
+  - [x] Error, but it still works after reload: You have no permission to edit the permissions of workspace "My Editor private".
+  - [x] No one is allowed to view the private workspace anymore? Not even admins? Why? No one sees it and can clean up.
+- [x] Fix initial creation distinction shared / private
+
+<img width="940" height="522" alt="image" src="https://github.com/user-attachments/assets/bc3c726d-132b-4339-b548-9183098c4065" />
+
+
+Needs to be done separately in Neos.Ui:
+- [ ] Make sure that removing users from a workspace doesn't crash their sessions if they are currently in that session
+- [x] Check permissions when editing workspaces in all actions
+
+
+
+* Packages: ``.github`` ``Neos`` ``Workspace.Ui``
+
+`FEATURE: Add backend document node link to workspace breadcrumb <https://github.com/neos/neos-development-collection/pull/5738>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This PR introduces a small quality of life improvement to the workspace review process.
+The final document node of a changes breadcrumb is now a link to the document inside the neos backend, allowing editors to quickly jump back to the document and make changes.
+
+resolved: `#5737 <https://github.com/neos/neos-development-collection/issues/5737>`_
+
+<img width="765" height="326" alt="546057539-864e2b33-8365-4cb6-aac7-11f6e1ba0da1" src="https://github.com/user-attachments/assets/569935fa-c148-42bb-bc08-0304fb6239ec" />
+
+
+
+* Packages: ``Workspace.Ui``
+
+`BUGFIX: Prevent race condition during content stream forking <https://github.com/neos/neos-development-collection/pull/5946>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Fixes: https://github.com/neos/neos-development-collection/issues/5849
+Requires https://github.com/neos/neos-development-collection/pull/5830
+Requires https://github.com/neos/neos-development-collection/pull/5927
+Requires https://github.com/neos/neos-development-collection/pull/5959
+
+Requires https://github.com/neos/eventstore-doctrineadapter/pull/40
+
+This will be possible by leveraging the new API ``Neos\\EventStore\\Model\\EventsForCommit::withExpectedVersionForStream()`` -> or in this case our mirror in ``EventsToPublish``
+
+Requires adjustments of the dbal event-store. Currently, this is not supported yet by the adapter in 3.0 see ``DoctrineEventStore::validateAllConstraintStreamsAreWritten``
+
+With 3.1 and this feature the adapter will support that.
+
+`FEATURE: Implement global advisory locking to enforce foreign stream constraints <https://github.com/neos/eventstore-doctrineadapter/pull/40>`_
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Adjust spacing of long workspace visibility label <https://github.com/neos/neos-development-collection/pull/5914>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+
+<img width="619" height="626" alt="image" src="https://github.com/user-attachments/assets/0abf59ea-7e27-4a6f-a690-12058030888c" />
+
+Before the labels were not indented and also not adjusted to the fixed width. 
+
+That took a lot of CSS effort more CSS you will not get from me for the next 2 months again.
+
+Thank you @pKallert for motivating me to do this change.
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: Fix exception message in Neos.Neos:ConvertUris <https://github.com/neos/neos-development-collection/pull/5949>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This fixes an exception message in ``Neos.Neos:ConvertUris`` (wrong ``get_debug_type()``). It also adds tests for scenarios that behave differently in the current Neos 9 release.
+
+**Upgrade instructions**
+n/a
+
+**Review instructions**
+
+See https://github.com/neos/neos-development-collection/pull/5926#discussion_r3727980323
+
+Sorry for not also adjusting the documentation. It took me quite a while to check it in the Neos 9 branch and I currently don't have the time to check it again for Neos 8.3.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Followup #5899 don't fail setup for detached projections <https://github.com/neos/neos-development-collection/pull/5947>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/neos-development-collection/pull/5899
+
+Fixes point 2 of https://github.com/neos/neos-development-collection/issues/5925 in a non breaking simple way
+
+See https://github.com/neos/neos-development-collection/pull/5948 for a better fix where we dont hide any skipped projections because they are detached.
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: Release-able dependencies for Neos 9.2 <https://github.com/neos/neos-development-collection/pull/5921>`_
+-----------------------------------------------------------------------------------------------------------------
+
+- ``Fix remaining dependencies to require Flow 9.1 <https://github.com/neos/neos-development-collection/commit/``b842dd8bc43606a373b68c29c375ca69249b7e5d <https://github.com/neos/neos-development-collection/commit/b842dd8bc43606a373b68c29c375ca69249b7e5d>`_>`_
+- ``Also move ResetupAndReplayContentGraphUpgradeTest to Behavior Test Package <https://github.com/neos/neos-development-collection/commit/``73b243bfe896c5789eb913af2c0d4e82e11deb0a <https://github.com/neos/neos-development-collection/commit/73b243bfe896c5789eb913af2c0d4e82e11deb0a>`_>`_
+  - see https://github.com/neos/neos-development-collection/pull/5473#issuecomment-4864333768
+
+* Packages: ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Instantiate datasources via object manager <https://github.com/neos/neos-development-collection/pull/5865>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This is necessary to make them fully compatible with the DI changes in 9.2.
+
+* Packages: ``Neos``
+
+`TASK: Raise to new minor `neos/eventstore-doctrineadapter` using global locking <https://github.com/neos/neos-development-collection/pull/5959>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+see https://github.com/neos/eventstore-doctrineadapter/pull/40
+related https://github.com/neos/neos-development-collection/issues/5963
+
+does not fix the race condition, foundation for https://github.com/neos/neos-development-collection/pull/5946
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`TASK: Adjust `EventsConcurrentWorkspaceRebases` migration after absence of `ContentStreamWasClosed` events <https://github.com/neos/neos-development-collection/pull/5964>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The event ``ContentStreamWasClosed`` no longer exists and thus the sequence numbers asserted are off by one
+
+see https://github.com/neos/neos-development-collection/pull/5927
+see https://github.com/neos/neos-development-collection/pull/5830
+
+* Packages: ``Neos`` ``ContentRepositoryRegistry``
+
+`TASK: Provide event migration for rebases on already removed content streams <https://github.com/neos/neos-development-collection/pull/5927>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Upgrade to deduplicate illegal concurrent workspace rebases
+
+See issue https://github.com/neos/neos-development-collection/issues/5849
+
+Content stream forking was not thread safe before not expressing the assertion to the source content stream
+e.g. that the ``sourceContentStreamVersion`` should match the reality in the event store.
+This resulted in the possibility that a source content stream was not constraint from being forked when it was already removed.
+The resulting illegal ``ContentStreamWasForked`` event and its ``RebaseWorkspace`` sequence must be removed.
+
+Required to ensure 9.2 can be replayed. Otherwise the graph will reject this event - in Neos 9.0 and 9.1 this was ignored accidentally
+
+> Content stream "cs-review-first" does not exist. No layers found.
+
+### 
+
+The upgrade first determines any ``ContentStreamWasForked`` events where the source content stream was already removed via ``ContentStreamWasRemoved``.
+We assume all illegally found forks are restricted to being caused by a ``RebaseWorkspace`` command (via correlation id).
+Further we expect a simple ``RebaseWorkspace`` without any changes on the "user" workspace but just an empty fork.
+On this empty fork we expect only a new second ``RebaseWorkspace``, starting with a ``ContentStreamWasClosed`` event or nothing if the event stream ended.
+This second ``RebaseWorkspace`` is either also illegal and to be removed or a valid rebase if the source content stream existed at that point.
+If valid we want to keep this rebase, but a rebase sequence refers to its previous content stream to remove it and indicate projections which was the last. The original information is no longer valid as we have removed the existence of the original previous content stream. Instead we need to patch the events to use the previous content stream of the first illegal fork - the previous-previous content stream.
+Thus we patch the field ``$previousContentStreamId`` of the ``WorkspaceWasRebased`` event and rewrite the
+``ContentStreamWasClosed`` and ``ContentStreamWasRemoved`` events to affect the now new last content stream.
+
+After the migration is applied the workspace will have its last successfully rebased content stream as without the migration,
+but we deduplicated any temporary illegal rebases that happened in a race condition. No content on the workspaces is affected.
+
+* Packages: ``.github`` ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.BehavioralTests`` ``ContentRepository.Core`` ``ContentRepository.Dbal`` ``ContentRepository.LegacyNodeMigration`` ``ContentRepository.NodeAccess`` ``ContentRepositoryRegistry`` ``Fusion.Afx`` ``Fusion`` ``Media`` ``Neos`` ``SiteKickstarter``
+
+`TASK: Update to PHPUnit 11 <https://github.com/neos/neos-development-collection/pull/5950>`_
+---------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+The only thing you might need to adjust (besides catering to all the changes in PhpUnit 11), is the signature of ``getAccessibleMock()`` in our base testcase class. The arguments
+
+- ``$callAutoload``
+- ``$callOriginalMethods``
+- ``$proxyTarget``
+
+have been removed, as the underlying PHPUnit methods are deprecated.
+
+**Review instructions**
+
+All tests should still pass – have fun verifying they still do test the correct stuff.
+
+
+* Packages: ``.github``
+
+`TASK: Update used actions, tweak workflows <https://github.com/neos/neos-development-collection/pull/5954>`_
+-------------------------------------------------------------------------------------------------------------
+
+This updates the version of used actions and tweaks some other things in the workflows.
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Enforce correct event publication in structure adjustments <https://github.com/neos/neos-development-collection/pull/5945>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+### Preparation for atomic commit of events
+
+Adjust structure adjustments to decouple from the CR's ``EventsToPublish``
+    
+This is a preparation for https://github.com/neos/neos-development-collection/pull/5830 where ``EventsToPublish`` is fully refactored and more complex.
+I adjusted to the new shape of ``EventsToPublish`` first but we want to to restrict publishing events from the outside - not allow to make it more complex by publishing on multiple streams.
+
+### Event publication is NOT Api
+
+See https://github.com/neos/neos-development-collection/issues/4451
+
+Annotate the obvious fact that creating own structure adjustments is not API (nor possible).
+Classes are now final to indicate that and annotated via ``@internal``.
+
+### Attempt to use expected version constraints
+
+
+I refactored the structure adjustments to only emit the events and the outer wrapping retrieves the expected version for the live content stream.
+
+There is a safe guard that all events emitted from the structure adjustments must implement the ``EmbedsContentStreamId`` and indeed affect live only.
+
+See https://github.com/neos/neos-development-collection/issues/5058
+
+The implementation is a bit hacked because i wanted to respect the current StructureAdjustment architecture and dont change anything in this PR:
+
+The property ``$liveContentStreamVersion`` on the StructureAdjustmentService is currently mutable as we allow fixing of one error after another from the outside.
+That means it is initialised once in the constructor and the version it advanced after each ``fixError`` call by the events committed on live. As with all mutable things it probably a bad idea and i can already think of a theoretical way where the pointer does not work: ~If ``findAllAdjustments()`` is run once then errors are fixed, and in the same process with the same instance ``findAllAdjustments()`` is run again - finding _new_ adjustments~. Edit: Actually that might still work.
+But aside from the errors caused by mutable state, there are bigger problems with the structure adjustments to be tackled at some point:
+
+we need to rethink the API and consistency guarantees:
+- what if there are parallel users working on live?
+- what if a structure adjustment has a side effect on another structure adjustment, making that obsolete or being invalid.
+
+A ``fixAllErrors`` should allow to commit all fixes at once and catchup the graph once afterwards.
+
+* Packages: ``Neos`` ``ContentRepository.StructureAdjustment``
+
+`TASK: Use content repository clock for date time default value <https://github.com/neos/neos-development-collection/pull/5913>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+We now use the content repository clock for date time default value.
+
+That way we can deterministically test these as ``$this->clock()->now()->modify("now")`` is just the specified "now" in the tests:
+
+```
+And the current date and time is "2024-09-22T12:00:00+00:00"
+```
+
+Also all date time default values now respect the clock's timezone.
+
+We still only accept a "string" or null for dates. Previously there were not so many constraint checks, but despite what ``Symfony\\Component\\Serializer\\Normalizer\\DateTimeNormalizer`` looks like it also only allowed "string"s.
+
+
+Added tests:
+
+- Test other possible php date time modifiers and also timezones
+- Add test for ``defaultValue: null`` or ``defaultValue: ~`` works (relevant for inheritance)
+- Add test for all illegal date time default values
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`TASK: Bind `CommandHandlingDependencies` to CommandHandlers <https://github.com/neos/neos-development-collection/pull/5943>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+
+History:
+
+In the original draft of the ESCR we passed the ``$contentRepository`` along through the command handlers to query the graph but also to invoke ``$contentRepository->handle()`` recursively.
+
+That had the obvious problem of a recursion and did not allow to bind the content repository onto the command handlers.
+
+Over time we introduced the ``CommandHandlingDependencies`` object which originally contained still the ``$contentRepository`` (https://github.com/neos/neos-development-collection/pull/5028) but limited access to it. Eventually we got rid of the ``handle()`` recursion and nowadays the ``CommandHandlingDependencies`` are only a thin wrapper around the ``ContentGraphReadModelInterface`` (https://github.com/neos/neos-development-collection/pull/5272) and this read-model is NOT the content repository instance but available _before_ the cr is build and thus we can pass it into the actual command handler instances to simplify their code.
+
+We also don't publish events via the command handlers anymore but since https://github.com/neos/neos-development-collection/pull/5315 introduced generators to yield them into the content repository.
+
+Solves todo from https://github.com/neos/neos-development-collection/pull/5301 / followup to "Dont pass CommandHandlingDependencies through half of the world" https://github.com/neos/neos-development-collection/commit/`f0ba01abe76a88d3b40ab8f615e06680f3d5d58a <https://github.com/neos/neos-development-collection/commit/f0ba01abe76a88d3b40ab8f615e06680f3d5d58a>`_
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`TASK: PSR12 & PHP-CS-Fixer <https://github.com/neos/neos-development-collection/pull/5928>`_
+---------------------------------------------------------------------------------------------
+
+Parent meta issue: https://github.com/neos/neos-development-collection/issues/5929
+
+The codestyle is adjusted from psr2 to psr12 and the linters are adjusted accordingly.
+
+PHP-CS-Fixer shall replace the StyleCi that caused lots of unexpected test failures. It also replaces 
+phpCodeSniffer that is used in newer parts of the code.
+
+The fixer is included in the ``composer lint`` command and thus can be executed locally before pushing. 
+The ``composer fix`` command allows to adjust the coding style to the requirements quickly.
+
+The fixer must be required as dev dependency by the Neos and Flow dev-distribution via
+
+also:
+
+- changes the codestyle from psr2 to psr12
+- cs fixer in check mode to the composer lint command
+- style ci configuration is removed
+
+**Review instructions**
+
+!!! Style ci will fail as we remove the configuration and change the settings. This is intended and will be fixed by removeing style ci after the merge !!! 
+
+This pr replaces previous work be @bwaidelich here https://github.com/neos/neos-development-collection/pull/4949
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.Export`` ``ContentRepository.TestSuite`` ``Media.Browser`` ``Media`` ``Neos``
+
+`TASK: Finally remove `removalAttachmentPoint` <https://github.com/neos/neos-development-collection/pull/5833>`_
+----------------------------------------------------------------------------------------------------------------
+
+with soft-removal the removalAttachmentPoint became obsolete but was kept to allow beta-users to upgrade 2b45a2d
+
+See also the issue for a complete history as to what happened.
+
+https://github.com/neos/neos-development-collection/issues/4487
+
+TLTR: It was planned to remove this, and we can safely do that now with 9.2 as its non-breaking
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.Core`` ``Neos``
+
+`TASK: Add upgrade to deduplicate parallel base workspace changes  <https://github.com/neos/neos-development-collection/pull/5884>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+based on `#5858 <https://github.com/neos/neos-development-collection/issues/5858>`_
+
+Upgrade to deduplicate parallel base workspace changes
+
+for bug https://github.com/neos/neos-development-collection/issues/5877
+
+Workspace operations, also ChangeBaseWorkspace were not thread safe before the addition of workspace versioning
+in the read model and thus safe soft constraint checks.
+That resulted in the possibility that a single workspace was changed two or more times in parallel by the same user.
+Because each ChangeBaseWorkspace can be slow and cleans up at the end the content stream via ContentStreamWasRemoved,
+that results in possibly multiple illegal ContentStreamWasRemoved events and in total a fully illegal ChangeBaseWorkspace.
+
+The upgrade first identifies any duplicate ContentStreamWasRemoved events on a single stream.
+If found we assume check via their unique prefixed correlation id that they belong to a ChangeBaseWorkspace sequence.
+Then we find all events of the ChangeBaseWorkspace sequences and that occurred during these the content stream removals.
+If there ar no other concurrent changes on our workspace - which would have been illegal as well - and it's truly
+the race condition as understood with only the events a ChangeBaseWorkspace emits we continue.
+We identify the last and thus valid ChangeBaseWorkspace sequence and delete all events from the previous illegal sequence(s).
+The ChangeBaseWorkspace sequences can even be interlaced due to the race condition but the correlation id identifies the last sequence to keep uniquely.
+
+After the migration is applied the workspace will have the same new base workspace as without the migration,
+but we deduplicated any temporary changes that happened in a race condition. No content on the workspaces is affected.
+
+
+for further insights, please see behaviour tests ``EventsDeduplicateBaseWorkspaceChangesUpgrade`` as to what cruelties we must handle
+
+TODO:
+- [x] decide on 9.0 or 9.2 to target. -> 9.2 because the problem can still appear in 9.0 again and again
+- [x] Naming of CLI command
+- [x] Message
+
+* Packages: ``ContentRepositoryRegistry``
+
+`TASK: Provide upgrade re-setup and replay content graph <https://github.com/neos/neos-development-collection/pull/5896>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+Upgrade to allow to empty, set up and replay the graph projection in one step
+
+> The CR provides a simple setup tooling via "./flow cr:setup" it allows to create the database schemas in the beginning
+> and also minor upgrades from one existing schema to the desired like index changes or small renames.
+>
+> Some Neos versions will include changes which go beyond this as they heavily adjust the schema.
+> 
+> The following upgrade is required:
+>
+>  - 1. Reset (drop old tables),
+>  - 2. Setup (create new empty tables)
+>  - 3. Replay (refill new tables)
+>
+> Attempting to upgrade with "./flow cr:setup" in step 2 without dropping the old content graph tables would fail.
+
+It allows to run ``cr:setup`` and drop the tables before so it's a clean setup and guaranteed to work. Afterwards we do a "special" replay without invoking the catchup hooks.
+
+In the past during the beta development ``cr:setup``  did had a flag ``--reset-projections`` introduced via https://github.com/neos/neos-development-collection/pull/4864 which tried to accomplish what we do now here with the drop before the setup.
+At the time it was required to upgrade from UUID nodeAnchorPoints to auto increments.
+
+But because we used the projections ``resetState()`` method the setup could fail on an empty neos as the projection did not anticipate that the tables dont exist yet: https://github.com/neos/neos-development-collection/pull/5089 - also when the Neos 9 release got closer we did not need this experimental hack as we did not introduced new big schema adjustments anymore.
+
+Now with the 9.2 content stream layers a simple ``cr:setup`` migration is not enough and will fail (see `comment <https://github.com/neos/neos-development-collection/pull/5776#issuecomment-4698137092>`_) with
+
+> Syntax error or access violation: 1075 Incorrect table definition; there can be only one auto column and it must be defined as a key
+
+If there schema already exist with existing data. We not only need to invoke ``resetState()`` but actually ``DROP`` all tables of the graph to ensure the new schema will definitely work.
+
+We dont add a switch back to ``cr:setup`` as ``cr:setup`` should stay something safe and dont have any flags that do something entirely destructive and dangerous. Also we expect the upgrade only to be rarely used. Now once for 9.2.
+
+TODO:
+
+- [ ] add new table with the layer pr
+```
+        // New table introduced via Neos 9.2.0
+        $this->context->dbal->executeStatement('DROP TABLE IF EXISTS ' . $tableNames->contentStreamLayer());
+```
+- [x] ensure ``resetgraphandsetup`` resets error state and allows to replay
+- [x] should ``resetgraphandsetup`` set subscription to ``0`` and ``BOOTING``?
+- [x] find out (separately) how to recover from a failed ``cr:setup`` -> currently bugged https://github.com/neos/neos-development-collection/pull/5899
+
+* Packages: ``ContentRepository.Core`` ``ContentRepositoryRegistry``
+
+`TASK: Internal API to replay only single projection without catchup hooks <https://github.com/neos/neos-development-collection/pull/5889>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Internal ketchup- :tomato: -hook-skip API for https://github.com/neos/neos-development-collection/pull/5896
+
+required for a sane migration to 9.2 - as we dont want to flush the asset usage and also get in trouble with the router cache hook
+
+
+
+This allows to skip the following hooks for the graph, which would otherwise need to be disabled to achieve the same effect:
+
+```yaml
+contentGraphProjection:
+  catchUpHooks:
+    'Neos.ContentRepositoryRegistry:FlushSubgraphCachePool': ~
+    'Neos.Neos:FlushContentCache': ~
+    'Neos.Neos:AssetUsage': ~
+    'Neos.Neos:ImpendingHardRemovalConflictDetection': ~
+```
+
+Required for the Neos Io deployment: https://github.com/neos/Neos.NeosIo/issues/725
+
+~Not sure yet if this is a good idea~ - especially as projections can with the subscription engine know that its ``BOOTING`` and choose to be cheaper like for the fusion hook - https://github.com/neos/neos-development-collection/pull/5525 - but by default id say they do a poor choice and i as a developer will want to overrule that.
+
+-> as discussed with bastian, we definitely need some kind of internal way to do this as for the destructive "fully drop, and replay" as well as for a future: replay into a Version2 table - we need this. All catchup hooks - where - already executed at that point on the data it received at that time which "would" be the same again.
+
+* Packages: ``ContentRepository.Core`` ``ContentRepository.BehavioralTests``
+
+`TASK: Add parallel test that `ChangeBaseWorkspace` is thread safe <https://github.com/neos/neos-development-collection/pull/5888>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+see https://github.com/neos/neos-development-collection/issues/5877
+
+In Neos 9.0 and 9.1 it was possible to have race conditions during a ``ChangeBaseWorkspace``.
+
+With the introduction of the 9.2 hierarchy layer change we noticed this as we found old events removing a content stream twice (see issue).
+
+Now this new test shows that 9.2 solves this problem as it contains https://github.com/neos/neos-development-collection/pull/5488. 
+
+~Note: The tests dont actually fail on 9.0 as the graph did permit a duplicate content stream removal - only with the merge of the 9.2 layers test would fail if we were not thread safe - but we are now. - Tested locally.~
+Edit: We now check the events to assert validity
+
+Additionally there is an event migration https://github.com/neos/neos-development-collection/pull/5884 to repair old events
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`TASK: Use proper version checks for workspace events <https://github.com/neos/neos-development-collection/pull/5488>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Based on https://github.com/neos/neos-development-collection/pull/5860
+
+Follow-up to `#5456 <https://github.com/neos/neos-development-collection/issues/5456>`_enforcing proper version checks for most workspace events
+
+* Related: `#5058 <https://github.com/neos/neos-development-collection/issues/5058>`_, #5591
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`TASK: Greatly simplify pruning in CR maintainer <https://github.com/neos/neos-development-collection/pull/5802>`_
+------------------------------------------------------------------------------------------------------------------
+
+Requires https://github.com/neos/eventstore/pull/26
+Fixes hack of https://github.com/neos/neos-development-collection/pull/5792 cleanly
+
+Now as the ``ContentRepositoryMaintainer`` supports reset of the sequence number we can use it in CI
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``.github`` ``ContentRepository.Core`` ``Neos`` ``ContentRepository.BehavioralTests``
+
+`TASK: Update PHP version requirement to 8.4 <https://github.com/neos/neos-development-collection/pull/5841>`_
+--------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``.github`` ``ContentRepository.Core`` ``ContentRepository.Export`` ``ContentRepository.LegacyNodeMigration`` ``Diff`` ``Fusion.Afx`` ``Fusion`` ``Media.Browser`` ``Media`` ``NodeTypes.Form`` ``SiteKickstarter`` ``TimeableNodeVisibility``
+
+`TAKS: Use new workspaces icon in backend module <https://github.com/neos/neos-development-collection/pull/5866>`_
+------------------------------------------------------------------------------------------------------------------
+
+We have then the same icon in the modules, workspace dropdown and publish dropdown. See https://github.com/neos/neos-ui/pull/4113
+
+<img width="664" height="486" alt="CleanShot 2026-06-11 at 13 37 20@2x" src="https://github.com/user-attachments/assets/225da30a-e6ca-4452-bc11-0945fdd5d592" />
+
+<img width="3186" height="1324" alt="CleanShot 2026-06-11 at 13 37 15@2x" src="https://github.com/user-attachments/assets/40a61097-3668-489e-b88f-4e5abd0f5ece" />
+
+* Packages: ``Workspace.Ui``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.1.8...9.2.0-beta3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
