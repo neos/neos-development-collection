@@ -33,8 +33,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
+use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -218,7 +217,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
                     );
                     $this->log('Successfully rebased');
                     continue;
-                } catch (WorkspaceCommandSkipped|ContentStreamIsClosed|ContentStreamDoesNotExistYet $expected) {
+                } catch (WorkspaceCommandSkipped|ContentStreamDoesNotExist $expected) {
                     $this->log(
                         sprintf(
                             'Got expected %s: %s',
@@ -252,20 +251,16 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
         $this->assertEventsAreValid();
 
         // writing to user works!!!
-        try {
-            $this->contentRepository->handle(
-                SetNodeProperties::create(
-                    WorkspaceName::fromString('user'),
-                    NodeAggregateId::fromString('nody-mc-nodeface-0'),
-                    OriginDimensionSpacePoint::createWithoutDimensions(),
-                    PropertyValuesToWrite::fromArray([
-                        'title' => 'written-after-rebases'
-                    ])
-                )
-            );
-        } catch (ContentStreamIsClosed $exception) {
-            Assert::fail(sprintf('Workspace after rebase cannot be written: %s', $exception->getMessage()));
-        }
+        $this->contentRepository->handle(
+            SetNodeProperties::create(
+                WorkspaceName::fromString('user'),
+                NodeAggregateId::fromString('nody-mc-nodeface-0'),
+                OriginDimensionSpacePoint::createWithoutDimensions(),
+                PropertyValuesToWrite::fromArray([
+                    'title' => 'written-after-rebases'
+                ])
+            )
+        );
 
         $node = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user'))
             ->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty())
