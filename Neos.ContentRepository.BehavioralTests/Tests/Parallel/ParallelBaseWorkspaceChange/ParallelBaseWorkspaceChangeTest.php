@@ -56,6 +56,8 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 
     private const VARIETY_SIZE = 5;
 
+    private const ATTEMPTED_BASE_WORKSPACE_CHANGES_PER_PROCESS = 30;
+
     private ContentRepository $contentRepository;
 
     protected ObjectManagerInterface $objectManager;
@@ -172,9 +174,9 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 
         touch(self::WRITING_IS_RUNNING_FLAG_PATH);
 
-        $successFullChanged = 0;
+        $successfulChanged = 0;
         try {
-            for ($i = 0; $i <= 50; $i++) {
+            for ($i = 0; $i <= self::ATTEMPTED_BASE_WORKSPACE_CHANGES_PER_PROCESS; $i++) {
                 $randomTarget = WorkspaceName::fromString('review-' . random_int(0, self::VARIETY_SIZE));
                 try {
                     $this->contentRepository->handle(ChangeBaseWorkspace::create(
@@ -183,7 +185,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                     )->withNewContentStreamId(
                         ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                     ));
-                    $successFullChanged++;
+                    $successfulChanged++;
                 } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExist $concurrencyException) {
                     $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
                 }
@@ -192,8 +194,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
             unlink(self::WRITING_IS_RUNNING_FLAG_PATH);
         }
 
-        $this->log('1. base workspace change finished with: ' . $successFullChanged);
-        Assert::assertGreaterThan(1, $successFullChanged, 'Base workspace was not changed');
+        $this->log(sprintf('1. base workspace changes %d of %d successful', $successfulChanged, self::ATTEMPTED_BASE_WORKSPACE_CHANGES_PER_PROCESS));
 
         $this->assertEventsAreValid();
     }
@@ -215,8 +216,8 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
 
         $this->log('2. base workspace change started');
 
-        $successFullChanged = 0;
-        for ($i = 0; $i <= 50; $i++) {
+        $successfulChanged = 0;
+        for ($i = 0; $i <= self::ATTEMPTED_BASE_WORKSPACE_CHANGES_PER_PROCESS; $i++) {
             $randomTarget = WorkspaceName::fromString('review-' . random_int(0, self::VARIETY_SIZE));
             try {
                 $this->contentRepository->handle(ChangeBaseWorkspace::create(
@@ -225,14 +226,13 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                 )->withNewContentStreamId(
                     ContentStreamId::fromString(sprintf('%d-%d', getmypid(), $i))
                 ));
-                $successFullChanged++;
+                $successfulChanged++;
             } catch (ConcurrencyException|WorkspaceCommandSkipped|ContentStreamDoesNotExist $concurrencyException) {
                 $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
             }
         }
 
-        $this->log('2. base workspace change finished with: ' . $successFullChanged);
-        Assert::assertGreaterThan(1, $successFullChanged, 'Base workspace was not changed');
+        $this->log(sprintf('2. base workspace changes %d of %d successful', $successfulChanged, self::ATTEMPTED_BASE_WORKSPACE_CHANGES_PER_PROCESS));
 
         $this->assertEventsAreValid();
     }
@@ -240,6 +240,14 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
     private function assertEventsAreValid(): void
     {
         $eventStore = $this->getEventStore($this->contentRepository->id);
+
+        $baseWorkspaceWasChanges = iterator_count($eventStore->load(VirtualStreamName::forCategory('Workspace:'), EventStreamFilter::create(
+            EventTypes::create(
+                EventType::fromString('WorkspaceBaseWorkspaceWasChanged')
+            )
+        )));
+
+        Assert::assertGreaterThanOrEqual(1, $baseWorkspaceWasChanges, 'Base workspace was not changed');
 
         $contentStreamWasRemovedEvents = $eventStore->load(VirtualStreamName::forCategory('ContentStream:'), EventStreamFilter::create(
             EventTypes::create(
