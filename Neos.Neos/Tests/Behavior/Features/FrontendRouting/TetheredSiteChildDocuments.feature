@@ -59,6 +59,5 @@ Feature: Tests for site node child documents. These are special in that they hav
       | Key             | Value                           |
       | nodeAggregateId | "$notFoundId"                   |
       | propertyValues  | {"uriPathSegment": "not-found"} |
-    And I am on URL "/"
-    Then the matched node should be "shernode-homes" in dimension "{}"
+    And The URL "/" should match the node "shernode-homes" in dimension "{}"
     And the node "$notFoundId" in dimension "{}" should resolve to URL "/not-found"

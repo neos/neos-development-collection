@@ -132,18 +132,14 @@ Feature: Routing functionality with multiple content dimensions
     """
     # URL -> Node
     # special case for homepage: / should be resolved to default dimensions.
-    When I am on URL "/"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
-    When I am on URL "/de"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/de" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
     # homepage should not be available via dimension
     Then No node should match URL "/en"
     # all other english pages should have /en prefix as usual.
-    When I am on URL "/en/nody/carl"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/en/nody/carl" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
     Then No node should match URL "/nody/carl"
-    When I am on URL "/de/nody/karl-de"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/de/nody/karl-de" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
 
     # Node -> URL
     # special case for homepage: homepage should be resolved to /
@@ -210,20 +206,16 @@ Feature: Routing functionality with multiple content dimensions
 
 
   Scenario: Match homepage node in default dimension
-    When I am on URL "/"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
 
   Scenario: Match homepage node in specific dimension
-    When I am on URL "/de"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/de" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Match node in default dimension
-    When I am on URL "/nody/carl"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/nody/carl" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
 
   Scenario: Match node in specific dimension
-    When I am on URL "/de/nody/karl-de"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/de/nody/karl-de" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Add Dimension shine through, then resolving should still work
     Given I change the content dimensions in content repository "default" to:

@@ -65,8 +65,7 @@ Feature: Routing functionality if path segments are missing like during tethered
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
   Scenario: Match homepage URL
-    When I am on URL "/"
-    Then the matched node should be "shernode-homes" in dimension "{}"
+    When The URL "/" should match the node "shernode-homes" in dimension "{}"
 
   Scenario: Resolve nodes correctly from homepage
     When I am on URL "/"
@@ -75,8 +74,7 @@ Feature: Routing functionality if path segments are missing like during tethered
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/sir-david-nodenborough/earl-o-documentbourgh"
 
   Scenario: Match node lower in the tree
-    When I am on URL "/sir-david-nodenborough/earl-o-documentbourgh"
-    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    When The URL "/sir-david-nodenborough/earl-o-documentbourgh" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Resolve from node lower in the tree
     When I am on URL "/sir-david-nodenborough/earl-o-documentbourgh"

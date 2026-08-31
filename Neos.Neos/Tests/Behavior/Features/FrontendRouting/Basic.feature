@@ -66,8 +66,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     """
 
   Scenario: Match homepage URL
-    When I am on URL "/"
-    Then the matched node should be "shernode-homes" in dimension "{}"
+    When The URL "/" should match the node "shernode-homes" in dimension "{}"
 
   Scenario: Resolve nodes correctly from homepage
     When I am on URL "/"
@@ -76,8 +75,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Match node lower in the tree
-    When I am on URL "/david-nodenborough/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    When The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Resolve from node lower in the tree
     When I am on URL "/david-nodenborough/earl-document"
@@ -144,8 +142,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "shernode-homes"        |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And I am on URL "/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    And The URL "/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/earl-document"
 
   Scenario: Move node downwards in the tree
@@ -155,6 +152,5 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    And I am on URL "/david-nodenborough/earl-document/nody"
-    Then the matched node should be "nody-mc-nodeface" in dimension "{}"
+    And The URL "/david-nodenborough/earl-document/nody" should match the node "nody-mc-nodeface" in dimension "{}"
     And the node "nody-mc-nodeface" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/nody"

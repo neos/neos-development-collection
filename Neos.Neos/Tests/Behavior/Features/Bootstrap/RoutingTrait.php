@@ -154,26 +154,6 @@ trait RoutingTrait
     }
 
     /**
-     * @Then the matched node should be :nodeAggregateId in dimension :dimensionSpacePoint
-     */
-    public function theMatchedNodeShouldBeInOriginDimension(string $nodeAggregateId, string $dimensionSpacePoint): void
-    {
-        $matchedNodeAddress = $this->match($this->requestUrl);
-        Assert::assertNotNull($matchedNodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
-        Assert::assertTrue($matchedNodeAddress->workspaceName->isLive(), 'Workspace should be always live.');
-        Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
-        Assert::assertSame(
-            DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            $matchedNodeAddress->dimensionSpacePoint,
-            sprintf(
-                'Dimension space point "%s" did not match the expected "%s"',
-                $matchedNodeAddress->dimensionSpacePoint->toJson(),
-                $dimensionSpacePoint
-            )
-        );
-    }
-
-    /**
      * @Then No node should match URL :url
      */
     public function noNodeShouldMatchUrl(string $url): void

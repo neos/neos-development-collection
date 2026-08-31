@@ -95,13 +95,9 @@ Feature: Linking between multiple websites
     And the node "sir-david-nodenborough2" in dimension "{}" should resolve to URL "/david-nodenborough"
 
   Scenario: Match homepage node
-    When I am on URL "http://domain1.tld/"
-    Then the matched node should be "homepage1" in dimension "{}"
-    When I am on URL "http://domain2.tld/"
-    Then the matched node should be "homepage2" in dimension "{}"
+    When The URL "http://domain1.tld/" should match the node "homepage1" in dimension "{}"
+    When The URL "http://domain2.tld/" should match the node "homepage2" in dimension "{}"
 
   Scenario: Match other nodes
-    When I am on URL "http://domain1.tld/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in dimension "{}"
-    When I am on URL "http://domain2.tld/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough2" in dimension "{}"
+    When The URL "http://domain1.tld/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
+    When The URL "http://domain2.tld/david-nodenborough" should match the node "sir-david-nodenborough2" in dimension "{}"
