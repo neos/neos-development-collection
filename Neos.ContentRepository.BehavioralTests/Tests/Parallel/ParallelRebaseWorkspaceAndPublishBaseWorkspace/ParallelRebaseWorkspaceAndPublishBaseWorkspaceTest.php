@@ -213,34 +213,22 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
 
         for ($i = 0; $i <= 1000; $i++) {
             try {
-                try {
-                    $this->contentRepository->handle(
-                        RebaseWorkspace::create(
-                            WorkspaceName::fromString('user')
-                        )->withRebasedContentStreamId(ContentStreamId::fromString('cs-user-rebased-' . $i))
-                    );
-                    $this->log('Successfully rebased');
-                    continue;
-                } catch (WorkspaceCommandSkipped|ConcurrencyException|ContentStreamDoesNotExist $expected) {
-                    $this->log(
-                        sprintf(
-                            'Got expected %s: %s',
-                            self::shortClassName($expected::class),
-                            $expected->getMessage()
-                        )
-                    );
-                    continue;
-                }
-            } catch (\Exception $thrownException) {
-                $actualException = $thrownException;
+                $this->contentRepository->handle(
+                    RebaseWorkspace::create(
+                        WorkspaceName::fromString('user')
+                    )->withRebasedContentStreamId(ContentStreamId::fromString('cs-user-rebased-' . $i))
+                );
+                $this->log('Successfully rebased');
+                continue;
+            } catch (WorkspaceCommandSkipped|ConcurrencyException|ContentStreamDoesNotExist $expected) {
                 $this->log(
                     sprintf(
-                        'Got exception %s: %s',
-                        self::shortClassName($actualException::class),
-                        $actualException->getMessage()
+                        'Got expected %s: %s',
+                        self::shortClassName($expected::class),
+                        $expected->getMessage()
                     )
                 );
-                break;
+                continue;
             }
         }
 
