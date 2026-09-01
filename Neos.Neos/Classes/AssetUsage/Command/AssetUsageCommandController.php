@@ -20,21 +20,32 @@ final class AssetUsageCommandController extends CommandController
         parent::__construct();
     }
 
-    public function indexCommand(string $contentRepository = 'default', string $nodeTypeName = NodeTypeNameFactory::NAME_SITES): void
+    /**
+     * @param string $contentRepository The content repository identifier. (Default: 'default')
+     * @param string $nodeTypeName Name of the root nodetype (Default: 'Neos.Neos:Sites')
+     * @param bool $force Flag to enforce the index creation also with outdated workspaces with unpublished changes
+     * @return void
+     */
+    public function indexCommand(string $contentRepository = 'default', string $nodeTypeName = NodeTypeNameFactory::NAME_SITES, bool $force = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $this->outputFormatted("Start indexing asset usages");
 
-        $this->assetUsageIndexingProcessor->buildIndex(
-            $contentRepository,
+        $successful = $this->assetUsageIndexingProcessor->buildIndex(
+            $this->contentRepositoryRegistry->get($contentRepositoryId),
             NodeTypeName::fromString($nodeTypeName),
+            $force,
             function (string $message) {
                 $this->outputFormatted($message);
             }
         );
 
-        $this->outputFormatted("Finished.");
+        if ($successful) {
+            $this->outputFormatted("Finished.");
+        } else {
+            $this->outputFormatted("An error occured while indexing asset usages.");
+            $this->quit(1);
+        }
     }
 }
