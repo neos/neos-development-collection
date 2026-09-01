@@ -22,6 +22,7 @@ jobs:
       - name: Check out documentation site
         uses: actions/checkout@v6
         with:
+          token: ${{ secrets.NEOS_BOT_TOKEN }}
           repository: neos/neos.github.io
           path: docs-site
           fetch-depth: 0
@@ -43,12 +44,16 @@ jobs:
             exit 0
           fi
           git add .
-          git commit -m "TASK: Update API docs from ${{ github.ref_name }}"
+          git commit -m "TASK: Update API docs from ${{ github.ref_name }}" || {
+            echo "Commit failed"
+            git status
+            exit 1
+          }
 
       - name: Push to git
         uses: ad-m/github-push-action@v1
         with:
-          github_token: ${{ secrets.NEOS_BOT_TOKEN }}
+          token: ${{ secrets.NEOS_BOT_TOKEN }}
           repository: neos/neos.github.io
           directory: docs-site
           branch: main
