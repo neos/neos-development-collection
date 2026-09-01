@@ -583,11 +583,11 @@
       </trans-unit>
       <trans-unit id="workspaces.publishChanges" xml:space="preserve">
         <source>Publish</source>
-        <target state="needs-translation" state-qualifier="leveraged-mt">Publiceren</target>
+        <target state="translated">Publiceren</target>
       </trans-unit>
       <trans-unit id="workspaces.discardChanges" xml:space="preserve">
         <source>Discard</source>
-        <target state="needs-translation" state-qualifier="leveraged-mt">Verwerpen</target>
+        <target state="translated">Verwerpen</target>
       </trans-unit>
     </body>
   </file>
