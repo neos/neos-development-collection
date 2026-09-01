@@ -3,26 +3,33 @@
   <file original="" product-name="Neos.NodeTypes" source-language="en" datatype="plaintext" target-language="uk">
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
-				<source>Page</source>
-			<target state="translated">Сторінка</target></trans-unit>
+        <source>Page</source>
+        <target state="translated">Сторінка</target>
+      </trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
-				<source>Title</source>
-			<target state="translated">Назва</target></trans-unit>
+        <source>Title</source>
+        <target state="translated">Назва</target>
+      </trans-unit>
       <trans-unit id="groups.layout" xml:space="preserve">
-				<source>Layout</source>
-			<target state="translated">Розмітка</target></trans-unit>
+        <source>Layout</source>
+        <target state="translated">Розмітка</target>
+      </trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
-				<source>Layout for this page only</source>
-			<target state="translated">Розмітка лише для цієї сторінки</target></trans-unit>
+        <source>Layout for this page only</source>
+        <target state="translated">Розмітка лише для цієї сторінки</target>
+      </trans-unit>
       <trans-unit id="properties.layout.selectBoxEditor.placeholder" xml:space="preserve">
-				<source>Inherit from parent</source>
-			<target state="translated">Успадковувати з предка </target></trans-unit>
+        <source>Inherit from parent</source>
+        <target state="translated">Успадковувати з предка</target>
+      </trans-unit>
       <trans-unit id="properties.subpageLayout" xml:space="preserve">
-				<source>Layout for subpages of this page</source>
-			<target state="translated">Розмітка підсторінок цієї сторінки</target></trans-unit>
+        <source>Layout for subpages of this page</source>
+        <target state="translated">Розмітка підсторінок цієї сторінки</target>
+      </trans-unit>
       <trans-unit id="properties.subpageLayout.selectBoxEditor.placeholder" xml:space="preserve">
-				<source>Inherit from parent</source>
-			<target state="translated">Успадковувати з предка </target></trans-unit>
+        <source>Inherit from parent</source>
+        <target state="translated">Успадковувати з предка</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

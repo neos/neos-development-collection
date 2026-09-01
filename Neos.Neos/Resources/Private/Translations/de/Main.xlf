@@ -1094,6 +1094,10 @@
         <source>Relative Path</source>
         <target state="translated">Relativer Pfad</target>
       </trans-unit>
+      <trans-unit id="notVisibleDocument.message" xml:space="preserve">
+        <source>This page is currently hidden and is not visible in this workspace.</source>
+        <target state="translated">Diese Seite ist aktuell versteckt und in diesem Arbeitsbereich unsichtbar.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
