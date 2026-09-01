@@ -47,6 +47,7 @@ use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * In Neos 9.0 it occurred that a rebase of a user workspace during publishing of the review base workspace lead to the rebase workspace still referencing the old review base content stream
@@ -161,9 +162,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileBaseWorkspaceIsBeingPublished(): void
     {
         $this->log('publish started');
@@ -198,9 +197,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
         Assert::assertTrue(true, 'No exception was thrown ;)');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentRebaseWorks(): void
     {
         if (!is_file(self::FIRST_IS_RUNNING_FLAG_PATH)) {
