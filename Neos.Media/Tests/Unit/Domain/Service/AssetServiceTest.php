@@ -56,7 +56,7 @@ class AssetServiceTest extends UnitTestCase
             ->method('get')
             ->willReturn($this->createMock($expectedRepositoryClassName));
 
-        $mockAssetService = $this->getAccessibleMock(AssetService::class, ['dummy'], [], '', false);
+        $mockAssetService = $this->getAccessibleMock(AssetService::class, [], [], '', false);
         $this->inject($mockAssetService, 'objectManager', $mockObjectManager);
 
         $repository = $mockAssetService->_call('getRepository', $mockAsset);
