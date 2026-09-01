@@ -1142,6 +1142,10 @@
         <source>Switch back to the orginal user account</source>
         <target state="translated">Zurück zum ursprünglichen Benutzerkonto wechseln</target>
       </trans-unit>
+      <trans-unit id="notVisibleDocument.message" xml:space="preserve">
+        <source>This page is currently hidden and is not visible in this workspace.</source>
+        <target state="translated">Diese Seite ist aktuell versteckt und in diesem Arbeitsbereich unsichtbar.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
