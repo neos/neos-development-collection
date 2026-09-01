@@ -6,13 +6,12 @@ namespace Neos\Neos\Tests\Unit\Domain\Link;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\Neos\Domain\Link\Link;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class LinkTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function emptyLink()
     {
         $link = Link::create(
@@ -31,9 +30,7 @@ class LinkTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkWithAttributes()
     {
         $link = Link::create(
@@ -51,9 +48,7 @@ class LinkTest extends TestCase
         self::assertEquals(true, $link->download);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkWithAttributesViaWither()
     {
         $emptyLink = Link::create(
@@ -75,9 +70,7 @@ class LinkTest extends TestCase
         self::assertEquals(true, $link->download);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkWithAttributesOneUpdated()
     {
         $link = Link::create(
@@ -97,9 +90,7 @@ class LinkTest extends TestCase
         self::assertEquals(true, $link->download);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function linkWithAttributesCanBeResetViaWith()
     {
         $link = Link::create(
