@@ -91,7 +91,7 @@ trait NodeMove
         }
 
         // fetch...
-        $newPosition = $this->getRelationPosition(
+        $newSortPath = $this->getRelationSortPath(
             $ingoingHierarchyRelation->parentNodeAnchor,
             null,
             $newSucceedingSibling?->relationAnchorPoint,
@@ -99,17 +99,33 @@ trait NodeMove
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
 
-        // ...and assign the new position
+        // A rebalance inside getRelationSortPath() may have re-pathed this very relation - the node being moved
+        // is itself a member of the sibling set here - so re-read it before using its path as the re-path source.
+        $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
+            $nodeToBeMoved,
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint
+        );
+
+        // the descendants' paths are built from this node's, so the whole subtree moves with it
+        $this->repathDescendants(
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint,
+            $ingoingHierarchyRelation->sortPath,
+            $newSortPath
+        );
+
+        // ...and assign the new sort path
         if ($contentStreamLayers->getWriteLayer()->equals($ingoingHierarchyRelation->contentStreamLayer)) {
-            $ingoingHierarchyRelation->assignNewPosition(
-                $newPosition,
+            $ingoingHierarchyRelation->assignNewSortPath(
+                $newSortPath,
                 $this->dbal,
                 $this->tableNames
             );
         } else {
             $copiedHierarchyRelation = $ingoingHierarchyRelation->with(
                 contentStreamLayer: $contentStreamLayers->getWriteLayer(),
-                position: $newPosition,
+                sortPath: $newSortPath,
             );
             $copiedHierarchyRelation->addToDatabase(
                 $this->dbal,
@@ -162,8 +178,8 @@ trait NodeMove
             }
         }
 
-        // assign new position
-        $newPosition = $this->getRelationPosition(
+        // assign new sort path
+        $newSortPath = $this->getRelationSortPath(
             $newParent->relationAnchorPoint,
             null,
             $newSucceedingSibling?->relationAnchorPoint,
@@ -171,11 +187,26 @@ trait NodeMove
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
 
+        // a rebalance inside getRelationSortPath() may have re-pathed relations, so re-read before re-pathing
+        $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
+            $nodeToBeMoved,
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint
+        );
+
+        // the descendants' paths are built from this node's, so the whole subtree moves with it
+        $this->repathDescendants(
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint,
+            $ingoingHierarchyRelation->sortPath,
+            $newSortPath
+        );
+
         // this is the actual move
         if ($contentStreamLayers->getWriteLayer()->equals($ingoingHierarchyRelation->contentStreamLayer)) {
             $ingoingHierarchyRelation->assignNewParentNode(
                 $newParent->relationAnchorPoint,
-                $newPosition,
+                $newSortPath,
                 $this->dbal,
                 $this->tableNames
             );
@@ -183,7 +214,7 @@ trait NodeMove
             $copiedHierarchyRelation = $ingoingHierarchyRelation->with(
                 parentNodeAnchor: $newParent->relationAnchorPoint,
                 contentStreamLayer: $contentStreamLayers->getWriteLayer(),
-                position: $newPosition,
+                sortPath: $newSortPath,
             );
             $copiedHierarchyRelation->addToDatabase(
                 $this->dbal,

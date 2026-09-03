@@ -35,7 +35,7 @@ final readonly class HierarchyRelation
         public NodeRelationAnchorPoint $childNodeAnchor,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
-        public int $position,
+        public NodeSortPath $sortPath,
         public NodeTags $subtreeTags,
     ) {
     }
@@ -47,7 +47,7 @@ final readonly class HierarchyRelation
         ?ContentStreamLayer $contentStreamLayer = null,
         ?DimensionSpacePoint $dimensionSpacePoint = null,
         ?string $dimensionSpacePointHash = null,
-        ?int $position = null,
+        ?NodeSortPath $sortPath = null,
         ?NodeTags $subtreeTags = null,
     ): self {
         return new self(
@@ -57,7 +57,7 @@ final readonly class HierarchyRelation
             childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
             dimensionSpacePoint: $dimensionSpacePoint ?? $this->dimensionSpacePoint,
             dimensionSpacePointHash: $dimensionSpacePointHash ?? $this->dimensionSpacePointHash,
-            position: $position ?? $this->position,
+            sortPath: $sortPath ?? $this->sortPath,
             subtreeTags: $subtreeTags ?? $this->subtreeTags,
         );
     }
@@ -79,7 +79,7 @@ final readonly class HierarchyRelation
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'contentstreamlayer' => $this->contentStreamLayer->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-                'position' => $this->position,
+                'sortpath' => $this->sortPath->value,
                 'subtreetags' => $subtreeTagsJson,
             ]);
         } catch (DBALException $e) {
@@ -116,15 +116,15 @@ final readonly class HierarchyRelation
 
     public function assignNewParentNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
-        ?int $position,
+        ?NodeSortPath $sortPath,
         Connection $databaseConnection,
         ContentGraphTableNames $tableNames
     ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint->value
         ];
-        if (!is_null($position)) {
-            $data['position'] = $position;
+        if (!is_null($sortPath)) {
+            $data['sortpath'] = $sortPath->value;
         }
         try {
             $databaseConnection->update(
@@ -137,13 +137,18 @@ final readonly class HierarchyRelation
         }
     }
 
-    public function assignNewPosition(int $position, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
+    /**
+     * Note this pins the write to the relation's *own* layer via {@see getDatabaseId()}. Callers must therefore
+     * only use it when the relation already lives in the write layer - lower layers are shared and immutable.
+     * {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove} shows the required guard.
+     */
+    public function assignNewSortPath(NodeSortPath $sortPath, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         try {
             $databaseConnection->update(
                 $tableNames->hierarchyRelation(),
                 [
-                    'position' => $position
+                    'sortpath' => $sortPath->value
                 ],
                 $this->getDatabaseId()
             );

@@ -37,18 +37,18 @@ Feature: Run integrity violation detection regarding sibling sorting
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
       | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
-    And I set the following position:
+    And I set the following sort path:
       | Key                  | Value              |
       | contentStreamId      | "cs-identifier"    |
       | dimensionSpacePoint  | {"language":"de"}  |
       | childNodeAggregateId | "nody-mc-nodeface" |
-      | newPosition          | 128                |
-    And I set the following position:
+      | newSortPath          | "a0"               |
+    And I set the following sort path:
       | Key                  | Value                   |
       | contentStreamId      | "cs-identifier"         |
       | dimensionSpacePoint  | {"language":"de"}       |
       | childNodeAggregateId | "noderella-mc-nodeface" |
-      | newPosition          | 128                     |
+      | newSortPath          | "a0"                    |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597910918

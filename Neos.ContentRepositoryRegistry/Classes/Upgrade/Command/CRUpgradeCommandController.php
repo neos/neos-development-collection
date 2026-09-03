@@ -141,6 +141,13 @@ final class CRUpgradeCommandController extends CommandController
      *     - new column hierarchrelation.contentstreamlayer and id
      *     - new table contentstreamlayer
      *
+     *   - fractional indexing of sibling order
+     *     - hierarchyrelation.position (INTEGER) replaced by hierarchyrelation.sortpath (VARBINARY)
+     *       holding a materialised sort path of base 62 fractional index keys, e.g. a0/a0/b3/ZzV
+     *     - the four composite indexes containing `position` are replaced accordingly
+     *     - the values are derived from the events, so a replay regenerates them; no data migration exists
+     *       (and none is possible, the column type changes)
+     *
      * - [future version X ...]
      *
      * The following upgrade is required
