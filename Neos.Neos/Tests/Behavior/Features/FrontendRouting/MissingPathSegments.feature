@@ -65,21 +65,17 @@ Feature: Routing functionality if path segments are missing like during tethered
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
     """
   Scenario: Match homepage URL
-    When I am on URL "/"
-    Then the matched node should be "shernode-homes" in dimension "{}"
+    When The URL "/" should match the node "shernode-homes" in dimension "{}"
 
   Scenario: Resolve nodes correctly from homepage
-    When I am on URL "/"
     Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
     And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/sir-david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/sir-david-nodenborough/earl-o-documentbourgh"
 
   Scenario: Match node lower in the tree
-    When I am on URL "/sir-david-nodenborough/earl-o-documentbourgh"
-    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    When The URL "/sir-david-nodenborough/earl-o-documentbourgh" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Resolve from node lower in the tree
-    When I am on URL "/sir-david-nodenborough/earl-o-documentbourgh"
     Then the node "shernode-homes" in dimension "{}" should resolve to URL "/"
     And the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/sir-david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/sir-david-nodenborough/earl-o-documentbourgh"
@@ -90,7 +86,6 @@ Feature: Routing functionality if path segments are missing like during tethered
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-o-documentbourgh"
 
@@ -100,7 +95,6 @@ Feature: Routing functionality if path segments are missing like during tethered
       | nodeAggregateId           | "earl-o-documentbourgh"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "earl-documentbourgh-updated"} |
-    And I am on URL "/"
     Then the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/sir-david-nodenborough/earl-documentbourgh-updated"
 
   Scenario: Add empty uri path segment on first level
@@ -109,7 +103,6 @@ Feature: Routing functionality if path segments are missing like during tethered
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": ""} |
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/sir-david-nodenborough"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/sir-david-nodenborough/earl-o-documentbourgh"
 
@@ -119,7 +112,6 @@ Feature: Routing functionality if path segments are missing like during tethered
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-o-documentbourgh"
     When the command SetNodeProperties is executed with payload:
@@ -136,7 +128,6 @@ Feature: Routing functionality if path segments are missing like during tethered
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
-    And I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-o-documentbourgh"
     When the command SetNodeProperties is executed with payload:

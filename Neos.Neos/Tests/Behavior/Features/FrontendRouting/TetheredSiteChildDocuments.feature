@@ -37,8 +37,8 @@ Feature: Tests for site node child documents. These are special in that they hav
       | nodeTypeName    | "Neos.Neos:Sites"        |
     # We explicitly create a site node with a tethered child document without uriPathSegment, so its uriPath is empty, exactly as the site node's
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues | nodeName |
-      | shernode-homes  | lady-eleonode-rootford | Acme.Site:Document.Homepage | {}                    | site     |
+      | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues | nodeName | tetheredDescendantNodeAggregateIds |
+      | shernode-homes  | lady-eleonode-rootford | Acme.Site:Document.Homepage | {}                    | site     | {"notFound": "not-found-agg"}       |
     And A site exists for node name "site"
     And the sites configuration is:
     """yaml
@@ -54,11 +54,9 @@ Feature: Tests for site node child documents. These are special in that they hav
     """
 
   Scenario: Set tethered child uriPathSegment
-    When I remember NodeAggregateId of node "shernode-homes"s child "notFound" as "notFoundId"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value                           |
-      | nodeAggregateId | "$notFoundId"                   |
+      | nodeAggregateId | "not-found-agg"                  |
       | propertyValues  | {"uriPathSegment": "not-found"} |
-    And I am on URL "/"
-    Then the matched node should be "shernode-homes" in dimension "{}"
-    And the node "$notFoundId" in dimension "{}" should resolve to URL "/not-found"
+    And The URL "/" should match the node "shernode-homes" in dimension "{}"
+    And the node "not-found-agg" in dimension "{}" should resolve to URL "/not-found"

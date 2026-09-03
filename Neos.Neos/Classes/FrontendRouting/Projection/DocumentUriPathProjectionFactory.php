@@ -23,15 +23,7 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
     public static function projectionTableNamePrefix(
         ContentRepositoryId $contentRepositoryId
     ): string {
-        $projectionShortName = strtolower(
-            str_replace(
-                'Projection',
-                '',
-                (new \ReflectionClass(DocumentUriPathProjection::class))->getShortName()
-            )
-        );
-
-        return sprintf('cr_%s_p_neos_%s', $contentRepositoryId->value, $projectionShortName);
+        return sprintf('cr_%s_p_neos_documenturipath', $contentRepositoryId->value);
     }
 
 
