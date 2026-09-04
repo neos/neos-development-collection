@@ -103,7 +103,7 @@ use Neos\ContentRepository\Dbal\Query\SqlWhereConditionInterface;
  *   - in theory its safe to access the nodes' node aggregate id which MUST be invariant across all layers
  * - `dimensionspacepointhash` see move dimension space point
  * - `subtreetags` see subtree tagging
- * - `position` see move node
+ * - `sortpath` see move node (and every descendant of a moved node, whose prefix changes with it)
  *
  * Additionally, all of these columns can be set to `NULL` signaling a node removal.
  * Filtering on these candidates would exclude the NULL values and resurrect the node.

@@ -103,7 +103,9 @@ trait NodeVariation
                     $specializedNode->relationAnchorPoint,
                     $uncoveredDimensionSpacePoint,
                     $uncoveredDimensionSpacePoint->hash,
-                    $this->projectionContentGraph->determineHierarchyRelationPosition(
+                    // routed through getRelationSortPath() rather than calling the repository directly, so that
+                    // an over-long key triggers a rebalance here too - the direct call used to bypass that guard
+                    $this->getRelationSortPath(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
                         $specializationSucceedingSiblingNode?->relationAnchorPoint,
