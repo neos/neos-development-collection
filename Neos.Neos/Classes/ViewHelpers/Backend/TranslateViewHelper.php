@@ -76,6 +76,12 @@ class TranslateViewHelper extends FluidTranslateViewHelper
     protected $userService;
 
     /**
+     * @Flow\Inject
+     * @var \Neos\Flow\I18n\EelHelper\TranslationHelper
+     */
+    protected $translationHelper;
+
+    /**
      * Renders the translated label.
      *
      * Replaces all placeholders with corresponding values if they exist in the
@@ -97,16 +103,12 @@ class TranslateViewHelper extends FluidTranslateViewHelper
         $value = $this->arguments['value'];
         $locale = $this->arguments['locale'];
 
-        if (preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
-            // In the longer run, this "extended ID" format should directly be resolved in the localization service
-            list($package, $source, $id) = explode(':', $id, 3);
-            $this->arguments['id'] = $id;
-            $this->arguments['package'] = $package;
-            $this->arguments['source'] = str_replace('.', '/', $source);
-        }
-
         if ($locale === null) {
             $this->arguments['locale'] = $this->userService->getInterfaceLanguage();
+        }
+
+        if (preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) >= 1) {
+            return $this->translationHelper->translate($id, null, [], 'Main', null, null, $locale, 'en');
         }
 
         // Catch exception in case the translation file doesn't exist, should be fixed in Flow 3.1
