@@ -3,6 +3,9 @@
 #
 prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
   node = null
+  format = null
+  section = null
+  queryParameters = Neos.Fusion:DataStructure
   additionalParams = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure
   argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
@@ -12,7 +15,10 @@ prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
 
   @context {
     node = ${this.node}
+    format = ${this.format}
+    section = ${this.section}
     additionalParams = ${this.additionalParams}
+    queryParameters = ${this.queryParameters}
     arguments = ${this.arguments}
     argumentsToBeExcludedFromQueryString = ${this.argumentsToBeExcludedFromQueryString}
     addQueryString = ${this.addQueryString}
@@ -24,6 +30,9 @@ prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
   attributes {
     href = Neos.Neos:NodeUri {
       node = ${node}
+      format = ${format}
+      section = ${section}
+      queryParameters = ${queryParameters}
       additionalParams = ${additionalParams}
       arguments = ${arguments}
       argumentsToBeExcludedFromQueryString = ${argumentsToBeExcludedFromQueryString}
