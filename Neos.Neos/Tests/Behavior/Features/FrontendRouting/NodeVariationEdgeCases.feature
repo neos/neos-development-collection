@@ -379,7 +379,7 @@ Feature: Test cases for node variation edge cases
       | "9a723c057afa02982dae9d0b541739be" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
       | "c60c44685475d0e2e4f2b964e6158ce2" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
 
-  Scenario: Peer variants created from disabled source variants must also be disabled in the content graph
+  Scenario: Peer variants created from disabled source variants must not be disabled in the target dimension
     Given using the following content dimensions:
       | Identifier | Values | Generalizations |
       | language   | de, fr |                 |
@@ -441,4 +441,12 @@ Feature: Test cases for node variation edge cases
       | targetOrigin    | {"language":"fr"}        |
 
     Then I am in dimension space point {"language":"fr"}
-    And I expect the node with aggregate identifier "hidden-source-document" to be explicitly tagged "disabled"
+    And I expect the node with aggregate identifier "hidden-source-document" to not contain the tag "disabled"
+    And I expect the documenturipath table to contain exactly:
+      | nodeaggregateid           | dimensionspacepointhash | disabled |
+      | "lady-eleonode-rootford"  | hash{"language":"de"}   | 0        |
+      | "lady-eleonode-rootford"  | hash{"language":"fr"}   | 0        |
+      | "shernode-homes"         | hash{"language":"de"}   | 0        |
+      | "shernode-homes"         | hash{"language":"fr"}   | 0        |
+      | "hidden-source-document" | hash{"language":"de"}   | 1        |
+      | "hidden-source-document" | hash{"language":"fr"}   | 0        |
