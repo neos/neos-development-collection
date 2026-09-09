@@ -66,6 +66,8 @@ class ThumbnailConfiguration
      */
     protected static $loggedDeprecation = false;
 
+    protected array $additionalOptions = [];
+
     /**
      * @param integer $width Desired width of the image
      * @param integer $maximumWidth Desired maximum width of the image
@@ -76,9 +78,20 @@ class ThumbnailConfiguration
      * @param boolean $async Whether the thumbnail can be generated asynchronously
      * @param integer $quality Quality of the processed image
      * @param string $format Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp, avif and bmp are supported.
+     * @param array $additionalOptions Additional data for the thumbnail configuration
      */
-    public function __construct($width = null, $maximumWidth = null, $height = null, $maximumHeight = null, $allowCropping = false, $allowUpScaling = false, $async = false, $quality = null, $format = null)
-    {
+    public function __construct(
+        $width = null,
+        $maximumWidth = null,
+        $height = null,
+        $maximumHeight = null,
+        $allowCropping = false,
+        $allowUpScaling = false,
+        $async = false,
+        $quality = null,
+        $format = null,
+        array $additionalOptions = []
+    ) {
         $this->width = $width ? (integer)$width : null;
         $this->maximumWidth = $maximumWidth ? (integer)$maximumWidth : null;
         $this->height = $height ? (integer)$height : null;
@@ -88,6 +101,7 @@ class ThumbnailConfiguration
         $this->async = $async ? (boolean)$async : false;
         $this->quality = $quality ? (integer)$quality : null;
         $this->format = $format ? (string)$format : null;
+        $this->additionalOptions = $additionalOptions;
     }
 
     /**
@@ -181,6 +195,36 @@ class ThumbnailConfiguration
     /**
      * @return array
      */
+    public function getAdditionalOptions(): array
+    {
+        return $this->additionalOptions;
+    }
+
+    /**
+     * Has additional option
+     * 
+     * @param string $key
+     * @return bool
+     */
+    public function hasAdditionalOption(string $key): bool
+    {
+        return isset($this->additionalOptions[$key]);
+    }
+
+    /**
+     * Get additional option
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function getAdditionalOption(string $key): mixed
+    {
+        return $this->additionalOptions[$key];
+    }
+
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $data = array_filter([
@@ -191,7 +235,8 @@ class ThumbnailConfiguration
             'ratioMode' => $this->getRatioMode(),
             'allowUpScaling' => $this->isUpScalingAllowed(),
             'quality' => $this->getQuality(),
-            'format' => $this->getFormat()
+            'format' => $this->getFormat(),
+            ...$this->additionalOptions,
         ], function ($value) {
             return $value !== null;
         });
