@@ -9,46 +9,31 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Export\ProcessingContext;
-use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetRepository;
-use PHPUnit\Framework\TestCase;
 
 // FIXME, like ContentRepositoryMaintenanceCommandControllerTest this test should reside in
 // Neos.ContentRepository.Export, but it requires a fully bootstrapped Flow (persistence,
 // resource management, neos/media) which is only available in this test distribution
-final class AssetRepositoryImportProcessorTest extends TestCase
+final class AssetRepositoryImportProcessorTest extends FunctionalTestCase
 {
+    protected static $testablePersistenceEnabled = true;
+
     private AssetRepository $assetRepository;
-
-    private PersistenceManagerInterface $persistenceManager;
-
-    /** @var array<string> */
-    private array $importedAssetIds = [];
 
     public function setUp(): void
     {
-        $this->assetRepository = $this->getObject(AssetRepository::class);
-        $this->persistenceManager = $this->getObject(PersistenceManagerInterface::class);
-    }
-
-    public function tearDown(): void
-    {
-        foreach ($this->importedAssetIds as $assetId) {
-            $asset = $this->assetRepository->findByIdentifier($assetId);
-            if ($asset !== null) {
-                // Not using AssetRepository::remove()/removeWithoutUsageChecks(): both emit the
-                // "asset removed" signal, which Neos.Neos uses to update asset usage records —
-                // that requires a content repository to be built, which this test neither
-                // configures nor needs, and which is unavailable for non-mariadb/mysql
-                // connections (see Neos.ContentGraph.DoctrineDbalAdapter).
-                $this->persistenceManager->remove($asset);
-            }
+        if (!class_exists(AssetRepositoryImportProcessor::class)) {
+            self::markTestSkipped('The Neos.ContentRepository.Export package is not installed.');
         }
-        $this->persistenceManager->persistAll();
+        if (!extension_loaded('gd')) {
+            self::markTestSkipped('The test fixture is a real JPEG, generated with the gd extension.');
+        }
+        parent::setUp();
+        $this->assetRepository = $this->objectManager->get(AssetRepository::class);
     }
 
     /** @test */
@@ -63,7 +48,6 @@ final class AssetRepositoryImportProcessorTest extends TestCase
         $files = new Filesystem(new InMemoryFilesystemAdapter());
         $files->write('/Resources/' . $sha1, $fileContent);
         foreach ([['duplicate-asset-1', 'first.jpg'], ['duplicate-asset-2', 'second.jpg']] as [$identifier, $filename]) {
-            $this->importedAssetIds[] = $identifier;
             $files->write('/Assets/' . $identifier . '.json', json_encode([
                 'identifier' => $identifier,
                 'type' => 'IMAGE',
@@ -82,8 +66,8 @@ final class AssetRepositoryImportProcessorTest extends TestCase
 
         $processor = new AssetRepositoryImportProcessor(
             $this->assetRepository,
-            $this->getObject(ResourceRepository::class),
-            $this->getObject(ResourceManager::class),
+            $this->objectManager->get(ResourceRepository::class),
+            $this->objectManager->get(ResourceManager::class),
             $this->persistenceManager,
         );
 
@@ -109,17 +93,6 @@ final class AssetRepositoryImportProcessorTest extends TestCase
         // … while sharing the same content
         self::assertSame($sha1, $firstAsset->getResource()->getSha1());
         self::assertSame($sha1, $secondAsset->getResource()->getSha1());
-    }
-
-    /**
-     * @template T of object
-     * @param class-string<T> $className
-     *
-     * @return T
-     */
-    private function getObject(string $className): object
-    {
-        return Bootstrap::$staticObjectManager->get($className);
     }
 
     private function createJpegContent(): string
