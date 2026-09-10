@@ -57,7 +57,7 @@ abstract class AbstractTestCase extends FunctionalTestCase
     }
 
     /**
-     * Creates a mock ResourcePointer and PersistentResource from a given hash.
+     * Creates a mock PersistentResource from a given hash.
      * Make sure that a file representation already exists, e.g. with
      * file_put_content('resource://' . $hash) before
      *
@@ -66,13 +66,8 @@ abstract class AbstractTestCase extends FunctionalTestCase
      */
     protected function createMockResourceAndPointerFromHash($hash)
     {
-        $mockResource = $this->getMockBuilder(PersistentResource::class)->addMethods(['getHash', 'getUri'])->getMock();
-        $mockResource->expects(self::any())
-                ->method('getHash')
-                ->willReturn($hash);
-        $mockResource->expects(self::any())
-            ->method('getUri')
-            ->willReturn('resource://' . $hash);
+        $mockResource = $this->createMock(PersistentResource::class);
+        $mockResource->method('getSha1')->willReturn($hash);
         return $mockResource;
     }
 

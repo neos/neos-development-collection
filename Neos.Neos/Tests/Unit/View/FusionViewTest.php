@@ -100,7 +100,7 @@ class FusionViewTest extends UnitTestCase
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
         $this->expectException(Exception::class);
-        $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
+        $view = $this->getAccessibleMock(FusionView::class, []);
         $view->render();
     }
 
@@ -108,7 +108,7 @@ class FusionViewTest extends UnitTestCase
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
         $this->expectException(Exception::class);
-        $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
+        $view = $this->getAccessibleMock(FusionView::class, []);
         $view->_set('variables', ['value' => 'foo']);
         $view->render();
     }

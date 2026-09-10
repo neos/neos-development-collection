@@ -231,7 +231,6 @@ class AssetVariantGeneratorTest extends UnitTestCase
         $mock = $this->getMockBuilder(Image::class)
             ->setConstructorArgs([$this->createMock(PersistentResource::class)])
             ->onlyMethods(['refresh', 'getMediaType'])
-            ->addMethods(['renderResource'])
             ->getMock();
         $mock->method('getMediaType')->willReturn('image/jpeg');
 
