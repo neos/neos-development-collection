@@ -23,7 +23,6 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\EventStore\EventsToPublishTemplate;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
@@ -218,29 +217,26 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw $workspaceRebaseFailed;
         }
 
-        $eventsOfWorkspaceToPublish = $this->getCopiedEventsOfEventStream(
+        $eventsOfWorkspaceToPublish = $this->requireCopiedEventsOfEventStream(
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId,
             $commandSimulator->eventStream(),
         );
 
-        $eventsToPublish = EventsToPublishTemplate::create();
-        if ($eventsOfWorkspaceToPublish !== null) {
-            $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
-                ContentStreamEventStreamName::fromContentStreamId($baseWorkspace->currentContentStreamId)
-                    ->getEventStreamName(),
-                $eventsOfWorkspaceToPublish,
-                ExpectedVersion::fromVersion($baseWorkspaceContentStreamVersion)
-            );
-        }
+        $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
+            ContentStreamEventStreamName::fromContentStreamId($baseWorkspace->currentContentStreamId)
+                ->getEventStreamName(),
+            $eventsOfWorkspaceToPublish,
+            ExpectedVersion::fromVersion($baseWorkspaceContentStreamVersion)
+        );
 
         $eventsToPublish = $eventsToPublish->merge(
             $this->forkContentStream(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
-                Version::fromInteger($baseWorkspaceContentStreamVersion->value + ($eventsOfWorkspaceToPublish?->count() ?? 0)),
+                Version::fromInteger($baseWorkspaceContentStreamVersion->value + $eventsOfWorkspaceToPublish->count()),
                 sprintf('Publish workspace %s and fork base %s', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value),
-                requireSourceContentStreamVersion: $eventsOfWorkspaceToPublish === null
+                requireSourceContentStreamVersion: false
             )
         );
 
@@ -293,6 +289,19 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         return $eventsToPublish->merge(
             $this->removeContentStream($workspace->currentContentStreamId, $workspaceContentStreamVersion)
         );
+    }
+
+    private function requireCopiedEventsOfEventStream(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId,
+        EventStreamInterface $eventStream
+    ): Events {
+        $events = $this->getCopiedEventsOfEventStream($targetWorkspaceName, $targetContentStreamId, $eventStream);
+        if ($events === null) {
+            /** This exception should not happen and indicates a programming error */
+            throw new \RuntimeException(sprintf('Required one or more publishable events on stream for %s', $targetWorkspaceName->value), 1788194775);
+        }
+        return $events;
     }
 
     /**
@@ -465,27 +474,24 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw $workspaceRebaseFailed;
         }
 
-        $selectedEventsOfWorkspaceToPublish = $this->getCopiedEventsOfEventStream(
+        $selectedEventsOfWorkspaceToPublish = $this->requireCopiedEventsOfEventStream(
             $baseWorkspace->workspaceName,
             $baseWorkspace->currentContentStreamId,
             $commandSimulator->eventStream()->withMaximumSequenceNumber($highestSequenceNumberForMatching),
         );
 
-        $eventsToPublish = EventsToPublishTemplate::create();
-        if ($selectedEventsOfWorkspaceToPublish !== null) {
-            $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
-                ContentStreamEventStreamName::fromContentStreamId($baseWorkspace->currentContentStreamId)
-                    ->getEventStreamName(),
-                $selectedEventsOfWorkspaceToPublish,
-                ExpectedVersion::fromVersion($baseWorkspaceContentStreamVersion)
-            );
-        }
+        $eventsToPublish = EventsToPublish::createEventsForStreamAndExpectedVersion(
+            ContentStreamEventStreamName::fromContentStreamId($baseWorkspace->currentContentStreamId)
+                ->getEventStreamName(),
+            $selectedEventsOfWorkspaceToPublish,
+            ExpectedVersion::fromVersion($baseWorkspaceContentStreamVersion)
+        );
 
         $eventsToPublish = $eventsToPublish->merge(
             $this->forkNewContentStreamAndApplyEvents(
                 $command->contentStreamIdForRemainingPart,
                 $baseWorkspace->currentContentStreamId,
-                Version::fromInteger($baseWorkspaceContentStreamVersion->value + ($selectedEventsOfWorkspaceToPublish?->count() ?? 0)),
+                Version::fromInteger($baseWorkspaceContentStreamVersion->value + $selectedEventsOfWorkspaceToPublish->count()),
                 EventsToPublish::createEventsForStreamAndExpectedVersion(
                     WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
                     Events::fromArray([
@@ -505,7 +511,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     $commandSimulator->eventStream()->withMinimumSequenceNumber($highestSequenceNumberForMatching->next())
                 ),
                 sprintf('Partial publish workspace %s and fork base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value),
-                requireSourceContentStreamVersion: $selectedEventsOfWorkspaceToPublish === null
+                requireSourceContentStreamVersion: false
             )
         );
 
