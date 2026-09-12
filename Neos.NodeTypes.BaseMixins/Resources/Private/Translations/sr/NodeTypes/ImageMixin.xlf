@@ -3,17 +3,20 @@
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="sr">
     <body>
       <trans-unit id="groups.image" xml:space="preserve">
-				<source>Image</source>
-			<target state="translated">Слика</target></trans-unit>
+        <source>Image</source>
+        <target state="translated">Слика</target>
+      </trans-unit>
       <trans-unit id="properties.image" xml:space="preserve">
-				<source>Image</source>
-			<target state="translated">Слика</target></trans-unit>
+        <source>Image</source>
+        <target state="translated">Слика</target>
+      </trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
-				<source>Alternative text</source>
-			<target state="needs-translation">Alternative text</target></trans-unit>
+        <source>Alternative text</source>
+      </trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
-				<source>Title</source>
-			<target state="translated">Наслов</target></trans-unit>
+        <source>Title</source>
+        <target state="translated">Наслов</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
