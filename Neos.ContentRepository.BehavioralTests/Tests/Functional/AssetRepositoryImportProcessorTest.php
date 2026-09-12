@@ -1,0 +1,108 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\BehavioralTests\Tests\Functional;
+
+use League\Flysystem\Filesystem;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
+use Neos\ContentRepository\Export\Severity;
+use Neos\ContentRepository\Export\ProcessingContext;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Repository\AssetRepository;
+
+// FIXME, like ContentRepositoryMaintenanceCommandControllerTest this test should reside in
+// Neos.ContentRepository.Export, but it requires a fully bootstrapped Flow (persistence,
+// resource management, neos/media) which is only available in this test distribution
+final class AssetRepositoryImportProcessorTest extends FunctionalTestCase
+{
+    protected static $testablePersistenceEnabled = true;
+
+    private AssetRepository $assetRepository;
+
+    public function setUp(): void
+    {
+        if (!class_exists(AssetRepositoryImportProcessor::class)) {
+            self::markTestSkipped('The Neos.ContentRepository.Export package is not installed.');
+        }
+        if (!extension_loaded('gd')) {
+            self::markTestSkipped('The test fixture is a real JPEG, generated with the gd extension.');
+        }
+        parent::setUp();
+        $this->assetRepository = $this->objectManager->get(AssetRepository::class);
+    }
+
+    /** @test */
+    public function twoAssetsSharingTheSameResourceContentAreBothImported(): void
+    {
+        // Needs to be a valid image: importing an Image asset calculates its dimensions from
+        // the actual file content, which would fail (unrelated to the resource deduplication
+        // this test is about) if the content weren't a decodable image.
+        $fileContent = $this->createJpegContent();
+        $sha1 = sha1($fileContent);
+
+        $files = new Filesystem(new InMemoryFilesystemAdapter());
+        $files->write('/Resources/' . $sha1, $fileContent);
+        foreach ([['duplicate-asset-1', 'first.jpg'], ['duplicate-asset-2', 'second.jpg']] as [$identifier, $filename]) {
+            $files->write('/Assets/' . $identifier . '.json', json_encode([
+                'identifier' => $identifier,
+                'type' => 'IMAGE',
+                'title' => 'Duplicate content test',
+                'copyrightNotice' => '',
+                'caption' => '',
+                'assetSourceIdentifier' => 'neos',
+                'resource' => [
+                    'filename' => $filename,
+                    'collectionName' => 'persistent',
+                    'mediaType' => 'image/jpeg',
+                    'sha1' => $sha1,
+                ],
+            ], JSON_THROW_ON_ERROR));
+        }
+
+        $processor = new AssetRepositoryImportProcessor(
+            $this->assetRepository,
+            $this->objectManager->get(ResourceRepository::class),
+            $this->objectManager->get(ResourceManager::class),
+            $this->persistenceManager,
+        );
+
+        $errors = [];
+        $processor->run(new ProcessingContext($files, function (Severity $severity, string $message) use (&$errors) {
+            if ($severity === Severity::ERROR) {
+                $errors[] = $message;
+            }
+        }));
+
+        self::assertSame([], $errors);
+
+        $firstAsset = $this->assetRepository->findByIdentifier('duplicate-asset-1');
+        $secondAsset = $this->assetRepository->findByIdentifier('duplicate-asset-2');
+        self::assertInstanceOf(Asset::class, $firstAsset);
+        self::assertInstanceOf(Asset::class, $secondAsset);
+
+        // both assets reference their own resource instance (a resource can only belong to a single asset) …
+        self::assertNotSame(
+            $this->persistenceManager->getIdentifierByObject($firstAsset->getResource()),
+            $this->persistenceManager->getIdentifierByObject($secondAsset->getResource())
+        );
+        // … while sharing the same content
+        self::assertSame($sha1, $firstAsset->getResource()->getSha1());
+        self::assertSame($sha1, $secondAsset->getResource()->getSha1());
+    }
+
+    private function createJpegContent(): string
+    {
+        $image = imagecreatetruecolor(1, 1);
+        ob_start();
+        imagejpeg($image);
+        $content = ob_get_clean();
+        imagedestroy($image);
+        assert(is_string($content));
+        return $content;
+    }
+}
