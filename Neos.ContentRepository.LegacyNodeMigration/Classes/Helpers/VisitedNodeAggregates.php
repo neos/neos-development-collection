@@ -34,6 +34,9 @@ final class VisitedNodeAggregates
         $this->add($nodeAggregateId, $allowedDimensionSubspace, $nodeTypeName, $nodePath, NodeAggregateId::fromString('00000000-0000-0000-0000-000000000000'), PropertyNames::createEmpty());
     }
 
+    /**
+     * @param DimensionSpacePointSet|null $claimedDimensionSpacePoints The coverage the exported creation/variation event of the added variant claims, or null to default to the visited dimension space point itself (used for root nodes, whose variants are only registered for parent resolution)
+     */
     public function add(
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -41,13 +44,14 @@ final class VisitedNodeAggregates
         NodePath $nodePath,
         NodeAggregateId $parentNodeAggregateId,
         PropertyNames $propertyNames,
+        ?DimensionSpacePointSet $claimedDimensionSpacePoints = null,
     ): void {
         $visitedNodeAggregate = $this->byNodeAggregateId[$nodeAggregateId->value] ?? new VisitedNodeAggregate($nodeAggregateId, $nodeTypeName);
         if (!$nodeTypeName->equals($visitedNodeAggregate->nodeTypeName)) {
             throw new MigrationException(sprintf('Node aggregate with id "%s" has a type of "%s" in content dimension %s. I was visited previously for content dimension %s with the type "%s". Node variants must not have different types', $nodeAggregateId->value, $nodeTypeName->value, $coveredDimensionSpacePoints->toJson(), $visitedNodeAggregate->getOriginDimensionSpacePoints()->toJson(), $visitedNodeAggregate->nodeTypeName->value), 1655913685);
         }
         foreach ($coveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $visitedNodeAggregate->addVariant(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint), $parentNodeAggregateId, $propertyNames);
+            $visitedNodeAggregate->addVariant(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint), $parentNodeAggregateId, $propertyNames, $claimedDimensionSpacePoints ?? new DimensionSpacePointSet([$dimensionSpacePoint]));
             $pathAndDimensionSpacePointHash = $nodePath->serializeToString() . '__' . $dimensionSpacePoint->hash;
             if (isset($this->byPathAndDimensionSpacePoint[$pathAndDimensionSpacePointHash])) {
                 throw new MigrationException(sprintf('Node "%s" with path "%s" and dimension space point "%s" was already visited before', $nodeAggregateId->value, $nodePath->serializeToString(), $dimensionSpacePoint->toJson()), 1655900356);
