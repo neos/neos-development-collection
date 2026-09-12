@@ -81,7 +81,7 @@
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility" xml:space="preserve">
         <source>Visibility</source>
-        <target state="needs-translation">Visibility</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Видљивост</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve">
         <source>Private</source>
