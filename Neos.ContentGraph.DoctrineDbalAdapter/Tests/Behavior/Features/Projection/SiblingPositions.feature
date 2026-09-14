@@ -1,8 +1,10 @@
 Feature: Sibling positions are properly resolved
 
-  In the general DBAL adapter, hierarchy relations are sorted by an integer field. It defaults to a distance of 128,
-  which is reduced each time a node is inserted between two siblings. Once the number becomes uneven, the siblings positions are recalculated.
-  These are the test cases for this behavior.
+  In the general DBAL adapter, hierarchy relations are sorted by a materialised sort path: one base 62 fractional
+  index key per tree level, joined with "/" (e.g. a0/a0/b3/ZzV). Inserting between two siblings generates a key
+  strictly between their two keys, so there is no fixed distance to run out of - the key simply grows, by roughly
+  0.17 characters per insert into the same gap. Only once a key passes NodeSortPath::MAX_KEY_LENGTH is the whole
+  sibling set rebalanced. These are the test cases for this behavior.
 
   Background:
     Given using the following content dimensions:
@@ -40,43 +42,38 @@ Feature: Sibling positions are properly resolved
 
   Scenario: Trigger position update in DBAL graph
     Given I am in workspace "live" and dimension space point {"example": "general"}
-    # distance i to x: 128
-    # distance ii to x: 64
+    # Every move below inserts into the same gap, directly before nodington-x. With the integer scheme the
+    # distance halved each time (128, 64, 32 ... 1) and the siblings had to be renumbered at the end; with
+    # fractional keys the key simply grows instead, and no renumbering happens at this scale.
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-ii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    # distance iii to x: 32
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
       | nodeAggregateId                     | "lady-nodette-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"   |
-    # distance iv to x: 16
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-iv" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    # distance v to x: 8
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                      |
       | nodeAggregateId                     | "lady-nodette-nodington-v" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x" |
-    # distance vi to x: 4
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-vi" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"  |
-    # distance vii to x: 2
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                        |
       | nodeAggregateId                     | "lady-nodette-nodington-vii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"   |
-    # distance viii to x: 1 -> reorder -> 128
+    # with the integer scheme this was the point the siblings had to be renumbered; fractional keys just grow
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                         |
       | nodeAggregateId                     | "lady-nodette-nodington-viii" |
       | newSucceedingSiblingNodeAggregateId | "lady-nodette-nodington-x"    |
-    # distance ix to x: 64 after reorder
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                       |
       | nodeAggregateId                     | "lady-nodette-nodington-ix" |

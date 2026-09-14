@@ -68,7 +68,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $subtreeTags = NodeFactory::extractNodeTagsFromJson($record['subtreetags']);
         unset($record['subtreetags']);
-        unset($record['position']);
+        unset($record['sortpath']);
 
         if (!$subtreeTags->contain($subtreeTagToRemove)) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
@@ -104,7 +104,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        unset($record['position']);
+        unset($record['sortpath']);
         unset($record['subtreetags']);
 
         $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
@@ -133,7 +133,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        unset($record['position']);
+        unset($record['sortpath']);
         unset($record['subtreetags']);
 
         $this->dbal->update(
@@ -183,11 +183,11 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     }
 
     /**
-     * @When /^I set the following position:$/
+     * @When /^I set the following sort path:$/
      * @param TableNode $payloadTable
      * @throws DBALException
      */
-    public function iSetTheFollowingPosition(TableNode $payloadTable): void
+    public function iSetTheFollowingSortPath(TableNode $payloadTable): void
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
@@ -205,7 +205,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $this->dbal->update(
             $this->tableNames()->hierarchyRelation(),
             [
-                'position' => $dataset['newPosition']
+                'sortpath' => $dataset['newSortPath']
             ],
             $record
         );
@@ -292,7 +292,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['childnodeanchor'] : 9999999,
             'childnodeanchor' => $childHierarchyRelation !== null ? $childHierarchyRelation['childnodeanchor'] : 8888888,
-            'position' => $dataset['position'] ?? $parentHierarchyRelation !== null ? $parentHierarchyRelation['position'] : 0,
+            'sortpath' => $dataset['sortpath'] ?? ($parentHierarchyRelation !== null ? $parentHierarchyRelation['sortpath'] : ''),
             'subtreetags' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['subtreetags'] : '{}',
         ];
     }

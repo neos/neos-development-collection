@@ -59,7 +59,7 @@ final readonly class NodeQueryBuilder
             ->innerJoin('ch', $this->tableNames->dimensionSpacePoints(), 'cdsp', 'cdsp.hash = ch.dimensionspacepointhash')
             ->innerJoin('ch', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ch.childnodeanchor')
             ->whereCondition('pn', $nodeAggregateIdCondition)
-            ->orderBy('ch.position');
+            ->orderBy('ch.sortpath');
     }
 
     public function buildFindRootNodeAggregatesQuery(HierarchyRelationSubquery $hierarchyRelationQuery, FindRootNodeAggregatesFilter $filter): QueryBuilder
@@ -118,14 +118,15 @@ final readonly class NodeQueryBuilder
             ->whereCondition('sn', $nodeAggregateIdCondition);
 
         $parentNodeAnchorSubQuery = (clone $sharedSubQuery)->select('sh.parentnodeanchor');
-        $siblingPositionSubQuery = (clone $sharedSubQuery)->select('sh.position');
+        $siblingSortPathSubQuery = (clone $sharedSubQuery)->select('sh.sortpath');
 
         return $this->buildBasicNodeQuery($hierarchyRelationQuery)
             ->andWhere('h.parentnodeanchor = (' . $parentNodeAnchorSubQuery->getSQL() . ')')
             ->andWhere('n.nodeaggregateid != ' . $nodeAggregateIdCondition->getParameters()->getReference('nodeAggregateId'))
-            ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
+            // siblings share the parent prefix, so comparing whole sort paths is equivalent to comparing keys
+            ->andWhere('h.sortpath ' . ($preceding ? '<' : '>') . ' (' . $siblingSortPathSubQuery->getSQL() . ')')
             ->mergeParametersFromBuilder($sharedSubQuery)
-            ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
+            ->orderBy('h.sortpath', $preceding ? 'DESC' : 'ASC');
     }
 
     public function addNodeTypeCriteria(QueryBuilder $queryBuilder, ExpandedNodeTypeCriteria $constraintsWithSubNodeTypes, string $nodeTableAlias = 'n'): void
