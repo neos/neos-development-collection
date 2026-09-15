@@ -1,0 +1,183 @@
+`9.1.9 (2026-09-12) <https://github.com/neos/neos-development-collection/releases/tag/9.1.9>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fix duplicate token entry in doctum.yml <https://github.com/neos/neos-development-collection/pull/5974>`_
+------------------------------------------------------------------------------------------------------------------
+
+Removed duplicate token entry in the workflow configuration. 
+
+* Packages: ``.github``
+
+`BUGFIX: Don't render links to disabled nodes in Neos.Neos:ConvertUris <https://github.com/neos/neos-development-collection/pull/5926>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+``Neos.Neos:ConvertUris`` now checks whether the target node of a ``node://`` URI is
+accessible in the subgraph of the current node before generating a URL for it.
+Links to disabled nodes are thus treated like links to non-existing nodes again.
+This restores the behaviour we had in Neos 8.
+
+**Upgrade instructions**
+
+No action is required unless you previously relied on these rendered links to identify inaccessible or broken link targets. In that case, you may want to use https://github.com/NEOSidekick/NEOSidekick.LinkChecker instead.
+
+**Review instructions**
+
+For previous discussion, see https://neos-project.slack.com/archives/C050C8FEK/p1782918992284449
+
+- Please note that not all commits are strictly necessary to fix this but while working on the file I noticed inaccuracies and minor bugs in other parts too. I tried to use consistent names for URIs, URLs and anchor tags.
+- I did not remove the line "// todo log also arguments?" but maybe we could do that while we're at it?
+- I did not refactor or debug the handling of anchor tags. I did not want to blow up this PR.
+- ``$this->resourceManager->getPublicPersistentResourceUri()`` could return ``false`` which should probably also be caught. I did not look into that either to not blow up the PR.
+- I found this Behat step definition confusing because it refers to "visibility constraints" while the argument actually takes excluded subtree tags. But I didn't dare changing it. What do you think? https://github.com/neos/neos-development-collection/blob/`8f30701705d47d3b21598456e159892d70b320ad <https://github.com/neos/neos-development-collection/commit/8f30701705d47d3b21598456e159892d70b320ad>`_/Neos.Neos/Tests/Behavior/Features/Bootstrap/FusionTrait.php#L85-L94
+- 
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Do not disable visible node variants when migrating hidden nodes <https://github.com/neos/neos-development-collection/pull/5868>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+### What I did
+This fixes a bug in the legacy node migration where a node that is hidden in one dimension could end up disabled in other dimensions as well, even though it has its own visible variant there. For example, a page with a hidden en row and a visible de row was disabled in both languages after the migration, although it was visible in de in the old content repository.
+
+###  How I did it
+Hidden nodes are migrated as SubtreeWasTagged (disabled) events. These events were already exported at the very end of the migration, but their affected dimension space points were computed while the row was being processed, at a point where variants of the same node in other dimensions may not have been seen yet. The exported tag could therefore still cover dimensions whose own row said the node is visible.
+
+The affected dimension space points are now resolved when the events are exported, after all rows have been processed. The tag is limited to the dimension space points the hidden variant still covers in the final structure, so visible variants keep their state.
+
+* Packages: ``Neos`` ``ContentRepository.LegacyNodeMigration``
+
+`BUGFIX: Handle workspace states on asset usage indexing processor <https://github.com/neos/neos-development-collection/pull/5956>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+This PR add addtional handling of workspace states to asset indexing processor (re-index) to address issues with asset usages, when running the re-indexing while some workspaces are outdated and/or contain any unpublished changes. For more background please check also `this comment <https://github.com/neos/neos-development-collection/issues/5953#issuecomment-5294134956>`_.
+
+**1) Skip workspaces without publishable changes during indexing**
+To fix issues with outdated workspaces (and no additional unpublushed changes) we simply skip these workspaces, as we don't expect any other asset usages as in base workspace. This saves time on indexing and prevents false asset usage entries.
+
+**2) Check for outdated workspaces with unpublished changes**
+We check for outdated workspaces with unpublished changes and do not run the re-index if at least one affected workspace has been found. The use can overrule this with an ``--force`` flag, but may end up with false asset usage entries in the index.
+
+**Example output**
+```
+Start indexing asset usages
+ContentRepository "default"
+
+!!! Some workspaces are not up to date and have additional unpublished changes.
+The indexing may produce false asset usages for these cases.
+
+!!! Please rebase the corresponding workspaces or publish all pending changes.
+./flow workspace:rebaseoutdated
+./flow workspace:publish <workspace>
+
+If you still want to run the index, run it with the 'force' option.
+
+Affected Workspaces: 
+  - review
+
+An error occured while indexing asset usages.
+```
+
+* Fixes: `#5953 <https://github.com/neos/neos-development-collection/issues/5953>`_ 
+
+* Packages: ``Neos``
+
+`BUGFIX: Asset index not updated on asset removal from a multi-asset property <https://github.com/neos/neos-development-collection/pull/5952>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+When two usages share the same property, the second iteration overwrites the first one's result.
+This is fixed by accumulating, instead of assigning (overwriting).
+
+`#5951 <https://github.com/neos/neos-development-collection/issues/5951>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix exception message in Neos.Neos:ConvertUris <https://github.com/neos/neos-development-collection/pull/5949>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This fixes an exception message in ``Neos.Neos:ConvertUris`` (wrong ``get_debug_type()``). It also adds tests for scenarios that behave differently in the current Neos 9 release.
+
+**Upgrade instructions**
+n/a
+
+**Review instructions**
+
+See https://github.com/neos/neos-development-collection/pull/5926#discussion_r3727980323
+
+Sorry for not also adjusting the documentation. It took me quite a while to check it in the Neos 9 branch and I currently don't have the time to check it again for Neos 8.3.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Followup #5899 don't fail setup for detached projections <https://github.com/neos/neos-development-collection/pull/5947>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Followup to https://github.com/neos/neos-development-collection/pull/5899
+
+Fixes point 2 of https://github.com/neos/neos-development-collection/issues/5925 in a non breaking simple way
+
+See https://github.com/neos/neos-development-collection/pull/5948 for a better fix where we dont hide any skipped projections because they are detached.
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`TASK: Hack PHPUnit assertion support in Behat <https://github.com/neos/neos-development-collection/pull/5960>`_
+----------------------------------------------------------------------------------------------------------------
+
+followup to the PHPUnit 11 upgrade `#5950 <https://github.com/neos/neos-development-collection/issues/5950>`_
+
+Unfortunately the new PHPUnit versions have a not so pure design and thus exceptions thrown by ``Assert::*`` expect to get some random global state from $someWhere to do magic stuff.
+And more unfortunately for us is that its fully intended and apparently not wanted to have other contexts using the ``Assert::`` class despite it being marked api?!.
+
+There is currently no alternative id know which gives me the diff output id expect when working with php objects and values.
+I think we should find a fork of PHPUnit which cleanly and purely exposes the ``Assert`` library as before. Or build it ourselves.
+
+see https://github.com/Behat/Behat/issues/1618
+
+* Packages: ``.github`` ``ContentRepository.TestSuite``
+
+`TASK: Update to PHPUnit 11 <https://github.com/neos/neos-development-collection/pull/5950>`_
+---------------------------------------------------------------------------------------------
+
+See upgrade to PHPUnit 11 in Flow https://github.com/neos/flow-development-collection/pull/3563
+
+**Upgrade instructions**
+
+The only thing you might need to adjust (besides catering to all the changes in PhpUnit 11), is the signature of ``getAccessibleMock()`` in our base testcase class. The arguments
+
+- ``$callAutoload``
+- ``$callOriginalMethods``
+- ``$proxyTarget``
+
+have been removed, as the underlying PHPUnit methods are deprecated.
+
+**Review instructions**
+
+All tests should still pass – have fun verifying they still do test the correct stuff.
+
+
+* Packages: ``.github``
+
+`TASK: Update used actions, tweak workflows <https://github.com/neos/neos-development-collection/pull/5954>`_
+-------------------------------------------------------------------------------------------------------------
+
+This updates the version of used actions and tweaks some other things in the workflows.
+
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.1.8...9.1.9>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
