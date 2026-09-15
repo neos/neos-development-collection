@@ -378,3 +378,75 @@ Feature: Test cases for node variation edge cases
       | "65901ded4f068dac14ad0dce4f459b29" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
       | "9a723c057afa02982dae9d0b541739be" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
       | "c60c44685475d0e2e4f2b964e6158ce2" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
+
+  Scenario: Peer variants created from disabled source variants must not be disabled in the target dimension
+    Given using the following content dimensions:
+      | Identifier | Values | Generalizations |
+      | language   | de, fr |                 |
+    And using the following node types:
+    """yaml
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Document':
+      properties:
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {"language":"de"}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                    |
+      | nodeAggregateId           | "shernode-homes"         |
+      | nodeTypeName              | "Neos.Neos:Site"         |
+      | parentNodeAggregateId     | "lady-eleonode-rootford" |
+      | originDimensionSpacePoint | {"language":"de"}        |
+      | nodeName                  | "site"                   |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value             |
+      | nodeAggregateId | "shernode-homes"  |
+      | sourceOrigin    | {"language":"de"} |
+      | targetOrigin    | {"language":"fr"} |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                      |
+      | nodeAggregateId           | "hidden-source-document"   |
+      | nodeTypeName              | "Neos.Neos:Document"       |
+      | parentNodeAggregateId     | "shernode-homes"           |
+      | originDimensionSpacePoint | {"language":"de"}          |
+      | nodeName                  | "document"                 |
+      | initialPropertyValues     | {"uriPathSegment": "page"} |
+
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "hidden-source-document" |
+      | coveredDimensionSpacePoint   | {"language":"de"}        |
+      | nodeVariantSelectionStrategy | "allSpecializations"     |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "hidden-source-document" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"fr"}        |
+
+    Then I am in dimension space point {"language":"fr"}
+    And I expect the node with aggregate identifier "hidden-source-document" to not contain the tag "disabled"
+    And I expect the documenturipath table to contain exactly:
+      | nodeaggregateid           | dimensionspacepointhash | disabled |
+      | "lady-eleonode-rootford"  | hash{"language":"de"}   | 0        |
+      | "lady-eleonode-rootford"  | hash{"language":"fr"}   | 0        |
+      | "shernode-homes"         | hash{"language":"de"}   | 0        |
+      | "shernode-homes"         | hash{"language":"fr"}   | 0        |
+      | "hidden-source-document" | hash{"language":"de"}   | 1        |
+      | "hidden-source-document" | hash{"language":"fr"}   | 0        |

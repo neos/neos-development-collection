@@ -89,6 +89,22 @@ final class DocumentNodeInfo
         return new self($source);
     }
 
+    public function withDisabledLevel(int $disabledLevel): self
+    {
+        $source = $this->source;
+        $source['disabled'] = $disabledLevel;
+
+        return new self($source);
+    }
+
+    public function withRemovedLevel(int $removedLevel): self
+    {
+        $source = $this->source;
+        $source['removed'] = $removedLevel;
+
+        return new self($source);
+    }
+
     public function getNodeAggregateId(): NodeAggregateId
     {
         return NodeAggregateId::fromString($this->source['nodeaggregateid']);
