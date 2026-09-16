@@ -110,7 +110,7 @@ class UsersController extends AbstractModuleController
      *
      * @param string $searchTerm
      * @param string $sortBy
-     * @param string $sortDirection
+     * @param QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING $sortDirection
      * @return void
      */
     public function indexAction(

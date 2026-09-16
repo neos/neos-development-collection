@@ -69,7 +69,7 @@ class NodesController extends ActionController
     protected $contentRepositoryRegistry;
 
     /**
-     * @var array<string,string>
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,

@@ -157,7 +157,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
         $matches = [];
         try {
-            if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+            if (preg_match('#resource://([^/]+)/Public/(.*)#', $localizedResourcePathData[0], $matches) === 1) {
                 $packageKey = $matches[1];
                 $path = $matches[2];
                 return $this->resourceManager->getPublicPackageResourceUri($packageKey, $path);

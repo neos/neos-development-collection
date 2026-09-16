@@ -18,17 +18,19 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
+use Neos\Neos\Domain\Model\User;
 
 /**
  * The User Repository
  *
  * @Flow\Scope("singleton")
+ * @extends Repository<User>
  * @api
  */
 class UserRepository extends Repository
 {
     /**
-     * @return QueryResultInterface
+     * @return QueryResultInterface<User>
      * @deprecated
      */
     public function findAllOrderedByUsername(): QueryResultInterface
@@ -36,6 +38,10 @@ class UserRepository extends Repository
         return $this->findAllOrdered('accounts.accountIdentifier');
     }
 
+    /**
+     * @param QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING $sortDirection
+     * @return QueryResultInterface<User>
+     */
     public function findAllOrdered(
         string $fieldName,
         string $sortDirection = QueryInterface::ORDER_ASCENDING
@@ -59,6 +65,10 @@ class UserRepository extends Repository
             ->execute();
     }
 
+    /**
+     * @param QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING $sortDirection
+     * @return QueryResultInterface<User>
+     */
     public function findBySearchTerm(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
         try {

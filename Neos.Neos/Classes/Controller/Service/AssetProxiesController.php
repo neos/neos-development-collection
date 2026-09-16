@@ -63,7 +63,7 @@ class AssetProxiesController extends ActionController
     protected $asyncThumbnails;
 
     /**
-     * @var array<string,string>
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
