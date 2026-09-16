@@ -349,7 +349,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $event->sourceOrigin,
             $event->generalizationOrigin,
             $event->variantSucceedingSiblings,
-            false
+            true
         );
     }
 
