@@ -136,8 +136,8 @@ class XliffService
     }
 
     /**
-     * @param array<string,mixed> $labelValue
-     * @return array<string,string>
+     * @param array<int, array<string, string>> $labelValue
+     * @return array<int, string>
      */
     protected function getTranslationUnitValue(array $labelValue)
     {

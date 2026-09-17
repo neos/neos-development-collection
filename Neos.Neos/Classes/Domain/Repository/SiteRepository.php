@@ -34,6 +34,7 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  * @api
  * @method QueryResultInterface|Site[] findByNodeName(string $nodeName)
  * @method QueryResultInterface|Site[] findByState(int $state)
+ * @extends Repository<Site>
  */
 class SiteRepository extends Repository
 {
@@ -43,7 +44,7 @@ class SiteRepository extends Repository
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @var array<string,string>
+     * @var array<string, QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING>
      */
     protected $defaultOrderings = [
         'name' => QueryInterface::ORDER_ASCENDING,

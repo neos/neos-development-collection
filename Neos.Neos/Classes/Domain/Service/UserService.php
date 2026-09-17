@@ -166,8 +166,8 @@ class UserService
      * Retrieves a list of all existing users
      *
      * @param string $sortBy
-     * @param string $sortDirection
-     * @return QueryResultInterface The users
+     * @param 'ASC'|'DESC' $sortDirection
+     * @return QueryResultInterface<User> The users
      * @api
      */
     public function getUsers(
@@ -180,8 +180,8 @@ class UserService
     /**
      * @param string $searchTerm
      * @param string $sortBy
-     * @param string $sortDirection
-     * @return QueryResultInterface
+     * @param 'ASC'|'DESC' $sortDirection
+     * @return QueryResultInterface<User>
      */
     public function searchUsers(string $searchTerm, string $sortBy, string $sortDirection): QueryResultInterface
     {
