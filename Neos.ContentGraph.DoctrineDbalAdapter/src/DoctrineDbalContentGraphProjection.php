@@ -19,6 +19,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeSortPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentStreamLayerFinder;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
@@ -86,8 +87,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use NodeVariation;
     use SubtreeTagging;
     use Workspace;
-
-    public const RELATION_DEFAULT_OFFSET = 128;
 
     private SqlTableSubqueryFactory $subqueries;
 
@@ -308,7 +307,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   contentstreamlayer,
                   parentnodeanchor,
                   childnodeanchor,
-                  position,
+                  sortpath,
                   subtreetags,
                   dimensionspacepointhash
                 )
@@ -317,7 +316,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   :contentStreamLayerToMergeInto AS contentstreamlayer,
                   h.parentnodeanchor,
                   h.childnodeanchor,
-                  h.position,
+                  h.sortpath,
                   h.subtreetags,
                   h.dimensionspacepointhash
                 -- using table instead of HierarchyRelationStatement because merging is a low level operation and combines exactly two layers without taking any other layers into account
@@ -328,7 +327,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 ON DUPLICATE KEY UPDATE
                   parentnodeanchor = VALUES(parentnodeanchor),
                   childnodeanchor = VALUES(childnodeanchor),
-                  position = VALUES(position),
+                  sortpath = VALUES(sortpath),
                   subtreetags = VALUES(subtreetags),
                   dimensionspacepointhash = VALUES(dimensionspacepointhash)
                 SQL;
@@ -428,7 +427,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               contentstreamlayer,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
               subtreetags,
               dimensionspacepointhash
             )
@@ -436,7 +435,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               :targetContentStreamLayer as contentstreamlayer,
               h.parentnodeanchor,
               h.childnodeanchor,
-              h.position,
+              h.sortpath,
               h.subtreetags,
               :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM
@@ -504,7 +503,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               contentstreamlayer,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
               subtreetags,
               dimensionspacepointhash
             )
@@ -513,7 +512,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               :targetContentStreamLayer as contentstreamlayer,
               h.parentnodeanchor,
               h.childnodeanchor,
-              h.position,
+              h.sortpath,
               h.subtreetags,
               :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM {$hierarchyRelationQuery->toSql()} AS h
@@ -919,7 +918,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   id,
                   parentnodeanchor,
                   childnodeanchor,
-                  position,
+                  sortpath,
                   subtreetags,
                   dimensionspacepointhash,
                   contentstreamlayer
@@ -930,7 +929,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor) as parentnodeanchor,
                   -- if our (copied) node is the child, we update h.childNodeAnchor
                   IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor) as childnodeanchor,
-                  h.position,
+                  h.sortpath,
                   h.subtreetags,
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
@@ -1094,7 +1093,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
     ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
-            $position = $this->getRelationPosition(
+            $sortPath = $this->getRelationSortPath(
                 $parentNodeAnchorPoint,
                 null,
                 $succeedingSiblingNodeAnchorPoint,
@@ -1112,7 +1111,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $childNodeAnchorPoint,
                 $dimensionSpacePoint,
                 $dimensionSpacePoint->hash,
-                $position,
+                $sortPath,
                 $inheritedSubtreeTags,
             );
 
@@ -1120,14 +1119,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
     }
 
-    private function getRelationPosition(
+    private function getRelationSortPath(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
-        $position = $this->projectionContentGraph->determineHierarchyRelationPosition(
+    ): NodeSortPath {
+        $sortPath = $this->projectionContentGraph->determineHierarchySortPath(
             $parentAnchorPoint,
             $childAnchorPoint,
             $succeedingSiblingAnchorPoint,
@@ -1135,8 +1134,10 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $dimensionSpacePoint
         );
 
-        if ($position % 2 !== 0) {
-            $position = $this->getRelationPositionAfterRecalculation(
+        // This replaces the odd/even heuristic of the integer scheme. Fractional indexing never runs out of
+        // room - keys just get longer - so the trigger is length, and the fallback is a rebalance of the level.
+        if ($sortPath->exceedsMaxKeyLength()) {
+            $sortPath = $this->rebalanceSiblingKeys(
                 $parentAnchorPoint,
                 $childAnchorPoint,
                 $succeedingSiblingAnchorPoint,
@@ -1145,25 +1146,36 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             );
         }
 
-        return $position;
+        // only meaningful once the value is final: a rebalance is exactly what makes an over-long key short again
+        $sortPath->assertFitsColumn();
+
+        return $sortPath;
     }
 
-    private function getRelationPositionAfterRecalculation(
+    /**
+     * Regenerates the keys of a whole sibling set and returns the slot reserved for the incoming node.
+     *
+     * The new keys are generated *above* the current maximum key rather than from scratch. That is what makes
+     * the rewrite collision free: every new key is strictly greater than every old one, so assigning a new key
+     * can never land on a slot an unprocessed sibling still occupies. The keys stay short regardless, because
+     * generateKeyBetween($max, null) increments the integer part and drops the fraction entirely.
+     *
+     * Unlike the integer renumbering this replaced, rebalancing is O(subtree) rather than O(siblings): changing
+     * a sibling's key changes the prefix of everything beneath it, so each sibling's descendants are re-pathed.
+     */
+    private function rebalanceSiblingKeys(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
+    ): NodeSortPath {
         if (!$childAnchorPoint && !$parentAnchorPoint) {
             throw new \InvalidArgumentException(
-                'You must either specify a parent or child node anchor'
-                . ' to get relation positions after recalculation.',
+                'You must either specify a parent or child node anchor to rebalance sibling keys.',
                 1519847858
             );
         }
-        $offset = 0;
-        $position = 0;
         $hierarchyRelations = $parentAnchorPoint
             ? $this->projectionContentGraph->getOutgoingHierarchyRelationsForNodeAndSubgraph(
                 $parentAnchorPoint,
@@ -1176,24 +1188,172 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $dimensionSpacePoint
             );
 
+        if ($hierarchyRelations === []) {
+            // unreachable in practice: with no siblings the generated key is "a0", which never exceeds the limit
+            throw new \RuntimeException('Cannot rebalance an empty sibling set', 1775980020);
+        }
+
         usort(
             $hierarchyRelations,
-            static fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int => $relationA->position <=> $relationB->position
+            static fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
+                => strcmp($relationA->sortPath->value, $relationB->sortPath->value)
         );
 
+        $parentSortPath = $hierarchyRelations[0]->sortPath->parent();
+        $greatestKey = $hierarchyRelations[array_key_last($hierarchyRelations)]->sortPath->localKey();
+        // one key per existing sibling, plus one for the node being inserted
+        $keys = array_map(
+            static function (?string $key): string {
+                if ($key === null || $key === '') {
+                    throw new \RuntimeException('Failed to generate fractional index keys while rebalancing a sibling set', 1775980024);
+                }
+                return $key;
+            },
+            FractionalIndexing::generateNKeysBetween($greatestKey, null, count($hierarchyRelations) + 1)
+        );
+
+        $reservedSortPath = null;
+        $keyIndex = 0;
         foreach ($hierarchyRelations as $relation) {
-            $offset += self::RELATION_DEFAULT_OFFSET;
             if (
                 $succeedingSiblingAnchorPoint
                 && $relation->childNodeAnchor->equals($succeedingSiblingAnchorPoint)
             ) {
-                $position = $offset;
-                $offset += self::RELATION_DEFAULT_OFFSET;
+                // the incoming node takes the slot directly before its succeeding sibling
+                $reservedSortPath = $parentSortPath->child($keys[$keyIndex]);
+                $keyIndex++;
             }
-            $relation->assignNewPosition($offset, $this->dbal, $this->tableNames);
+            $this->assignRebalancedSortPath(
+                $relation,
+                $parentSortPath->child($keys[$keyIndex]),
+                $contentStreamLayers,
+                $dimensionSpacePoint
+            );
+            $keyIndex++;
         }
 
-        return $position;
+        // without a succeeding sibling the incoming node is appended, so it takes the last remaining slot
+        return $reservedSortPath ?? $parentSortPath->child($keys[$keyIndex]);
+    }
+
+    private function assignRebalancedSortPath(
+        HierarchyRelation $relation,
+        NodeSortPath $newSortPath,
+        ContentStreamLayers $contentStreamLayers,
+        DimensionSpacePoint $dimensionSpacePoint,
+    ): void {
+        $oldSortPath = $relation->sortPath;
+        if ($oldSortPath->equals($newSortPath)) {
+            return;
+        }
+        $newSortPath->assertFitsColumn();
+        $this->repathDescendants($contentStreamLayers, $dimensionSpacePoint, $oldSortPath, $newSortPath);
+
+        if ($contentStreamLayers->getWriteLayer()->equals($relation->contentStreamLayer)) {
+            $relation->assignNewSortPath($newSortPath, $this->dbal, $this->tableNames);
+            return;
+        }
+        // The relation lives in a shared lower layer, which must stay immutable, so copy it up instead of
+        // updating in place. The integer renumbering this replaced got exactly this wrong.
+        $relation
+            ->with(contentStreamLayer: $contentStreamLayers->getWriteLayer(), sortPath: $newSortPath)
+            ->addToDatabase($this->dbal, $this->tableNames);
+    }
+
+    /**
+     * Rewrites the sort path prefix of every descendant of $oldSortPath to $newSortPath, into the write layer.
+     *
+     * Because the path is materialised, the descendants are exactly the contiguous range
+     * [oldPath . '/', oldPath . '0') - so this needs no recursive CTE, only an index range scan.
+     */
+    private function repathDescendants(
+        ContentStreamLayers $contentStreamLayers,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeSortPath $oldSortPath,
+        NodeSortPath $newSortPath,
+    ): void {
+        if ($oldSortPath->equals($newSortPath)) {
+            return;
+        }
+
+        // The range predicate must go through withWhereCondition(), never the id-based prefilter:
+        // sortpath is not layer invariant {@see HierarchyRelationSubquery}.
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)
+            ->withDimensionSpacePoint($dimensionSpacePoint)
+            ->withWhereCondition(StaticWhereCondition::fromString('h', 'h.sortpath >= :descendantRangeStart AND h.sortpath < :descendantRangeEnd'));
+        $rangeParameters = [
+            'descendantRangeStart' => $oldSortPath->rangeStart(),
+            'descendantRangeEnd' => $oldSortPath->rangeEnd(),
+        ];
+
+        // Guard the column width in PHP: without STRICT_TRANS_TABLES, MariaDB would truncate the CONCAT result
+        // instead of erroring, which corrupts the ordering silently.
+        $longestDescendantStatement = <<<SQL
+            SELECT
+                MAX(LENGTH(h.sortpath))
+            FROM
+                {$hierarchyRelationQuery->toSql()} h
+            SQL;
+        try {
+            $longestDescendantLength = (int)$this->dbal->fetchOne($longestDescendantStatement, [
+                ...$rangeParameters,
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to determine the longest descendant sort path below %s: %s', $oldSortPath->value, $e->getMessage()), 1775980021, $e);
+        }
+        if ($longestDescendantLength === 0) {
+            return;
+        }
+        $longestResultingLength = $longestDescendantLength - strlen($oldSortPath->value) + strlen($newSortPath->value);
+        if ($longestResultingLength > NodeSortPath::MAX_LENGTH) {
+            throw new \RuntimeException(sprintf(
+                'Re-pathing the subtree of "%s" to "%s" would produce a sort path of %d bytes, exceeding the maximum of %d',
+                $oldSortPath->value,
+                $newSortPath->value,
+                $longestResultingLength,
+                NodeSortPath::MAX_LENGTH
+            ), 1775980022);
+        }
+
+        $repathStatement = <<<SQL
+            INSERT INTO {$this->tableNames->hierarchyRelation()} (
+              id,
+              parentnodeanchor,
+              childnodeanchor,
+              sortpath,
+              subtreetags,
+              dimensionspacepointhash,
+              contentstreamlayer
+            )
+            SELECT
+              h.id,
+              h.parentnodeanchor,
+              h.childnodeanchor,
+              CONCAT(:newSortPath, SUBSTRING(h.sortpath, :oldSortPathLength + 1)) AS sortpath,
+              h.subtreetags,
+              h.dimensionspacepointhash,
+              :targetContentStreamLayer AS contentstreamlayer
+            FROM
+              {$hierarchyRelationQuery->toSql()} h
+            ON DUPLICATE KEY UPDATE sortpath = VALUES(sortpath)
+            SQL;
+        try {
+            $this->dbal->executeStatement($repathStatement, [
+                'newSortPath' => $newSortPath->value,
+                // passed as an int rather than LENGTH(:oldSortPath) so the optimizer sees a constant
+                'oldSortPathLength' => strlen($oldSortPath->value),
+                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
+                ...$rangeParameters,
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to re-path the subtree of "%s" to "%s": %s', $oldSortPath->value, $newSortPath->value, $e->getMessage()), 1775980023, $e);
+        }
     }
 
     private function copyHierarchyRelationToDimensionSpacePoint(
@@ -1213,7 +1373,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $newChild,
             $dimensionSpacePoint,
             $dimensionSpacePoint->hash,
-            $this->getRelationPosition(
+            $this->getRelationSortPath(
                 $newParent,
                 $newChild,
                 $newSucceedingSibling,

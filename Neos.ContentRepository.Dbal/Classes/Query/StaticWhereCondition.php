@@ -16,20 +16,27 @@ final readonly class StaticWhereCondition implements SqlWhereConditionInterface
     private function __construct(
         private string $expectedAlias,
         private string $whereConditionSql,
+        private Parameters $parameters,
     ) {
     }
 
-    public static function fromString(string $expectedAlias, string $whereConditionSql): self
+    /**
+     * The parameters are optional: a caller that executes the statement itself may bind the placeholders
+     * directly. They MUST be passed whenever the condition ends up inside a {@see QueryBuilder}, which
+     * collects the parameters of the subqueries it inlines and has no other way of learning about them.
+     */
+    public static function fromString(string $expectedAlias, string $whereConditionSql, ?Parameters $parameters = null): self
     {
         return new self(
             expectedAlias: $expectedAlias,
             whereConditionSql: $whereConditionSql,
+            parameters: $parameters ?? Parameters::create(),
         );
     }
 
     public function getParameters(): Parameters
     {
-        return Parameters::create();
+        return $this->parameters;
     }
 
     public function toWhereSql(string $alias): string

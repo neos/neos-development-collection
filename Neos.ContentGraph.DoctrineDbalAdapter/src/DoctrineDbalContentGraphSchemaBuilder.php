@@ -12,6 +12,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeSortPath;
 use Neos\ContentRepository\Dbal\DbalSchemaFactory;
 
 /**
@@ -64,7 +65,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
             (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
             (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
-            (new Column('position', self::type(Types::INTEGER)))->setNotnull(false),
+            (new Column('sortpath', self::type(Types::BINARY)))->setLength(NodeSortPath::MAX_LENGTH)->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform)->setNotnull(false),
@@ -77,11 +78,15 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamlayer'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['position'])
-            /** Optimize the $rightmostSucceedingSiblingRelationStatement in {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph::determineHierarchyRelationPosition()} */
-            ->addIndex(['parentnodeanchor', 'position'])
-            ->addIndex(['childnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['parentnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'position'])
+            /** Optimize the $rightmostSucceedingSiblingRelationStatement in {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph::determineHierarchySortPath()} */
+            ->addIndex(['parentnodeanchor', 'sortpath'])
+            ->addIndex(['childnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash'])
+            ->addIndex(['parentnodeanchor', 'contentstreamlayer', 'dimensionspacepointhash', 'sortpath'])
+            /**
+             * Serves the subtree range scans over {@see NodeSortPath::rangeStart()} / {@see NodeSortPath::rangeEnd()},
+             * which replace the recursive CTEs in {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph}.
+             */
+            ->addIndex(['contentstreamlayer', 'dimensionspacepointhash', 'sortpath'])
             ->addIndex(['contentstreamlayer', 'dimensionspacepointhash']);
     }
 
