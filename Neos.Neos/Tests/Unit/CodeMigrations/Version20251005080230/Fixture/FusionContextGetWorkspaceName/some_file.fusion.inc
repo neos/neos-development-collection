@@ -21,13 +21,13 @@ prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
     workspaceName = ${node.workspaceName.value}
     workspaceNameByWorkspace = ${node.workspaceName.value}
 
-    attributes = ${node.workspaceName || site.workspaceName || documentNode.workspaceName}
+    attributes = ${node.workspaceName.value || site.workspaceName.value || documentNode.workspaceName.value}
 
 
     renderer = afx`
         <Neos.Context:Component
             type="checkbox"
-            name={node.workspaceName}
+            name={node.workspaceName.value}
             value={someOtherVariable.context.workspaceName}
         />
     `

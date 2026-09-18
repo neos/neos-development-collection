@@ -33,8 +33,8 @@ prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 // TODO Neos.Neos-20251005080230 Line 30: !! node.context.isRemovedContentShown is removed in Neos 9.0.
 prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 
-    workspaceName = ${node.workspaceName}
-    workspaceNameByWorkspace = ${node.workspaceName}
+    workspaceName = ${node.workspaceName.value}
+    workspaceNameByWorkspace = ${node.workspaceName.value}
     rootNode = ${node.context.rootNode}
 
     currentDateTime = ${node.context.currentDateTime}
