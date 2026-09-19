@@ -67,6 +67,11 @@ final readonly class Events implements \IteratorAggregate, \Countable
         return array_map($callback, $this->items);
     }
 
+    public function toInnerEvents(): PublishedEvents
+    {
+        return PublishedEvents::fromArray($this->map(fn (EventInterface|DecoratedEvent $event) => $event instanceof DecoratedEvent ? $event->innerEvent : $event));
+    }
+
     public function count(): int
     {
         return count($this->items);

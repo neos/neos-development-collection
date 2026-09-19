@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Remove a {@see SubtreeTag} from a node aggregate and its descendants.
+ *
  * Note: This will remove the tag from the node aggregate and all inherited instances. If the same tag is added for another Subtree below this aggregate, this will still be set!
  *
  * @api commands are the write-API of the ContentRepository

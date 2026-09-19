@@ -23,6 +23,7 @@ use Neos\Media\Domain\Model\ImageInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 require_once(__DIR__ . '/../../Fixtures/PostalAddress.php');
 
@@ -31,9 +32,7 @@ require_once(__DIR__ . '/../../Fixtures/PostalAddress.php');
  */
 class PropertyTypeTest extends TestCase
 {
-    /**
-     * @dataProvider declarationAndValueProvider
-     */
+    #[DataProvider('declarationAndValueProvider')]
     public function testIsMatchedBy(array $declarationsByType, array $validValues, array $invalidValues): void
     {
         foreach ($declarationsByType as $declaration) {
@@ -134,10 +133,10 @@ class PropertyTypeTest extends TestCase
     }
 
     /**
-     * @dataProvider declarationTypeProvider
      * @param array $declaredTypes
      * @param string $expectedSerializationType
      */
+    #[DataProvider('declarationTypeProvider')]
     public function testGetSerializationType(array $declaredTypes, string $expectedSerializationType): void
     {
         foreach ($declaredTypes as $declaredType) {

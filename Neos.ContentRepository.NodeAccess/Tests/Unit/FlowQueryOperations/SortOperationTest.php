@@ -7,15 +7,14 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\SortOperation;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * SortOperation test
  */
 class SortOperationTest extends TestCase
 {
-    /**
-     * @test+
-     */
+    #[Test]
     public function callWithoutArgumentsCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -24,9 +23,7 @@ class SortOperationTest extends TestCase
         $operation->evaluate($flowQuery, []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidSortDirectionCausesException()
     {
         $this->expectException(FlowQueryException::class);
@@ -35,9 +32,7 @@ class SortOperationTest extends TestCase
         $operation->evaluate($flowQuery, ['title', 'FOO']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidSortOptionCausesException()
     {
         $this->expectException(FlowQueryException::class);

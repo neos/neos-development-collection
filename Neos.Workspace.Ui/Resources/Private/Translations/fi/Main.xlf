@@ -87,9 +87,9 @@
         <source>Private</source>
         <target state="final">Yksityinen</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="final">Ainoastaan arvioijat ja pääkäyttäjät voivat käyttää ja muokata tätä työtilaa</target>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="no">
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Ainoastaan arvioijat ja pääkäyttäjät voivat käyttää ja muokata tätä työtilaa</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
         <source>Shared</source>
@@ -255,15 +255,31 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Tallenna muutokset</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Tallenna muutokset</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Arviointi</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Arviointi</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Viimeksi muokattu</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Viimeksi muokattu</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.status" xml:space="preserve">
+        <source>Status</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Tila</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Solmu</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Julkaise</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Hylkää</target>
       </trans-unit>
     </body>
   </file>

@@ -22,8 +22,8 @@ final readonly class ContentDimensionConstraints
 {
     public function __construct(
         /**
-         * if TRUE, the logic is "all allowed, except..." (blacklist approach).
-         * if FALSE, the logic is "nothing allowed, except..." (whitelist approach).
+         * if TRUE, the logic is "all allowed, except..." (denylist approach).
+         * if FALSE, the logic is "nothing allowed, except..." (allowlist approach).
          */
         public bool $isWildcardAllowed = true,
         /**

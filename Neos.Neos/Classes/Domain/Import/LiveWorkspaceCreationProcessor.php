@@ -47,7 +47,7 @@ final readonly class LiveWorkspaceCreationProcessor implements ProcessorInterfac
             $this->contentRepository->id,
             WorkspaceName::forLive(),
             WorkspaceTitle::fromString('Public live workspace'),
-            WorkspaceDescription::empty(),
+            WorkspaceDescription::createEmpty(),
             WorkspaceRoleAssignments::createForLiveWorkspace()
         );
     }

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create a root node aggregate
 
   As a user of the CR I want to create a new root node aggregate with an initial node.
@@ -39,8 +38,6 @@ Feature: Create a root node aggregate
       | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
       | nodeAggregateClassification | "root"                                                                      |
-    And event metadata at index 1 is:
-      | Key | Expected |
 
     Then I expect the node aggregate "lady-eleonode-rootford" to exist
     And I expect this node aggregate to be classified as "root"

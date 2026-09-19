@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
@@ -24,7 +25,7 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
     /**
      * @param array<string,mixed> $settings
      */
-    public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
+    public function build(array $settings, ContentRepository $contentRepository): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         return new class ($settings['propertyName'], $settings['serializedValue']) implements NodeBasedFilterInterface {
             public function __construct(

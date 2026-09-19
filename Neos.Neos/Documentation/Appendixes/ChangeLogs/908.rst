@@ -1,0 +1,188 @@
+`9.0.8 (2025-12-12) <https://github.com/neos/neos-development-collection/releases/tag/9.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Enable migration `Version20251005080230` which adjusts EEL in Fusion code to the new Neos 9 API <https://github.com/neos/neos-development-collection/pull/5642>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Adjustment after the upmerge of https://github.com/neos/neos-development-collection/pull/5638 for 9.0
+
+This is a step of the process to remove the fusion migration task from ``neos/rector``. People who already updated via the ``neos/rector`` migrations or already are on Neos 9.0 will find this migration obsolete - though we cannot recognise that and thus the migration will be run on the package never-the-less if executed via ``./flow flow:core:migrate``
+
+To especially prevent these new fusion migrations from being run they have to be manually excluded before running ``flow:core:migrate`` by modifying the composer.json to include:
+
+```json
+{
+    "extra": {
+        "applied-flow-migrations": [
+            // ...
+            "Neos.Neos-20251005080230",
+            "Neos.Fusion-20251006080506"
+        ]
+    }
+}
+```
+
+Users already on 9.0 might need to exclude the fusion migrations when updating to this patch as there could be false positive detections when using ``${item.label}`` or ``${item.identfier}`` in Fusion which is found by this migration as possible unsafe. The migration recognises that the variable item could be node which would require manual adjustments and thus the migration adds a todo comment to the file. These todo comments then might be totally obsolete for people already on a working 9.0.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+
+
+The command ``neos9preparation:preadjustfusion`` from Neos 8.4 was removed as ``flow:core:migrate Neos.Demo --version 20251005080230`` is now its successor
+
+
+
+* Packages: ``Neos``
+
+`FEATURE: Add yaml Flow core Neos 9 migrations (previously in rector) <https://github.com/neos/neos-development-collection/pull/5680>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+based on https://github.com/neos/neos-development-collection/pull/5642
+
+
+migrates the "YamlDimensionConfigRector" and the "YamlRoutePartHandlerRector" to Flow Yaml Source Code Migrations
+
+**Upgrade instructions**
+
+**Review instructions**
+
+Changes to neos/rector.
+
+We write warning comments to the top of the file and not inline.
+We dont add inline comment notes as attempted explanation.
+-> This allows us to simplify Yaml handling to parse and dump without hacky comment handling https://github.com/neos/rector/blob/`efbff0d060f9cf115c7c99fdcefeb07c488a3273 <https://github.com/neos/neos-development-collection/commit/efbff0d060f9cf115c7c99fdcefeb07c488a3273>`_/src/Core/YamlProcessing/YamlWithComments.php#L7
+-> in the case we figure out how to read existing comments and keep them when the file is written again we might also find a solution to inject custom comments along.
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Hotfix media browser horizontal over-scroll <https://github.com/neos/neos-development-collection/pull/5708>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Resolves: https://github.com/neos/neos-development-collection/issues/5685 at a bare minimum effort ... no extra glory ... not going over start and getting 200DM in cash... nuthing 
+
+**Upgrade instructions**
+
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Improve FusionView slow queries for current document and site <https://github.com/neos/neos-development-collection/pull/5597>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+By reusing already existing information we can skip 2 unnecessary subgraph ancestry queries, which are marked as slow queries.
+Both changes are reimplementations from Neos 8.3.
+
+In my test this improved the loading time in the Neos.Demo by 20ms (70ms -> 50ms for a blank page).
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent "security Context cannot be initialized" in CLI when using `getContentSubgraph()` <https://github.com/neos/neos-development-collection/pull/5701>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+``canReadNodesFromWorkspace()`` correctly uses this check but ``$this->securityContext->getRoles()`` fails in CLI when the subgraph is fetched during asking for the ``getVisibilityConstraints()``
+
+CLI is invoked in a ``$this->securityContext->withoutAuthorizationChecks()`` closure but its up to us as developers to check ``areAuthorizationChecksDisabled()`` as there is no best-effort return value generation like empty array for ``getRoles()``
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Creating valid „more“ url in history module <https://github.com/neos/neos-development-collection/pull/5703>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+With this change the uri to load more history entries is correctly generated again and all history entries can be browsed.
+
+* Resolves: `#5702 <https://github.com/neos/neos-development-collection/issues/5702>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Rebuild backend styles to fix user menu <https://github.com/neos/neos-development-collection/pull/5705>`_
+------------------------------------------------------------------------------------------------------------------
+
+This probably broke due to an error during upmerges from Neos 8.4
+
+* Resolves: `#5704 <https://github.com/neos/neos-development-collection/issues/5704>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Nodes show action does not handle `\JsonSerializable` objects and crashes if object is not StringAble <https://github.com/neos/neos-development-collection/pull/5706>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+With https://github.com/neos/neos-ui/pull/3723 and https://github.com/neos/neos-ui/pull/3723 the ``NodePropertyConverterService`` returns ``\\JsonSerializable`` objects directly in the expectation that they are serialized directly. This is also true for the usages within the Neos Ui.
+
+But this legacy endpoint here in Neos doesnt do it. And throws
+
+"Object of class Sitegeist\\Archaeopteryx\\Link could not be converted to string"
+
+on some occasions whenever the endoint is used. Funnely the Neos Ui really does not care about the node properties rendered here via fluid in html so we could also return "nudelsuppe" here. Its just important that it not crashes.
+
+https://github.com/neos/neos-development-collection/blob/`1aeef6c02142b41e4626ea32434f06cd0f84e9bd <https://github.com/neos/neos-development-collection/commit/1aeef6c02142b41e4626ea32434f06cd0f84e9bd>`_/Neos.Neos/Resources/Private/Templates/Service/Nodes/Show.html#L30-L35
+
+In the future we should have this whole thing killed :D
+
+**Upgrade instructions**
+
+
+* Packages: ``.github`` ``Neos``
+
+`BUGFIX: Prevent render error if asset is not set in ImageTag <https://github.com/neos/neos-development-collection/pull/5647>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+As the thumbnail is generated within „context“ conditions don’t apply yet which could prevent the rendering and therefore the error.
+
+The new method was introduced with Neos 8.4.
+
+* Packages: ``Media`` ``Neos``
+
+`BUGFIX: Make regex for replacing nodes in cache entry identifier more… <https://github.com/neos/neos-development-collection/pull/5690>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes part of https://github.com/neos/neos-development-collection/issues/5688
+
+* Packages: ``Neos``
+
+`TASK: Cover bug #5677 with behat tests (tests shortcuts via FrontendNodeController) <https://github.com/neos/neos-development-collection/pull/5679>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+We do have a full test-suite for the uri path projection and also test the shortcut node resolving but this is only done against the uri builder. We dont have tests for  `#5677 <https://github.com/neos/neos-development-collection/issues/5677>`_to assert that the frontend node controller behaves correctly. This allowed the regression to snuck in which results in the backend preview being shown. To prevent this here are tests <3
+
+Also covers shortcut backend rendering `#3372 <https://github.com/neos/neos-development-collection/issues/3372>`_with behat tests (fusion rendering of Neos.Neos:Shortcut)
+
+* Packages: ``Neos``
+
+`TASK: Implement performance tracing for CatchUpHooks <https://github.com/neos/neos-development-collection/pull/5700>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Before this change, it was really hard to figure out why Neos was slow if CatchUpHooks (f.e. added by community packages) had a negative impact on write performance.
+With this change, it is really easy to see. The change is non-breaking.
+
+* Packages: ``.github`` ``ContentRepository.Core``
+
+`TASK: Update pdf.js library to version v5.4.394 <https://github.com/neos/neos-development-collection/pull/5687>`_
+------------------------------------------------------------------------------------------------------------------
+
+Update pdf.js to current version v5.4.394 and replace old version 1.9.426.
+
+I consider this as a security bugfix. Thats why it targets 8.3.
+
+* Fixes: `#5684 <https://github.com/neos/neos-development-collection/issues/5684>`_ 
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`TASK: Run pipeline with PHP8.5 <https://github.com/neos/neos-development-collection/pull/5689>`_
+-------------------------------------------------------------------------------------------------
+
+Fails currently due to Eel unit tests in Flow. 
+See also https://github.com/neos/flow-development-collection/pull/3527
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.7...9.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

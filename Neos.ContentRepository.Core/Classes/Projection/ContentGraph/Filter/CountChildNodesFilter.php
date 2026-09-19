@@ -79,4 +79,9 @@ final readonly class CountChildNodesFilter
             $propertyValue ?? $this->propertyValue,
         );
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->nodeTypes === null && $this->searchTerm === null && $this->propertyValue === null;
+    }
 }

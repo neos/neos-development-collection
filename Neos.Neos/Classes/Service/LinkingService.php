@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -28,6 +27,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\Fusion\Helper\LinkHelper;
@@ -290,7 +290,7 @@ class LinkingService
         $mainRequest = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($mainRequest);
-        $createLiveUri = $workspace && $nodeAddress->workspaceName->isLive() && !$resolvedNode->tags->contain(SubtreeTag::disabled());
+        $createLiveUri = $workspace && $nodeAddress->workspaceName->isLive() && !$resolvedNode->tags->contain(NeosSubtreeTag::disabled());
 
         if ($addQueryString === true) {
             // legacy feature see https://github.com/neos/neos-development-collection/issues/5076

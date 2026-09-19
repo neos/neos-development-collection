@@ -68,7 +68,15 @@ final readonly class DimensionSpacePointSet implements
 
     public static function fromJsonString(string $jsonString): self
     {
-        return new self(\json_decode($jsonString, true));
+        try {
+            return new self(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(
+                sprintf('Failed to JSON-decode "%s": %s', $jsonString, $e->getMessage()),
+                1782715535,
+                $e
+            );
+        }
     }
 
     /**
@@ -139,13 +147,7 @@ final readonly class DimensionSpacePointSet implements
 
     public function equals(DimensionSpacePointSet $other): bool
     {
-        $thisPointHashes = $this->getPointHashes();
-        $otherPointHashes = $other->getPointHashes();
-
-        sort($thisPointHashes);
-        sort($otherPointHashes);
-
-        return $thisPointHashes === $otherPointHashes;
+        return count($this->points) === count($other->points) && array_diff_key($this->points, $other->points) === [];
     }
 
     public function getIterator(): \Traversable

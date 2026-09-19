@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpaceInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
@@ -16,13 +18,15 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class PropertyAdjustment
 {
+    use DimensionSpaceInternals;
+
     public function __construct(
         private readonly ContentGraphInterface $contentGraph,
+        private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly NodeTypeManager $nodeTypeManager
     ) {
     }
@@ -41,7 +45,9 @@ class PropertyAdjustment
         $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 
         foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
-            foreach ($nodeAggregate->getNodes() as $node) {
+            $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOccupiedDimensionSpacePoints($nodeAggregate);
+            foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
+                $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
                 $propertyKeysInNode = [];
 
                 $properties = $node->properties;

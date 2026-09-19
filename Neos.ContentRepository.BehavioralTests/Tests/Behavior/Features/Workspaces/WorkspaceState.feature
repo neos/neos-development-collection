@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Workspace status
   The workspace status signals if the workspace is UP_TO_DATE or OUTDATED
   All depending workspaces are considered OUTDATED if changes are made or published into a workspace

@@ -6,6 +6,7 @@ namespace Neos\Neos\AssetUsage\Domain;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Doctrine\DBAL\Result;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -13,12 +14,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\Flow\Annotations\Scope;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
 
 /**
  * @internal Not meant to be used in user land code. In order to look up asset usages the AssetUsageService or GlobalAssetUsageService can be used
  */
+#[Scope("singleton")]
 final class AssetUsageRepository
 {
     public const TABLE = 'neos_asset_usage';
@@ -31,9 +34,7 @@ final class AssetUsageRepository
     public function findUsages(ContentRepositoryId $contentRepositoryId, AssetUsageFilter $filter): AssetUsages
     {
         $queryBuilder = $this->dbal->createQueryBuilder();
-        $queryBuilder
-            ->select('*')
-            ->from(self::TABLE);
+        $queryBuilder->from(self::TABLE);
         $queryBuilder->andWhere('contentrepositoryid = :contentRepositoryId');
         $queryBuilder->setParameter('contentRepositoryId', $contentRepositoryId->value);
         if ($filter->hasAssetId()) {
@@ -54,18 +55,39 @@ final class AssetUsageRepository
             $queryBuilder->andWhere('workspacename = :workspaceName');
             $queryBuilder->setParameter('workspaceName', $filter->workspaceName?->value);
         }
+        $hasGroupBy = false;
         if ($filter->groupByAsset) {
             $queryBuilder->addGroupBy('assetid');
+            $hasGroupBy = true;
         }
         if ($filter->groupByNodeAggregate) {
             $queryBuilder->addGroupBy('nodeaggregateid');
+            $hasGroupBy = true;
         }
         if ($filter->groupByWorkspaceName) {
             $queryBuilder->addGroupBy('workspacename');
+            $hasGroupBy = true;
         }
         if ($filter->groupByNode) {
             $queryBuilder->addGroupBy('nodeaggregateid');
             $queryBuilder->addGroupBy('origindimensionspacepointhash');
+            $hasGroupBy = true;
+        }
+        if ($hasGroupBy && !$this->dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
+            // MySQL (with ONLY_FULL_GROUP_BY) and PostgreSQL require non-grouped columns
+            // to be wrapped in aggregate functions when GROUP BY is used
+            $queryBuilder->select(
+                'ANY_VALUE(assetid) as assetid',
+                'ANY_VALUE(originalassetid) as originalassetid',
+                'ANY_VALUE(contentrepositoryid) as contentrepositoryid',
+                'ANY_VALUE(nodeaggregateid) as nodeaggregateid',
+                'ANY_VALUE(workspacename) as workspacename',
+                'ANY_VALUE(origindimensionspacepointhash) as origindimensionspacepointhash',
+                'ANY_VALUE(origindimensionspacepoint) as origindimensionspacepoint',
+                'ANY_VALUE(propertyname) as propertyname',
+            );
+        } else {
+            $queryBuilder->select('*');
         }
         return new AssetUsages(function () use ($queryBuilder) {
             $result = $queryBuilder->execute();

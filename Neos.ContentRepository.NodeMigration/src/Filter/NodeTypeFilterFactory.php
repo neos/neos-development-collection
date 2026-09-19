@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -23,14 +24,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
  */
 class NodeTypeFilterFactory implements FilterFactoryInterface
 {
-    public function __construct(private readonly NodeTypeManager $nodeTypeManager)
-    {
-    }
-
     /**
      * @param array<string,mixed> $settings
      */
-    public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
+    public function build(array $settings, ContentRepository $contentRepository): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $nodeType = NodeTypeName::fromString($settings['nodeType']);
         $withSubTypes = false;
@@ -47,7 +44,7 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
             $nodeType,
             $withSubTypes,
             $exclude,
-            $this->nodeTypeManager
+            $contentRepository->getNodeTypeManager()
         ) implements NodeAggregateBasedFilterInterface {
             public function __construct(
                 /**

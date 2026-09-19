@@ -108,7 +108,7 @@ readonly class SiteServiceInternals
                     $this->contentRepository->id,
                     WorkspaceName::forLive(),
                     WorkspaceTitle::fromString('Public live workspace'),
-                    WorkspaceDescription::empty(),
+                    WorkspaceDescription::createEmpty(),
                     WorkspaceRoleAssignments::createForLiveWorkspace()
                 )
             );

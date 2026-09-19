@@ -22,8 +22,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * Finder for changes
  *
- * !!! Still a bit unstable - might change in the future.
- *
+ * @internal Only for consumption inside Neos. Not public api because the implementation will be refactored sooner or later: https://github.com/neos/neos-development-collection/issues/5493
  * @Flow\Proxy(false)
  */
 final class ChangeFinder implements ProjectionStateInterface
@@ -36,10 +35,11 @@ final class ChangeFinder implements ProjectionStateInterface
 
     public function findByContentStreamId(ContentStreamId $contentStreamId): Changes
     {
+        $contentStreamIdColumn = $this->dbal->quoteIdentifier('contentStreamId');
         $changeRows = $this->dbal->executeQuery(
             <<<SQL
                 SELECT * FROM {$this->tableName}
-                WHERE contentStreamId = :contentStreamId
+                WHERE {$contentStreamIdColumn} = :contentStreamId
             SQL,
             [
                 'contentStreamId' => $contentStreamId->value
@@ -50,10 +50,11 @@ final class ChangeFinder implements ProjectionStateInterface
 
     public function countByContentStreamId(ContentStreamId $contentStreamId): int
     {
+        $contentStreamIdColumn = $this->dbal->quoteIdentifier('contentStreamId');
         return (int)$this->dbal->fetchOne(
             <<<SQL
                 SELECT COUNT(*) FROM {$this->tableName}
-                WHERE contentStreamId = :contentStreamId
+                WHERE {$contentStreamIdColumn} = :contentStreamId
             SQL,
             [
                 'contentStreamId' => $contentStreamId->value

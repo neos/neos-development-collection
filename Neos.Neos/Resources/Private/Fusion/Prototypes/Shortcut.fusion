@@ -1,20 +1,11 @@
-# Neos.Neos.Shortcut is given a representation for editing purposes
-#
-prototype(Neos.Neos:Shortcut) < prototype(Neos.Neos:Page) {
-  head.stylesheets {
-    shortcut = afx`
-        <link rel="stylesheet" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Shortcut.css')} />
-    `
-  }
-
-  body = afx`
-    <div id="neos-shortcut">
-      <p>
-        <Neos.Neos:Shortcut.Link />
-      </p>
-    </div>
+prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
+  renderer = afx`
+            <p>
+                <Neos.Neos:Shortcut.Link />
+            </p>
   `
 }
+
 
 /** @internal */
 prototype(Neos.Neos:Shortcut.Link) < prototype(Neos.Fusion:Component) {

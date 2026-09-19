@@ -10,7 +10,9 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Cache\ParserCache;
@@ -30,12 +32,12 @@ class ParserExceptionTest extends UnitTestCase
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
         $parserCache = $this->getMockBuilder(ParserCache::class)->getMock();
-        $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
-        $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
+        $parserCache->method('cacheForFusionFile')->willReturnCallback(fn ($_, $getValue) => $getValue());
+        $parserCache->method('cacheForDsl')->willReturnCallback(fn ($_, $_2, $getValue) => $getValue());
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
-    public function fullParserExceptionMessage(): \Generator
+    public static function fullParserExceptionMessage(): \Generator
     {
         yield 'no closing brace' => [
             <<<'FUSION'
@@ -99,7 +101,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function generalInvalidFusion(): \Generator
+    public static function generalInvalidFusion(): \Generator
     {
         yield 'space in object path' => [
             'path. hello = 123',
@@ -157,7 +159,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration(): \Generator
+    public static function privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration(): \Generator
     {
         yield 'simple @private meta key cannot be declared from outside' => [
             <<<'FUSION'
@@ -196,7 +198,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function parsingWorksButOtherLogicThrows(): \Generator
+    public static function parsingWorksButOtherLogicThrows(): \Generator
     {
         yield 'invalid path to object inheritance' => [
             'prototype(a:b) < path.simple',
@@ -215,7 +217,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function advancedGuessingWhatWentWrong(): \Generator
+    public static function advancedGuessingWhatWentWrong(): \Generator
     {
         yield 'misspelled prototype declaration' => [
             'prooototype(a:b)',
@@ -228,7 +230,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function unclosedStatements(): \Generator
+    public static function unclosedStatements(): \Generator
     {
         yield 'unclosed multiline comment' => [
             '/*',
@@ -276,7 +278,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function removedLanguageFeaturedAreExplained(): \Generator
+    public static function removedLanguageFeaturedAreExplained(): \Generator
     {
         yield 'unqualified object type' => [
             'a = Value',
@@ -289,7 +291,7 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    public function endOfLineExpected(): \Generator
+    public static function endOfLineExpected(): \Generator
     {
         yield 'multiple values' => [
             'a = 1 + 1',
@@ -302,40 +304,34 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider fullParserExceptionMessage
-     */
+    #[DataProvider('fullParserExceptionMessage')]
+    #[Test]
     public function itMatchesTheFullExceptionMessage($fusion, $expectedMessage): void
     {
         self::expectException(ParserException::class);
         self::expectExceptionMessage($expectedMessage);
-        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+        $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
-    /**
-     * @test
-     * @dataProvider advancedGuessingWhatWentWrong
-     * @dataProvider removedLanguageFeaturedAreExplained
-     * @dataProvider generalInvalidFusion
-     * @dataProvider parsingWorksButOtherLogicThrows
-     * @dataProvider privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration
-     * @dataProvider unclosedStatements
-     * @dataProvider endOfLineExpected
-     */
+    #[DataProvider('advancedGuessingWhatWentWrong')]
+    #[DataProvider('removedLanguageFeaturedAreExplained')]
+    #[DataProvider('generalInvalidFusion')]
+    #[DataProvider('parsingWorksButOtherLogicThrows')]
+    #[DataProvider('privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration')]
+    #[DataProvider('unclosedStatements')]
+    #[DataProvider('endOfLineExpected')]
+    #[Test]
     public function itMatchesThePartialExceptionMessage($fusion, $expectedMessage): void
     {
         try {
-            $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
+            $this->parser->parseFromSource(FusionSourceCodeCollection::fromString($fusion))->toArray();
             self::fail('No exception was thrown. Expected message: ' . $expectedMessage);
         } catch (ParserException $e) {
             self::assertSame($expectedMessage, $e->getHelperMessagePart());
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function messageLinePartWorks()
     {
         $part = new MessageLinePart('abcd');

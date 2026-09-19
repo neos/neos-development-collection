@@ -328,70 +328,6 @@
         <source>Deactivated</source>
         <target state="translated">Uitgeschakeld</target>
       </trans-unit>
-      <trans-unit id="packages.tooltip.unfreeze" xml:space="preserve">
-        <source>This package is currently frozen. Click to unfreeze it.</source>
-        <target state="translated">Dit pakket is momenteel vergrendeld. Klik om deze te ontgrendelen.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.freeze" xml:space="preserve">
-        <source>Freeze the package in order to speed up your website.</source>
-        <target state="translated">Vergrendel dit pakket om je website sneller te laten lopen.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDeactivate" xml:space="preserve">
-        <source>This package is protected and cannot be deactivated.</source>
-        <target state="translated">Dit pakket is beschermd en kan daarom niet worden uitgeschakeld.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
-        <source>Deactivate Package</source>
-        <target state="translated">Pakket uitschakelen</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.activate" xml:space="preserve">
-        <source>Activate Package</source>
-        <target state="translated">Pakket inschakelen</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.noDelete" xml:space="preserve">
-        <source>This package is protected and cannot be deleted.</source>
-        <target state="translated">Dit pakket is beschermd en kan daarom niet worden verwijderd.</target>
-      </trans-unit>
-      <trans-unit id="packages.tooltip.delete" xml:space="preserve">
-        <source>Delete Package</source>
-        <target state="translated">Pakket verwijderen</target>
-      </trans-unit>
-      <trans-unit id="packages.message.reallyDelete" xml:space="preserve">
-        <source>Do you really want to delete "{0}"?</source>
-        <target state="translated">Weet je zeker dat je "{0}" wilt verwijderen?</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDelete" xml:space="preserve">
-        <source>Yes, delete the package</source>
-        <target state="translated">Ja, verwijder het pakket</target>
-      </trans-unit>
-      <trans-unit id="packages.message.confirmDeletes" xml:space="preserve">
-        <source>Yes, delete the packages</source>
-        <target state="translated">Ja, verwijder de pakketten</target>
-      </trans-unit>
-      <trans-unit id="packages.message.selected.reallyDelete" xml:space="preserve">
-        <source>Do you really want to delete the selected packages?</source>
-        <target state="translated">Weet je zeker dat je de geselecteerde pakketten wil verwijderen?</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.freeze" xml:space="preserve">
-        <source>Freeze selected packages</source>
-        <target state="translated">Vergrendel de geselecteerde pakketten</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.unfreeze" xml:space="preserve">
-        <source>Unfreeze selected packages</source>
-        <target state="translated">Ontgrendel de geselecteerde pakketten</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.delete" xml:space="preserve">
-        <source>Delete selected packages</source>
-        <target state="translated">Verwijder de geselecteerde pakketten</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.deactivate" xml:space="preserve">
-        <source>Deactivate selected packages</source>
-        <target state="translated">Schakel de geselecteerde pakketten uit</target>
-      </trans-unit>
-      <trans-unit id="packages.selected.activate" xml:space="preserve">
-        <source>Activate selected packages</source>
-        <target state="translated">Schakel de geselecteerde pakketten in</target>
-      </trans-unit>
       <trans-unit id="sites.label" xml:space="preserve" approved="yes">
         <source>Sites Management</source>
         <target state="final">Site Management</target>
@@ -948,6 +884,14 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
       <trans-unit id="users.sortBy.lastLogin" xml:space="preserve">
         <source>Sort by last login</source>
         <target state="translated">Sorteren op laatste login</target>
+      </trans-unit>
+      <trans-unit id="sites.creationContentRepository" xml:space="preserve">
+        <source>In the content repository: "{0}"</source>
+        <target state="translated">In de contentopslag: "{0}"</target>
+      </trans-unit>
+      <trans-unit id="branding.link.title" xml:space="preserve">
+        <source>Go back to your starting module</source>
+        <target state="translated">Ga terug naar de startmodule</target>
       </trans-unit>
     </body>
   </file>

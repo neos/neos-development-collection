@@ -16,9 +16,8 @@ namespace Neos\Workspace\Ui\Controller;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\ConflictingEvent;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
@@ -59,6 +58,7 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\Service\WorkspaceService;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 use Neos\Neos\FrontendRouting\NodeUriBuilderFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
@@ -728,10 +728,71 @@ class WorkspaceController extends AbstractModuleController
                 $this->addFlashMessage($this->getModuleLabel('workspaces.ForceRebaseWorkspaceFailed'));
                 $this->forward('index');
             }
+            $conflictInformation = array_map(fn (ConflictingEvent $conflictingEvent) => [
+                'error' => $conflictingEvent->getException()->getMessage(),
+                'affectedNode' => $conflictingEvent->getAffectedNodeAggregateId(),
+                'event' => (new \ReflectionClass($conflictingEvent->getEvent()))->getShortName() . ' ' . $conflictingEvent->getSequenceNumber()->value,
+                'eventPayload' => htmlentities(json_encode($conflictingEvent->getEvent(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT), ENT_NOQUOTES),
+            ], iterator_to_array($e->conflictingEvents));
+
         }
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
+        if ($workspace === null) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(404, 'Workspace does not exist');
+        }
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
+        if ($workspace->baseWorkspaceName === null) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(404, 'Workspace does not exist');
+        }
+        $baseWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->baseWorkspaceName);
         $this->response->addHttpHeader('HX-Retarget', '#popover-container');
         $this->response->addHttpHeader('HX-ReSwap', 'innerHTML');
-        $this->view->assign('workspaceName', $workspaceName->value);
+
+        $this->view->assignMultiple([
+            'workspaceName' => $workspaceName->value,
+            'workspaceTitle' => $workspaceMetadata->title->value,
+            'baseWorkspaceTitle' => $baseWorkspaceMetadata->title->value,
+            'conflictInformation' => $conflictInformation,
+        ]);
+
+
+    }
+
+    /**
+     * Confirm force rebase a workspace
+     */
+    public function rebaseConfirmAction(WorkspaceName $workspaceName, int $conflictCount): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspace = $contentRepository->findWorkspaceByName($workspaceName);
+        if ($workspace === null) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.workspaceDoesNotExist'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(404, 'Workspace does not exist');
+        }
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
+
+        $this->view->assignMultiple([
+            'workspaceName' => $workspaceName->value,
+            'workspaceTitle' => $workspaceMetadata->title->value,
+            'conflictCount' => $conflictCount
+        ]);
     }
 
     /**
@@ -760,29 +821,29 @@ class WorkspaceController extends AbstractModuleController
     {
         $siteChanges = [];
         $changes = $this->getChangesFromWorkspace($selectedWorkspace, $contentRepository);
-
-        // TODO hack for the case $change->originDimensionSpacePoint is NULL so we can fetch a subgraph still. This is the case for changes NodeAggregateNameWasChanged or NodeAggregateTypeWasChanged
-        $dimensionSpacePoints = iterator_to_array($contentRepository->getVariationGraph()->getDimensionSpacePoints());
-        /** @var DimensionSpacePoint $arbitraryDimensionSpacePoint */
-        $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints);
-
+        $contentGraph = $contentRepository->getContentGraph($selectedWorkspace->workspaceName);
         foreach ($changes as $change) {
-            $workspaceName = $selectedWorkspace->workspaceName;
-            if ($change->deleted) {
-                // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream
-                // where the node was deleted.
-                // Thus, to figure out the rootline for display, we check the *base workspace* Content Stream.
-                //
-                // This is safe because the UI basically shows what would be removed once the deletion is published.
-                $baseWorkspace = $this->requireBaseWorkspace($selectedWorkspace, $contentRepository);
-                $workspaceName = $baseWorkspace->workspaceName;
+            if ($change->originDimensionSpacePoint) {
+                $subgraph = $contentGraph->getSubgraph(
+                    $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+                    VisibilityConstraints::createEmpty()
+                );
+                $node = $subgraph->findNodeById($change->nodeAggregateId);
+            } else {
+                // for changes like NodeAggregateNameWasChanged or NodeAggregateTypeWasChanged, get a random occupying node:
+                $nodeAggregate = $contentGraph->findNodeAggregateById($change->nodeAggregateId);
+                if ($nodeAggregate === null) {
+                    continue;
+                }
+                $occupiedDimensionSpacePoints = $nodeAggregate->occupiedDimensionSpacePoints->getPoints();
+                assert($occupiedDimensionSpacePoints !== []);
+                $arbitraryDimensionSpacePoint = reset($occupiedDimensionSpacePoints);
+                $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($arbitraryDimensionSpacePoint);
+                $subgraph = $contentGraph->getSubgraph(
+                    $arbitraryDimensionSpacePoint->toDimensionSpacePoint(),
+                    VisibilityConstraints::createEmpty()
+                );
             }
-            $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph(
-                $change->originDimensionSpacePoint?->toDimensionSpacePoint() ?? $arbitraryDimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
-
-            $node = $subgraph->findNodeById($change->nodeAggregateId);
             if ($node) {
                 $documentNode = null;
                 $siteNode = null;
@@ -863,19 +924,11 @@ class WorkspaceController extends AbstractModuleController
                             isRemoved: $change->deleted,
                             isNew: $change->created,
                             isMoved: $change->moved,
-                            isHidden: $documentNode->tags->contain(SubtreeTag::disabled()),
+                            isHidden: $documentNode->tags->contain(NeosSubtreeTag::disabled()),
                         );
                     }
 
-                    // As for changes of type `delete` we are using nodes from the live workspace
-                    // we can't create a serialized nodeAddress from the node.
-                    // Instead, we use the original stored values.
-                    $nodeAddress = NodeAddress::create(
-                        $contentRepository->id,
-                        $selectedWorkspace->workspaceName,
-                        $change->originDimensionSpacePoint?->toDimensionSpacePoint() ?? $arbitraryDimensionSpacePoint,
-                        $change->nodeAggregateId
-                    );
+                    $nodeAddress = NodeAddress::fromNode($node);
                     $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
                     $dimensions = [];
                     foreach ($node->dimensionSpacePoint->coordinates as $id => $coordinate) {
@@ -887,7 +940,7 @@ class WorkspaceController extends AbstractModuleController
                     }
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$node->dimensionSpacePoint->hash][$relativePath] = new ChangeItem(
                         serializedNodeAddress: $nodeAddress->toJson(),
-                        hidden: $node->tags->contain(SubtreeTag::disabled()),
+                        hidden: $node->tags->contain(NeosSubtreeTag::disabled()),
                         isRemoved: $change->deleted,
                         isNew: $change->created,
                         isMoved: $change->moved,
@@ -928,7 +981,7 @@ class WorkspaceController extends AbstractModuleController
     ): ?Node {
         $baseSubgraph = $contentRepository->getContentGraph($baseWorkspaceName)->getSubgraph(
             $modifiedNode->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
         return $baseSubgraph->findNodeById($modifiedNode->aggregateId);
     }

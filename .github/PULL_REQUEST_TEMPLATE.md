@@ -30,7 +30,10 @@
 
 - [ ] Code follows the PSR-2 coding style
 - [ ] Tests have been created, run and adjusted as needed
-- [ ] The PR is created against the [lowest maintained branch](https://www.neos.io/features/release-roadmap.html)
+- [ ] The PR is created against the correct branch:
+  - If it's a bugfix, use the [lowest maintained branch which has the bug](https://www.neos.io/features/release-roadmap.html)
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
 - [ ] Reviewer - PR Title is brief but complete and starts with `FEATURE|TASK|BUGFIX`
 - [ ] Reviewer - The first section explains the change briefly for change-logs
 - [ ] Reviewer - Breaking Changes are marked with `!!!` and have upgrade-instructions

@@ -18,6 +18,7 @@ use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\Test;
 
 class NodeTypeEnrichmentServiceTest extends UnitTestCase
 {
@@ -29,9 +30,7 @@ class NodeTypeEnrichmentServiceTest extends UnitTestCase
     }
 
 
-    /**
-     * @test
-     */
+    #[Test]
     public function EnrichNodeTypeLabelsConfig(): void
     {
         $nodeConfiguration = YAML::parse(<<<'YAML'
@@ -51,6 +50,10 @@ class NodeTypeEnrichmentServiceTest extends UnitTestCase
                   type: text
                   ui:
                     label: i18n
+          childNodes:
+            someChildNode:
+              type: Neos.Neos:ContentCollection
+              label: i18n
         YAML);
 
         $expectedResult = YAML::parse(<<<'YAML'
@@ -70,6 +73,10 @@ class NodeTypeEnrichmentServiceTest extends UnitTestCase
                   type: text
                   ui:
                     label: Neos.Enrichment:NodeTypes.Translation:docReference.properties.referenceProperty
+          childNodes:
+            someChildNode:
+              type: Neos.Neos:ContentCollection
+              label: Neos.Enrichment:NodeTypes.Translation:childNodes.someChildNode
         YAML);
 
         $actualResult = $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($nodeConfiguration);

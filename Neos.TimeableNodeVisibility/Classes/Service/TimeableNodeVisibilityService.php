@@ -7,7 +7,6 @@ namespace Neos\TimeableNodeVisibility\Service;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
@@ -15,14 +14,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeType
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use Neos\TimeableNodeVisibility\Domain\ChangedVisibilities;
 use Neos\TimeableNodeVisibility\Domain\ChangedVisibility;
 use Psr\Log\LoggerInterface;
@@ -49,8 +48,7 @@ class TimeableNodeVisibilityService
 
         /** @var Node $node */
         foreach ($nodes as $node) {
-            $nodeIsDisabled = $node->tags->contain(SubtreeTag::disabled());
-            if ($this->needsEnabling($node, $now) && $nodeIsDisabled) {
+            if ($this->needsEnabling($node, $now)) {
                 $contentRepository->handle(
                     EnableNodeAggregate::create(
                         $workspaceName,
@@ -64,7 +62,7 @@ class TimeableNodeVisibilityService
                 $this->logResult($result);
 
             }
-            if ($this->needsDisabling($node, $now) && !$nodeIsDisabled) {
+            if ($this->needsDisabling($node, $now)) {
                 $contentRepository->handle(
                     DisableNodeAggregate::create(
                         $workspaceName,
@@ -92,10 +90,9 @@ class TimeableNodeVisibilityService
 
             $contentGraph = $contentRepository->getContentGraph($workspaceName);
 
-            // We fetch without restriction to get also all disabled nodes
             $subgraph = $contentGraph->getSubgraph(
                 $dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
+                NeosVisibilityConstraints::excludeRemoved()
             );
 
             $sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
@@ -130,7 +127,8 @@ class TimeableNodeVisibilityService
 
     private function needsEnabling(Node $node, \DateTimeImmutable $now): bool
     {
-        return $node->hasProperty('enableAfterDateTime')
+        return $node->tags->withoutInherited()->contain(NeosSubtreeTag::disabled())
+            && $node->hasProperty('enableAfterDateTime')
             && $node->getProperty('enableAfterDateTime') != null
             && $node->getProperty('enableAfterDateTime') < $now
             && (
@@ -143,7 +141,8 @@ class TimeableNodeVisibilityService
 
     private function needsDisabling(Node $node, \DateTimeImmutable $now): bool
     {
-        return $node->hasProperty('disableAfterDateTime')
+        return !$node->tags->withoutInherited()->contain(NeosSubtreeTag::disabled())
+            && $node->hasProperty('disableAfterDateTime')
             && $node->getProperty('disableAfterDateTime') != null
             && $node->getProperty('disableAfterDateTime') < $now
             && (

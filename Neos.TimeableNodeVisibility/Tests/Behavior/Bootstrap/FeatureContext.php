@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Neos\Behat\FlowBootstrapTrait;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 use Neos\TimeableNodeVisibility\Service\TimeableNodeVisibilityService;
 use PHPUnit\Framework\Assert;
 
@@ -55,11 +55,11 @@ class FeatureContext implements Context
         Assert::assertNotNull($this->currentNode, 'No current node selected');
         $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions(),
+            VisibilityConstraints::createEmpty(),
         );
         $currentNode = $subgraph->findNodeById($this->currentNode->aggregateId);
         Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in workspace %s and dimension %s', $this->currentNode->aggregateId->value, $subgraph->getWorkspaceName()->value, $subgraph->getDimensionSpacePoint()->toJson()));
-        Assert::assertFalse($currentNode->tags->contain(SubtreeTag::disabled()), sprintf('Node "%s" was expected to be enabled, but it is not', $this->currentNode->aggregateId->value));
+        Assert::assertFalse($currentNode->tags->contain(NeosSubtreeTag::disabled()), sprintf('Node "%s" was expected to be enabled, but it is not', $this->currentNode->aggregateId->value));
     }
 
     /**
@@ -70,11 +70,11 @@ class FeatureContext implements Context
         Assert::assertNotNull($this->currentNode, 'No current node selected');
         $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
             $this->currentDimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions(),
+            VisibilityConstraints::createEmpty(),
         );
         $currentNode = $subgraph->findNodeById($this->currentNode->aggregateId);
         Assert::assertNotNull($currentNode, sprintf('Failed to find node with id "%s" in workspace %s and dimension %s', $this->currentNode->aggregateId->value, $subgraph->getWorkspaceName()->value, $subgraph->getDimensionSpacePoint()->toJson()));
-        Assert::assertTrue($currentNode->tags->contain(SubtreeTag::disabled()), sprintf('Node "%s" was expected to be disabled, but it is not', $this->currentNode->aggregateId->value));
+        Assert::assertTrue($currentNode->tags->contain(NeosSubtreeTag::disabled()), sprintf('Node "%s" was expected to be disabled, but it is not', $this->currentNode->aggregateId->value));
     }
 
     protected function getContentRepositoryService(

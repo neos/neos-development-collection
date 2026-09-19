@@ -25,9 +25,8 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\TetheredNodeAggregateCannotBeRemoved;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -41,7 +40,6 @@ trait NodeRemoval
     /**
      * @param RemoveNodeAggregate $command
      * @return EventsToPublish
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws ContentStreamDoesNotExistYet
      * @throws DimensionSpacePointNotFound
      */
@@ -56,29 +54,21 @@ trait NodeRemoval
             $contentGraph,
             $command->nodeAggregateId
         );
+        if ($nodeAggregate->classification->isRoot() && $command->nodeVariantSelectionStrategy !== NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS) {
+            throw new \RuntimeException(sprintf('Root node aggregates (%s) can only be removed by using node variant selection strategy as they should cover all allowed dimensions. To adjust to removed dimensions use UpdateRootNodeAggregateDimensions instead.', $nodeAggregate->nodeAggregateId->value), 1740753598);
+        }
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $this->requireNodeAggregateNotToBeTethered($nodeAggregate);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
-        if ($command->removalAttachmentPoint instanceof NodeAggregateId) {
-            $this->requireProjectedNodeAggregate(
-                $contentGraph,
-                $command->removalAttachmentPoint
-            );
-        }
 
         $events = Events::with(
             new NodeAggregateWasRemoved(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
-                $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
-                    $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
-                    $nodeAggregate,
-                    $this->getInterDimensionalVariationGraph()
-                ),
                 $command->nodeVariantSelectionStrategy->resolveAffectedDimensionSpacePoints(
                     $command->coveredDimensionSpacePoint,
                     $nodeAggregate,

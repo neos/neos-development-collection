@@ -386,6 +386,11 @@
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
 			</trans-unit>
 
+			<!-- not visible documents -->
+			<trans-unit id="notVisibleDocument.message" xml:space="preserve">
+				<source>This page is currently hidden and is not visible in this workspace.</source>
+			</trans-unit>
+
 			<!-- javascript -->
 			<trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>

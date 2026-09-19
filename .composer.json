@@ -25,28 +25,21 @@
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
     ],
-    "test:paratest-cli": "../../bin/paratest --debug -v --functional --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml",
+    "test:paratest-cli": "FLOW_CONTEXT=Testing ../../bin/paratest -v --functional --processes 2 --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml",
     "test:parallel": [
       "for f in Neos.ContentRepository.BehavioralTests/Tests/Parallel/**/*Test.php; do composer test:paratest-cli $f || exit 1; done"
     ],
     "test:behat-cli": "../../bin/behat -f progress --strict --no-interaction",
     "test:behavioral": [
       "@test:behat-cli -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-      "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
       "@test:behat-cli -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
-      "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
       "@test:behat-cli -c Neos.Neos/Tests/Behavior/behat.yml.dist"
     ],
-    "test:behavioral:stop-on-failure": [
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist",
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.ContentRepository.Export/Tests/Behavior/behat.yml.dist",
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.TimeableNodeVisibility/Tests/Behavior/behat.yml.dist",
-      "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-      "@test:behat-cli -vvv --stop-on-failure -c Neos.Neos/Tests/Behavior/behat.yml.dist"
+    "test:behavioral-maria-mysql": [
+      "@test:behat-cli -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+      "@test:behat-cli -c Neos.ContentRepositoryRegistry/Tests/Behavior/behat.yml.dist"
     ],
     "test": [
       "@test:unit",

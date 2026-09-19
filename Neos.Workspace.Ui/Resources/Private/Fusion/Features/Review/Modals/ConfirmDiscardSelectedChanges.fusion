@@ -40,7 +40,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDiscardSelectedChanges) < pro
           <Neos.Workspace.Ui:Component.Button
             isDanger
             autofocus
-            label={"discard"}
+            label={private.i18n.id('workspaces.discardChanges')}
             icon="trash-alt icon-white"
             attributes.form="publishOrDiscardNodes"
             attributes.name="moduleArguments[action]"

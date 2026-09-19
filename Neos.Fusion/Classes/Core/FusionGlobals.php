@@ -41,7 +41,7 @@ final readonly class FusionGlobals
     ) {
     }
 
-    public static function empty(): self
+    public static function createEmpty(): self
     {
         return new self([]);
     }

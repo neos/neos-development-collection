@@ -38,7 +38,7 @@ final class Subscriptions implements \IteratorAggregate, \Countable, \JsonSerial
         return new self($subscriptionsById);
     }
 
-    public static function none(): self
+    public static function createEmpty(): self
     {
         return self::fromArray([]);
     }

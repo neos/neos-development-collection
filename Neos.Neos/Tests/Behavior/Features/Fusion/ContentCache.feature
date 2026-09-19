@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Tests for Fusion ContentCache
 
   Background:

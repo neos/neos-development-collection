@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Test cases for partial publish to live and uri path generation
 
   Scenario: Create Document in another workspace and partially publish to live

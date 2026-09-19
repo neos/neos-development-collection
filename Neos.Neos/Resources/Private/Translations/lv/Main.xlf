@@ -456,9 +456,9 @@
         <target state="translated">Priekšskats</target>
       </trans-unit>
       <!-- node types -->
-      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="yes">
+      <trans-unit id="nodeTypes.groups.general" xml:space="preserve" approved="no">
         <source>General</source>
-        <target state="final">Galvenais</target>
+        <target state="translated">Vispārīga</target>
       </trans-unit>
       <trans-unit id="nodeTypes.groups.structure" xml:space="preserve" approved="yes">
         <source>Structure</source>
@@ -1040,11 +1040,11 @@
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Ceļš</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Ceļš</target>
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">Relatīvais ceļš</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Relatīvais ceļš</target>
       </trans-unit>
     </body>
   </file>

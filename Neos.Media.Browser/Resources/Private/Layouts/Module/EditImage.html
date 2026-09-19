@@ -3,5 +3,10 @@
 
     <f:render section="Content"/>
 </div>
-<script src="{f:uri.resource(path: 'resource://Neos.Media.Browser/Public/JavaScript/pdf.js')}"></script>
+<script src="{f:uri.resource(path: 'resource://Neos.Media.Browser/Public/JavaScript/pdf.js')}" type="module"></script>
+<script type="module">
+    var { pdfjsLib } = globalThis;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "{f:uri.resource(path: 'resource://Neos.Media.Browser/Public/JavaScript/pdf.worker.js')}";
+    window.dispatchEvent(new Event('pdfjslibready'));
+</script>
 <f:render section="Scripts" optional="TRUE"/>

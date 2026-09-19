@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+
 /**
  * An immutable, type-safe collection of NodeAggregate objects
  *
@@ -24,27 +26,27 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 final class NodeAggregates implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<NodeAggregate>
+     * @var array<string,NodeAggregate> indexed by NodeAggregate Id
      */
     private array $nodeAggregates;
 
     /**
-     * @param iterable<NodeAggregate> $collection
+     * @param array<NodeAggregate> $items
      */
-    private function __construct(iterable $collection)
+    private function __construct(array $items)
     {
-        $nodes = [];
-        foreach ($collection as $item) {
+        $indexedItems = [];
+        foreach ($items as $item) {
             if (!$item instanceof NodeAggregate) {
                 throw new \InvalidArgumentException(
-                    'Nodes can only consist of ' . NodeAggregate::class . ' objects.',
+                    'Nodes Aggregates can only consist of ' . NodeAggregate::class . ' objects.',
                     1618044512
                 );
             }
-            $nodes[] = $item;
+            $indexedItems[$item->nodeAggregateId->value] = $item;
         }
 
-        $this->nodeAggregates = $nodes;
+        $this->nodeAggregates = $indexedItems;
     }
 
     /**
@@ -60,9 +62,22 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
         return new self([]);
     }
 
+    public function get(NodeAggregateId $nodeAggregateId): ?NodeAggregate
+    {
+        return $this->nodeAggregates[$nodeAggregateId->value] ?? null;
+    }
+
+    public function first(): ?NodeAggregate
+    {
+        foreach ($this->nodeAggregates as $nodeAggregate) {
+            return $nodeAggregate;
+        }
+        return null;
+    }
+
     public function getIterator(): \Traversable
     {
-        yield from $this->nodeAggregates;
+        yield from array_values($this->nodeAggregates);
     }
 
     public function count(): int
@@ -70,15 +85,8 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
         return count($this->nodeAggregates);
     }
 
-    /**
-     * @return NodeAggregate|null
-     */
-    public function first(): ?NodeAggregate
+    public function isEmpty(): bool
     {
-        if (count($this->nodeAggregates) > 0) {
-            $array = $this->nodeAggregates;
-            return reset($array);
-        }
-        return null;
+        return $this->nodeAggregates === [];
     }
 }

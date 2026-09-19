@@ -1,6 +1,6 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Remove node aggregate with node without dimensions
+  Todo obsolete via 02-RemoveNodeAggregate_WithDimensions
 
   Background:
     Given using no content dimensions
@@ -52,10 +52,10 @@ Feature: Remove node aggregate with node without dimensions
       | coveredDimensionSpacePoint   | {}                   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId  | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface | 0       | 0       | 0     | 1       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Remove node aggregate in live workspace
     Given the command RemoveNodeAggregate is executed with payload:
@@ -65,8 +65,8 @@ Feature: Remove node aggregate with node without dimensions
       | coveredDimensionSpacePoint   | {}                   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
-    Then I expect the ChangeProjection to have no changes in "cs-identifier"
-    And I expect the ChangeProjection to have no changes in "user-cs-id"
+    Then I expect to have no changes in workspace "live"
+    And I expect to have no changes in workspace "user-workspace"
 
   Scenario: Remove node aggregate with children in user workspace
     Given the command RemoveNodeAggregate is executed with payload:
@@ -76,10 +76,10 @@ Feature: Remove node aggregate with node without dimensions
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 0       | 0     | 1       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"
 
   Scenario: Remove node aggregate with children in live workspace
     Given the command RemoveNodeAggregate is executed with payload:
@@ -89,8 +89,8 @@ Feature: Remove node aggregate with node without dimensions
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
-    Then I expect the ChangeProjection to have no changes in "cs-identifier"
-    And I expect the ChangeProjection to have no changes in "user-cs-id"
+    Then I expect to have no changes in workspace "live"
+    And I expect to have no changes in workspace "user-workspace"
 
   Scenario: Remove node aggregate in user workspace which was already modified
     Given the command SetNodeProperties is executed with payload:
@@ -107,7 +107,7 @@ Feature: Remove node aggregate with node without dimensions
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId        | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough | 0       | 0       | 0     | 1       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

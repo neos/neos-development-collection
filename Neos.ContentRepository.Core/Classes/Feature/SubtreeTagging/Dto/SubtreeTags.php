@@ -41,6 +41,11 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
         return new self();
     }
 
+    public static function create(SubtreeTag ...$tags): self
+    {
+        return new self(...$tags);
+    }
+
     /**
      * @param array<SubtreeTag> $tags
      */
@@ -59,7 +64,7 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
         if ($this->contain($subtreeTagToAdd)) {
             return $this;
         }
-        return new self(...[...$this->tags, $subtreeTagToAdd]);
+        return new self(...[...array_values($this->tags), $subtreeTagToAdd]);
     }
 
     public function without(SubtreeTag $subtreeTagToRemove): self

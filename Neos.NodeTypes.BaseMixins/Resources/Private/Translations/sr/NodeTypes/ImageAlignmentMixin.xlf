@@ -3,20 +3,25 @@
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="sr">
     <body>
       <trans-unit id="properties.alignment" xml:space="preserve">
-				<source>Alignment</source>
-			<target state="needs-translation">Alignment</target></trans-unit>
+        <source>Alignment</source>
+        <target state="translated">Поравнање</target>
+      </trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.placeholder" xml:space="preserve">
-				<source>Default</source>
-			<target state="needs-translation">Default</target></trans-unit>
+        <source>Default</source>
+        <target state="needs-translation">Default</target>
+      </trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.center" xml:space="preserve">
-				<source>Center</source>
-			<target state="needs-translation">Center</target></trans-unit>
+        <source>Center</source>
+        <target state="needs-translation">Center</target>
+      </trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
-				<source>Left</source>
-			<target state="needs-translation">Left</target></trans-unit>
+        <source>Left</source>
+        <target state="needs-translation">Left</target>
+      </trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
-				<source>Right</source>
-			<target state="needs-translation">Right</target></trans-unit>
+        <source>Right</source>
+        <target state="needs-translation">Right</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

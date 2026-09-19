@@ -15,15 +15,16 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\SubgraphCachePool;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 
 /**
  * "context" operation working on ContentRepository nodes. Modifies the ContentRepository Context of each
@@ -68,6 +69,9 @@ class ContextOperation extends AbstractOperation
     #[Flow\Inject()]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
+    #[Flow\Inject()]
+    protected SubgraphCachePool $subgraphCachePool;
+
     /**
      * {@inheritdoc}
      *
@@ -110,15 +114,15 @@ class ContextOperation extends AbstractOperation
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $contentRepository = $this->contentRepositoryRegistry->get($contextNode->contentRepositoryId);
-            $newSubgraph = $contentRepository->getContentGraph(
-                $newWorkspaceName ?? $contextNode->workspaceName
-            )->getSubgraph(
+            $newSubgraph = $this->subgraphCachePool->getContentSubgraph(
+                $contentRepository,
+                $newWorkspaceName ?? $contextNode->workspaceName,
                 $newDimensions ?? $contextNode->dimensionSpacePoint,
-                VisibilityConstraints::fromTagConstraints(
+                VisibilityConstraints::excludeSubtreeTags(
                     match ($newInvisibleContentShown) {
-                        true => $contextNode->visibilityConstraints->tagConstraints->without(SubtreeTag::disabled()),
-                        false => $contextNode->visibilityConstraints->tagConstraints->with(SubtreeTag::disabled()),
-                        null => $contextNode->visibilityConstraints->tagConstraints
+                        true => $contextNode->visibilityConstraints->excludedSubtreeTags->without(NeosSubtreeTag::disabled()),
+                        false => $contextNode->visibilityConstraints->excludedSubtreeTags->with(NeosSubtreeTag::disabled()),
+                        null => $contextNode->visibilityConstraints->excludedSubtreeTags
                     }
                 )
             );

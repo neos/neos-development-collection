@@ -1,4 +1,3 @@
-@contentrepository
 Feature: NoopResolver does nothing (boilerplate testcase)
 
   Background:

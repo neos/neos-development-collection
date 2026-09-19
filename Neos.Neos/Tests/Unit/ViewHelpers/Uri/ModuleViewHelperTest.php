@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers\Uri;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper;
@@ -35,20 +35,18 @@ class ModuleViewHelperTest extends ViewHelperBaseTestcase
     public function setUp(): void
     {
         parent::setUp();
-        $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->setMethods(['setMainRequestToUriBuilder'])->getMock();
+        $this->viewHelper = $this->getMockBuilder(ModuleViewHelper::class)->onlyMethods(['setMainRequestToUriBuilder'])->getMock();
         $this->uriBuilder = $this->createMock(UriBuilder::class);
         $this->inject($this->viewHelper, 'uriBuilder', $this->uriBuilder);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function callingRenderAssignsVariablesCorrectlyToUriBuilder()
     {
-        $this->uriBuilder->expects(self::once())->method('setSection')->with('section')->will(self::returnSelf());
-        $this->uriBuilder->expects(self::once())->method('setArguments')->with(['additionalParams'])->will(self::returnSelf());
-        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->will(self::returnSelf());
-        $this->uriBuilder->expects(self::once())->method('setFormat')->with('format')->will(self::returnSelf());
+        $this->uriBuilder->expects(self::once())->method('setSection')->with('section')->willReturnSelf();
+        $this->uriBuilder->expects(self::once())->method('setArguments')->with(['additionalParams'])->willReturnSelf();
+        $this->uriBuilder->expects(self::once())->method('setArgumentsToBeExcludedFromQueryString')->with(['argumentsToBeExcludedFromQueryString'])->willReturnSelf();
+        $this->uriBuilder->expects(self::once())->method('setFormat')->with('format')->willReturnSelf();
 
         $expectedModifiedArguments = [
             'module' => 'the/path',

@@ -8,10 +8,13 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryStatus;
+use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\Engine\Errors;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
+use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;
@@ -23,7 +26,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
-use Doctrine\DBAL\Exception as DBALException;
+use Neos\EventStore\WithResetInterface;
 
 /**
  * Set up and manage a content repository
@@ -83,11 +86,43 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
     public function setUp(): Error|null
     {
         $this->eventStore->setup();
-        $eventStoreIsEmpty = iterator_count($this->eventStore->load(VirtualStreamName::all())->limit(1)) === 0;
         $setupResult = $this->subscriptionEngine->setup();
         if ($setupResult->errors !== null) {
             return self::createErrorForReason('Setup failed:', $setupResult->errors);
         }
+
+        $statusOfSkippedSubscriptions = $this->subscriptionEngine->subscriptionStatusOfSetupExcluded();
+        if (!$statusOfSkippedSubscriptions->isEmpty()) {
+            $message = ['Setup skipped subscriptions:'];
+            foreach ($statusOfSkippedSubscriptions as $status) {
+                $message[] = sprintf('  %s:', $status->subscriptionId->value);
+                if ($status instanceof DetachedSubscriptionStatus) {
+                    continue;
+                }
+                if ($status instanceof ProjectionSubscriptionStatus) {
+                    if ($status->subscriptionStatus !== SubscriptionStatus::ERROR) {
+                        continue;
+                    }
+                    $message[] = sprintf('    Projection: in %s', $status->subscriptionStatus->value);
+                    if ($status->subscriptionError !== null) {
+                        $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: 'No details available.');
+                        foreach ($lines as $line) {
+                            $message[] = sprintf('      %s', $line);
+                        }
+                    }
+                    $message[] = sprintf('    Setup: %s', $status->setupStatus->type->name);
+                    if ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details) {
+                        $lines = explode(chr(10), $status->setupStatus->details);
+                        foreach ($lines as $line) {
+                            $message[] = '      ' . $line;
+                        }
+                    }
+                }
+            }
+            return new Error(join("\n", $message));
+        }
+
+        $eventStoreIsEmpty = iterator_count($this->eventStore->load(VirtualStreamName::all())->limit(1)) === 0;
         if ($eventStoreIsEmpty) {
             // note: possibly introduce $skipBooting flag instead
             // see https://github.com/patchlevel/event-sourcing/blob/b8591c56b21b049f46bead8e7ab424fd2afe9917/src/Subscription/Engine/DefaultSubscriptionEngine.php#L42
@@ -104,7 +139,8 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
         try {
             $lastEventEnvelope = current(iterator_to_array($this->eventStore->load(VirtualStreamName::all())->backwards()->limit(1))) ?: null;
             $sequenceNumber = $lastEventEnvelope?->sequenceNumber ?? SequenceNumber::none();
-        } catch (DBALException) {
+        } catch (\Doctrine\DBAL\Exception) {
+            // todo do not depend on the dbal exception as this is totally implementation specific and the core has no dependency to dbal!
             $sequenceNumber = null;
         }
 
@@ -149,11 +185,58 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
     }
 
     /**
+     * Catchup all active subscriptions
+     *
+     * Allows explicit manual invocation for recovery
+     * All modifications via {@see ContentRepository::handle()} already trigger a catchup internally
+     * It cannot be 100% guaranteed that the commited events are catchup as they are two transactions by design
+     * A lost database connection or killed PHP process can result in the event-store being ahead.
+     */
+    public function catchupAllSubscriptions(\Closure|null $progressCallback = null): Error|null
+    {
+        $catchupResult = $this->subscriptionEngine->catchUpActive(progressCallback: $progressCallback, batchSize: self::REPLAY_BATCH_SIZE);
+        if ($catchupResult->errors !== null) {
+            return self::createErrorForReason('Catchup failed:', $catchupResult->errors);
+        }
+        return null;
+    }
+
+    /**
+     * Reactivate a subscription
+     *
+     * The explicit catchup is only needed for subscriptions in the error or detached status with an advanced position.
+     * Running a full replay would work but might be overkill, instead this reactivation will just attempt
+     * catchup the subscription back to active from its current position.
+     *
+     * @internal reactivation is an experimental and advanced concept, if possible a replay should be used instead which is more stable
+     * Problematic can be events where the projection did partially apply them (some commited queries) but then suddenly crashed.
+     * A reactivation attempts to fully reapply that event which can conflict with work already done.
+     */
+    public function reactivateSubscription(SubscriptionId $subscriptionId, \Closure|null $progressCallback = null): Error|null
+    {
+        $subscriptionStatus = $this->subscriptionEngine->subscriptionStatus(SubscriptionEngineCriteria::create([$subscriptionId]))->first();
+        if ($subscriptionStatus === null) {
+            return new Error(sprintf('Subscription "%s" is not registered.', $subscriptionId->value));
+        }
+        if ($subscriptionStatus->subscriptionStatus === SubscriptionStatus::NEW) {
+            return new Error(sprintf('Subscription "%s" is not setup and cannot be reactivated.', $subscriptionId->value));
+        }
+        $reactivateResult = $this->subscriptionEngine->reactivate(SubscriptionEngineCriteria::create([$subscriptionId]), progressCallback: $progressCallback, batchSize: self::REPLAY_BATCH_SIZE);
+        if ($reactivateResult->errors !== null) {
+            return self::createErrorForReason('Could not reactivate subscriber:', $reactivateResult->errors);
+        }
+        return null;
+    }
+
+    /**
      * WARNING: Removes all events from the content repository and resets the subscriptions
      * This operation cannot be undone.
      */
     public function prune(): Error|null
     {
+        if (!$this->eventStore instanceof WithResetInterface) {
+            return new Error(sprintf('Reset is not supported of the event-store: "%s".', $this->eventStore::class));
+        }
         // prune all streams:
         foreach ($this->findAllContentStreamStreamNames() as $contentStreamStreamName) {
             $this->eventStore->deleteStream($contentStreamStreamName);

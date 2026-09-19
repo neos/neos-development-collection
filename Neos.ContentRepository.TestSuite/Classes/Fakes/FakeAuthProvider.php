@@ -52,7 +52,7 @@ final class FakeAuthProvider implements AuthProviderInterface
             return self::$contentRepositoryAuthProvider->getVisibilityConstraints($workspaceName);
         }
 
-        return VisibilityConstraints::withoutRestrictions();
+        return VisibilityConstraints::createEmpty();
     }
 
     public function canReadNodesFromWorkspace(WorkspaceName $workspaceName): Privilege

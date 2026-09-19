@@ -8,10 +8,11 @@ use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Subscription\Engine\ProcessedResult;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionBatchingTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function singleBatchSize()
     {
         $this->eventStore->setup();
@@ -39,7 +40,7 @@ final class SubscriptionBatchingTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function invalidBatchSizes()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');

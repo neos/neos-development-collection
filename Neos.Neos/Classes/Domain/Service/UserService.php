@@ -40,6 +40,7 @@ use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Repository\UserRepository;
+use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
 use Neos\Party\Domain\Model\AbstractParty;
 use Neos\Party\Domain\Model\PersonName;
 use Neos\Party\Domain\Repository\PartyRepository;
@@ -143,6 +144,18 @@ class UserService
      * @var Now
      */
     protected $now;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceService
+     */
+    protected $workspaceService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceMetadataAndRoleRepository
+     */
+    protected $workspaceMetadataAndRoleRepository;
 
     /**
      * @var array<string,string>
@@ -303,7 +316,7 @@ class UserService
      * object itself. If you need to create the User object elsewhere, for example in your ActionController, make sure
      * to call this method for registering the new user instead of adding it to the PartyRepository manually.
      *
-     * This method also creates a new user workspace for the given user if no such workspace exist.
+     * A personal workspace for editor users is created on demand via {@see WorkspaceService::getPersonalWorkspaceForUser()}
      *
      * @param string $username The username of the user to be created.
      * @param string $password Password of the user to be created
@@ -353,7 +366,7 @@ class UserService
     }
 
     /**
-     * Deletes the specified user and all remaining content in his personal workspaces
+     * Deletes the specified user and all remaining content in his personal workspaces across all content repositories
      *
      * @param User $user The user to delete
      * @return void
@@ -371,6 +384,10 @@ class UserService
         }
 
         $this->partyRepository->remove($user);
+        foreach ($this->workspaceMetadataAndRoleRepository->findAllPersonalWorkspaceNamesByUser($user->getId()) as $contentRepositoryId => $workspaceName) {
+            // we delete the workspace WITH possible pending changes
+            $this->workspaceService->deleteWorkspace($contentRepositoryId, $workspaceName);
+        }
         $this->emitUserDeleted($user);
     }
 

@@ -88,8 +88,8 @@
         <target state="translated">私人的</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">只有審查者和管理員可以連結和修改此工作區</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">只有審查者和管理員可以連結和修改此工作區</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>
@@ -251,19 +251,31 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">套用變更</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">套用變更</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">審查</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">審查</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">狀態</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">狀態</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">上次修改</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">上次修改</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">節點</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">發布</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">捨棄</target>
       </trans-unit>
     </body>
   </file>

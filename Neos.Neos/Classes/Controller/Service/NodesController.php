@@ -136,14 +136,14 @@ class NodesController extends ActionController
 
         unset($contextNode);
         if (is_null($nodeAddress)) {
-            $subgraph = $contentRepository->getContentGraph(WorkspaceName::fromString($workspaceName))->getSubgraph(
-                DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
-                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+            $subgraph = $contentRepository->getContentSubgraph(
+                WorkspaceName::fromString($workspaceName),
+                DimensionSpacePoint::fromLegacyDimensionArray($dimensions)
             );
         } else {
-            $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)->getSubgraph(
-                $nodeAddress->dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions() // we are in a backend controller.
+            $subgraph = $contentRepository->getContentSubgraph(
+                $nodeAddress->workspaceName,
+                $nodeAddress->dimensionSpacePoint
             );
         }
 
@@ -171,6 +171,14 @@ class NodesController extends ActionController
                 ) {
                     // include the starting node if it matches
                     $nodes = $nodes->prepend($entryNode);
+                }
+                $nodeAggregateIdOrNull = NodeAggregateId::tryFromString($searchTerm->term);
+                if ($nodeAggregateIdOrNull !== null) {
+                    $nodeByAggregateId = $subgraph->findNodeById($nodeAggregateIdOrNull);
+                    if ($nodeByAggregateId !== null) {
+                        // include node by aggregate id if it matches the search term
+                        $nodes = $nodes->prepend($nodeByAggregateId);
+                    }
                 }
             }
         } else {
@@ -210,11 +218,7 @@ class NodesController extends ActionController
         $workspaceName = WorkspaceName::fromString($workspaceName);
 
         $dimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $subgraph = $contentRepository->getContentGraph($workspaceName)
-            ->getSubgraph(
-                $dimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
+        $subgraph = $contentRepository->getContentSubgraph($workspaceName, $dimensionSpacePoint);
 
         $node = $subgraph->findNodeById($nodeAggregateId);
 
@@ -231,7 +235,7 @@ class NodesController extends ActionController
         // @todo illegal dependency direction. Neos Neos has no business calling the ui
         $convertedNodeProperties = $this->nodePropertyConverterService->getPropertiesArray($node);
         array_walk($convertedNodeProperties, function (&$value) {
-            if (is_array($value)) {
+            if (is_array($value) || $value instanceof \JsonSerializable) {
                 $value = json_encode($value);
             }
         });
@@ -276,19 +280,10 @@ class NodesController extends ActionController
 
         $workspaceName = WorkspaceName::fromString($workspaceName);
 
-        $contentGraph = $contentRepository->getContentGraph($workspaceName);
-        $sourceSubgraph = $contentGraph
-            ->getSubgraph(
-                DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions),
-                VisibilityConstraints::withoutRestrictions()
-            );
+        $sourceSubgraph = $contentRepository->getContentSubgraph($workspaceName, DimensionSpacePoint::fromLegacyDimensionArray($sourceDimensions));
 
         $targetDimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
-        $targetSubgraph = $contentGraph
-            ->getSubgraph(
-                $targetDimensionSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
-            );
+        $targetSubgraph = $contentRepository->getContentSubgraph($workspaceName, $targetDimensionSpacePoint);
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
             $this->adoptNodeAndParents(

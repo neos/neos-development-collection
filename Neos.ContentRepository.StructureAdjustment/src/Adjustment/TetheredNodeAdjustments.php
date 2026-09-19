@@ -67,7 +67,7 @@ class TetheredNodeAdjustments
                 foreach ($nodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
                     $tetheredNode = $this->contentGraph->getSubgraph(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
-                        VisibilityConstraints::withoutRestrictions()
+                        VisibilityConstraints::createEmpty()
                     )->findNodeByPath(
                         $tetheredNodeTypeDefinition->name,
                         $nodeAggregate->nodeAggregateId
@@ -84,11 +84,15 @@ class TetheredNodeAdjustments
                             'The tethered child node "' . $tetheredNodeTypeDefinition->name->value . '" is missing.',
                             function () use ($nodeAggregate, $originDimensionSpacePoint, $tetheredNodeTypeDefinition) {
                                 $events = $this->createEventsForMissingTetheredNode(
-                                    $this->contentGraph,
-                                    $nodeAggregate,
-                                    $originDimensionSpacePoint,
-                                    $tetheredNodeTypeDefinition,
-                                    null
+                                    contentGraph: $this->contentGraph,
+                                    parentNodeAggregateId: $nodeAggregate->nodeAggregateId,
+                                    parentNodeTypeName: $nodeAggregate->nodeTypeName,
+                                    parentNodeAggregateCoverageByOccupant: $nodeAggregate->classification->isRoot()
+                                        ? $nodeAggregate->coveredDimensionSpacePoints
+                                        : $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
+                                    originDimensionSpacePoint: $originDimensionSpacePoint,
+                                    tetheredNodeTypeDefinition: $tetheredNodeTypeDefinition,
+                                    tetheredNodeAggregateId: null
                                 );
 
                                 $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -131,7 +135,7 @@ class TetheredNodeAdjustments
             // find wrongly ordered tethered nodes
             if ($foundMissingOrDisallowedTetheredNodes === false) {
                 foreach ($originDimensionSpacePoints as $originDimensionSpacePoint) {
-                    $childNodes = $this->contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::withoutRestrictions())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
+                    $childNodes = $this->contentGraph->getSubgraph($originDimensionSpacePoint->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())->findChildNodes($nodeAggregate->nodeAggregateId, FindChildNodesFilter::create());
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];

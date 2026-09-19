@@ -103,10 +103,12 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
             'packageKey' => $package->getPackageKey(),
         ];
 
-        foreach (Files::readDirectoryRecursively($templateFolder, '.yaml') as $templatePathAndFilename) {
-            $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
-            $targetPathAndFilename = str_replace($templateFolder, $targetFolder, $templatePathAndFilename);
-            $this->generateFile($targetPathAndFilename, $fileContent);
+        foreach (['.yaml', '.fusion'] as $fileExtension) {
+            foreach (Files::readDirectoryRecursively($templateFolder, $fileExtension) as $templatePathAndFilename) {
+                $fileContent = $this->simpleTemplateRenderer->render($templatePathAndFilename, $contextVariables);
+                $targetPathAndFilename = str_replace($templateFolder, $targetFolder, $templatePathAndFilename);
+                $this->generateFile($targetPathAndFilename, $fileContent);
+            }
         }
     }
 

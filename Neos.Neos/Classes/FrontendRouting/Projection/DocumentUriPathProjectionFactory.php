@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 
 /**
  * @implements ProjectionFactoryInterface<DocumentUriPathProjection>
+ * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
 final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterface
 {

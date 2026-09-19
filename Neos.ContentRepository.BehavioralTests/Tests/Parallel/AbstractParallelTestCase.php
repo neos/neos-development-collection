@@ -15,10 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +41,43 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
 
     public function setUp(): void
     {
+        FakeAuthProvider::setDefaultUserId(UserId::fromString(sprintf('Testing [pid %s]', getmypid())));
         $this->objectManager = Bootstrap::$staticObjectManager;
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+    }
+
+    protected function onNotSuccessfulTest(\Throwable $t): never
+    {
+        try {
+            $this->log('Start logging exception');
+            $messageLines = [];
+            $level = 0;
+            $exception = $t;
+            do {
+                $level++;
+                if ($level >= 8) {
+                    $messageLines[] = '...Recursion';
+                    break;
+                }
+
+                $exceptionFqn = $exception::class;
+
+                $messageLines[] = <<<MESSAGE
+                Class: {$exceptionFqn}
+                Message: {$exception->getMessage()}
+                Code: {$exception->getCode()}
+                File: {$exception->getFile()}
+                Line: {$exception->getLine()}
+
+                Trace: {$exception->getTraceAsString()}
+                MESSAGE;
+            } while ($exception = $exception->getPrevious());
+            file_put_contents(self::LOGGING_PATH, join("\n\n", $messageLines), FILE_APPEND);
+            $this->log('Fished exception logging');
+        } catch (\Throwable $throwable) {
+            $this->log(sprintf('Failed logging exception [%s (%d)]: %s', $throwable::class, $throwable->getCode(), $throwable->getMessage()));
+        }
+        parent::onNotSuccessfulTest($t);
     }
 
     final protected function awaitFile(string $filename): void
@@ -56,7 +96,7 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
     final protected function awaitFileRemoval(string $filename): void
     {
         $waiting = 0;
-        while (!is_file($filename)) {
+        while (is_file($filename)) {
             usleep(1000);
             $waiting++;
             clearstatcache(true, $filename);
@@ -80,7 +120,7 @@ abstract class AbstractParallelTestCase extends TestCase // we don't use Flows f
 
     final protected function log(string $message): void
     {
-        file_put_contents(self::LOGGING_PATH, self::shortClassName($this::class) . ': ' . getmypid() . ': ' .  $message . PHP_EOL, FILE_APPEND);
+        file_put_contents(self::LOGGING_PATH, self::shortClassName($this::class) . ': [pid ' . getmypid() . ', time ' . time() . '] ' .  $message . PHP_EOL, FILE_APPEND);
     }
 
     final protected static function shortClassName(string $className): string

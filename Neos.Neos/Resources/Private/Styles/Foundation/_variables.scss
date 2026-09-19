@@ -39,6 +39,7 @@ $linkColorHover: darken($linkColor, 15%) !default;
 
 // Typography
 // -------------------------
+$notoSansfontsPath: "../Fonts/NotoSans" !default; // Allow other packages to override the font path, e.g. Neos.Media.Browser
 $sansFontFamily: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 $serifFontFamily: Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily: Monaco, Menlo, Consolas, "Courier New", monospace !default;

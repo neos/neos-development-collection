@@ -1,0 +1,307 @@
+========
+Neos 8.4
+========
+
+This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Restrict site creation module to site nodetype and hide legacy options
+-------------------------------------------------------------------------------
+
+Hide "Import a site" and "Create a new site-package" by default in Neos 8.4 and add settings to re-enable
+
+these options were removed via Neos 9.0 but can be restored by settings:
+
+```yaml
+Neos.Neos.modules.administration.submodules.sites.settings.enableLegacyPackageImport: true
+Neos.Neos.modules.administration.submodules.sites.settings.enableLegacyPackageCreation: true
+```
+
+**Upgrade instructions**
+
+
+FEATURE: Add image helper and render image dimensions in image tag attributes
+-----------------------------------------------------------------------------
+
+With this change a new image helper is introduced in Neos.Media which allows creating a thumbnail and using its various properties in Fusion object. This way the actual size of a thumbnail can be rendered into the HTML attributes.
+Until now we only had the uri from the ImageUri helper and component.
+
+**Review instructions**
+
+Adjust the image prototype renderer in the Demo like this:
+```
+prototype(Neos.Demo:Content.Image) < prototype(Neos.Neos:ContentComponent) {
+    renderer = afx`
+        <figure>
+            <Neos.Neos:ImageTag
+                asset={q(node).property('image')}
+                width={900}
+                height={200}
+                allowUpScaling={true}
+            />
+        </figure>
+    `
+//    renderer = afx``<Neos.Demo:Presentation.Image {...props} />``
+}
+```
+
+The resulting image should have with and height properties of the generated thumbnail and not the ones of the original.
+
+I'm not 100% sure if we could break something with this change if somebody modified the ImageTag prototype. 
+We can also target 9.0 if the anybody thinks this would be better.
+
+FEATURE: Fusion (EEL) core migrations for new 9.0 API (replaces `neos/rector` for Fusion)
+-----------------------------------------------------------------------------------------
+
+Fixes the fusion part of https://github.com/neos/neos-development-collection/issues/5607 in a simple manner as a first iteration
+
+### Behaviour for 9.0
+
+This change introduces an extended way to write flow core migrations by providing a trait which allows for exact eel replacements. For this framework code see the changes in "Neos.Fusion" and its tests.
+
+Also this change introduces a first major user of this new migration api. The migration "20251005080230" contains all fusion  migrations concerning the content repository that currently reside in ``neos/rector`` and were executed with rector.
+
+They are now part of "Neos.Neos" and can be executed as any flow core migration:
+
+```
+flow flow:core:migrate Neos.Demo --version 20251005080230
+```
+
+The comprehensive testsuite for this cr-fusion migration was copied and adjusted from ``neos/rector`` to ensure all replacements work as desired.
+
+
+### Behaviour for Neos 8.4
+
+Introducing a core migration for 8.4 was considered but was found to be too magic as its truly an optional step which makes the code not backwardscompatible to previous neos versions.
+
+You can run the adjustments manually. They will not add todo comments like the 9.0 migration. It will be safe to rerun this migration and also to run the 9.0 migration via ``flow:core:migrate`` when updating.
+
+```
+./flow neos9preparation:preadjustfusion Neos.Demo
+```
+
+
+**Upgrade instructions**
+
+
+FEATURE: Filter users by role
+-----------------------------
+
+ 
+
+**Review instructions**
+
+Go to there users module and filter the users by their role, also in combination with the search term
+
+!`CleanShot 2024-08-16 at 11 07 15@2x <https://github.com/user-attachments/assets/af7d834c-4ed8-476d-b500-854f381012da>`_
+
+Related issue: `#5208 <https://github.com/neos/neos-development-collection/issues/5208>`_
+
+FEATURE: Improve user sorting behavior
+--------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Original PR: `#5159 <https://github.com/neos/neos-development-collection/issues/5159>`_
+
+
+FEATURE: Backport NodeHelper methods from 9.0
+---------------------------------------------
+
+
+
+**Upgrade instructions**
+
+
+
+Related issue: `#5627 <https://github.com/neos/neos-development-collection/issues/5627>`_
+
+FEATURE: Hacky backport of the 9.0 `renderingMode` in Fusion
+------------------------------------------------------------
+
+Neos 9.0 contains the introduction of FusionGlobals https://github.com/neos/neos-development-collection/pull/4425 which allowed to introduce ``renderingMode`` https://github.com/neos/neos-development-collection/pull/4505 as global like ``request``.
+
+We evaluated to fully back-port these features but this would require lots of effort and might be not agreeable as it certainly would break APIs across Fusion and Neos.
+
+But herby we introduce a super slim backport which disregards any architecture and makes ``${renderingMode}`` magically possible in Fusion when Neos is installed and nodes are rendered.
+
+The ``renderingMode`` attempts to align to the new 9.0 specification as close as possible - but the implementation is limited in two regards:
+
+- ``site``, ``documentNode`` or ``node`` have to be available in the current fusion context which can be tampered with in fusion by forgetting to register those in a cached segment. This would lead to ``renderingMode`` not being available but in 9.0 it would as its ever-present.
+- when nodes from the "live" workspace are rendered the renderingMode will switch to ``frontend`` which results in ``renderingMode.isEdit`` being false. In Neos 9 the rendering mode and the rendered nodes are decoupled from each other. With this backport a decoupling is not possible and using ``q().context()`` on a node and replacing that fusion variable might thus have implications on the ``renderingMode``.
+
+
+Also users of the herby introduced 8.4 ``renderingMode`` and its 9.0 brother should be aware its not behaving exactly as ``node.context.currentRenderingMode``.
+The rendering mode of the ``context`` returns for every logged in users its current rendering mode. This leads to ``edit`` being true for the frontend and for the backend in the neos ui. Only if logged out or when using a private window the frontend behaviour aligns to the Neos 9 specification and ``edit`` is false.
+ 
+The rector migration ```FusionContextCurrentRenderingModeRector`` <https://github.com/neos/rector/blob/`e397f70ed1340c5a62b9d20b0b70253b87201617 <https://github.com/neos/neos-development-collection/commit/e397f70ed1340c5a62b9d20b0b70253b87201617>`_/src/ContentRepository90/Rules/FusionContextCurrentRenderingModeRector.php#L27-L28>`_ still migrates it as an exact replacement to improve the current situation.
+
+**Upgrade instructions**
+
+
+FEATURE: Adds new login wallpaper and backport attribution 
+-----------------------------------------------------------
+
+resolves `#5620 <https://github.com/neos/neos-development-collection/issues/5620>`_
+
+<img width="1829" height="1066" alt="Bildschirmfoto 2025-10-07 um 09 04 07" src="https://github.com/user-attachments/assets/499b6b22-9921-4396-bd78-f55730c109d2" />
+
+FEATURE: Backport Neos.Caching Helper
+-------------------------------------
+
+Backport of Neos.Caching Eel Helper to provide forward compatibility in Neos 8.4.
+```
+prototype(Acme.Site:Document) {
+    @cache {
+        mode = "cached"
+        entryIdentifier {
+            documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+        }
+     }
+}
+```
+ 
+
+Related issue: `#5628 <https://github.com/neos/neos-development-collection/issues/5628>`_
+
+FEATURE: Backport Neos.Site Helper
+----------------------------------
+
+Backport of Neos.Site Eel Helper to provide forward compatibility in Neos 8.4.
+
+```
+prototype(Acme.Site:Document) {
+   name = ${Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
+}
+
+```
+
+ 
+
+Related issue: `#5629 <https://github.com/neos/neos-development-collection/issues/5629>`_
+
+FEATURE: Backport aggregateId from 9.0
+--------------------------------------
+
+
+
+**Upgrade instructions**
+
+With this change it's possible to use ``node.aggregateId`` which will return an instance of ``NodeAggregateIdentifier`` that can also be cast to a string which equals the ``node.identifier``. It is recommended to replace all ``node.identifier`` instances this way to already be compatible with Neos 9. See the related rector rule https://github.com/neos/rector/blob/main/docs/rules_overview.md#fusionnodeidentifierrector.
+
+Keep in mind to adjust places where you do a strict comparison as the returned value is not a plain string.
+
+
+Related issue: `#5633 <https://github.com/neos/neos-development-collection/issues/5633>`_
+
+FEATURE: Site nodetype
+----------------------
+
+
+
+**Upgrade instructions**
+
+Add the abstract nodetype ``Neos.Neos:Site`` to your homepage nodetype like this:
+
+```yaml
+'My.SitePackage:Document.Homepage':
+  superTypes:
+    'Neos.Neos:Site': true
+```
+
+**Review instructions**
+
+Newly generated sites and empty content repository should be initialised with the new sites nodetype and use the site mixing in the generated homepage.
+
+Related issue: `#5617 <https://github.com/neos/neos-development-collection/issues/5617>`_
+
+FEATURE: add more details to user list and user show command
+------------------------------------------------------------
+
+### Description
+
+Adds more informations to the ``./flow user:list`` and ``./flow user:show`` command.
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+resolves: `#4357 <https://github.com/neos/neos-development-collection/issues/4357>`_
+
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+FEATURE: Custom label for auto created child nodes
+--------------------------------------------------
+
+Resolves: https://github.com/neos/neos-development-collection/issues/2276
+
+This change add a node type configuration to generate a custom node label
+for auto created child nodes:
+
+```
+'Neos.Neos.NodeTypes:Page':
+  superTypes:
+    'Neos.Neos:Document': TRUE
+  childNodes:
+    main:
+      label: 'Main Content Collection'
+      type: 'Neos.Neos:ContentCollection'
+```
+
+This allow to have a less technical content tree. This change include the
+schema validation and default label for default node types.
+
+The label can be a string or an EEL expression. Inside the
+expression you can access the parent node in the variable ``parentNode``.
+
+FEATURE: Support doctrine/dbal 2.x and 3.x
+------------------------------------------
+
+Declares compatibility with ``doctrine/dbal`` 3.x (in addition to the already supported versions ``2.8+``) and adjusts affected code such that it works with both versions
+
+FEATURE: Improve site:list command
+----------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Improves our ``./flow site:list`` command by render the list of all available sites directly in a table.
+
+!`WindowsTerminal_2VE3pBUkYq <https://github.com/neos/neos-development-collection/assets/39345336/63951db9-dab5-4fdc-90da-531769f0b4a1>`_
+
+
+FEATURE: Link Neos logo in modules to primary module
+----------------------------------------------------
+
+In the default configuration this links to the content module, or to their user settings if they don’t have access to the content module.
+
+
+
+Related issue: `#4799 <https://github.com/neos/neos-development-collection/issues/4799>`_
+
+********************
+Upgrade Instructions
+********************
+
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-8-3-8-4
+
+.. note::
+
+   Additionally all changes in Flow 8.4 apply, see the release notes to further information.
+   See https://flowframework.readthedocs.org/en/8.4/TheDefinitiveGuide/PartV/ReleaseNotes/840.html

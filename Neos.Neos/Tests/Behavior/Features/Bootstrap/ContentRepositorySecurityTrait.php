@@ -13,18 +13,14 @@ declare(strict_types=1);
  */
 
 use Behat\Hook\BeforeScenario;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Security\Authentication\Provider\TestingProvider;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Security\ContentRepositoryAuthProvider\ContentRepositoryAuthProviderFactory;
-use Neos\ContentRepository\TestSuite\Fakes\FakeAuthProvider;
 use PHPUnit\Framework\Assert;
 
 /**

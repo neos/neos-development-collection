@@ -1,0 +1,241 @@
+`9.0.14 (2026-07-16) <https://github.com/neos/neos-development-collection/releases/tag/9.0.14>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Deterministic ordering of NodeAggregates' Nodes for emitting events <https://github.com/neos/neos-development-collection/pull/5824>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Requires https://github.com/neos/neos-development-collection/pull/5883
+
+Due to the removed ``ORDER BY`` we might also see slight query performance improvements
+
+### Query ``findNodeAggregatesById()``
+
+This PR now insures that we order Nodes ``$occupiedDimensionSpacePoints`` before emitting events based on order.
+
+Before the order returned from the database was used. This was determined by ``ORDER BY n.relationanchorpoint DESC``.
+But this order is highly adapter specific in this case it depends on internal (relationanchorpoint) from the M*SQL graph implementation that has no public defined behaviour.
+
+Nodes in an aggregate are unordered!!!
+
+Related https://github.com/neos/neos-development-collection/pull/5817
+
+### Query ``findNodeAggregatesByIds()`` and ``findNodeAggregatesTaggedBy()``
+
+Tests were now adjusted to sort the results alphabetically before comparing them to avoid any ordering mismatches as the database does not define an order.
+
+Also the soft-removal-garbage-collector was adjusted to sort the result from ``findNodeAggregatesTaggedBy()`` alphabetically to have a deterministic order for testing.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.Core`` ``ContentRepository.StructureAdjustment``
+
+`BUGFIX: Prevent command handling (`NodeTypeChange`) on currently invalid dimension subspace <https://github.com/neos/neos-development-collection/pull/5883>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Preparation for https://github.com/neos/neos-development-collection/pull/5824
+
+### Require all dimensions of NodeAggregate to be allowed during ``NodeTypeChange``
+
+During looping over the occupied nodes we should ensure that we don't sort out or keep invalid dimension space points. That can happen when a dimension was renamed via configuration or removed.
+
+Now we require that the dimension configuration is still up to date with the NodeAggregate (with `#5824 <https://github.com/neos/neos-development-collection/issues/5824>`_also for its children) which are attempted to be changed.
+
+That is a sane limitation and during node create and create variate already enforced where we specify the dimensions explicitly. There we use ``requireDimensionSpacePointToExist`` to ensure the provided DSP's of the command are allowed and ``requireNodeAggregateToOccupyDimensionSpacePoint`` to further check if we can vary a node or create a child node.
+
+Now because NodeTypeChange affects all dimensions we dont require to provide any dimension space points and thus dont validate that they are allowed. Still we take all covered dimension space points of the NodeAggregate and do further calculations. That is rather implicit to ensure there are no unexpected side-effects when reading both from the NodeAggregate and partially from the variation graph we first fully ensure that the node aggregate is up to date with the variation graph.
+
+The new constraint check "Try to change a node to a type while the dimension configuration was also changed" highlights that. Before this PR the test would pass without any errors but it was not able to satisfy
+
+```
+Then I expect the node aggregate "new-tethered" to exist
+Then I expect this node aggregate to occupy dimension space points [{"language":"de"}]
+Then I expect this node aggregate to cover dimension space points [{"language":"de"},{"language":"gsw"}]
+```
+
+As neither ``{"language":"gsw"}`` nor ``{"language":"ch"}`` will be covered.
+
+---------------
+
+As a side effect another test in 9.x would fail without adjustment as it mistakenly tests that it _is_ possibly to run a ``NodeTypeChange`` on a changed dimension configuration.
+
+Now the test would fail
+
+```
+Features/D3-MoveDimensionSpacePoint/MoveDimensionSpacePoint.feature
+
+The dimension space points [{"language":"ch"}] were not found in the allowed dimension subspace [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}]
+```
+
+because of the the method call
+
+```
+NodeTypeChange/NodeTypeChange.php(216): NodeAggregateCommandHandler->requireOrderedOriginDimensionSpacePoints
+```
+
+As this is a new limitation by design we now use a simpler NodeProperty migration which is still allowed a passes while dimensions are being changed - still questionable but not as "dangerous".
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`BUGFIX: NodeController improve node resolve exceptions <https://github.com/neos/neos-development-collection/pull/5917>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Nothing big. Just shows also the visibility constraints which could be important.
+
+* Packages: ``ContentRepository.Core`` ``Neos``
+
+`BUGFIX: variation coverage restriction <https://github.com/neos/neos-development-collection/pull/5919>`_
+---------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5918 <https://github.com/neos/neos-development-collection/issues/5918>`_ 
+
+This prefilters the dimension space point set used for variation by evaluating the parent aggregate's coverage
+
+**Review instructions**
+
+Check out the new test case
+
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: Migrated node variants leak properties from a different dimen… <https://github.com/neos/neos-development-collection/pull/5862>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+After migrating a legacy site with content dimensions, a dimension variant shows values from the dimension it was created from, even for properties left empty or never set in that variant. (e.g. an empty or non-existent property in the "en" variant still shows the "de" node after migration.
+
+This happens because creating a node variant copies the **whole** property set of the other node as source dimension (``copyNodeToDimensionSpacePoint``); the variant-created events carry no properties of their own. The migration wrote the variant's own values but never unset the copied-over ones it doesn't override, so they survive.
+
+It's not fixed since ``EventExportProcessor::createNodeVariant()`` now follows the variant creation with a ``NodePropertiesWereSet`` that unsets every property copied from the source which the variant's own node-data row does not set. 
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: Resolve error when publishing selected changes <https://github.com/neos/neos-development-collection/pull/5909>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+### What I did
+
+Change hx-post to hx-get  since this is only the first step that only brings up the confirmation dialog. 
+User clicks "Publish selected" → GET confirmPublishSelectedChanges → loads the modal HTML. With the post request the CSRF-Token was missing.
+
+Second problem:
+When confirming the changes the workspace-module-content is returned to the wrong target. It leads to the content being doubled.
+
+###  How I did it
+
+Change  POST to GET Method and change the target for the updated workspace-module-content. I basically just adjusted it to how the other buttons work aswell.
+
+fixes https://github.com/neos/neos-development-collection/issues/5895
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: `UntagSubtree` must preserve inherited tags for other affected dimension space points <https://github.com/neos/neos-development-collection/pull/5894>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Credit goes to @skurfuerst for finding it ;)
+
+See https://github.com/neos/neos-development-collection/issues/5893
+
+The logic in the graph during handling of ``SubtreeWasUntagged`` is broken when multiple dimension space points are involved during the untagging.
+
+Before to determine if a tag should be removed (json ``{}``) or kept as inherited ``{tag1: null}`` we checked via subquery if the entry node's parent contains the tag. If it does - explicit or inherited - the tag will be kept as inherited. The problem is that we didnt account for the dimension space point as seen in the missing ``ph.dimensionspacepointhash`` clause. The use of ``LIMIT 1`` just randomly selected one entry which is only correct for _one_ dimension space point.
+
+Now we calculate the information once for each covered affected entry node - thus respecting dimensions - and during the recursive descend we preserve the ``inheritsTag`` state as it is true for all children
+
+**Upgrade instructions**
+
+
+**Review instructions**
+
+- [ ] Find out what it meant for soft removal garbage collection which is subtree tag based?
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter``
+
+`BUGFIX: Show skipped projections in `cr:setup` <https://github.com/neos/neos-development-collection/pull/5899>`_
+-----------------------------------------------------------------------------------------------------------------
+
+
+Before running ``cr:setup`` once threw and error and successive runs said
+
+> Content Repository "default" was set up
+
+Now it fetches the status of all subscriptions and thus knows which it will skip.
+
+<img width="1163" height="164" alt="image" src="https://github.com/user-attachments/assets/87dd29d0-2fb2-49c3-9e50-371b3fe183fd" />
+
+There is no real error handling for this case except a full destruct and replay ... for the content graph we anticipate with `#5896 <https://github.com/neos/neos-development-collection/issues/5896>`_but im unsure regarding other subscriptions ... maybe we need a new API cli command after all that allows exactly that for one subscription?
+
+The only way currently to escape from this state is by dropping the tables manually and doing the re-setup.
+The reason why we remember the error state is because any changes done in the setup up until the error were destructive and done without transaction. We dont know where we failed and thus might be fully corrupted.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`TASK: Provide tests for old document uri path projection integer underflow bug <https://github.com/neos/neos-development-collection/pull/5901>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+While https://github.com/neos/neos-development-collection/issues/5778 is kindof fixed we have no tests and dont actually know how the scenario came to play. It is definitely not a race condition (https://github.com/neos/neos-development-collection/pull/5788).
+
+As described here https://github.com/neos/neos-development-collection/issues/5778#issuecomment-4797475672 i was able to provoke the old error - when reverting sebs patch - via just two commands. Tag and untag. The untag command must use a greater variant selection strategy than the tag.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`TASK: Improve JSON decode error handling <https://github.com/neos/neos-development-collection/pull/5908>`_
+-----------------------------------------------------------------------------------------------------------
+
+This change continues what was done in `#5196 <https://github.com/neos/neos-development-collection/issues/5196>`_and contains parts of the closed PR #5093
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`TASK: Allow core developers (me) to use cli tools like `flow setup` or others to work and inspect the testing content repository <https://github.com/neos/neos-development-collection/pull/5897>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+But as the testing cr uses these two tunnel through space factories that know no mercy its impossible.
+
+As this is merely an adjustment in the test fakes there is not much to consider.
+
+Might come in handy to setup the behat testing db initially.
+
+Also with `#5896 <https://github.com/neos/neos-development-collection/issues/5896>`_it definitely comes in handy when using
+
+```
+FLOW_CONTEXT=Testing/Behat flow crupgrade:resetgraphandsetup
+```
+
+For switching branches with different schemas - which i do a lot - and i always drop the tables by hand --- thousand times.
+
+* Packages: ``Neos`` ``ContentRepository.TestSuite``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.13...9.0.14>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

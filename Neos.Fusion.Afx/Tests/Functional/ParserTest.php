@@ -1,15 +1,14 @@
 <?php
 namespace Neos\Fusion\Afx\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Parser;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseEmptyCode(): void
     {
         $parser = new Parser('');
@@ -20,9 +19,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseBlankCode(): void
     {
         $parser = new Parser('    ');
@@ -38,9 +35,25 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
+    public function shouldParseASingleExpression(): void
+    {
+        $parser = new Parser('{String.uppercase("test")}');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'expression',
+                    'payload' => 'String.uppercase("test")',
+                    'from' => 1,
+                    'to' => 24
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    #[Test]
     public function shouldParseSingleTag(): void
     {
         $parser = new Parser('<div></div>');
@@ -61,9 +74,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleTagWithContent(): void
     {
         $parser = new Parser('<div>test</div>');
@@ -89,9 +100,35 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
+    public function shouldParseSingleTagWithContentExpression(): void
+    {
+        $parser = new Parser('<div>{String.uppercase("test")}</div>');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [],
+                        'children' => [
+                            0 => [
+                                'type' => 'expression',
+                                'payload' => 'String.uppercase("test")',
+                                'from' => 6,
+                                'to' => 29
+                            ]
+                        ],
+                        'selfClosing' => false
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    #[Test]
     public function shouldParseSingleTagWithZeroAsContent(): void
     {
         $parser = new Parser('<div>0</div>');
@@ -117,9 +154,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleSelfClosingTag(): void
     {
         $parser = new Parser('<div/>');
@@ -140,9 +175,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleSelfClosingTagWithWhitespaces(): void
     {
         $parser = new Parser('<div   />');
@@ -163,9 +196,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleTagWithWhitespaces(): void
     {
         $parser = new Parser('<div   ></div>');
@@ -186,9 +217,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleSelfClosingTagWithSingleAttribute(): void
     {
         $parser = new Parser('<div prop="value"/>');
@@ -218,9 +247,39 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
+    public function shouldParseSingleSelfClosingTagWithSingleAttributeExpression(): void
+    {
+        $parser = new Parser('<div prop={"value" + "a"}/>');
+
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'node',
+                    'payload' => [
+                        'identifier' => 'div',
+                        'attributes' => [
+                            [
+                                'type' => 'prop',
+                                'payload' => [
+                                    'type' => 'expression',
+                                    'payload' => '"value" + "a"',
+                                    'identifier' => 'prop',
+                                    'from' => 11,
+                                    'to' => 23
+                                ]
+                            ]
+                        ],
+                        'children' => [],
+                        'selfClosing' => true
+                    ]
+                ]
+            ],
+            $parser->parse()
+        );
+    }
+
+    #[Test]
     public function shouldParseSingleSelfClosingTagWithEmptyAttribute(): void
     {
         $parser = new Parser('<div prop/>');
@@ -250,9 +309,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleSelfClosingTagWithMultipleAttributes(): void
     {
         $parser = new Parser('<div prop="value" anotherProp="Another Value"/>');
@@ -290,9 +347,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleSelfClosingTagWithMultipleAttributesWrappedByMultipleWhitespaces(): void
     {
         $parser = new Parser('<div   prop="value"    anotherProp="Another Value"  />');
@@ -330,9 +385,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseTagWithSingleOrDoubleQuoteEscapedAttributeIdentifier(): void
     {
         $parser = new Parser('<div "@click.blah.blih.blub"="value" \'@click.blah.blih.blub\'="value"/>');
@@ -370,9 +423,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseTagWithEscapedAttributeIdentifierWithQuoteEscapesInside(): void
     {
         $parser = new Parser('<div "@click.escaped\"escaped"="value" \'escaped\\\'escaped\' />');
@@ -410,9 +461,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSpreads(): void
     {
         $parser = new Parser('<div {...item} />');
@@ -429,7 +478,9 @@ class ParserTest extends TestCase
                                 'payload' => [
                                     'type' => 'expression',
                                     'payload' => 'item'
-                                ]
+                                ],
+                                'from' => 9,
+                                'to' => 12
                             ]
                         ],
                         'children' => [],
@@ -441,9 +492,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSpreadsAndPropsInOrder(): void
     {
         $parser = new Parser('<div foo="string" {...item} bar={expression} />');
@@ -468,14 +517,18 @@ class ParserTest extends TestCase
                                 'payload' => [
                                     'type' => 'expression',
                                     'payload' => 'item',
-                                ]
+                                ],
+                                'from' => 22,
+                                'to' => 25,
                             ],
                             [
                                 'type' => 'prop',
                                 'payload' => [
                                     'type' => 'expression',
                                     'payload' => 'expression',
-                                    'identifier' => 'bar'
+                                    'identifier' => 'bar',
+                                    'from' => 33,
+                                    'to' => 42,
                                 ]
                             ]
                         ],
@@ -488,9 +541,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseListOfTags(): void
     {
         $parser = new Parser('<div></div><span></span><h1></h1>');
@@ -529,9 +580,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseListOfTagsAndTextsWithTextOutside(): void
     {
         $parser = new Parser('foo<div></div>bar');
@@ -560,9 +609,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseListOfTagsAndTextsWithTagsOutside(): void
     {
         $parser = new Parser('<div></div>foobar<span></span>');
@@ -596,9 +643,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseListOfTagsAndTextsWithWhitepaceOutside(): void
     {
         $parser = new Parser('    <div></div>    ');
@@ -627,9 +672,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function propsCanHaveDashesInTheirName(): void
     {
         $parser = new Parser('<div prop-1="value" prop-2="Another Value"/>');
@@ -667,9 +710,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleTagWithSeparateClosingTag(): void
     {
         $parser = new Parser('<div></div>');
@@ -690,9 +731,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseSingleTagWithSeparateClosingTagAndOneChild(): void
     {
         $parser = new Parser('<div>Hello World!</div>');
@@ -718,9 +757,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseNestedSelfClosingTag(): void
     {
         $parser = new Parser('<div><input/></div>');
@@ -751,9 +788,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseNestedTags(): void
     {
         $parser = new Parser('<article><header><div>Header</div></header><div>Content</div><footer><div>Footer</div></footer></article>');
@@ -837,9 +872,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldHandleWhitespace(): void
     {
         $parser = new Parser('   <div>
@@ -914,9 +947,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseComments(): void
     {
         $parser = new Parser('<!-- lorem ipsum -->');
@@ -931,9 +962,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldIgnoreTagsAndExpressionsInComments(): void
     {
         $parser = new Parser('<!-- <foo>{bar}</foo> -->');
@@ -948,9 +977,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseCommentsBeforeContent(): void
     {
         $parser = new Parser('<!--lorem ipsum--><div />');
@@ -974,9 +1001,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseCommentsAfterContent(): void
     {
         $parser = new Parser('<div/><!--lorem ipsum-->');
@@ -1000,9 +1025,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldParseCommentsInsideContent(): void
     {
         $parser = new Parser('<div><!--lorem ipsum--></div>');
@@ -1027,9 +1050,7 @@ class ParserTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForUnclosedTag(): void
     {
         $this->expectException(AfxParserException::class);
@@ -1037,9 +1058,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForUnclosedTagWithContent(): void
     {
         $this->expectException(AfxParserException::class);
@@ -1047,9 +1066,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForUnclosedStringAttribute(): void
     {
         $this->expectException(AfxParserException::class);
@@ -1057,9 +1074,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForUnclosedAttributeExpression(): void
     {
         $this->expectException(AfxParserException::class);
@@ -1067,9 +1082,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForUnclosedContentExpression(): void
     {
         $this->expectException(AfxParserException::class);
@@ -1077,9 +1090,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForUnclosedSpreadExpression(): void
     {
         $this->expectException(AfxParserException::class);
@@ -1087,9 +1098,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForWronglyStartedComment()
     {
         $this->expectException(AfxParserException::class);
@@ -1097,9 +1106,7 @@ class ParserTest extends TestCase
         $parser->parse();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldThrowExceptionForCommentWithoutProperEnd()
     {
         $this->expectException(AfxParserException::class);

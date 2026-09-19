@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 
+/**
+ * Factory to build a transformation
+ */
 interface TransformationFactoryInterface
 {
     /**
@@ -14,7 +16,6 @@ interface TransformationFactoryInterface
      */
     public function build(
         array $settings,
-        ContentRepository $contentRepository,
-        PropertyConverter $propertyConverter,
+        ContentRepository $contentRepository
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface;
 }

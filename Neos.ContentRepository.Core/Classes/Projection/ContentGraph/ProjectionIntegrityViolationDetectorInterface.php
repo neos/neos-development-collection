@@ -19,7 +19,7 @@ use Neos\Error\Messages\Result;
 /**
  * interface because different impls.
  *
- * @internal
+ * @internal only API for custom content repository integrations
  */
 interface ProjectionIntegrityViolationDetectorInterface
 {

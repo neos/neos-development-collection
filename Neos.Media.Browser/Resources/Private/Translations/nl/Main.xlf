@@ -576,6 +576,14 @@
         <source>This asset might contain malicious content!</source>
         <target state="translated">Dit bestand kan kwaadaardige inhoud bevatten!</target>
       </trans-unit>
+      <trans-unit id="assetImport.importInfo" xml:space="preserve">
+        <source>Asset is being imported. Please wait.</source>
+        <target state="translated">Het bestand wordt geïmporteerd. Even geduld.</target>
+      </trans-unit>
+      <trans-unit id="assetImport.importInProcess" xml:space="preserve">
+        <source>Import still in process. Please wait.</source>
+        <target state="translated">Importeren is nog aan de gang. Even geduld.</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

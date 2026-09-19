@@ -23,5 +23,5 @@ class SchemaValidationTest extends FlowSchemaValidationTest
     /**
      * @var array<string>
      */
-    protected $schemaPackageKeys = ['Neos.ContentRepository', 'Neos.Neos'];
+    protected static array $schemaPackageKeys = ['Neos.ContentRepository', 'Neos.Neos'];
 }

@@ -19,20 +19,14 @@ namespace Neos\ContentRepository\NodeMigration\Command;
  */
 class MigrationConfiguration
 {
-    /**
-     * @var string
-     */
-    protected $comments;
+    protected ?string $comments;
 
-    /**
-     * @var string
-     */
-    protected $warnings;
+    protected ?string $warnings;
 
     /**
      * @var array<int,mixed>
      */
-    protected $migration;
+    protected ?array $migration;
 
     /**
      * @param array<string,mixed> $configuration
@@ -44,18 +38,12 @@ class MigrationConfiguration
         $this->migration = $configuration['migration'] ?? null;
     }
 
-    /**
-     * @return string
-     */
-    public function getComments()
+    public function getComments(): ?string
     {
         return $this->comments;
     }
 
-    /**
-     * @return boolean
-     */
-    public function hasComments()
+    public function hasComments(): bool
     {
         return ($this->comments !== null);
     }
@@ -63,23 +51,17 @@ class MigrationConfiguration
     /**
      * @return array<int,mixed>
      */
-    public function getMigration(): array
+    public function getMigration(): ?array
     {
         return $this->migration;
     }
 
-    /**
-     * @return string
-     */
-    public function getWarnings()
+    public function getWarnings(): ?string
     {
         return $this->warnings;
     }
 
-    /**
-     * @return boolean
-     */
-    public function hasWarnings()
+    public function hasWarnings(): bool
     {
         return ($this->warnings !== null);
     }

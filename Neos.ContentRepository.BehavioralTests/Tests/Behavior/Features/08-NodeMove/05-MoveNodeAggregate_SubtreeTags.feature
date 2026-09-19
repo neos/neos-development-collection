@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Move a node aggregate into and out of a tagged parent
 
   As a user of the CR I want to move a node that

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find nodes using the findNodeByPath query with node name as path argument
 
   Background:
@@ -82,6 +81,7 @@ Feature: Find nodes using the findNodeByPath query with node name as path argume
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # findNodeByPath queries without results

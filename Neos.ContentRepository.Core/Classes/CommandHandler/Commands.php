@@ -16,7 +16,7 @@ use Neos\ContentRepository\Core\Subscription\Exception\CatchUpHadErrors;
  * Note that as they are separate commands, they might individually fail due to constraints
  * or a projection or catchup failing during the first catchup with {@see CatchUpHadErrors}
  *
- * @implements \IteratorAggregate<CommandInterface>
+ * @implements \IteratorAggregate<int,CommandInterface>
  */
 final readonly class Commands implements \IteratorAggregate, \Countable
 {
@@ -58,6 +58,11 @@ final readonly class Commands implements \IteratorAggregate, \Countable
     public function getIterator(): \Traversable
     {
         yield from $this->items;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->items === [];
     }
 
     public function count(): int

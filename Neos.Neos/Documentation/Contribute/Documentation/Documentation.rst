@@ -7,8 +7,8 @@ How it works
 
 Our documentation is managed in a Neos instance at https://docs.neos.io/
 
-We use Read The Docs (http://neos.readthedocs.org) to host the versionized API 
-documentation for Neos. 
+We use Read The Docs (http://neos.readthedocs.org) to host the versioned API
+documentation for Neos.
 
 This service listens for commits on Github and automatically builds the
 documentation for all branches.
@@ -34,11 +34,11 @@ markup. It can produce HTML, LaTex, ePub, plain text and many more output format
 
 As Sphinx is a python based tool, you can install it by using either pip:
 
-``pip install -U Sphinx``
+``pip install -U sphinx``
 
 or easy_install:
 
-``easy_install -U Sphinx``
+``easy_install -U sphinx``
 
 
 Makefile
@@ -49,26 +49,7 @@ we included a `Makefile` to simplify the building process.
 
 In order to use the commands you must already have Sphinx installed.
 
-You can get an overview of the provided commands by
+You can get an overview of the provided commands by::
 
-``cd Neos.Neos/Documentation``
-
-``make help``
-
-
-Docker
-======
-
-If you don't want to install Sphinx on your computer or have trouble installing
-it, you can use a prebuilt Docker image that contains a working version of Sphinx.
-The image is built on top of a pretty small alpine linux and has only around 80MB.
-
-You can simply prefix your `make` command with the following docker command:
-
-``docker run -v $(pwd):/documents hhoechtl/doctools-sphinx make html``
-
-This will fire up a docker-container built from that image and execute the
-Sphinx build inside the container. As your current directory is mounted into the
-container, it can read the files and the generated output will be written in your
-local filesystem as it would by just executing the make command with your local
-Sphinx installation.
+    cd Neos.Neos/Documentation
+    make help

@@ -38,7 +38,7 @@ final class FakeNodeTypeManagerFactory implements NodeTypeManagerFactoryInterfac
             // allows to be configured for testing
             return NodeTypeManager::createFromArrayConfiguration($options['nodeTypes']);
         }
-        throw new \RuntimeException('NodeTypeManagerFactory uninitialized');
+        return NodeTypeManager::createFromArrayConfiguration([]);
     }
 
     /**

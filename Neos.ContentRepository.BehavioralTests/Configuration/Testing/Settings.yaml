@@ -43,6 +43,27 @@ Neos:
             options:
               instanceId: debug
 
+      t_extensibility:
+        eventStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+        nodeTypeManager:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory
+        contentDimensionSource:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory
+        authProvider:
+          factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeAuthProviderFactory
+        clock:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+        subscriptionStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
+        propertyConverters: {}
+        contentGraphProjection:
+          factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+          catchUpHooks: {}
+        commandHooks:
+          'Neos.Testing:FakeCommandHook':
+            factoryObjectName: Neos\ContentRepository\TestSuite\Fakes\FakeCommandHookFactory
+
       t_subscription:
         eventStore:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory

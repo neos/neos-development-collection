@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Utility\ObjectAccess;
@@ -46,6 +47,28 @@ trait AssetTrait
         $this->getObject(AssetRepository::class)->add($asset);
         $this->getObject(PersistenceManagerInterface::class)->persistAll();
     }
+
+    /**
+     * @Given an asset with id :assetIdentifier and file name :fileName exists with the content :content
+     */
+    public function anAssetExists(string $assetIdentifier, string $fileName, string $content): void
+    {
+        /** @var ResourceManager $resourceManager */
+        $resourceManager = $this->getObject(ResourceManager::class);
+        /** @var AssetRepository $assetRepository */
+        $assetRepository = $this->getObject(AssetRepository::class);
+
+        $resource = $resourceManager->importResourceFromContent($content, $fileName);
+        $asset = new Asset($resource);
+        ObjectAccess::setProperty($asset, 'Persistence_Object_Identifier', $assetIdentifier, true);
+        $assetRepository->add($asset);
+
+        /** @var PersistenceManagerInterface $persistenceManager */
+        $persistenceManager = $this->getObject(PersistenceManagerInterface::class);
+        $persistenceManager->persistAll();
+        $persistenceManager->clearState();
+    }
+
 
     /**
      * @Given the asset :assetId has the title :title

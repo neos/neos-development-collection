@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Dimension mismatch
 
   Nodes must only cover specializations of their origin.

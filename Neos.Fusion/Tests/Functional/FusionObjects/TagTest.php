@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,16 +12,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Tag object
  *
  */
-class TagTest extends AbstractFusionObjectTest
+class TagTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithAttributesFromNonFusionObjectWorks()
     {
         $view = $this->buildView();
@@ -27,9 +26,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<link rel="stylesheet" type="text/css" />', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithAttributesFromFusionObjectWorks()
     {
         $view = $this->buildView();
@@ -37,9 +34,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<test sum="4" />', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithAttributesFromArraysWorks()
     {
         $view = $this->buildView();
@@ -47,9 +42,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<div class="a b"></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithFusionAttributesWorks()
     {
         $view = $this->buildView();
@@ -57,9 +50,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<div key="value" list="foo bar"></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithAttributesFromDataStructureWorks()
     {
         $view = $this->buildView();
@@ -67,9 +58,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<div key="value" list="foo bar"></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithBooleanAttributesWorks()
     {
         $view = $this->buildView();
@@ -77,9 +66,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<div foo></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithBooleanAttributesAndForbiddenEmptyAttributesWorks()
     {
         $view = $this->buildView();
@@ -87,9 +74,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<div foo=""></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithBooleanAndAllowEmptyAttributesAttributesWorks()
     {
         $view = $this->buildView();
@@ -97,9 +82,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<div foo></div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithContentFromNonFusionObjectWorks()
     {
         $view = $this->buildView();
@@ -107,9 +90,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<span>test</span>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithContentFromFusionObjectWorks()
     {
         $view = $this->buildView();
@@ -117,9 +98,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<span>4</span>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function registeredSelfClosingTagWorks()
     {
         $view = $this->buildView();
@@ -127,9 +106,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<br />', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function omitClosingTagWorks()
     {
         $view = $this->buildView();
@@ -137,9 +114,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<test>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithEelExpressionUsingThis()
     {
         $view = $this->buildView();
@@ -147,9 +122,7 @@ class TagTest extends AbstractFusionObjectTest
         self::assertSame('<title databar="baz" datafoo="baz_baz">foo</title>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function tagWithIgnorePropertiesInAttributes()
     {
         $view = $this->buildView();

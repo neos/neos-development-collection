@@ -15,12 +15,14 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesForNam
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -32,6 +34,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Exception\TetheredNodesCannotBePartiallyCopied;
 use Neos\Neos\Domain\Service\NodeDuplication\NodeAggregateIdMapping;
 use Neos\Neos\Domain\Service\NodeDuplication\TransientNodeCopy;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 
 /**
  * Service to copy node recursively - as there is no equivalent content repository core command.
@@ -87,7 +90,7 @@ final class NodeDuplicationService
     ): void {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph($sourceDimensionSpacePoint, VisibilityConstraints::withoutRestrictions());
+        $subgraph = $contentRepository->getContentGraph($workspaceName)->getSubgraph($sourceDimensionSpacePoint, NeosVisibilityConstraints::excludeRemoved());
 
         $targetParentNode = $subgraph->findNodeById($targetParentNodeAggregateId);
         if ($targetParentNode === null) {
@@ -109,7 +112,28 @@ final class NodeDuplicationService
             $nodeAggregateIdMapping
         );
 
+        $isFirstCommand = true;
         foreach ($commands as $command) {
+            if ($isFirstCommand) {
+                if (
+                    $command instanceof CreateNodeAggregateWithNode
+                    && $contentRepository->getNodeTypeManager()->getNodeType($command->nodeTypeName)
+                        ?->isOfType('Neos.Neos:Document')
+                    && array_key_exists('uriPathSegment', $command->initialPropertyValues->values)
+                ) {
+                    $command = $command->withInitialPropertyValues(
+                        newInitialPropertyValues: $command->initialPropertyValues->withValue(
+                            valueName: 'uriPathSegment',
+                            value: $this->resolveUriPathSegmentForCopy(
+                                originalUriPathSegment: $command->initialPropertyValues->values['uriPathSegment'],
+                                targetParentNodeAggregateId: $targetParentNodeAggregateId,
+                                subgraph: $subgraph,
+                            ),
+                        )
+                    );
+                }
+                $isFirstCommand = false;
+            }
             $contentRepository->handle($command);
         }
     }
@@ -140,10 +164,7 @@ final class NodeDuplicationService
             $targetDimensionSpacePoint,
             $targetParentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $targetSucceedingSiblingNodeAggregateId,
-            // todo skip properties not in schema
-            initialPropertyValues: PropertyValuesToWrite::fromArray(
-                iterator_to_array($subtreeToCopy->node->properties)
-            ),
+            initialPropertyValues: $this->filterPropertiesToWrite($subgraph->getContentRepositoryId(), $subtreeToCopy->node),
             references: $this->serializeProjectedReferences(
                 $subgraph->findReferences($subtreeToCopy->node->aggregateId, FindReferencesFilter::create())
             )
@@ -177,6 +198,34 @@ final class NodeDuplicationService
         }
 
         return $commands;
+    }
+
+    private function resolveUriPathSegmentForCopy(
+        string $originalUriPathSegment,
+        NodeAggregateId $targetParentNodeAggregateId,
+        ContentSubgraphInterface $subgraph
+    ): string {
+        $alreadyClaimedUriPathSegments = [];
+        foreach (
+            $subgraph->findChildNodes(
+                $targetParentNodeAggregateId,
+                FindChildNodesFilter::create(),
+            ) as $futureSibling
+        ) {
+            $siblingUriPathSegment = $futureSibling->getProperty('uriPathSegment');
+            if (is_string($siblingUriPathSegment)) {
+                $alreadyClaimedUriPathSegments[$siblingUriPathSegment] = true;
+            }
+        }
+
+        $uriPathSegment = $originalUriPathSegment;
+        $i = 1;
+        while (array_key_exists($uriPathSegment, $alreadyClaimedUriPathSegments)) {
+            $uriPathSegment = $originalUriPathSegment . '-' . $i;
+            $i++;
+        }
+
+        return $uriPathSegment;
     }
 
     private function commandsForSubtreeRecursively(TransientNodeCopy $transientParentNode, Subtree $subtree, ContentSubgraphInterface $subgraph, Commands $commands): Commands
@@ -231,10 +280,7 @@ final class NodeDuplicationService
                 $transientParentNode->originDimensionSpacePoint,
                 $transientParentNode->aggregateId,
                 // todo succeedingSiblingNodeAggregateId
-                // todo skip properties not in schema
-                initialPropertyValues: PropertyValuesToWrite::fromArray(
-                    iterator_to_array($subtree->node->properties)
-                ),
+                initialPropertyValues: $this->filterPropertiesToWrite($subgraph->getContentRepositoryId(), $subtree->node),
                 references: $this->serializeProjectedReferences(
                     $subgraph->findReferences($subtree->node->aggregateId, FindReferencesFilter::create())
                 )
@@ -286,5 +332,24 @@ final class NodeDuplicationService
         }
 
         return NodeReferencesToWrite::fromArray($serializedReferences);
+    }
+
+    private function filterPropertiesToWrite(ContentRepositoryId $contentRepositoryId, Node $node): PropertyValuesToWrite
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
+
+        assert($nodeType instanceof NodeType);
+
+        $nodeProperties = [];
+
+        foreach ($node->properties as $propertyName => $propertyValue) {
+            if ($nodeType->hasProperty($propertyName)) {
+                $nodeProperties[$propertyName] = $propertyValue;
+            }
+        }
+
+        return PropertyValuesToWrite::fromArray($nodeProperties);
     }
 }

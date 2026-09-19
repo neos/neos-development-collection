@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Tag subtree with dimensions
 
   As a user of the CR I want to tag a node and expect its descendants to also be tagged.
@@ -20,7 +19,7 @@ Feature: Tag subtree with dimensions
       | Key                  | Value                |
       | workspaceName        | "live"               |
       | newContentStreamId   | "cs-identifier"      |
-    And I am in workspace "live" and dimension space point {}
+    And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "root"                        |
@@ -59,7 +58,8 @@ Feature: Tag subtree with dimensions
       | targetOrigin    | {"language":"mul"} |
 
 
-    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a
      a1 (tag1*)
@@ -67,7 +67,8 @@ Feature: Tag subtree with dimensions
     """
 
     When I am in dimension space point {"language":"mul"}
-    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a
      a1
@@ -103,14 +104,16 @@ Feature: Tag subtree with dimensions
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"mul"} |
 
-    When I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a (tag2*)
      a1 (tag2)
     """
 
     When I am in dimension space point {"language":"de"}
-    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"de"}
+    And I expect this node to have the following subtree with tags:
     """
     a (tag1*,tag2*)
      a1 (tag1,tag2)
@@ -168,9 +171,60 @@ Feature: Tag subtree with dimensions
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
     And I am in workspace "user-ws" and dimension space point {"language":"gsw"}
-    And I execute the findSubtree query for entry node aggregate id "a" I expect the following tree with tags:
+    Then I expect node aggregate identifier "a" to lead to node new-user-cs-id;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
     """
     a (tag1*)
      a1 (tag1)
       a1a (tag1)
+    """
+
+  Scenario: Untagging preserves inherited tags for each dimension space point
+    Given the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | originDimensionSpacePoint |
+      | a2              | Neos.ContentRepository.Testing:Document | a                     | a2       | {"language":"mul"}        |
+      | a2a             | Neos.ContentRepository.Testing:Document | a2                    | a2a      | {"language":"mul"}        |
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "a"                  |
+      | coveredDimensionSpacePoint   | {"language":"de"}    |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "tag1"               |
+
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "a2"               |
+      | coveredDimensionSpacePoint   | {"language":"mul"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "tag1"             |
+
+    # untag the explicit tag on "a2" in all dimensions ...
+    When the command UntagSubtree is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "a2"               |
+      | coveredDimensionSpacePoint   | {"language":"mul"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "tag1"             |
+
+    # ... only in "de" it STILL inherits tag1 from "a"
+    When I am in dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a (tag1*)
+     a1 (tag1)
+      a1a (tag1)
+     a2 (tag1)
+      a2a (tag1)
+    """
+
+    # ... while in "en" there are no tags anymore
+    When I am in dimension space point {"language":"en"}
+    Then I expect node aggregate identifier "a" to lead to node cs-identifier;a;{"language":"mul"}
+    And I expect this node to have the following subtree with tags:
+    """
+    a
+     a2
+      a2a
     """

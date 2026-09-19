@@ -26,6 +26,7 @@ use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Mvc\View\ViewInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -148,6 +149,12 @@ class AssetController extends ActionController
      * @var AssetVariantGenerator
      */
     protected $assetVariantGenerator;
+
+    /**
+     * @Flow\Inject
+     * @var PersistenceManagerInterface
+     */
+    protected $persistenceManager;
 
     /**
      * @var AssetSourceInterface[]

@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
@@ -35,14 +36,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
  */
 class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
 {
-    public function __construct(private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph)
-    {
-    }
-
     /**
      * @param array<string,mixed> $settings
      */
-    public function build(array $settings): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
+    public function build(array $settings, ContentRepository $contentRepository): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
         $points = OriginDimensionSpacePointSet::fromArray($settings['points']);
 
@@ -54,7 +51,7 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
         return new class (
             $points,
             $includeSpecializations,
-            $this->interDimensionalVariationGraph
+            $contentRepository->getVariationGraph()
         ) implements NodeBasedFilterInterface {
             public function __construct(
                 private readonly OriginDimensionSpacePointSet $points,

@@ -34,6 +34,11 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         $this->fusionCodeCollection = self::deduplicateItemsAndKeepLast($fusionSourceCode);
     }
 
+    public static function createEmpty(): self
+    {
+        return new self();
+    }
+
     public static function fromFilePath(string $filePath): self
     {
         return new self(FusionSourceCode::fromFilePath($filePath));
@@ -47,7 +52,7 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     public static function tryFromFilePath(string $filePath): self
     {
         if (!is_readable($filePath)) {
-            return self::empty();
+            return self::createEmpty();
         }
         return self::fromFilePath($filePath);
     }
@@ -61,9 +66,12 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         return self::tryFromFilePath($fusionPathAndFilename);
     }
 
+    /**
+     * @deprecated with Neos 9, remove me :)
+     */
     public static function empty(): self
     {
-        return new self();
+        return self::createEmpty();
     }
 
     public function union(FusionSourceCodeCollection $other): self

@@ -13,6 +13,7 @@
   },
   "require": {
     "neos/contentrepository-core": "self.version",
+    "neos/contentrepository-dbal": "self.version",
     "doctrine/dbal": "^3.1.4",
     "doctrine/migrations": "*"
   },

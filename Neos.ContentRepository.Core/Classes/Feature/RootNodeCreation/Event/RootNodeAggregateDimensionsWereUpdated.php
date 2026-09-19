@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsWorkspaceName;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -27,6 +28,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 /**
  * A root node aggregate is now visible in other dimensions. Needed when configured dimensions
  * change.
+ *
+ * This event is only emitted if new root generalisations were added.
+ * For the removal of a dimension a {@see NodeAggregateWasRemoved} targeting the root node will be emitted.
  *
  * @api events are the persistence-API of the content repository
  */

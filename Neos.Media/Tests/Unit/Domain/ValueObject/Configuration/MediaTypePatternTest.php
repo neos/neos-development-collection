@@ -10,7 +10,8 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\ValueObject\Configuration\MediaTypePattern;
 
@@ -19,7 +20,7 @@ class MediaTypePatternTest extends UnitTestCase
     /**
      * @return array
      */
-    public function validMediaTypePatterns(): array
+    public static function validMediaTypePatterns(): array
     {
         return [
             ['/image\/.*/'],
@@ -29,9 +30,9 @@ class MediaTypePatternTest extends UnitTestCase
 
     /**
      * @param $mediaTypePatternAsString
-     * @dataProvider validMediaTypePatterns()
-     * @test
      */
+    #[DataProvider('validMediaTypePatterns')]
+    #[Test]
     public function validMediaTypePatternsAreAccepted($mediaTypePatternAsString): void
     {
         $mediaType = new MediaTypePattern($mediaTypePatternAsString);
@@ -41,7 +42,7 @@ class MediaTypePatternTest extends UnitTestCase
     /**
      * @return array
      */
-    public function invalidMediaTypePatterns(): array
+    public static function invalidMediaTypePatterns(): array
     {
         return [
             [''],
@@ -53,18 +54,16 @@ class MediaTypePatternTest extends UnitTestCase
 
     /**
      * @param $mediaTypePatternAsString
-     * @test
-     * @dataProvider invalidMediaTypePatterns()
      */
+    #[DataProvider('invalidMediaTypePatterns')]
+    #[Test]
     public function invalidMediaTypePatternsAreRejected($mediaTypePatternAsString): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new MediaTypePattern($mediaTypePatternAsString);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function matchesChecksIfMediaTypeMatchesPattern(): void
     {
         $mediaTypePattern = new MediaTypePattern('~image/(jpe?g|png)~');

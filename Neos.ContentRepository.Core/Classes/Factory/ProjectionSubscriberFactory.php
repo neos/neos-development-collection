@@ -49,6 +49,7 @@ final readonly class ProjectionSubscriberFactory
             $dependencies->nodeTypeManager,
             $dependencies->contentDimensionSource,
             $dependencies->interDimensionalVariationGraph,
+            $dependencies->performanceTracer,
         ));
 
         return new ProjectionSubscriber(

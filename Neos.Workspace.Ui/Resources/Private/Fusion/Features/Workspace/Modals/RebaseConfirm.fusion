@@ -1,0 +1,63 @@
+prototype(Neos.Workspace.Ui:Component.Modal.RebaseConfirm) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = ''
+  /// string
+  workspaceTitle = ''
+  /// int
+  conflictCount = 0
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-rebase-confirm-modal'
+    popoverRebaseId = 'workspace-rebase-modal'
+
+    forceRebaseWorkspaceUri = Neos.Fusion:ActionUri {
+      action = 'rebase'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        force = true
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover class="error" id={private.popoverId}>
+      <header>
+        <button
+          type="button"
+          class="neos-close neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          <Neos.Workspace.Ui:Component.Icon icon="times"/>
+        </button>
+        <div class="neos-header">
+          <i class="fas fa-exclamation-triangle"></i> {private.i18n.id('workspaces.dialog.ConfirmationDropConflictingChanges').arguments([props.workspaceTitle])}
+        </div>
+      </header>
+      <section>
+        <p>{private.i18n.id('workspaces.dialog.ConfirmationDropConflictingChangesCount').arguments([props.conflictCount])}</p>
+        <p>{private.i18n.id('workspaces.dialog.ConfirmationDropConflictingChangesText')}</p>
+      </section>
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={private.popoverRebaseId}
+          popovertargetaction="close"
+        >
+          {private.i18n.id('cancel')}
+        </button>
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          label={private.i18n.id('workspaces.modal.yesRebaseWorkspace')}
+          attributes.hx-get={private.forceRebaseWorkspaceUri}
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverRebaseId + '").hidePopover()'}
+        />
+      </footer>
+    </div>
+  `
+}

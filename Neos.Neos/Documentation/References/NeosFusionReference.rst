@@ -47,7 +47,7 @@ other named element, using ``before`` and ``after`` syntax as follows:
   ``after [namedElement]`` statements exist. Statements without ``[optionalPriority]``
   are added farthest after the element.
 
-  If ``[namedElement]`` does not exist, the element is added before all all ``end`` positions.
+  If ``[namedElement]`` does not exist, the element is added before all ``end`` positions.
 
 Example Ordering::
 
@@ -249,7 +249,7 @@ Example::
 .. _Neos_Fusion__Debug_Console:
 
 Neos.Fusion:Debug.Console
------------------
+-------------------------
 
 Wraps the given value with a script tag to print it to the browser console.
 When used as process the script tag is appended to the processed value.
@@ -478,7 +478,7 @@ Example::
 
 
 Neos.Fusion:DataStructure
---------------------
+-------------------------
 
 Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Join`)
 
@@ -561,7 +561,7 @@ Neos.Fusion:ActionUri
 
 Built a URI to a controller action
 
-:request: (ActionRequest, defaults to the the current ``request``) The action request the uri is build from.
+:request: (ActionRequest, defaults to the current ``request``) The action request the uri is build from.
 :package: (string) The package key (e.g. ``'My.Package'``)
 :subpackage: (string) The subpackage, empty by default
 :controller: (string) The controller name (e.g. ``'Registration'``)
@@ -718,7 +718,7 @@ Example::
 	}
 
 Neos.Neos Fusion Objects
-=============================
+========================
 
 The Fusion objects defined in the Neos package contain all Fusion objects which
 are needed to integrate a site. Often, it contains generic Fusion objects
@@ -963,7 +963,7 @@ Example::
 	breadcrumb = Neos.Neos:BreadcrumbMenu
 
 .. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
-   you can use directly aswell.
+   you can use directly as well.
 
 .. note:: The ``rendering`` of the ``BreadcrumbMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
    If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
@@ -988,7 +988,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 .. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
-   you can use directly aswell.
+   you can use directly as well.
 
 .. note:: The ``rendering`` of the ``DimensionsMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
    If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
@@ -996,7 +996,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 .. _Neos_Neos__MenuItemListRenderer:
 
 Neos.Neos:MenuItemListRenderer
--------------------------------
+------------------------------
 
 A very basic renderer that takes a list of MenuItems and renders the result as unordered list. If item states were calculated
 they are applied as classnames to the list items.
@@ -1019,14 +1019,12 @@ Create a list of menu-items items for nodes.
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
 :itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
 
-Note::
-
 MenuItems item properties:
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
 :originalNode: (Node) Original node for the item
-:state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
+:state: (MenuItemState) Menu state of the item: ``normal``, ``current`` (the current node) or ``active`` (ancestor of current node). To retrieve the string value of the item state use ``item.state.value``.
 :label: (string) Full label of the node
 :menuLevel: (integer) Menu level the item is rendered on
 :uri: (string) Frontend URI of the node
@@ -1105,13 +1103,13 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-menu"
+:renderHiddenInMenu: (boolean, default **true**) If TRUE, render nodes which are marked as "hidden-in-menu"
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:
 
 :node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
-:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
+:state: (MenuItemState) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``. To retrieve the string value of the item state use ``item.state.value``.
 :label: (string) Label of the item (the dimension preset label)
 :menuLevel: (integer) Menu level the item is rendered on
 :dimensions: (array) Dimension values of the node, indexed by dimension name
@@ -1192,7 +1190,7 @@ Example::
 .. _Neos_Neos__NodeLink:
 
 Neos.Neos:NodeLink
------------------
+------------------
 
 Renders an anchor tag pointing to the node given via the argument. Based on :ref:`Neos_Neos__NodeUri`.
 The link text is the node label, unless overridden.
@@ -1265,15 +1263,19 @@ Example::
 Neos.Neos:ConvertUris
 ---------------------
 
-Convert internal node and asset URIs (``node://...`` or ``asset://...``) in a string to public URIs and allows for
+Converts internal node and asset URIs (``node://...`` or ``asset://...``) in a string to URLs and allows
 overriding the target attribute for external links and resource links.
+
+Anchor tags with an unresolvable URI in their href attribute (for example because the target node is
+disabled) are replaced by their inner content. Unresolvable URIs outside of anchor
+tags are removed entirely.
 
 :value: (string) The string value, defaults to the ``value`` context variable to work as a processor by default
 :node: (Node) The current node as a reference, defaults to the ``node`` context variable
 :externalLinkTarget: (string) Override the target attribute for external links, defaults to ``_blank``. Can be disabled with an empty value.
 :resourceLinkTarget: (string) Override the target attribute for resource links, defaults to ``_blank``. Can be disabled with an empty value.
-:forceConversion: (boolean) Whether to convert URIs in a non-live workspace, defaults to ``FALSE``
-:absolute: (boolean) Can be used to convert node URIs to absolute links, defaults to ``FALSE``
+:forceConversion: (boolean) Whether to convert URIs even when rendering in edit mode, defaults to ``FALSE``
+:absolute: (boolean) Can be used to resolve node URIs to absolute URLs, defaults to ``FALSE``
 :setNoOpener: (boolean) Sets the rel="noopener" attribute to external links, which is good practice, defaults to ``TRUE``
 :setExternal: (boolean) Sets the rel="external" attribute to external links. Defaults to ``TRUE``
 
@@ -1315,7 +1317,7 @@ Neos.Neos:ContentElementEditable
 
 Processor to augment an HTML tag with metadata for inline editing to make a rendered representation of a property editable.
 
-The processor expects beeing applied to an HTML tag with the content of the edited property.
+The processor expects being applied to an HTML tag with the content of the edited property.
 
 :node: (Node) The node of the content element. Optional, will use the Fusion context variable ``node`` by default.
 :property: (string) Node property that should be editable
@@ -1332,14 +1334,14 @@ Example::
 
 
 Deprecated Fusion Prototypes
-----------------------------
+============================
 
 The following prototypes are deprecated and will be removed in future versions of Neos!
 
 .. _Neos_Fusion__UriBuilder:
 
 Neos.Fusion:UriBuilder
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 Built a URI to a controller action
 
@@ -1368,16 +1370,8 @@ Removed Fusion Prototypes
 
 The following Fusion Prototypes have been removed:
 
-.. _Neos_Fusion__Array:
 * `Neos.Fusion:Array` replaced with :ref:`Neos_Fusion__Join`
-.. _Neos_Fusion__RawArray:
 * `Neos.Fusion:RawArray` replaced with :ref:`Neos_Fusion__DataStructure`
-.. _Neos_Fusion__Collection:
 * `Neos.Fusion:Collection` replaced with :ref:`Neos_Fusion__Loop`
-.. _Neos_Fusion__RawCollection:
 * `Neos.Fusion:RawCollection` replaced with :ref:`Neos_Fusion__Map`
-.. _Neos_Fusion__Attributes:
 * `Neos.Fusion:Attributes` use property `attributes` in :ref:`Neos_Fusion__Tag`
-
-
-

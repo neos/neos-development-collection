@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeTypeChange;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\Common\NodeTypeChangeInternals;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
@@ -28,8 +30,10 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodeP
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -38,7 +42,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -111,23 +114,14 @@ trait NodeTypeChange
         NodeTypeName $newNodeTypeName,
         NodeAggregateIdsByNodePaths $nodeAggregateIdsByNodePaths,
         NodePath $currentNodePath,
-        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $conflictResolutionStrategy,
+        NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy|NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy $conflictResolutionStrategy,
         NodeAggregateIds $alreadyRemovedNodeAggregates,
-    ): Events;
-
-    abstract protected function createEventsForMissingTetheredNode(
-        ContentGraphInterface $contentGraph,
-        NodeAggregate $parentNodeAggregate,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        TetheredNodeTypeDefinition $tetheredNodeTypeDefinition,
-        NodeAggregateId $tetheredNodeAggregateId
     ): Events;
 
     /**
      * @throws NodeTypeNotFound
      * @throws NodeConstraintException
      * @throws NodeTypeNotFound
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws \Exception
      */
     private function handleChangeNodeAggregateType(
@@ -174,9 +168,17 @@ trait NodeTypeChange
                 => $this->requireConstraintsImposedByHappyPathStrategyAreMet(
                     $contentGraph,
                     $nodeAggregate,
-                    $newNodeType
+                    $newNodeType,
+                    null,
                 ),
-            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE => null
+            NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_PROMISED_CASCADE
+                => $this->requireConstraintsImposedByHappyPathStrategyAreMet(
+                    $contentGraph,
+                    $nodeAggregate,
+                    $newNodeType,
+                    $nodeAggregate->nodeTypeName,
+                ),
+            default => null,
         };
 
         /**************
@@ -189,6 +191,13 @@ trait NodeTypeChange
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);
+
+        foreach ($descendantNodeAggregateIds->getNodeAggregateIds() as $descendantNodeAggregateId) {
+            $this->requireProjectedNodeAggregateToNotExist(
+                $contentGraph,
+                $descendantNodeAggregateId
+            );
+        }
 
         /**************
          * Creating the events
@@ -204,7 +213,11 @@ trait NodeTypeChange
 
         # Handle property adjustments
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
-        foreach ($nodeAggregate->getNodes() as $node) {
+        // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
+        $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOriginDimensionSpacePoints($nodeAggregate->occupiedDimensionSpacePoints);
+        foreach ($orderedOccupiedDimensionSpacePoints as $originDimensionSpacePoint) {
+            $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
+
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $newNodeType,
@@ -223,29 +236,36 @@ trait NodeTypeChange
                     $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
                     $nodeAggregate->nodeAggregateId,
-                    $node->originDimensionSpacePoint,
-                    $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
+                    $originDimensionSpacePoint,
+                    $nodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
                     $complementaryPropertyValues,
                     $obsoletePropertyNames
                 );
             }
         }
 
-        // remove disallowed nodes
+        // remove or tag disallowed nodes
         $alreadyRemovedNodeAggregateIds = NodeAggregateIds::createEmpty();
         if ($command->strategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-            array_push($events, ...$this->deleteDisallowedNodesWhenChangingNodeType(
-                $contentGraph,
-                $nodeAggregate,
-                $newNodeType,
-                $alreadyRemovedNodeAggregateIds,
-            ));
-            array_push($events, ...$this->deleteObsoleteTetheredNodesWhenChangingNodeType(
-                $contentGraph,
-                $nodeAggregate,
-                $newNodeType,
-                $alreadyRemovedNodeAggregateIds
-            ));
+            $handleNode = fn(NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
+                $contentGraph->getWorkspaceName(),
+                $contentGraph->getContentStreamId(),
+                $nodeAggregateToDelete->nodeAggregateId,
+                $points,
+            );
+
+            array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
+            array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
+        } elseif ($command->strategy instanceof NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy) {
+            $handleNode = fn(NodeAggregate $aggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
+                $contentGraph->getWorkspaceName(),
+                $contentGraph->getContentStreamId(),
+                $aggregateToTag->nodeAggregateId,
+                $points,
+                $command->strategy->subtreeTag,
+            );
+            array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
+            array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $newNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
         }
 
         // handle (missing) tethered node aggregates
@@ -292,14 +312,15 @@ trait NodeTypeChange
     }
 
     /**
-     * NOTE: when changing this method, {@see NodeTypeChange::deleteDisallowedNodesWhenChangingNodeType}
-     * needs to be modified as well (as they are structurally the same)
+     * NOTE: when changing this method, also check {@see NodeTypeChangeInternals::handleDisallowedNodesWhenChangingNodeType}
+     * which applies the same traversal pattern to produce events.
      * @throws NodeConstraintException|NodeTypeNotFound
      */
     private function requireConstraintsImposedByHappyPathStrategyAreMet(
         ContentGraphInterface $contentGraph,
         NodeAggregate $nodeAggregate,
-        NodeType $newNodeType
+        NodeType $newNodeType,
+        ?NodeTypeName $expectIdenticallyTypedDescendantsToBeChangedAsWell,
     ): void {
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
@@ -310,10 +331,28 @@ trait NodeTypeChange
             /* @var $childNodeAggregate NodeAggregate */
             // the "parent" of the $childNode is $node;
             // so we use $newNodeType (the target node type of $node after the operation) here.
-            $this->requireNodeTypeConstraintsImposedByParentToBeMet(
-                $newNodeType,
-                $this->requireNodeType($childNodeAggregate->nodeTypeName)
-            );
+            if (
+                $expectIdenticallyTypedDescendantsToBeChangedAsWell
+                && $childNodeAggregate->nodeTypeName->equals($expectIdenticallyTypedDescendantsToBeChangedAsWell)
+            ) {
+                $childNodeTypeForConstraintChecks = $newNodeType;
+            } else {
+                $childNodeTypeForConstraintChecks = $this->requireNodeType($childNodeAggregate->nodeTypeName);
+            }
+            if (
+                $childNodeAggregate->classification->isTethered()
+                && $childNodeAggregate->nodeName
+                && $newNodeType->tetheredNodeTypeDefinitions->get($childNodeAggregate->nodeName)?->nodeTypeName
+                    === $childNodeAggregate->nodeTypeName
+            ) {
+                // this tethered child node aggregate matches the tethered node declaration of the new node type
+                // and thus can stay the same and will simply be ignored
+            } else {
+                $this->requireNodeTypeConstraintsImposedByParentToBeMet(
+                    $newNodeType,
+                    $childNodeTypeForConstraintChecks
+                );
+            }
 
             // we do not need to test for grandparents here, as we did not modify the grandparents.
             // Thus, if it was allowed before, it is allowed now.
@@ -327,11 +366,30 @@ trait NodeTypeChange
                 // we do not need to test for the parent of grandchild (=child),
                 // as we do not change the child's node type.
                 // we however need to check for the grandparent node type.
-                $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
-                    $newNodeType, // the grandparent node type changes
-                    $childNodeAggregate->nodeName,
-                    $this->requireNodeType($grandchildNodeAggregate->nodeTypeName)
-                );
+
+                if (
+                    $expectIdenticallyTypedDescendantsToBeChangedAsWell
+                    && $grandchildNodeAggregate->nodeTypeName->equals($expectIdenticallyTypedDescendantsToBeChangedAsWell)
+                ) {
+                    $grandChildNodeTypeForConstraintChecks = $newNodeType;
+                } else {
+                    $grandChildNodeTypeForConstraintChecks = $this->requireNodeType($grandchildNodeAggregate->nodeTypeName);
+                }
+                if (
+                    $grandchildNodeAggregate->classification->isTethered()
+                    && $grandchildNodeAggregate->nodeName
+                    && $childNodeTypeForConstraintChecks->tetheredNodeTypeDefinitions->get($grandchildNodeAggregate->nodeName)?->nodeTypeName
+                        === $grandChildNodeTypeForConstraintChecks->name
+                ) {
+                    // this tethered grandchild node aggregate matches the tethered node declaration of the child's potentially new node type
+                    // and thus can stay the same and will simply be ignored
+                } else {
+                    $this->requireNodeTypeConstraintsImposedByGrandparentToBeMet(
+                        $newNodeType, // the grandparent node type changes
+                        $childNodeAggregate->nodeName,
+                        $grandChildNodeTypeForConstraintChecks
+                    );
+                }
             }
 
             foreach ($newNodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
@@ -340,7 +398,8 @@ trait NodeTypeChange
                         $this->requireConstraintsImposedByHappyPathStrategyAreMet(
                             $contentGraph,
                             $childNodeAggregate,
-                            $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName)
+                            $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName),
+                            $expectIdenticallyTypedDescendantsToBeChangedAsWell,
                         );
                     }
                 }

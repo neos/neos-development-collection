@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
@@ -40,9 +39,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Traversable;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
@@ -164,15 +161,26 @@ final class NodeFactory
         $occupiedDimensionSpacePoints = [];
         $nodesByOccupiedDimensionSpacePoint = [];
         $coveredDimensionSpacePoints = [];
-        $nodesByCoveredDimensionSpacePoints = [];
         $coverageByOccupants = [];
         $occupationByCovering = [];
-        $dimensionSpacePointsBySubtreeTags = DimensionSpacePointsBySubtreeTags::create();
+        $nodeTagsByCoveredDimensionSpacePoint = [];
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
+                $nodeRow['covereddimensionspacepoint']
+            );
             $occupiedDimensionSpacePoint = $this->dimensionSpacePointRepository->getOriginDimensionSpacePointByHash($nodeRow['origindimensionspacepointhash']);
-            if (!isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])) {
+            if (
+                // FIXME This condition should be exactly ONCE given for every occupation in a node aggregate
+                $coveredDimensionSpacePoint->hash === $occupiedDimensionSpacePoint->hash
+                // FIXME ... but, if poorly fetched a node aggregate does not include its occupation rows.
+                // as hack we support partial node aggregates by picking the first node row for an occupation which might not be the actual occupation
+                // The reason this is hacky is that edge information like subtree tags are not deterministic but dependent on the database returning rows.
+                // See https://github.com/neos/neos-development-collection/pull/5489
+                // This unfortunate hack condition means that the if-body is executed at most 2 times for regular cases.
+                || !isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])
+            ) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                     $nodeRow,
@@ -180,33 +188,28 @@ final class NodeFactory
                     $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                     $visibilityConstraints
                 );
-                $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
+                $occupiedDimensionSpacePoints[$occupiedDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
                 $rawNodeAggregateId = $rawNodeAggregateId ?: $nodeRow['nodeaggregateid'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
                 $rawNodeName = $rawNodeName ?: $nodeRow['name'];
                 $rawNodeAggregateClassification = $rawNodeAggregateClassification ?: $nodeRow['classification'];
             }
             // ... and coverage always ...
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
-                $nodeRow['covereddimensionspacepoint']
-            );
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
 
             $coverageByOccupants[$occupiedDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
             $occupationByCovering[$coveredDimensionSpacePoint->hash] = $occupiedDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash]
-                = $nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash];
-            // ... as we do for explicit subtree tags
-            foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
-                $dimensionSpacePointsBySubtreeTags = $dimensionSpacePointsBySubtreeTags->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
-            }
+            // ... as we do for the subtree tags
+            $nodeTagsByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash] = self::extractNodeTagsFromJson($nodeRow['subtreetags']);
         }
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
 
         // a nodeAggregate only exists if it at least contains one node
-        assert($nodesByOccupiedDimensionSpacePoint !== []);
+        if ($nodesByOccupiedDimensionSpacePoint === []) {
+            throw new \RuntimeException(sprintf('Fatal, no occupation found in fetched node rows for aggregate "%s"', $nodeRows[0]['nodeaggregateid'] ?? ''), 1778049288);
+        }
 
         return NodeAggregate::create(
             $this->contentRepositoryId,
@@ -219,9 +222,8 @@ final class NodeFactory
             $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupants),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
-            $nodesByCoveredDimensionSpacePoints,
             OriginByCoverage::fromArray($occupationByCovering),
-            $dimensionSpacePointsBySubtreeTags,
+            $nodeTagsByCoveredDimensionSpacePoint,
         );
     }
 
@@ -245,11 +247,10 @@ final class NodeFactory
         $occupiedDimensionSpacePointsByNodeAggregate = [];
         $nodesByOccupiedDimensionSpacePointsByNodeAggregate = [];
         $coveredDimensionSpacePointsByNodeAggregate = [];
-        $nodesByCoveredDimensionSpacePointsByNodeAggregate = [];
         $classificationByNodeAggregate = [];
         $coverageByOccupantsByNodeAggregate = [];
         $occupationByCoveringByNodeAggregate = [];
-        $dimensionSpacePointsBySubtreeTagsByNodeAggregate = [];
+        $nodeTagsByCoveredDimensionSpacePointByNodeAggregate = [];
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
@@ -288,26 +289,16 @@ final class NodeFactory
 
             $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePointsByNodeAggregate
-                [$rawNodeAggregateId][$coveredDimensionSpacePoint->hash]
-                = $nodesByOccupiedDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash];
 
-            // ... as we do for explicit subtree tags
-            if (!array_key_exists($rawNodeAggregateId, $dimensionSpacePointsBySubtreeTagsByNodeAggregate)) {
-                $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId] = DimensionSpacePointsBySubtreeTags::create();
-            }
-            foreach (self::extractNodeTagsFromJson($nodeRow['subtreetags'])->withoutInherited() as $explicitTag) {
-                $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId] = $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId]->withSubtreeTagAndDimensionSpacePoint($explicitTag, $coveredDimensionSpacePoint);
-            }
+            // ... as we do for the subtree tags
+            $nodeTagsByCoveredDimensionSpacePointByNodeAggregate[$rawNodeAggregateId][$coveredDimensionSpacePoint->hash] = self::extractNodeTagsFromJson($nodeRow['subtreetags']);
         }
 
         foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
-            /** @var string $rawNodeAggregateId */
             $nodeAggregates[] = NodeAggregate::create(
                 $this->contentRepositoryId,
                 $workspaceName,
-                NodeAggregateId::fromString($rawNodeAggregateId),
+                NodeAggregateId::fromString((string)$rawNodeAggregateId),
                 $classificationByNodeAggregate[$rawNodeAggregateId],
                 $nodeTypeNames[$rawNodeAggregateId],
                 $nodeNames[$rawNodeAggregateId],
@@ -321,12 +312,10 @@ final class NodeFactory
                 new DimensionSpacePointSet(
                     $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId]
                 ),
-                $nodesByCoveredDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateId],
                 OriginByCoverage::fromArray(
                     $occupationByCoveringByNodeAggregate[$rawNodeAggregateId]
                 ),
-                $dimensionSpacePointsBySubtreeTagsByNodeAggregate[$rawNodeAggregateId],
+                $nodeTagsByCoveredDimensionSpacePointByNodeAggregate[$rawNodeAggregateId],
             );
         }
 
@@ -343,6 +332,9 @@ final class NodeFactory
             throw new \RuntimeException(sprintf('Failed to JSON-decode subtree tags from JSON string %s: %s', $subtreeTagsJson, $e->getMessage()), 1716476904, $e);
         }
         foreach ($subtreeTagsArray as $tagValue => $explicit) {
+            if (!is_string($tagValue)) {
+                throw new \RuntimeException(sprintf('Fatal: SubtreeTags are never purely numeric. Got %d', $tagValue), 1768047428);
+            }
             if ($explicit) {
                 $explicitTags[] = $tagValue;
             } else {
@@ -357,7 +349,7 @@ final class NodeFactory
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable
     {
-        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string, new \DateTimeZone('UTC'));
         if ($result === false) {
             throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
         }

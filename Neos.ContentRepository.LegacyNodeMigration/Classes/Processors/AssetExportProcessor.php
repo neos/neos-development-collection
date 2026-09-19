@@ -51,9 +51,13 @@ final class AssetExportProcessor implements ProcessorInterface
                 continue;
             }
             foreach ($properties as $propertyName => $propertyValue) {
+                if ($nodeType->hasReference($propertyName)) {
+                    $context->dispatch(Severity::NOTICE, "Skipped node data processing for the property \"{$propertyName}\". The property is a reference. (Node: {$nodeDataRow['identifier']})");
+                    continue;
+                }
                 try {
                     $propertyType = $nodeType->getPropertyType($propertyName);
-                } catch (\InvalidArgumentException $e) {
+                } catch (\InvalidArgumentException) {
                     $context->dispatch(Severity::WARNING, "Skipped node data processing for the property \"{$propertyName}\". The property name is not part of the NodeType schema for the NodeType \"{$nodeType->name->value}\". (Node: {$nodeDataRow['identifier']})");
                     continue;
                 }

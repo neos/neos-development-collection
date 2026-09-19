@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Find root nodes by type
 
   Background:
@@ -30,6 +29,7 @@ Feature: Find root nodes by type
       | Key             | Value                                 |
       | nodeAggregateId | "lady-eleonode-rootfords-evil-sister" |
       | nodeTypeName    | "Neos.ContentRepository:AnotherRoot"  |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     When I execute the findRootNodeByType query for node type "Neos.ContentRepository:Root" I expect the node "lady-eleonode-rootford" to be returned

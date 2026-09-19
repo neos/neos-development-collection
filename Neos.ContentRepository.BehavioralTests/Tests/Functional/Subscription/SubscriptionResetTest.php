@@ -9,10 +9,11 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionResetTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function filteringReset()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');

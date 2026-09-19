@@ -11,20 +11,17 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
-
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\FlowBootstrapTrait;
-use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
@@ -33,7 +30,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 class FeatureContext implements BehatContext
 {
     use FlowBootstrapTrait;
-    use ProjectionIntegrityViolationDetectionTrait;
+    use DoctrineDbalProjectionIntegrityViolatorTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 

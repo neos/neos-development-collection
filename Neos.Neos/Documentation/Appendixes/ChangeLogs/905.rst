@@ -1,0 +1,216 @@
+`9.0.5 (2025-08-15) <https://github.com/neos/neos-development-collection/releases/tag/9.0.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: add more details to user list and user show command <https://github.com/neos/neos-development-collection/pull/5230>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+### Description
+
+Adds more informations to the ``./flow user:list`` and ``./flow user:show`` command.
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+resolves: `#4357 <https://github.com/neos/neos-development-collection/issues/4357>`_
+
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Media.Browser`` ``Neos`` ``NodeTypes.BaseMixins``
+
+`BUGFIX: backend module links with no hover color <https://github.com/neos/neos-development-collection/pull/5588>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Issue: `#5586 <https://github.com/neos/neos-development-collection/issues/5586>`_
+
+This fixes the issue at some places in the neos backend where links dont have a hover color. That where all places i found 🤔:
+
+
+https://github.com/user-attachments/assets/7c448606-5922-46b1-a0ae-400f724a2fad
+
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Reload node if hidden state is updated via inspector <https://github.com/neos/neos-development-collection/pull/5602>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+With this change nodes are updated in the guest frame when the hidden state is updated in the inspector.
+
+* Resolves: `#5601 <https://github.com/neos/neos-development-collection/issues/5601>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Neos backend login autofocus username <https://github.com/neos/neos-development-collection/pull/5599>`_
+----------------------------------------------------------------------------------------------------------------
+
+When loading the backend login screen, one have to either TAB or click in the username field to input the login.
+
+Increase accessibility (and convenience) by autofocusing the field upon loading.
+
+**Note**: The password field already gets autofocus if the username is already filled (i.e. after a failed password attempt), which is why we have the ``@if`` here.
+
+* Packages: ``Neos``
+
+`BUGFIX: adjust flow structureadjustments:fix command formatting in node helper exception <https://github.com/neos/neos-development-collection/pull/5596>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+
+This PR adjusts the formating of the ``./flow structureadjustments:fix`` command. So you can directly copy the command and run it.
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Use label helper in Debug.Console object <https://github.com/neos/neos-development-collection/pull/5590>`_
+-------------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#5589 <https://github.com/neos/neos-development-collection/issues/5589>`_
+
+
+* Packages: ``Fusion``
+
+` BUGFIX: Expose internal `CRBehavioralTestsSubjectProvider` via `Neos.ContentRepository.TestSuite` <https://github.com/neos/neos-development-collection/pull/5551>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+so that third party packages can use it by requiring the test-suite
+
+* Packages: ``ContentRepository.TestSuite``
+
+`BUGFIX: Standalone subscription store via `Neos.ContentRepository.Dbal` <https://github.com/neos/neos-development-collection/pull/5552>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+This pr is a non breaking architecture fix pr to be released with the next patch 9.0.x release.
+It introduces a new package which will be installed automatically when updating to that patch.
+Few internal classes were moved to that package, most importantly the ``SubscriptionStore`` implementation allowing custom standalone cr integration to instantiate that class and boot a cr without requiring the cr registry which requires flow.
+The ``SubscriptionStoreFactory`` and ``SubscriptionStoreFactoryInterface`` have not been moved to that package as they are correctly part of the CR Registry. The core just excepts an ``SubscriptionStoreInterface`` instance no factory.
+
+- ``BUGFIX: Move internal DoctrineSubscriptionStore to Neos\\ContentRepository\\Dbal <https://github.com/neos/neos-development-collection/pull/5552/commits/``311aa0b904bb3d96909f586dbb92e014e8364207 <https://github.com/neos/neos-development-collection/commit/311aa0b904bb3d96909f586dbb92e014e8364207>`_>`_
+- ``PATCH: Move neos/eventstore-doctrineadapter dependency to neos/contentrepository-dbal <https://github.com/neos/neos-development-collection/pull/5552/commits/``aa10ddb84484fc3b9a81b64b75f90c0241d6aa45 <https://github.com/neos/neos-development-collection/commit/aa10ddb84484fc3b9a81b64b75f90c0241d6aa45>`_>`_
+Allowing for real dbal independence of the core.
+
+- ``PATCH: Move internal DbalSchemaDiff and DbalSchemaFactory to Neos\\ContentRepository\\Dbal <https://github.com/neos/neos-development-collection/pull/5552/commits/``20c4daf9564cd7c106a385e919cada501aee66cd <https://github.com/neos/neos-development-collection/commit/20c4daf9564cd7c106a385e919cada501aee66cd>`_>`_
+The core should be independent of dbal. Previously it did hold dbal tools so the dbal content graph can access those as well as other projections. The content graph thus now depends also on the dbal package.
+
+
+**Upgrade instructions**
+
+
+* Packages: ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.Dbal``
+
+`BUGFIX: Standalone Core - move `AuthProviderFactoryInterface` to correct packgage <https://github.com/neos/neos-development-collection/pull/5547>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Neos\\ContentRepository\\Core MUST NOT have a dependency to Neos\\ContentRepositoryRegistry
+
+this was a hickup because at one point the cr factory did not need an AuthProviderFactoryInterface but the AuthProvider directly.
+
+see `b4e0c7829b61bc962986a898fcc10d929d0632a6 <https://github.com/neos/neos-development-collection/commit/b4e0c7829b61bc962986a898fcc10d929d0632a6>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``ContentRepositoryRegistry``
+
+`BUGFIX: Use cached node uris <https://github.com/neos/neos-development-collection/pull/5569>`_
+-----------------------------------------------------------------------------------------------
+
+By providing a node address as string, the ``RouterCachingService`` does not return null anymore for the given RouteValue.
+
+Though this leads to the address being serialised and deserialised for each built uri. This could be further optimised in the future by also accepting the nodeaddress as array in ``\\Neos\\Neos\\FrontendRouting\\EventSourcedFrontendNodeRoutePartHandler::resolveWithParameters``
+
+* Resolves: `#5568 <https://github.com/neos/neos-development-collection/issues/5568>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Convert *DateTime XML elements to \DateTimeImmutable during import <https://github.com/neos/neos-development-collection/pull/5249>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#5248 <https://github.com/neos/neos-development-collection/issues/5248>`_
+
+**Steps To Reproduce**
+
+Run ``./flow site:import`` on a site export (presumably one that has been done with Neos 8.3 or earlier) in a Neos 8.4 setup. Make sure ``doctrine/dbal@3.*`` is installed. You should see an error like this:
+```
+Exception `#1300360480 <https://github.com/neos/neos-development-collection/issues/1300360480>`_in line 99 of [...]/Framework/Neos.Flow/Classes/ObjectManagement/DependencyInjection/DependencyProxy.php: Error: During import an exception occurred: "Could not convert PHP value of type DateTime to type date_immutable. Expected one of the following types: null, DateTimeImmutable".
+```
+
+After checking out this branch, the error should be gone.
+
+`TASK: New build of neos/neos css assets <https://github.com/neos/neos-development-collection/pull/5613>`_
+----------------------------------------------------------------------------------------------------------
+
+* Relates: `#5588 <https://github.com/neos/neos-development-collection/issues/5588>`_
+
+* Packages: ``Neos``
+
+`TASK: Update enshrined/svg-sanitize to ^0.22.0 <https://github.com/neos/neos-development-collection/pull/5609>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Upgraded the enshrined/svg-sanitize dependency from ^0.17.0 to ^0.22.0 in composer.json due to CVE-2025-55166
+
+Relates to: #4812
+
+* Packages: ``Media.Browser``
+
+`TASK: Prevent `neos/contentrepository-testsuite` to define the phpunit version <https://github.com/neos/neos-development-collection/pull/5592>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+The package ``neos/contentrepository-testsuite`` is published on packagist to be installed as dev dependency for testing in libraries or projects.
+
+It has helpers and step definitions for behat.
+
+Phpunit is only used as dev dependency for tests in turn for that package. And because we rely on ``PHPUnit\\Framework\\Assert`` for the step definitions.
+
+The ``Assert`` api is pretty stable and available across php unit versions.
+
+To allow using phpunit 11 and beyond in libraries or projects in combination with the testsuite we relax the constraint here. And we not only relax it to ``>=9.6 <13`` but we drop it because the composer manifest merger would otherwise put that into the distributions requirement which then might install a higher phpunit version for neos itself wich does not work.
+
+Also both neos/contentrepository-structureadjustment and neos/contentrepository-nodemigration were turned into sugegestions
+
+brianium/paratest is not used by the test suite and was moved to the behavior tests package instead.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests`` ``ContentRepository.TestSuite``
+
+`TASK: Update terminology to use "allowlist/denylist" in ContentDimensionConstraints <https://github.com/neos/neos-development-collection/pull/5593>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``TimeableNodeVisibility`` ``Workspace.Ui`` ``ContentRepository.Core``
+
+`TASK: update shell commands in contributing guide according to Neos 9 <https://github.com/neos/neos-development-collection/pull/5583>`_
+----------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+This PR updates the shell commands for setting up the neos-development-distribution in the CONTRIBUTING.md file for Neos 9. I'm not sure whether this was forgotten or deliberately not changed.
+
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.4...9.0.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

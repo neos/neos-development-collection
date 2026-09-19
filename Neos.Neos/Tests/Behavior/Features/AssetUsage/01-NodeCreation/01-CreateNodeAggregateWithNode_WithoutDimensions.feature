@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Create node aggregate with node without dimensions
 

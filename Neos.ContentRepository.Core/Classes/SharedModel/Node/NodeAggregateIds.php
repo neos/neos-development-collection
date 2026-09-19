@@ -20,25 +20,22 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 /**
  * An immutable collection of NodeAggregateIds, indexed by their value
  *
- * @implements \IteratorAggregate<string,NodeAggregateId>
+ * @implements \IteratorAggregate<string|int,NodeAggregateId>
  * @api
  */
 final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<string,NodeAggregateId>
+     * @param array<string|int,NodeAggregateId> $nodeAggregateIds
      */
-    private array $nodeAggregateIds;
-
-    private function __construct(NodeAggregateId ...$nodeAggregateIds)
-    {
-        /** @var array<string,NodeAggregateId> $nodeAggregateIds */
-        $this->nodeAggregateIds = $nodeAggregateIds;
+    private function __construct(
+        private array $nodeAggregateIds
+    ) {
     }
 
     public static function createEmpty(): self
     {
-        return new self();
+        return new self([]);
     }
 
     public static function create(NodeAggregateId ...$nodeAggregateIds): self
@@ -60,12 +57,20 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
             }
         }
 
-        return new self(...$nodeAggregateIds);
+        return new self($nodeAggregateIds);
     }
 
     public static function fromJsonString(string $jsonString): self
     {
-        return self::fromArray(\json_decode($jsonString, true));
+        try {
+            return self::fromArray(json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(
+                sprintf('Failed to JSON-decode "%s": %s', $jsonString, $e->getMessage()),
+                1782715607,
+                $e
+            );
+        }
     }
 
     public static function fromNodes(Nodes $nodes): self
@@ -77,7 +82,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
 
     public function merge(self $other): self
     {
-        return new self(...array_merge(
+        return new self(array_merge(
             $this->nodeAggregateIds,
             $other->nodeAggregateIds
         ));
@@ -89,7 +94,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
     }
 
     /**
-     * @return array<string,NodeAggregateId>
+     * @return array<NodeAggregateId>
      */
     public function jsonSerialize(): array
     {
@@ -106,11 +111,12 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
      */
     public function toStringArray(): array
     {
-        return array_keys($this->nodeAggregateIds);
+        return array_map(strval(...), array_keys($this->nodeAggregateIds));
     }
 
     public function getIterator(): \Traversable
     {
+        // FIXME use array_values($this->nodeAggregateIds); with Neos 10.0 as exposing the internal int or string id representation is not reliable and internal
         yield from $this->nodeAggregateIds;
     }
 

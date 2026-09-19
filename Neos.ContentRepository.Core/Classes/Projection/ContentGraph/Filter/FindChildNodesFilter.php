@@ -92,4 +92,9 @@ final readonly class FindChildNodesFilter
             $pagination ?? $this->pagination,
         );
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->nodeTypes === null && $this->searchTerm === null && $this->propertyValue === null && $this->ordering === null && $this->pagination === null;
+    }
 }

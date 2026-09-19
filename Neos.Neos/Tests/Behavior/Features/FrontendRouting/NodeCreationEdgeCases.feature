@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Test cases for node creation edge cases
 
   Scenario: Delete the succeeding sibling node in a virtual specialization and then create the node

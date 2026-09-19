@@ -8,8 +8,6 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDimensionShineThrough;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
@@ -44,6 +42,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Model\WorkspacePermissions;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Security\Authorization\Privilege\EditNodePrivilege;
 
@@ -75,6 +74,9 @@ final readonly class ContentRepositoryAuthProvider implements AuthProviderInterf
 
     public function getVisibilityConstraints(WorkspaceName $workspaceName): VisibilityConstraints
     {
+        if ($this->securityContext->areAuthorizationChecksDisabled()) {
+            return NeosVisibilityConstraints::excludeRemoved();
+        }
         return $this->authorizationService->getVisibilityConstraints($this->contentRepositoryId, $this->securityContext->getRoles());
     }
 
@@ -105,7 +107,7 @@ final readonly class ContentRepositoryAuthProvider implements AuthProviderInterf
             }
             $node = $this->contentGraphReadModel
                 ->getContentGraph($nodeThatRequiresEditPrivilege->workspaceName)
-                ->getSubgraph($nodeThatRequiresEditPrivilege->dimensionSpacePoint, VisibilityConstraints::withoutRestrictions())
+                ->getSubgraph($nodeThatRequiresEditPrivilege->dimensionSpacePoint, VisibilityConstraints::createEmpty())
                 ->findNodeById($nodeThatRequiresEditPrivilege->aggregateId);
             if ($node === null) {
                 return Privilege::denied(sprintf('Failed to load node "%s" in workspace "%s"', $nodeThatRequiresEditPrivilege->aggregateId->value, $nodeThatRequiresEditPrivilege->workspaceName->value));
@@ -182,8 +184,6 @@ final readonly class ContentRepositoryAuthProvider implements AuthProviderInterf
         return match ($command::class) {
             CreateNodeAggregateWithNode::class => NodeAddress::create($this->contentRepositoryId, $command->workspaceName, $command->originDimensionSpacePoint->toDimensionSpacePoint(), $command->parentNodeAggregateId),
             CreateNodeVariant::class => NodeAddress::create($this->contentRepositoryId, $command->workspaceName, $command->sourceOrigin->toDimensionSpacePoint(), $command->nodeAggregateId),
-            DisableNodeAggregate::class,
-            EnableNodeAggregate::class,
             RemoveNodeAggregate::class,
             TagSubtree::class,
             UntagSubtree::class => NodeAddress::create($this->contentRepositoryId, $command->workspaceName, $command->coveredDimensionSpacePoint, $command->nodeAggregateId),

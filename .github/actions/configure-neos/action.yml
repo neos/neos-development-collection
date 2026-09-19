@@ -1,0 +1,54 @@
+name: 'Configure Neos'
+description: 'Write the Neos/Flow Testing persistence Settings.yaml for the selected database engine'
+inputs:
+  db-engine:
+    description: 'Database engine: mysql | pgsql'
+    required: true
+  db-port:
+    description: 'Database port the service listens on'
+    required: true
+  working-directory:
+    description: 'Neos development distribution directory the ./flow binary runs in'
+    required: true
+  flow-context:
+    description: 'Flow context to report in the log output'
+    default: 'Testing'
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Flow configuration
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        rm -f Configuration/Routes.yaml Configuration/Testing/Settings.yaml
+        cat > Configuration/Testing/Settings.yaml <<EOF
+        Neos:
+          Flow:
+            persistence:
+              backendOptions:
+                host: '127.0.0.1'
+                port: ${{ inputs.db-port }}
+                user: 'neos'
+                password: 'neos'
+                dbname: 'flow_functional_testing'
+        EOF
+        if [ "${{ inputs.db-engine }}" = "pgsql" ]; then
+          cat >> Configuration/Testing/Settings.yaml <<EOF
+                driver: pdo_pgsql
+                charset: 'utf8'
+                defaultTableOptions:
+                  charset: 'utf8'
+        EOF
+        else
+          cat >> Configuration/Testing/Settings.yaml <<EOF
+                driver: pdo_mysql
+        EOF
+        fi
+        cat >> Configuration/Testing/Settings.yaml <<EOF
+            mvc:
+              routes:
+                'Neos.Flow': TRUE
+        EOF
+        echo "Running in context '${{ inputs.flow-context }}'"
+        ./flow configuration:show
+        ./flow routing:list

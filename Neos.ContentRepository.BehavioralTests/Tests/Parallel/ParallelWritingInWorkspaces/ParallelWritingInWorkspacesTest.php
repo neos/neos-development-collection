@@ -36,6 +36,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * This tests ensures that the subscribers are updated without any locking problems (and to test via {@see DebugEventProjection} that locking is used at all!)
@@ -148,10 +149,7 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     * @group parallel
-     */
+    #[Test]
     public function whileANodesArWrittenOnLive(): void
     {
         $this->log('1. writing started');
@@ -178,16 +176,13 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
         $this->log('1. writing finished');
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::withoutRestrictions());
+        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
         $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface-100'));
         Assert::assertNotNull($node);
     }
 
-    /**
-     * @test
-     * @group parallel
-     */
-    public function thenConcurrentPublishLeadsToException(): void
+    #[Test]
+    public function thenConcurrentlyWritingToAnotherWorkspaceWorks(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {
             $this->log('waiting for 2. writing');
@@ -220,7 +215,7 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
 
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'))->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::withoutRestrictions());
+        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'))->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
         $node = $subgraph->findNodeById(NodeAggregateId::fromString('user-nody-mc-nodeface-100'));
         Assert::assertNotNull($node);
     }

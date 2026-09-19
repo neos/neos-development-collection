@@ -95,22 +95,6 @@ final readonly class ContentDimension
         return $this->specializations[$dimensionValue->value] ?? [];
     }
 
-    /**
-     * @deprecated not used - shall we remove it?
-     * @internal
-     */
-    public function traverseGeneralizations(ContentDimensionValue $dimensionValue, callable $callback): void
-    {
-        $callback($dimensionValue);
-        if ($this->getGeneralization($dimensionValue)) {
-            $this->traverseGeneralizations($this->getGeneralization($dimensionValue), $callback);
-        }
-    }
-
-    /**
-     * @deprecated not used - shall we remove it?
-     * @internal
-     */
     public function calculateSpecializationDepth(
         ContentDimensionValue $specialization,
         ContentDimensionValue $generalization
@@ -142,7 +126,6 @@ final readonly class ContentDimension
     }
 
     /**
-     * @deprecated not used - shall we remove it?
      * @internal
      */
     public function getMaximumDepth(): ContentDimensionValueSpecializationDepth

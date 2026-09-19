@@ -18,9 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,29 +32,25 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-        PropertyConverter $propertyConverter,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $propertyName = $settings['property'];
         return new class (
             $propertyName,
-            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
                  * the name of the property to be removed.
                  */
                 private readonly string $propertyName,
-                private readonly ContentRepository $contentRepository
             ) {
             }
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                WorkspaceName $workspaceNameForWriting,
-                ContentStreamId $contentStreamForWriting
-            ): void {
+                WorkspaceName $workspaceNameForWriting
+            ): TransformationStep {
                 if ($node->hasProperty($this->propertyName)) {
-                    $this->contentRepository->handle(
+                    return TransformationStep::fromCommand(
                         SetNodeProperties::create(
                             $workspaceNameForWriting,
                             $node->aggregateId,
@@ -67,6 +61,7 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
                         )
                     );
                 }
+                return TransformationStep::createEmpty();
             }
         };
     }

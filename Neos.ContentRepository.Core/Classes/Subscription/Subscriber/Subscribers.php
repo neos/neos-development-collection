@@ -44,7 +44,7 @@ final class Subscribers implements \IteratorAggregate, \Countable, \JsonSerializ
         return new self($subscribersById);
     }
 
-    public static function none(): self
+    public static function createEmpty(): self
     {
         return self::fromArray([]);
     }

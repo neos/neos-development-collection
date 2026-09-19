@@ -9,6 +9,8 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class SearchTermMatcherTest extends TestCase
 {
@@ -106,14 +108,14 @@ class SearchTermMatcherTest extends TestCase
         }
     }
 
-    public function emptySearchTermAlwaysMatches(): iterable
+    public static function emptySearchTermAlwaysMatches(): iterable
     {
         yield '1 property' => ['', self::value('foo')];
         yield '1 empty property' => ['', self::value('foo')];
         yield '0 properties' => ['', SerializedPropertyValues::fromArray([])];
     }
 
-    public function notMatchingExamples(): iterable
+    public static function notMatchingExamples(): iterable
     {
         yield 'different chars' => ['aepfel', self::value('äpfel')];
         yield 'upper boolean string representation' => ['TRUE', self::value(true)];
@@ -126,14 +128,12 @@ class SearchTermMatcherTest extends TestCase
         yield 'array with null value' => ['foo', self::value([null])];
     }
 
-    /**
-     * @test
-     * @dataProvider matchingStringComparisonExamples
-     * @dataProvider matchingNumberLikeComparisonExamples
-     * @dataProvider matchingBooleanLikeComparisonExamples
-     * @dataProvider matchingArrayComparisonExamples
-     * @dataProvider emptySearchTermAlwaysMatches
-     */
+    #[DataProvider('matchingStringComparisonExamples')]
+    #[DataProvider('matchingNumberLikeComparisonExamples')]
+    #[DataProvider('matchingBooleanLikeComparisonExamples')]
+    #[DataProvider('matchingArrayComparisonExamples')]
+    #[DataProvider('emptySearchTermAlwaysMatches')]
+    #[Test]
     public function searchTermMatchesProperties(
         string $searchTerm,
         SerializedPropertyValues $properties,
@@ -146,10 +146,8 @@ class SearchTermMatcherTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     * @dataProvider notMatchingExamples
-     */
+    #[DataProvider('notMatchingExamples')]
+    #[Test]
     public function searchTermDoesntMatchesProperties(
         string $searchTerm,
         SerializedPropertyValues $properties,

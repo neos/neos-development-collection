@@ -40,13 +40,14 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmPublishSelectedChanges) < pro
           <Neos.Workspace.Ui:Component.Button
             isSuccess
             autofocus
-            label={"publish"}
+            label={private.i18n.id('workspaces.publishChanges')}
             icon="fas fa-check-double icon-white"
             attributes.form="publishOrDiscardNodes"
             attributes.name="moduleArguments[action]"
             attributes.value="publish"
             attributes.type="submit"
-            attributes.hx-target='table'
+            attributes.hx-select='#workspace-module-content'
+            attributes.hx-target='#workspace-module-content'
             attributes.hx-include="#publishOrDiscardNodesForm"
             attributes.hx-swap='outerHTML'
             attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}

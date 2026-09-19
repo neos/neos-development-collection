@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,15 +12,12 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Fusion Concat
  */
-class JoinTest extends AbstractFusionObjectTest
+class JoinTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicOrderingWorks()
     {
         $view = $this->buildView();
@@ -27,9 +26,7 @@ class JoinTest extends AbstractFusionObjectTest
         self::assertEquals('Xtest10Xtest100', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function positionalOrderingWorks()
     {
         $view = $this->buildView();
@@ -38,9 +35,7 @@ class JoinTest extends AbstractFusionObjectTest
         self::assertEquals('XbeforeXmiddleXafter', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function startEndOrderingWorks()
     {
         $view = $this->buildView();
@@ -49,9 +44,7 @@ class JoinTest extends AbstractFusionObjectTest
         self::assertEquals('XbeforeXmiddleXafter', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function advancedStartEndOrderingWorks()
     {
         $view = $this->buildView();
@@ -60,9 +53,7 @@ class JoinTest extends AbstractFusionObjectTest
         self::assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function ignoredPropertiesWork()
     {
         $view = $this->buildView();
@@ -71,9 +62,7 @@ class JoinTest extends AbstractFusionObjectTest
         self::assertEquals('XbeforeXafter', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function glueWorks()
     {
         $view = $this->buildView();

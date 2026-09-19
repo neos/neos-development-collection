@@ -127,7 +127,7 @@
 				<source>Private</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-				<source>Only reviewers and administrators can access and modify this workspace</source>
+				<source>Only the workspace owner can access and modify this workspace</source>
 			</trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
 				<source>Shared</source>
@@ -175,10 +175,37 @@
 				<source>This will delete the workspace including all unpublished content. This operation cannot be undone.</source>
 			</trans-unit>
       <trans-unit id="workspaces.dialog.forceSyncWorkspace" xml:space="preserve">
-				<source>Syncing has failed</source>
+				<source>Conflicts between workspace "{0}" and "{1}"</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ShowInformationAboutConflict" xml:space="preserve">
+				<source>Show information about {0} conflict(s)</source>
 			</trans-unit>
       <trans-unit id="workspaces.dialog.thisCanLeadToLostChanges" xml:space="preserve">
-				<source>A conflict occured while syncing the workspace. Do you want to drop the conflicting changes?</source>
+				<source>Workspace "{0}" contains modifications that are in conflict with the changes in workspace "{1}".</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.thisCanLeadToLostChangesConfirmation" xml:space="preserve">
+				<source>Do you want to drop {0} conflicting change(s)?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChanges" xml:space="preserve">
+				<source>Do you really want to drop all conflicting changes from workspace "{0}"?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesCount" xml:space="preserve">
+				<source>This will remove {0} change(s) from the workspace.</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.ConfirmationDropConflictingChangesText" xml:space="preserve">
+				<source>This can not be undone! Do you wish to proceed?</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.error" xml:space="preserve">
+				<source>Error</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+				<source>Node</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.event" xml:space="preserve">
+				<source>Event</source>
+			</trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.eventDetails" xml:space="preserve">
+				<source>Event details</source>
 			</trans-unit>
       <trans-unit id="workspaces.modal.yesRebaseWorkspace" xml:space="preserve">
 				<source>Yes, drop changes</source>
@@ -201,6 +228,12 @@
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
 				<source>Publish selected changes to {0}</source>
 			</trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+				<source>Publish</source>
+			</trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
 			</trans-unit>

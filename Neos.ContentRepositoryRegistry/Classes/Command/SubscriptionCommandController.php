@@ -89,6 +89,52 @@ final class SubscriptionCommandController extends CommandController
     }
 
     /**
+     * Catchup all active subscriptions
+     *
+     * Allows explicit manual invocation for recovery
+     * All modifications via {@see ContentRepository::handle()} already trigger a catchup internally
+     * It cannot be 100% guaranteed that the commited events are catchup as they are two transactions by design
+     * A lost database connection or killed PHP process can result in the event-store being ahead.
+     *
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param bool $quiet If set only fatal errors are rendered to the output
+     */
+    public function catchUpActiveCommand(string $contentRepository = 'default', bool $quiet = false): void
+    {
+        if ($quiet) {
+            $this->output->getOutput()->setVerbosity(Output::VERBOSITY_QUIET);
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
+
+        $progressCallback = null;
+        if (!$quiet) {
+            $this->outputLine('Catchup new events for all subscriptions of content repository "%s" ...', [$contentRepositoryId->value]);
+            $this->output->getProgressBar()->setFormat('debug');
+            $this->output->progressStart();
+            $progressCallback = fn () => $this->output->progressAdvance();
+        }
+
+        $result = $contentRepositoryMaintainer->catchupAllSubscriptions(progressCallback: $progressCallback);
+
+        if (!$quiet) {
+            $this->output->progressFinish();
+            $this->outputLine();
+        }
+        if ($result !== null) {
+            $this->outputLine('<error>%s</error>', [$result->getMessage()]);
+            $this->quit(1);
+        } elseif (!$quiet) {
+            if ($this->output->getProgressBar()->getProgress() === 0) {
+                $this->outputLine('<success>Already fully caught up.</success>');
+            } else {
+                $this->outputLine('<success>Done.</success>');
+            }
+        }
+    }
+
+    /**
      * Replays all projections of the specified Content Repository by resetting their states and performing a full catchup
      *
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
@@ -130,6 +176,43 @@ final class SubscriptionCommandController extends CommandController
             $this->output->progressFinish();
             $this->outputLine();
         }
+
+        if ($result !== null) {
+            $this->outputLine('<error>%s</error>', [$result->getMessage()]);
+            $this->quit(1);
+        } elseif (!$quiet) {
+            $this->outputLine('<success>Done.</success>');
+        }
+    }
+
+    /**
+     * Reactivate a subscription (Advanced & Experimental)
+     *
+     * The explicit catchup is only needed for projections in the error or detached status with left behind position.
+     * Running a full replay would work but might be overkill, instead this reactivation will just attempt
+     * catchup the subscription back to active from its current position.
+     *
+     * @param string $subscription Identifier of the subscription to reactivate like it was configured (e.g. "contentGraph", "Vendor.Package:YourProjection")
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
+     *
+     * @internal reactivation is an experimental and advanced concept, if possible a replay should be used instead which is more stable
+     */
+    public function reactivateCommand(string $subscription, string $contentRepository = 'default', bool $quiet = false): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryMaintainer = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
+
+        $progressCallback = null;
+        if (!$quiet) {
+            $this->outputLine('Reactivate subscription "%s" of Content Repository "%s" ...', [$subscription, $contentRepositoryId->value]);
+            // render memory consumption and time remaining
+            $this->output->getProgressBar()->setFormat('debug');
+            $this->output->progressStart();
+            $progressCallback = fn () => $this->output->progressAdvance();
+        }
+
+        $result = $contentRepositoryMaintainer->reactivateSubscription(SubscriptionId::fromString($subscription), progressCallback: $progressCallback);
 
         if ($result !== null) {
             $this->outputLine('<error>%s</error>', [$result->getMessage()]);

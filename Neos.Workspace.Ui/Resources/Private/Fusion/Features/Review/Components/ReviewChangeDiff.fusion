@@ -2,15 +2,10 @@
 # Renders a document for review
 #
 prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:Component) {
-
-  relativePath = ''
   change = ''
-  document = ''
-  selectedWorkspaceName = ${selectedWorkspaceName}
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
-
   }
 
   renderer = afx`
@@ -21,33 +16,39 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
             <div class="neos-span8">
               <div class="node-icons">
                 <Neos.Workspace.Ui:Component.Icon
-                        @if.hasIcon={change.icon}
-                        icon={change.icon} />
-                <i @if.nodeIsHidden={change.hidden} class="icon-red fa-solid fa-circle-xmark"></i>
+                        @if.hasIcon={props.change.icon}
+                        icon={props.change.icon}
+                />
+                <i @if.nodeIsHidden={props.change.hidden} class="icon-red fa-solid fa-circle-xmark"></i>
               </div>
-              <span>{change.label}</span>
+              <span>{props.change.label}</span>
             </div>
             <div class="neos-span2">
-              <Neos.Fusion:Loop items={change.dimensions} itemKey="key" itemName="dimension">
-                <span class="neos-label neos-pull-right" title={dimension} >{dimension}</span>
+              <Neos.Fusion:Loop items={props.change.dimensions} itemKey="key" itemName="dimension">
+                <span class="neos-label neos-pull-right" title={dimension}>{dimension}</span>
               </Neos.Fusion:Loop>
             </div>
             <div class="neos-span2">
-              <span class="neos-pull-right" @if.hasChangedDateTime={change.lastModificationDateTime} title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + change.lastModificationDateTime} data-neos-toggle="tooltip">
-              <i class="fas fa-time"></i>{change.lastModificationDateTime}</span>
+              <span
+                class="neos-pull-right"
+                @if.hasChangedDateTime={props.change.lastModificationDateTime}
+                title={I18n.id('lastModification').source('Main').package('Neos.Neos')+ " : " + props.change.lastModificationDateTime}
+                data-neos-toggle="tooltip"
+              >
+                <i class="fas fa-time"></i>{props.change.lastModificationDateTime}
+              </span>
             </div>
           </div>
         </td>
-
       </tr>
-      <Neos.Fusion:Loop items={change.contentChanges} itemKey="propertyName" itemName="contentChanges">
+      <Neos.Fusion:Loop items={props.change.contentChanges} itemKey="propertyName" itemName="contentChanges">
         <tr>
           <td class="diff-property-label" colspan="3">
             <i class="fas fa-level-up-alt"></i>
             <span>{contentChanges.properties.propertyLabel}</span>
           </td>
         </tr>
-        <tr class="diff-property-content" @if={blocks}>
+        <tr class="diff-property-content">
           <td></td>
           <Neos.Fusion:Loop @if.isText={contentChanges.properties.type == 'text'} items={contentChanges.changes.diff} itemKey="index" itemName="blocks">
             <Neos.Fusion:Loop items={blocks} itemName="block">

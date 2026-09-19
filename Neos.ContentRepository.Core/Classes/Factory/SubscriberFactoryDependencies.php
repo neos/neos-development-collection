@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Factory;
 
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -31,6 +32,7 @@ final readonly class SubscriberFactoryDependencies
         public ContentDimensionSourceInterface $contentDimensionSource,
         public InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private PropertyConverter $propertyConverter,
+        public PerformanceTracerInterface|null $performanceTracer,
     ) {
     }
 
@@ -42,14 +44,16 @@ final readonly class SubscriberFactoryDependencies
         NodeTypeManager $nodeTypeManager,
         ContentDimensionSourceInterface $contentDimensionSource,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
-        PropertyConverter $propertyConverter
+        PropertyConverter $propertyConverter,
+        PerformanceTracerInterface|null $performanceTracer,
     ): self {
         return new self(
             $contentRepositoryId,
             $nodeTypeManager,
             $contentDimensionSource,
             $interDimensionalVariationGraph,
-            $propertyConverter
+            $propertyConverter,
+            $performanceTracer,
         );
     }
 

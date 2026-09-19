@@ -18,6 +18,33 @@ final class SubscriptionError
 
     public static function fromPreviousStatusAndException(SubscriptionStatus $previousStatus, \Throwable $error): self
     {
-        return new self($error->getMessage(), $previousStatus, $error->getTraceAsString());
+        $messageLines = [];
+        $level = 0;
+        $exception = $error;
+        do {
+            $level++;
+            if ($level >= 8) {
+                $messageLines[] = '...Recursion';
+                break;
+            }
+
+            $exceptionFqn = $exception::class;
+
+            $messageLines[] = <<<MESSAGE
+                Class: {$exceptionFqn}
+                Message: {$exception->getMessage()}
+                Code: {$exception->getCode()}
+                File: {$exception->getFile()}
+                Line: {$exception->getLine()}
+
+                Trace: {$exception->getTraceAsString()}
+                MESSAGE;
+        } while ($exception = $exception->getPrevious());
+
+        return new self(
+            $error->getMessage(),
+            $previousStatus,
+            implode(PHP_EOL . PHP_EOL, $messageLines)
+        );
     }
 }

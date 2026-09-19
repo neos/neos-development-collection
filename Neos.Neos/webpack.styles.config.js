@@ -13,7 +13,7 @@ const stylesConfig = {
 		Error: ["./Resources/Private/Styles/Error.scss"],
 		RawContentMode: ["./Resources/Private/Styles/RawContentMode.scss"],
 		Welcome: ["./Resources/Private/Styles/Welcome.scss"],
-		Shortcut: ["./Resources/Private/Styles/Shortcut.scss"],
+		BackendInformation: ["./Resources/Private/Styles/BackendInformation.scss"],
 	},
 	output: {
 		path: __dirname + "/Resources/Public/Styles",

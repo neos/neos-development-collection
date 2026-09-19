@@ -99,12 +99,12 @@ final class NodeSubjectProvider
             $nodeName,
             NodeTags::createEmpty(),
             Timestamps::create(
-                new \DateTimeImmutable(),
-                new \DateTimeImmutable(),
-                new \DateTimeImmutable(),
-                new \DateTimeImmutable()
+                $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+                $now,
+                $now,
+                $now
             ),
-            VisibilityConstraints::withoutRestrictions(),
+            VisibilityConstraints::createEmpty(),
         );
     }
 }

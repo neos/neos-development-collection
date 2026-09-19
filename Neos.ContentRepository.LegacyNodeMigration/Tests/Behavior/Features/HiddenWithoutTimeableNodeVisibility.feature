@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Simple migrations without content dimensions for hidden state migration without installed Neos.TimeableNodeVisibility
 
   Background:

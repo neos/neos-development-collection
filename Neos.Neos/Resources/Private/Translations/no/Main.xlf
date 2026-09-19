@@ -1068,11 +1068,11 @@
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Bane</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Bane</target>
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">Relativ bane</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Relativ bane</target>
       </trans-unit>
     </body>
   </file>

@@ -87,9 +87,9 @@
         <source>Private</source>
         <target state="final">Privat</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="yes">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="final">Nur Reviewer und Administratoren können auf diesen Arbeitsbereich zugreifen und ihn bearbeiten</target>
+      <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve" approved="no">
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="translated">Nur Eigentümer des Arbeitsbereiches können auf diesen zugreifen und ihn bearbeiten</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve" approved="yes">
         <source>Shared</source>
@@ -158,6 +158,14 @@
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve" approved="yes">
         <source>Publish selected changes to {0}</source>
         <target state="final">Ausgewählte Änderungen nach {0} veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="final">Veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="final">Verwerfen</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
         <source>Discard all changes</source>
@@ -279,23 +287,27 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Änderungen übernehmen</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Änderungen übernehmen</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Überprüfen</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Überprüfen</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Zuletzt geändert</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Zuletzt geändert</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Status</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Status</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.actions" xml:space="preserve">
         <source>Actions</source>
-        <target state="needs-translation">Aktionen</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Aktionen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Knoten</target>
       </trans-unit>
     </body>
   </file>

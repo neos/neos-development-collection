@@ -35,7 +35,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoes
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
@@ -73,7 +72,6 @@ trait NodeMove
 
     /**
      * @throws ContentStreamDoesNotExistYet
-     * @throws NodeAggregatesTypeIsAmbiguous
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
@@ -118,6 +116,7 @@ trait NodeMove
                 $contentGraph,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
+                $command->nodeAggregateId,
             );
             if ($nodeAggregate->nodeName) {
                 $this->requireNodeTypeNotToDeclareTetheredChildNodeName($newParentNodeAggregate->nodeTypeName, $nodeAggregate->nodeName);

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node specialization
 
   As a user of the CR I want to create a node at the proper place after deletion

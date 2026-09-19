@@ -1,13 +1,8 @@
 ##
-# Renders a document for review
+# Renders a change for review
 #
 prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fusion:Component) {
-
-  relativePath = ''
-  change = ${change}
-  document = ${document}
-  canPublishToBaseWorkspace = ${canPublishToBaseWorkspace}
-  selectedWorkspaceName = ${selectedWorkspaceName}
+  change = ${{}}
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -19,14 +14,11 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeTableRow) < prototype(Neos.Fus
         <Neos.Fusion:DataStructure
           @path="attributes.class"
           general="neos-content-change"
-          deleted={change.isRemoved ? 'legend-deleted' : ''}
-          created={change.isNew ? 'legend-created' : ''}
-          moved={change.isMoved ? 'legend-moved' : ''}
+          deleted={props.change.isRemoved ? 'legend-deleted' : ''}
+          created={props.change.isNew ? 'legend-created' : ''}
+          moved={props.change.isMoved ? 'legend-moved' : ''}
         />
-        <Neos.Workspace.Ui:Component.ReviewChangeDiff
-          change={change}
-          relativePath={relativePath}
-          document={document}/>
+        <Neos.Workspace.Ui:Component.ReviewChangeDiff change={props.change}/>
       </td>
     </tr>
   `

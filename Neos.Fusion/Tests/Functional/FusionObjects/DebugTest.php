@@ -10,14 +10,14 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Service\DebugStack;
 
 /**
  * Testcase for the Debug object
  *
  */
-class DebugTest extends AbstractFusionObjectTest
+class DebugTest extends AbstractFusionObjectTestCase
 {
     /**
      * @var DebugStack
@@ -31,9 +31,7 @@ class DebugTest extends AbstractFusionObjectTest
         $this->debugStack->flush();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugEmptyValue()
     {
         $view = $this->buildView();
@@ -44,9 +42,7 @@ class DebugTest extends AbstractFusionObjectTest
         self::assertEquals('NULL', $lines[1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugNullValue()
     {
         $view = $this->buildView();
@@ -57,9 +53,7 @@ class DebugTest extends AbstractFusionObjectTest
         self::assertEquals('NULL', $lines[1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugNullValueWithTitle()
     {
         $view = $this->buildView();
@@ -71,9 +65,7 @@ class DebugTest extends AbstractFusionObjectTest
         self::assertEquals('NULL', $lines[1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugEelExpression()
     {
         $view = $this->buildView();
@@ -84,9 +76,7 @@ class DebugTest extends AbstractFusionObjectTest
         self::assertEquals('string "hello world" (11)', $lines[1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugFusionObjectExpression()
     {
         $view = $this->buildView();
@@ -97,9 +87,7 @@ class DebugTest extends AbstractFusionObjectTest
         self::assertEquals('string "hello world" (11)', $lines[1]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function debugMultipleValues()
     {
         $view = $this->buildView();

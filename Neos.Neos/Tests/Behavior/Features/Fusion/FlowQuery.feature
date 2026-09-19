@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
 
   Background:
@@ -24,6 +24,8 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       properties:
         title:
           type: string
+    'Neos.Neos:ContentCollection':
+      label: "${Neos.Node.labelForNode(node)}"
     'Neos.Neos:Test.DocumentType1':
       superTypes:
         'Neos.Neos:Document': true
@@ -36,7 +38,16 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     'Neos.Neos:Test.Content':
       superTypes:
         'Neos.Neos:Content': true
-
+    'Neos.Neos:Test.Columns':
+      superTypes:
+        'Neos.Neos:Content': true
+      childNodes:
+        column0:
+          label: 'Left Column'
+          type: 'Neos.Neos:ContentCollection'
+        column1:
+          label: 'Right Column'
+          type: 'Neos.Neos:ContentCollection'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -72,6 +83,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
       | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                     | a1b3     |
       | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "hiddenInMenu": true} | a1c      |
       | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                     | a1c1     |
+      | a1d             | a1                    | Neos.Neos:Test.Columns        | {}                                                                   | a1d      |
     Given the current date and time is "2024-09-22T18:00:00+01:00"
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                | nodeName |
@@ -466,5 +478,23 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     {
         "label": "Neos.Neos:Test.DocumentType1 (a1)",
         "nodeTypeName": "Neos.Neos:Test.DocumentType1"
+    }
+    """
+
+  Scenario: Childnode label rendering
+    When the Fusion context node is "a1d"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      leftColumnLabel = ${Neos.Node.label(q(node).children().get(0))}
+      rightColumnLabel = ${Neos.Node.label(q(node).children().get(1))}
+      @process.render = ${Json.stringify(value, ['JSON_PRETTY_PRINT'])}
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    {
+        "leftColumnLabel": "Left Column",
+        "rightColumnLabel": "Right Column"
     }
     """

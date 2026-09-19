@@ -42,11 +42,9 @@ class NodeTypeEnrichmentService
     public function enrichNodeTypeLabelsConfiguration(array $fullConfiguration): array
     {
         $superTypeConfigResolver = new SuperTypeConfigResolver($fullConfiguration);
-
         foreach ($fullConfiguration as $nodeTypeName => &$nodeTypeConfiguration) {
             $this->addLabelsToNodeTypeConfiguration($nodeTypeName, $nodeTypeConfiguration, $superTypeConfigResolver);
         }
-
         return $fullConfiguration;
     }
 
@@ -65,13 +63,33 @@ class NodeTypeEnrichmentService
         if (isset($configuration['properties'])) {
             $this->setLabels($nodeTypeName, $configuration['properties'], $superTypeConfigResolver, 'properties');
         }
+
         if (isset($configuration['references'])) {
             $this->setLabels($nodeTypeName, $configuration['references'], $superTypeConfigResolver, 'references');
+        }
+
+        if (isset($configuration['childNodes'])) {
+            $this->setChildNodeLabels($nodeTypeName, $configuration);
+        }
+    }
+
+
+    /**
+     * @param string $nodeTypeName
+     * @param array<string,mixed> $configuration
+     * @return void
+     */
+    protected function setChildNodeLabels(string $nodeTypeName, array &$configuration)
+    {
+        $nodeTypeLabelIdPrefix = $this->generateNodeTypeLabelIdPrefix($nodeTypeName);
+        foreach ($configuration['childNodes'] as $childNodeName => &$childNodeConfiguration) {
+            if ($childNodeConfiguration && $this->shouldFetchTranslation($childNodeConfiguration)) {
+                $childNodeConfiguration['label'] = $this->getLabelTranslationId($nodeTypeLabelIdPrefix, $childNodeName, 'childNodes');
+            }
         }
     }
 
     /**
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
      * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
@@ -160,21 +178,22 @@ class NodeTypeEnrichmentService
     protected function resolveHelpMessageThumbnail($nodeTypeName, $configurationThumbnail)
     {
         $thumbnailUrl = '';
-        if (!empty($configurationThumbnail)) {
-            $thumbnailUrl = $configurationThumbnail;
-            if (strpos($thumbnailUrl, 'resource://') === 0) {
-                $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
-            }
-        } else {
-            # look in well know location
-            $splitPrefix = $this->splitIdentifier($nodeTypeName);
-            $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
-            $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
-            if (file_exists($resourcePath)) {
-                $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
+        if ($nodeTypeName !== null) {
+            if (isset($configurationThumbnail)) {
+                $thumbnailUrl = $configurationThumbnail;
+                if (strpos($thumbnailUrl, 'resource://') === 0) {
+                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
+                }
+            } else {
+                # look in well know location
+                $splitPrefix = $this->splitIdentifier($nodeTypeName);
+                $relativePathAndFilename = 'NodeTypes/Thumbnails/' . $splitPrefix['id'] . '.png';
+                $resourcePath = 'resource://' . $splitPrefix['packageKey'] . '/Public/' . $relativePathAndFilename;
+                if (file_exists($resourcePath)) {
+                    $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($resourcePath);
+                }
             }
         }
-
         return $thumbnailUrl;
     }
 
@@ -208,6 +227,9 @@ class NodeTypeEnrichmentService
                     }
                     if ($this->shouldFetchTranslation($optionConfiguration)) {
                         $optionConfiguration['label'] = $translationIdGenerator('selectBoxEditor.values.' . $value);
+                    }
+                    if ($this->shouldFetchTranslation($optionConfiguration, 'group')) {
+                        $optionConfiguration['group'] = $translationIdGenerator('selectBoxEditor.groups.' . $value);
                     }
                 }
                 break;
@@ -332,7 +354,7 @@ class NodeTypeEnrichmentService
     {
         $fieldValue = array_key_exists($fieldName, $parentConfiguration) ? $parentConfiguration[$fieldName] : '';
 
-        return (trim($fieldValue) === 'i18n');
+        return ($fieldValue !== null && trim($fieldValue) === 'i18n');
     }
 
     /**

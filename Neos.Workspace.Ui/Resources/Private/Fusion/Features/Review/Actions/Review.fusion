@@ -34,7 +34,6 @@ Neos.Workspace.Ui.WorkspaceController.review = Neos.Fusion:Component {
             form.target.action="publishOrDiscardNodes"
             form.target.format="htmx"
             form.target.arguments.workspaceName={props.selectedWorkspaceName}
-            attributes.class="neos-inline"
             attributes.hx-post={form.getTarget()}
             attributes.id="publishOrDiscardNodesForm"
           >

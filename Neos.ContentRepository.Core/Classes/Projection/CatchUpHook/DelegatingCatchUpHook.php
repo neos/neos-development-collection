@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\CatchUpHook;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\EventEnvelope;
 
@@ -22,6 +23,7 @@ final readonly class DelegatingCatchUpHook implements CatchUpHookInterface
     private array $catchUpHooks;
 
     public function __construct(
+        private PerformanceTracerInterface|null $performanceTracer,
         CatchUpHookInterface ...$catchUpHooks
     ) {
         $this->catchUpHooks = $catchUpHooks;
@@ -79,6 +81,7 @@ final readonly class DelegatingCatchUpHook implements CatchUpHookInterface
         foreach ($this->catchUpHooks as $catchUpHook) {
             try {
                 $closure($catchUpHook);
+                $this->performanceTracer?->mark('CatchUpHook::' . $hookName, ['hook' => get_class($catchUpHook)]);
             } catch (\Throwable $e) {
                 $firstError ??= $e;
                 $failedCatchupHookName = substr(strrchr($catchUpHook::class, '\\') ?: '', 1);

@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\Feature\Common\WorkspaceConstraintChecks;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasReopened;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
@@ -41,7 +42,6 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBas
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\BaseWorkspaceEqualsWorkspaceException;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\CircularRelationBetweenWorkspacesException;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\WorkspaceIsNotEmptyException;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -59,14 +59,18 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistY
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
+use Neos\EventStore\Model\Event\EventType;
+use Neos\EventStore\Model\Event\EventTypes;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event\Version;
+use Neos\EventStore\Model\EventStream\EventStreamFilter;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -76,6 +80,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     use ContentStreamHandling;
+    use WorkspaceConstraintChecks;
 
     public function __construct(
         private CommandSimulatorFactory $commandSimulatorFactory,
@@ -139,17 +144,23 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             sprintf('Create workspace %s with base %s', $command->workspaceName->value, $baseWorkspace->workspaceName->value)
         );
 
-        yield new EventsToPublish(
-            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            Events::with(
-                new WorkspaceWasCreated(
-                    $command->workspaceName,
-                    $command->baseWorkspaceName,
-                    $command->newContentStreamId,
-                )
-            ),
-            ExpectedVersion::ANY()
-        );
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
+        $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
+        try {
+            yield new EventsToPublish(
+                $workspaceStreamName->getEventStreamName(),
+                Events::with(
+                    new WorkspaceWasCreated(
+                        $command->workspaceName,
+                        $command->baseWorkspaceName,
+                        $command->newContentStreamId,
+                    )
+                ),
+                $expectedWorkspaceStreamVersion,
+            );
+        } catch (ConcurrencyException) {
+            yield $this->removeContentStreamWithoutConstraintChecks($command->newContentStreamId);
+        }
     }
 
     /**
@@ -174,16 +185,22 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ExpectedVersion::NO_STREAM()
         );
 
-        yield new EventsToPublish(
-            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
-            Events::with(
-                new RootWorkspaceWasCreated(
-                    $command->workspaceName,
-                    $command->newContentStreamId
-                )
-            ),
-            ExpectedVersion::ANY()
-        );
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName);
+        $expectedWorkspaceStreamVersion = $this->requireWorkspaceStreamVersionForCreation($workspaceStreamName);
+        try {
+            yield new EventsToPublish(
+                $workspaceStreamName->getEventStreamName(),
+                Events::with(
+                    new RootWorkspaceWasCreated(
+                        $command->workspaceName,
+                        $command->newContentStreamId
+                    )
+                ),
+                $expectedWorkspaceStreamVersion,
+            );
+        } catch (ConcurrencyException) {
+            yield $this->removeContentStreamWithoutConstraintChecks($command->newContentStreamId);
+        }
     }
 
     private function handlePublishWorkspace(
@@ -212,13 +229,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($rebaseableCommands): void {
-                foreach ($rebaseableCommands as $rebaseableCommand) {
-                    $handle($rebaseableCommand);
+        try {
+            $commandSimulator->run(
+                static function ($handle) use ($rebaseableCommands): void {
+                    foreach ($rebaseableCommands as $rebaseableCommand) {
+                        $handle($rebaseableCommand);
+                    }
                 }
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = WorkspaceRebaseFailed::duringPublish($commandSimulator->getConflictingEvents());
@@ -382,13 +407,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($rebaseableCommands): void {
-                foreach ($rebaseableCommands as $rebaseableCommand) {
-                    $handle($rebaseableCommand);
+        try {
+            $commandSimulator->run(
+                static function ($handle) use ($rebaseableCommands): void {
+                    foreach ($rebaseableCommands as $rebaseableCommand) {
+                        $handle($rebaseableCommand);
+                    }
                 }
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if (
             $command->rebaseErrorHandlingStrategy === RebaseErrorHandlingStrategy::STRATEGY_FAIL
@@ -471,18 +504,26 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $highestSequenceNumberForMatching = $commandSimulator->run(
-            static function ($handle) use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
-                foreach ($matchingCommands as $matchingCommand) {
-                    $handle($matchingCommand);
+        try {
+            $highestSequenceNumberForMatching = $commandSimulator->run(
+                static function ($handle) use ($commandSimulator, $matchingCommands, $remainingCommands): SequenceNumber {
+                    foreach ($matchingCommands as $matchingCommand) {
+                        $handle($matchingCommand);
+                    }
+                    $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
+                    foreach ($remainingCommands as $remainingCommand) {
+                        $handle($remainingCommand);
+                    }
+                    return $highestSequenceNumberForMatching;
                 }
-                $highestSequenceNumberForMatching = $commandSimulator->currentSequenceNumber();
-                foreach ($remainingCommands as $remainingCommand) {
-                    $handle($remainingCommand);
-                }
-                return $highestSequenceNumberForMatching;
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {
@@ -607,13 +648,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $commandSimulator = $this->commandSimulatorFactory->createSimulatorForWorkspace($baseWorkspace->workspaceName);
 
-        $commandSimulator->run(
-            static function ($handle) use ($commandsToKeep): void {
-                foreach ($commandsToKeep as $matchingCommand) {
-                    $handle($matchingCommand);
+        try {
+            $commandSimulator->run(
+                static function ($handle) use ($commandsToKeep): void {
+                    foreach ($commandsToKeep as $matchingCommand) {
+                        $handle($matchingCommand);
+                    }
                 }
-            }
-        );
+            );
+        } catch (\Throwable $unexpectedException) {
+            yield $this->reopenContentStreamWithoutConstraintChecks(
+                $workspace->currentContentStreamId,
+                sprintf('unexpected error %d: %s', $unexpectedException->getCode(), $unexpectedException->getMessage())
+            );
+            throw $unexpectedException;
+        }
 
         if ($commandSimulator->hasConflicts()) {
             $workspaceRebaseFailed = match ($workspace->status) {
@@ -721,7 +770,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
-     * @throws WorkspaceIsNotEmptyException
+     * @throws WorkspaceContainsPublishableChanges
      * @throws BaseWorkspaceEqualsWorkspaceException
      * @throws CircularRelationBetweenWorkspacesException
      */
@@ -738,7 +787,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw WorkspaceCommandSkipped::becauseTheBaseWorkspaceIsUnchanged($command->baseWorkspaceName, $command->workspaceName);
         }
 
-        $this->requireEmptyWorkspace($workspace);
+        if ($workspace->hasPublishableChanges()) {
+            throw WorkspaceContainsPublishableChanges::butWasNotSupposedToForBaseWorkspaceChange($workspace->workspaceName);
+        }
+
         $newBaseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $commandHandlingDependencies);
         $this->requireNonCircularRelationBetweenWorkspaces($workspace, $newBaseWorkspace, $commandHandlingDependencies);
 
@@ -762,6 +814,8 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
             ExpectedVersion::ANY()
         );
+
+        yield $this->removeContentStreamWithoutConstraintChecks($workspace->currentContentStreamId);
     }
 
     /**
@@ -853,35 +907,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @throws WorkspaceDoesNotExist
-     */
-    private function requireWorkspace(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): Workspace
-    {
-        $workspace = $commandHandlingDependencies->findWorkspaceByName($workspaceName);
-        if (is_null($workspace)) {
-            throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
-        }
-
-        return $workspace;
-    }
-
-    /**
-     * @throws WorkspaceHasNoBaseWorkspaceName
-     * @throws BaseWorkspaceDoesNotExist
-     */
-    private function requireBaseWorkspace(Workspace $workspace, CommandHandlingDependencies $commandHandlingDependencies): Workspace
-    {
-        if (is_null($workspace->baseWorkspaceName)) {
-            throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->workspaceName);
-        }
-        $baseWorkspace = $commandHandlingDependencies->findWorkspaceByName($workspace->baseWorkspaceName);
-        if (is_null($baseWorkspace)) {
-            throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
-        }
-        return $baseWorkspace;
-    }
-
-    /**
      * @throws BaseWorkspaceEqualsWorkspaceException
      * @throws CircularRelationBetweenWorkspacesException
      */
@@ -900,12 +925,18 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @throws WorkspaceIsNotEmptyException
+     * The workspace stream version from the even-store. We cannot use the constant NO_STREAM() as we allow recreation of workspaces.
      */
-    private function requireEmptyWorkspace(Workspace $workspace): void
+    private function requireWorkspaceStreamVersionForCreation(WorkspaceEventStreamName $workspaceStreamName): ExpectedVersion
     {
-        if ($workspace->hasPublishableChanges()) {
-            throw new WorkspaceIsNotEmptyException('The user workspace needs to be empty before switching the base workspace.', 1681455989);
+        // If an event exists, the only valid last event is a removal, otherwise we are not allowed to recreate the workspace.
+        $workspaceStream = $this->eventStore->load(
+            $workspaceStreamName->getEventStreamName(),
+            EventStreamFilter::create(eventTypes:EventTypes::create(EventType::fromString('WorkspaceWasRemoved')))
+        );
+        foreach ($workspaceStream->backwards()->limit(1) as $eventEnvelope) {
+            return ExpectedVersion::fromVersion($eventEnvelope->version);
         }
+        return ExpectedVersion::NO_STREAM();
     }
 }

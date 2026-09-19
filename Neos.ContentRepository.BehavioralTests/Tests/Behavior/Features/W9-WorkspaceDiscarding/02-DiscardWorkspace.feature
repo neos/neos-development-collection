@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Workspace discarding - basic functionality
 
   This is an END TO END test; testing all layers of the related functionality step by step together

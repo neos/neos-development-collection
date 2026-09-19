@@ -57,6 +57,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Com
             label={props.i18n.id('back')}
             attributes.hx-get={private.indexWorkspaceUri}
             attributes.hx-replace-url={private.indexWorkspaceUri}
+            attributes.hx-push-url={private.indexWorkspaceUri}
             attributes.hx-select="#workspace-module-content"
             attributes.hx-target="#workspace-module-content"
             attributes.hx-swap="outerHTML"
@@ -103,11 +104,10 @@ prototype(Neos.Workspace.Ui:Component.ReviewActions) < prototype(Neos.Fusion:Com
               disabled={!props.canPublishToBaseWorkspace}
               attributes.hx-target={'#popover-container'}
               attributes.hx-swap='innerHTML'
-              attributes.hx-post={private.confirmPublishSelectedChanges}
+              attributes.hx-get={private.confirmPublishSelectedChanges}
               attributes.hx-on--after-request={'document.getElementById("' + private.publishSelectedChangesPopoverId + '").showPopover()'}
             />
           </div>
-
         </div>
       </div>
   `

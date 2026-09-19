@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,16 +12,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Fusion View
  *
  */
-class ContextOverrideTest extends AbstractFusionObjectTest
+class ContextOverrideTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicContextOverrides()
     {
         $view = $this->buildView();

@@ -973,7 +973,7 @@ class Runtime
     private function withSimulatedLegacyControllerContext(\Closure $renderer): ResponseInterface|StreamInterface
     {
         if ($this->legacyActionResponseForCurrentRendering !== null) {
-            throw new Exception('Recursion detected in `Runtime::renderResponse`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
+            throw new Exception('Recursion detected in `Runtime::renderEntryPathWithContext`. This entry point is only allowed to be invoked once per rendering.', 1706993940);
         }
         $this->legacyActionResponseForCurrentRendering = new ActionResponse();
 
@@ -1023,7 +1023,7 @@ class Runtime
         // legacy controller context layer
         $actionRequest = $this->fusionGlobals->get('request');
         if ($this->legacyActionResponseForCurrentRendering === null || !$actionRequest instanceof ActionRequest) {
-            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderResponse` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
+            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderEntryPathWithContext` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
         }
 
         return new LegacyFusionControllerContext(

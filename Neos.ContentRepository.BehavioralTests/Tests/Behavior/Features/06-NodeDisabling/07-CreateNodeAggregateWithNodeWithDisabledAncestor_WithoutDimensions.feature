@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Creation of nodes underneath disabled nodes
 
   If we create new nodes underneath of disabled nodes, they must be marked as disabled as well;
@@ -38,11 +37,17 @@ Feature: Creation of nodes underneath disabled nodes
       | nodingers-cat   | Neos.ContentRepository.Testing:Document | the-great-nodini      | pet-document |
     Then I expect the node aggregate "nodingers-cat" to exist
     And I expect this node aggregate to disable dimension space points []
-    And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
+
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags "disabled"
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId              | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    Then I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{}
+
+    Then I expect node aggregate identifier "nodingers-cat" to lead to node cs-identifier;nodingers-cat;{}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{}

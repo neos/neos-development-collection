@@ -37,16 +37,18 @@ trait NodeVariationInternals
 {
     use SiblingResolutionInternals;
 
+    use DimensionSpaceInternals;
+
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
     protected function createEventsForVariations(
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ?NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $precedingSiblingNodeAggregateId,
         ?NodeAggregateId $succeedingSiblingNodeAggregateId,
-        NodeAggregate $nodeNodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregate $parentNodeAggregate,
     ): Events {
         return match (
             $this->getInterDimensionalVariationGraph()->getVariantType(
@@ -58,28 +60,28 @@ trait NodeVariationInternals
                 $contentGraph,
                 $sourceOrigin,
                 $targetOrigin,
-                $parentNodeAggregateId,
                 $precedingSiblingNodeAggregateId,
                 $succeedingSiblingNodeAggregateId,
-                $nodeNodeAggregate
+                $nodeAggregate,
+                $parentNodeAggregate,
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
                 $contentGraph,
                 $sourceOrigin,
                 $targetOrigin,
-                $parentNodeAggregateId,
                 $precedingSiblingNodeAggregateId,
                 $succeedingSiblingNodeAggregateId,
-                $nodeNodeAggregate
+                $nodeAggregate,
+                $parentNodeAggregate,
             ),
             default => $this->handleCreateNodePeerVariant(
                 $contentGraph,
                 $sourceOrigin,
                 $targetOrigin,
-                $parentNodeAggregateId,
                 $precedingSiblingNodeAggregateId,
                 $succeedingSiblingNodeAggregateId,
-                $nodeNodeAggregate
+                $nodeAggregate,
+                $parentNodeAggregate,
             ),
         };
     }
@@ -88,17 +90,21 @@ trait NodeVariationInternals
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ?NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $precedingSiblingNodeAggregateId,
         ?NodeAggregateId $succeedingSiblingNodeAggregateId,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregate $parentNodeAggregate,
     ): Events {
-        $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
+        $specializationVisibility = $this->calculateEffectiveVisibility(
+            $targetOrigin,
+            $nodeAggregate,
+            $parentNodeAggregate,
+        );
         $events = $this->collectNodeSpecializationVariantsThatWillHaveBeenCreated(
             $contentGraph,
             $sourceOrigin,
             $targetOrigin,
-            $parentNodeAggregateId,
+            $parentNodeAggregate->nodeAggregateId,
             $precedingSiblingNodeAggregateId,
             $succeedingSiblingNodeAggregateId,
             $nodeAggregate,
@@ -179,17 +185,21 @@ trait NodeVariationInternals
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ?NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $precedingSiblingNodeAggregateId,
         ?NodeAggregateId $succeedingSiblingNodeAggregateId,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregate $parentNodeAggregate,
     ): Events {
-        $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
+        $generalizationVisibility = $this->calculateEffectiveVisibility(
+            $targetOrigin,
+            $nodeAggregate,
+            $parentNodeAggregate,
+        );
         $events = $this->collectNodeGeneralizationVariantsThatWillHaveBeenCreated(
             $contentGraph,
             $sourceOrigin,
             $targetOrigin,
-            $parentNodeAggregateId,
+            $parentNodeAggregate->nodeAggregateId,
             $precedingSiblingNodeAggregateId,
             $succeedingSiblingNodeAggregateId,
             $nodeAggregate,
@@ -271,17 +281,21 @@ trait NodeVariationInternals
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        ?NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $precedingSiblingNodeAggregateId,
         ?NodeAggregateId $succeedingSiblingNodeAggregateId,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregate $parentNodeAggregate,
     ): Events {
-        $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
+        $peerVisibility = $this->calculateEffectiveVisibility(
+            $targetOrigin,
+            $nodeAggregate,
+            $parentNodeAggregate,
+        );
         $events = $this->collectNodePeerVariantsThatWillHaveBeenCreated(
             $contentGraph,
             $sourceOrigin,
             $targetOrigin,
-            $parentNodeAggregateId,
+            $parentNodeAggregate->nodeAggregateId,
             $precedingSiblingNodeAggregateId,
             $succeedingSiblingNodeAggregateId,
             $nodeAggregate,
@@ -360,11 +374,14 @@ trait NodeVariationInternals
 
     private function calculateEffectiveVisibility(
         OriginDimensionSpacePoint $targetOrigin,
-        NodeAggregate $nodeAggregate
+        NodeAggregate $nodeAggregate,
+        ?NodeAggregate $parentNodeAggregateForCoverageFilter,
     ): DimensionSpacePointSet {
         $specializations = $this->getInterDimensionalVariationGraph()
             ->getIndexedSpecializations($targetOrigin->toDimensionSpacePoint());
-        $excludedSet = new DimensionSpacePointSet([]);
+        $excludedSet = $parentNodeAggregateForCoverageFilter
+            ? $specializations->getDifference($parentNodeAggregateForCoverageFilter->coveredDimensionSpacePoints)
+            : DimensionSpacePointSet::fromArray([]);
         foreach (
             $specializations->getIntersection(
                 $nodeAggregate->occupiedDimensionSpacePoints->toDimensionSpacePointSet()

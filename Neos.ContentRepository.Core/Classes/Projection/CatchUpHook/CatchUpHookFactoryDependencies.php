@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\CatchUpHook;
 
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -36,7 +37,8 @@ final readonly class CatchUpHookFactoryDependencies
         public ProjectionStateInterface $projectionState,
         public NodeTypeManager $nodeTypeManager,
         public ContentDimensionSourceInterface $contentDimensionSource,
-        public InterDimensionalVariationGraph $variationGraph
+        public InterDimensionalVariationGraph $variationGraph,
+        public PerformanceTracerInterface|null $performanceTracer,
     ) {
     }
 
@@ -51,14 +53,16 @@ final readonly class CatchUpHookFactoryDependencies
         ProjectionStateInterface $projectionState,
         NodeTypeManager $nodeTypeManager,
         ContentDimensionSourceInterface $contentDimensionSource,
-        InterDimensionalVariationGraph $variationGraph
+        InterDimensionalVariationGraph $variationGraph,
+        PerformanceTracerInterface|null $performanceTracer,
     ): self {
         return new self(
             $contentRepositoryId,
             $projectionState,
             $nodeTypeManager,
             $contentDimensionSource,
-            $variationGraph
+            $variationGraph,
+            $performanceTracer,
         );
     }
 }

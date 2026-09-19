@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Tethered Nodes integrity violations
 
   As a user of the CR I want to be able to detect and fix tethered nodes that are missing, not allowed or otherwise incorrect
@@ -36,49 +35,25 @@ Feature: Tethered Nodes integrity violations
       | newContentStreamId   | "cs-identifier"      |
     And I am in workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                                | Value                                               |
-      | nodeAggregateId                    | "lady-eleonode-rootford"                            |
-      | nodeTypeName                       | "Neos.ContentRepository:Root"                       |
-      | tetheredDescendantNodeAggregateIds | {"originally-tethered-node": "originode-tetherton"} |
+      | Key                                | Value                                                                                                                     |
+      | nodeAggregateId                    | "lady-eleonode-rootford"                                                                                                  |
+      | nodeTypeName                       | "Neos.ContentRepository:Root"                                                                                             |
+      | tetheredDescendantNodeAggregateIds | {"originally-tethered-node": "originode-tetherton", "originally-tethered-node/tethered-leaf": "originode-tetherton-leaf"} |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                     |
-      | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
-      | nodeAggregateId             | "sir-david-nodenborough"                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint   | {"market":"CH", "language":"gsw"}         |
-      | coveredDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
-      | parentNodeAggregateId       | "lady-eleonode-rootford"                  |
-      | nodeName                    | "document"                                |
-      | nodeAggregateClassification | "regular"                                 |
-    # We add a tethered child node to provide for test cases for node aggregates of that classification
-    # Node /document/tethered-node
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                     |
-      | workspaceName               | "live"                                    |
-      | contentStreamId             | "cs-identifier"                           |
-      | nodeAggregateId             | "nodewyn-tetherton"                       |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Tethered" |
-      | originDimensionSpacePoint   | {"market":"CH", "language":"gsw"}         |
-      | coveredDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]       |
-      | parentNodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeName                    | "tethered-node"                           |
-      | nodeAggregateClassification | "tethered"                                |
-    # We add a tethered grandchild node to provide for test cases that this works recursively
-    # Node /document/tethered-node/tethered-leaf
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                         |
-      | workspaceName               | "live"                                        |
-      | contentStreamId             | "cs-identifier"                               |
-      | nodeAggregateId             | "nodimer-tetherton"                           |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:TetheredLeaf" |
-      | originDimensionSpacePoint   | {"market":"CH", "language":"gsw"}             |
-      | coveredDimensionSpacePoints | [{"market":"CH", "language":"gsw"}]           |
-      | parentNodeAggregateId       | "nodewyn-tetherton"                           |
-      | nodeName                    | "tethered-leaf"                               |
-      | nodeAggregateClassification | "tethered"                                    |
+    # With Node /document/tethered-node
+    # With Node /document/tethered-node/tethered-leaf
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                                | Value                                                                                     |
+      | workspaceName                      | "live"                                                                                    |
+      | nodeAggregateId                    | "sir-david-nodenborough"                                                                  |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:Document"                                                 |
+      | originDimensionSpacePoint          | {"market":"CH", "language":"gsw"}                                                         |
+      | coveredDimensionSpacePoints        | [{"market":"CH", "language":"gsw"}]                                                       |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                  |
+      | nodeName                           | "document"                                                                                |
+      | tetheredDescendantNodeAggregateIds | {"tethered-node":"nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
+
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
@@ -145,11 +120,15 @@ Feature: Tethered Nodes integrity violations
 
     When I am in workspace "live" and dimension space point {"market":"CH", "language":"gsw"}
     And I get the node at path "document/some-new-child"
-    And I expect this node to have the following properties:
+    Then I expect this node to have the following properties:
       | Key | Value                |
       | foo | "my default applied" |
-    And I get the node at path "tethered-node"
-    And I expect this node to have the following properties:
+
+    When I get the node at path "document/some-new-child/tethered-leaf"
+    Then I expect this node to be of type "Neos.ContentRepository.Testing:TetheredLeaf"
+
+    When I get the node at path "tethered-node"
+    Then I expect this node to have the following properties:
       | Key | Value                |
       | foo | "my default applied" |
 
@@ -173,9 +152,9 @@ Feature: Tethered Nodes integrity violations
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
-    Then I expect exactly 8 events to be published on stream "ContentStream:cs-identifier"
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
-    Then I expect exactly 8 events to be published on stream "ContentStream:cs-identifier"
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation (which can be fixed)
     Given I change the node types in content repository "default" to:
@@ -228,3 +207,33 @@ Feature: Tethered Nodes integrity violations
       | Type                     | nodeAggregateId   |
       | TETHERED_NODE_TYPE_WRONG | nodewyn-tetherton |
 
+  Scenario: Tethered child node is missing in new dimension space point
+  We specialize/generalize/... the other tethered Node
+    When I change the content dimensions in content repository "default" to:
+      | Identifier | Values           | Generalizations   |
+      | market     | DE, CH           | CH->DE            |
+      | language   | en, de, gsw, new | gsw->de->en, new  |
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+    And I expect exactly 8 events to be published on stream "ContentStream:cs-identifier"
+
+    Then I expect the following structure adjustments for type "Neos.ContentRepository:Root":
+      | Type                  | nodeAggregateId        |
+      | TETHERED_NODE_MISSING | lady-eleonode-rootford |
+    When I adjust the node structure for node type "Neos.ContentRepository:Root"
+    Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 8 is of type "NodePeerVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                                          |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                   |
+      | nodeAggregateId        | "originode-tetherton"                                                                                                                                             |
+      | sourceOrigin           | {"market":"DE","language":"en"}                                                                                                                                   |
+      | peerOrigin             | {"market":"DE","language":"new"}                                                                                                                                  |
+      | peerSucceedingSiblings | [{"dimensionSpacePoint":{"market":"DE","language":"new"},"nodeAggregateId":null},{"dimensionSpacePoint":{"market":"CH","language":"new"},"nodeAggregateId":null}] |
+    And event at index 9 is of type "NodePeerVariantWasCreated" with payload:
+      | Key                    | Expected                                                                                                                                                          |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                   |
+      | nodeAggregateId        | "originode-tetherton-leaf"                                                                                                                                        |
+      | sourceOrigin           | {"market":"DE","language":"en"}                                                                                                                                   |
+      | peerOrigin             | {"market":"DE","language":"new"}                                                                                                                                  |
+      | peerSucceedingSiblings | [{"dimensionSpacePoint":{"market":"DE","language":"new"},"nodeAggregateId":null},{"dimensionSpacePoint":{"market":"CH","language":"new"},"nodeAggregateId":null}] |

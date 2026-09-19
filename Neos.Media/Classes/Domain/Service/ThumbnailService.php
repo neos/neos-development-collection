@@ -255,7 +255,15 @@ class ThumbnailService
     {
         $resource = $thumbnail->getResource();
         if ($resource) {
-            return $this->resourceManager->getPublicPersistentResourceUri($resource);
+            $uri = $this->resourceManager->getPublicPersistentResourceUri($resource);
+            if ($uri === false) {
+                throw new ThumbnailServiceException(sprintf(
+                    'Could not generate URI for resource "%s".',
+                    $this->persistenceManager->getIdentifierByObject($resource)
+                ), 1737558490);
+            }
+
+            return $uri;
         }
 
         $staticResource = $thumbnail->getStaticResource();

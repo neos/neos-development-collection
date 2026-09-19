@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\StatusType;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -60,10 +61,11 @@ final class CrCommandController extends CommandController
 
         $result = $contentRepositoryMaintainer->setUp();
         if ($result !== null) {
+            $this->outputLine('<comment>Failed to fully setup content repository "%s"</comment>', [$contentRepositoryId->value]);
             $this->outputLine('<error>%s</error>', [$result->getMessage()]);
             $this->quit(1);
         }
-        $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
+        $this->outputLine('<success>Content repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
     /**
@@ -110,52 +112,18 @@ final class CrCommandController extends CommandController
         }
         foreach ($crStatus->subscriptionStatus as $status) {
             if ($status instanceof DetachedSubscriptionStatus) {
-                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
-                $this->output('    Subscription: ');
-                $this->output('%s <comment>DETACHED</comment>', [$status->subscriptionId->value, $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be']);
-                $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
+                $this->outputDetachedSubscriptionStatus($status);
             }
             if ($status instanceof ProjectionSubscriptionStatus) {
-                $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
-                $this->output('    Setup: ');
-                $this->outputLine(match ($status->setupStatus->type) {
-                    ProjectionStatusType::OK => '<success>OK</success>',
-                    ProjectionStatusType::SETUP_REQUIRED => '<comment>SETUP REQUIRED</comment>',
-                    ProjectionStatusType::ERROR => '<error>ERROR</error>',
-                });
+                $this->outputProjectionSubscriptionStatus($status, $crStatus->eventStorePosition, $verbose);
+
                 $hasErrors |= $status->setupStatus->type === ProjectionStatusType::ERROR;
                 $setupRequired |= $status->setupStatus->type === ProjectionStatusType::SETUP_REQUIRED;
-                if ($verbose && ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details)) {
-                    $lines = explode(chr(10), $status->setupStatus->details ?: '<comment>No details available.</comment>');
-                    foreach ($lines as $line) {
-                        $this->outputLine('      ' . $line);
-                    }
-                    $this->outputLine();
-                }
-                $this->output('    Projection: ');
-                $this->output(match ($status->subscriptionStatus) {
-                    SubscriptionStatus::NEW => '<comment>NEW</comment>',
-                    SubscriptionStatus::BOOTING => '<comment>BOOTING</comment>',
-                    SubscriptionStatus::ACTIVE => '<success>ACTIVE</success>',
-                    SubscriptionStatus::DETACHED => '<comment>DETACHED</comment>',
-                    SubscriptionStatus::ERROR => '<error>ERROR</error>',
-                });
-                if ($crStatus->eventStorePosition?->value > $status->subscriptionPosition->value) {
-                    // projection is behind
-                    $this->outputLine(' at position <error>%d</error>', [$status->subscriptionPosition->value]);
-                } else {
-                    $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
-                }
+
                 $hasErrors |= $status->subscriptionStatus === SubscriptionStatus::ERROR;
                 $replayRequired |= $status->subscriptionStatus === SubscriptionStatus::ERROR;
                 $replayRequired |= $status->subscriptionStatus === SubscriptionStatus::BOOTING;
                 $replayRequired |= $status->subscriptionStatus === SubscriptionStatus::DETACHED;
-                if ($verbose && $status->subscriptionError !== null) {
-                    $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: '<comment>No details available.</comment>');
-                    foreach ($lines as $line) {
-                        $this->outputLine('<error>      %s</error>', [$line]);
-                    }
-                }
             }
         }
         if ($verbose) {
@@ -172,56 +140,49 @@ final class CrCommandController extends CommandController
         }
     }
 
-    /**
-     * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup.
-     *
-     * @param string $projection Identifier of the projection to replay
-     * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $force Replay the projection without confirmation. This may take some time!
-     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
-     * @internal
-     * @deprecated with Neos 9 Beta 17, please use ./flow subscription:replay instead
-     */
-    public function projectionReplayCommand(string $projection, string $contentRepository = 'default', bool $force = false, bool $quiet = false): void
+    private function outputDetachedSubscriptionStatus(DetachedSubscriptionStatus $status): void
     {
-        $subscriptionId = match($projection) {
-            'doctrineDbalContentGraph',
-            'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection' => 'contentGraph',
-            'documentUriPathProjection' => 'Neos.Neos:DocumentUriPathProjection',
-            'change' => 'Neos.Neos:PendingChangesProjection',
-            default => null
-        };
-        if ($subscriptionId === null) {
-            $this->outputLine('<error>Invalid --projection specified. Please use <em>./flow subscription:replay [contentGraph|Neos.Neos:DocumentUriPathProjection|...]</em> directly.</error>');
-            $this->quit(1);
-        }
-        $this->outputLine('<comment>Please use <em>./flow subscription:replay %s</em> instead!</comment>', [$subscriptionId]);
-        $this->forward(
-            'replay',
-            SubscriptionCommandController::class,
-            array_merge(
-                ['subscription' => $subscriptionId],
-                compact('contentRepository', 'force', 'quiet')
-            )
-        );
+        $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
+        $this->output('    Subscription: ');
+        $this->output('%s <comment>DETACHED</comment>', [$status->subscriptionId->value, $status->subscriptionStatus === SubscriptionStatus::DETACHED ? 'is' : 'will be']);
+        $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
     }
 
-    /**
-     * Replays all projections of the specified Content Repository by resetting their states and performing a full catchup
-     *
-     * @param string $contentRepository Identifier of the Content Repository instance to operate on
-     * @param bool $force Replay the projection without confirmation. This may take some time!
-     * @param bool $quiet If set only fatal errors are rendered to the output (must be used with --force flag to avoid user input)
-     * @internal
-     * @deprecated with Neos 9 Beta 17, please use ./flow subscription:replayall instead
-     */
-    public function projectionReplayAllCommand(string $contentRepository = 'default', bool $force = false, bool $quiet = false): void
+    private function outputProjectionSubscriptionStatus(ProjectionSubscriptionStatus $status, ?SequenceNumber $eventStorePosition, bool $verbose): void
     {
-        $this->outputLine('<comment>Please use <em>./flow subscription:replayall</em> instead!</comment>');
-        $this->forward(
-            'replayall',
-            SubscriptionCommandController::class,
-            compact('contentRepository', 'force', 'quiet')
-        );
+        $this->outputLine('  <b>%s</b>:', [$status->subscriptionId->value]);
+        $this->output('    Setup: ');
+        $this->outputLine(match ($status->setupStatus->type) {
+            ProjectionStatusType::OK => '<success>OK</success>',
+            ProjectionStatusType::SETUP_REQUIRED => '<comment>SETUP REQUIRED</comment>',
+            ProjectionStatusType::ERROR => '<error>ERROR</error>',
+        });
+        if ($verbose && ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details)) {
+            $lines = explode(chr(10), $status->setupStatus->details ?: '<comment>No details available.</comment>');
+            foreach ($lines as $line) {
+                $this->outputLine('      ' . $line);
+            }
+        }
+        $this->output('    Projection: ');
+        $this->output(match ($status->subscriptionStatus) {
+            SubscriptionStatus::NEW => '<comment>NEW</comment>',
+            SubscriptionStatus::BOOTING => '<comment>BOOTING</comment>',
+            SubscriptionStatus::ACTIVE => '<success>ACTIVE</success>',
+            SubscriptionStatus::DETACHED => '<comment>DETACHED</comment>',
+            SubscriptionStatus::ERROR => '<error>ERROR</error>',
+        });
+        if ($eventStorePosition?->value > $status->subscriptionPosition->value) {
+            // projection is behind
+            $this->outputLine(' at position <error>%d</error>', [$status->subscriptionPosition->value]);
+        } else {
+            $this->outputLine(' at position <b>%d</b>', [$status->subscriptionPosition->value]);
+        }
+
+        if ($verbose && $status->subscriptionError !== null) {
+            $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: '<comment>No details available.</comment>');
+            foreach ($lines as $line) {
+                $this->outputLine('<error>      %s</error>', [$line]);
+            }
+        }
     }
 }

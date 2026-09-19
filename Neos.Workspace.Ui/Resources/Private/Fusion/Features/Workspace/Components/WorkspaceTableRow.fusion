@@ -117,6 +117,7 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           disabled={props.workspaceListItem.pendingChanges.total == 0}
           attributes.hx-get={private.reviewWorkspaceUri}
           attributes.hx-replace-url={private.reviewWorkspaceUri}
+          attributes.hx-push-url={private.reviewWorkspaceUri}
           attributes.hx-target="#workspace-module-content"
           attributes.hx-select="#workspace-module-content"
           attributes.hx-swap="outerHTML"

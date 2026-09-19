@@ -24,7 +24,6 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -37,31 +36,28 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Dbal\DbalSchemaDiff;
+use Neos\ContentRepository\Dbal\DbalSchemaFactory;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 
 /**
- * TODO: this class needs testing and probably a major refactoring!
- * @internal
+ * @internal Only for consumption inside Neos. Not public api because the implementation will be refactored sooner or later: https://github.com/neos/neos-development-collection/issues/5493
  * @implements ProjectionInterface<ChangeFinder>
  */
 class ChangeProjection implements ProjectionInterface
 {
-    /**
-     * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
-     * so that always the same instance is returned
-     */
-    private ?ChangeFinder $changeFinder = null;
+    private ChangeFinder $changeFinder;
 
     public function __construct(
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
     ) {
+        $this->changeFinder = new ChangeFinder($this->dbal, $this->tableNamePrefix);
     }
 
     /**
@@ -104,22 +100,22 @@ class ChangeProjection implements ProjectionInterface
         $platform = $this->dbal->getDatabasePlatform();
 
         $changeTable = new Table($this->tableNamePrefix, [
-            DbalSchemaFactory::columnForContentStreamId('contentStreamId', $platform)->setNotNull(true),
+            DbalSchemaFactory::columnForContentStreamId($connection->quoteIdentifier('contentStreamId'), $platform)->setNotNull(true),
             (new Column('created', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('changed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
-            DbalSchemaFactory::columnForNodeAggregateId('nodeAggregateId', $platform)->setNotnull(true),
-            DbalSchemaFactory::columnForDimensionSpacePoint('originDimensionSpacePoint', $platform)->setNotnull(false),
-            DbalSchemaFactory::columnForDimensionSpacePointHash('originDimensionSpacePointHash', $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAggregateId($connection->quoteIdentifier('nodeAggregateId'), $platform)->setNotnull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint($connection->quoteIdentifier('originDimensionSpacePoint'), $platform)->setNotnull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash($connection->quoteIdentifier('originDimensionSpacePointHash'), $platform)->setNotnull(true),
             (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
             // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
-            DbalSchemaFactory::columnForNodeAggregateId('removalAttachmentPoint', $platform)->setNotnull(false)
+            DbalSchemaFactory::columnForNodeAggregateId($connection->quoteIdentifier('removalAttachmentPoint'), $platform)->setNotnull(false)
         ]);
 
         $changeTable->setPrimaryKey([
-            'contentStreamId',
-            'nodeAggregateId',
-            'originDimensionSpacePointHash'
+            $connection->quoteIdentifier('contentStreamId'),
+            $connection->quoteIdentifier('nodeAggregateId'),
+            $connection->quoteIdentifier('originDimensionSpacePointHash'),
         ]);
 
         $schema = DbalSchemaFactory::createSchemaWithTables($connection, [$changeTable]);
@@ -143,25 +139,20 @@ class ChangeProjection implements ProjectionInterface
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
-            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event),
             NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
+            // we don't need to handle all events,
+            // DimensionSpacePointWasMoved is unhandled, because other workspaces MUST NOT contain changes i.e. nothing needs to be adjusted
             default => null,
         };
     }
 
     public function getState(): ChangeFinder
     {
-        if (!$this->changeFinder) {
-            $this->changeFinder = new ChangeFinder(
-                $this->dbal,
-                $this->tableNamePrefix
-            );
-        }
         return $this->changeFinder;
     }
 
@@ -231,6 +222,13 @@ class ChangeProjection implements ProjectionInterface
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
+            if ($event->tag->equals(NeosSubtreeTag::removed())) {
+                $this->modifyChange($event->contentStreamId, $event->nodeAggregateId, OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint), static function (Change $change) {
+                    $change->deleted = true;
+                });
+                continue;
+            }
+
             $this->markAsChanged(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
@@ -245,6 +243,14 @@ class ChangeProjection implements ProjectionInterface
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
+            if ($event->tag->equals(NeosSubtreeTag::removed())) {
+                $this->modifyChange($event->contentStreamId, $event->nodeAggregateId, OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint), static function (Change $change) {
+                    $change->deleted = false;
+                    $change->changed = true;
+                });
+                continue;
+            }
+
             $this->markAsChanged(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
@@ -259,12 +265,13 @@ class ChangeProjection implements ProjectionInterface
             return;
         }
 
+
         $this->dbal->executeStatement(
             'DELETE FROM ' . $this->tableNamePrefix . '
                 WHERE
-                    contentStreamId = :contentStreamId
-                    AND nodeAggregateId = :nodeAggregateId
-                    AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
+                    ' . $this->dbal->quoteIdentifier('contentStreamId') . ' = :contentStreamId
+                    AND ' . $this->dbal->quoteIdentifier('nodeAggregateId') . ' = :nodeAggregateId
+                    AND ' . $this->dbal->quoteIdentifier('originDimensionSpacePointHash') . ' IN (:affectedDimensionSpacePointHashes)
                 ',
             [
                 'contentStreamId' => $event->contentStreamId->value,
@@ -277,55 +284,20 @@ class ChangeProjection implements ProjectionInterface
             ]
         );
 
-        foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
-            $this->dbal->executeStatement(
-                'INSERT INTO ' . $this->tableNamePrefix . '
-                        (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
-                         originDimensionSpacePointHash, created, deleted, changed, moved, removalAttachmentPoint)
-                    VALUES (
-                        :contentStreamId,
-                        :nodeAggregateId,
-                        :originDimensionSpacePoint,
-                        :originDimensionSpacePointHash,
-                        0,
-                        1,
-                        0,
-                        0,
-                        :removalAttachmentPoint
-                    )
-                ',
-                [
-                    'contentStreamId' => $event->contentStreamId->value,
-                    'nodeAggregateId' => $event->nodeAggregateId->value,
-                    'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
-                    'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
-                    'removalAttachmentPoint' => $event->removalAttachmentPoint?->value,
-                ]
+        foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
+            $removalChange = new Change(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($coveredDimensionSpacePoint),
+                created: false,
+                changed: false,
+                moved: false,
+                deleted: true,
+                removalAttachmentPoint: $event->removalAttachmentPoint
             );
+            $removalChange->addToDatabase($this->dbal, $this->tableNamePrefix);
         }
     }
-
-    private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
-    {
-        $this->dbal->executeStatement(
-            '
-            UPDATE ' . $this->tableNamePrefix . ' c
-                SET
-                    c.originDimensionSpacePoint = :newDimensionSpacePoint,
-                    c.originDimensionSpacePointHash = :newDimensionSpacePointHash
-                WHERE
-                  c.originDimensionSpacePointHash = :originalDimensionSpacePointHash
-                  AND c.contentStreamId = :contentStreamId
-                  ',
-            [
-                'originalDimensionSpacePointHash' => $event->source->hash,
-                'newDimensionSpacePointHash' => $event->target->hash,
-                'newDimensionSpacePoint' => $event->target->toJson(),
-                'contentStreamId' => $event->contentStreamId->value
-            ]
-        );
-    }
-
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
@@ -491,15 +463,15 @@ class ChangeProjection implements ProjectionInterface
     ): ?Change {
         $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-WHERE n.contentStreamId = :contentStreamId
-AND n.nodeAggregateId = :nodeAggregateId
-AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
+                    WHERE n.' . $this->dbal->quoteIdentifier('contentStreamId') . ' = :contentStreamId
+                    AND n.' . $this->dbal->quoteIdentifier('nodeAggregateId') . ' = :nodeAggregateId
+                    AND n.' . $this->dbal->quoteIdentifier('originDimensionSpacePointHash') . ' = :originDimensionSpacePointHash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
-        )->fetch();
+        )->fetchAssociative();
 
         // We always allow root nodes
         return $changeRow ? Change::fromDatabaseRow($changeRow) : null;
@@ -511,9 +483,9 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
     ): ?Change {
         $changeRow = $this->dbal->executeQuery(
             'SELECT n.* FROM ' . $this->tableNamePrefix . ' n
-WHERE n.contentStreamId = :contentStreamId
-AND n.nodeAggregateId = :nodeAggregateId
-AND n.origindimensionspacepointhash = :origindimensionspacepointhash',
+WHERE n.' . $this->dbal->quoteIdentifier('contentStreamId') . ' = :contentStreamId
+AND n.' . $this->dbal->quoteIdentifier('nodeAggregateId') . ' = :nodeAggregateId
+AND n.' . $this->dbal->quoteIdentifier('originDimensionSpacePointHash') . ' = :origindimensionspacepointhash',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'nodeAggregateId' => $nodeAggregateId->value,
@@ -526,10 +498,11 @@ AND n.origindimensionspacepointhash = :origindimensionspacepointhash',
 
     private function removeChangesForContentStreamId(ContentStreamId $contentStreamId): void
     {
+        $contentStreamIdColumn = $this->dbal->quoteIdentifier('contentStreamId');
         $statement = <<<SQL
             DELETE FROM {$this->tableNamePrefix}
             WHERE
-                contentStreamId = :contentStreamId
+                {$contentStreamIdColumn} = :contentStreamId
         SQL;
         $this->dbal->executeStatement(
             $statement,

@@ -362,12 +362,6 @@ class WorkspaceCommandController extends CommandController
             $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
         }
-        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
-
-        if ($workspaceMetadata->classification === WorkspaceClassification::PERSONAL) {
-            $this->outputLine('<error>Did not delete workspace "%s" because it is a personal workspace. Personal workspaces cannot be deleted manually.</error>', [$workspaceName->value]);
-            $this->quit(2);
-        }
 
         $dependentWorkspaces = $contentRepositoryInstance->findWorkspaces()->getDependantWorkspaces($workspaceName);
         if (!$dependentWorkspaces->isEmpty()) {
@@ -389,17 +383,27 @@ class WorkspaceCommandController extends CommandController
             $this->quit(3);
         }
 
-        if ($crWorkspace->hasPublishableChanges()) {
-            if ($force === false) {
-                $nodesCount = $this->workspacePublishingService->countPendingWorkspaceChanges($contentRepositoryId, $workspaceName);
-                $this->outputLine(
-                    'Did not delete workspace "%s" because it contains %s unpublished node(s).'
-                    . ' Use --force to delete it nevertheless.',
-                    [$workspaceName->value, $nodesCount]
-                );
-                $this->quit(4);
-            }
-            $this->workspacePublishingService->discardAllWorkspaceChanges($contentRepositoryId, $workspaceName);
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        if ($workspaceMetadata->classification === WorkspaceClassification::PERSONAL && $force === false) {
+            $nodesCount = $this->workspacePublishingService->countPendingWorkspaceChanges($contentRepositoryId, $workspaceName);
+            $workspaceOwner = $workspaceMetadata->ownerUserId ? $this->userService->findUserById($workspaceMetadata->ownerUserId) : null;
+            $this->outputLine(
+                'Did not delete workspace "%s" because its the personal workspace of user "%s" with %s unpublished node(s).'
+                . ' Use --force to delete it nevertheless.',
+                [$workspaceName->value, (string)$workspaceOwner?->getName(), $nodesCount]
+            );
+            $this->quit(2);
+        }
+
+        if ($crWorkspace->hasPublishableChanges() && $force === false) {
+            $nodesCount = $this->workspacePublishingService->countPendingWorkspaceChanges($contentRepositoryId, $workspaceName);
+            $this->outputLine(
+                'Did not delete workspace "%s" because it contains %s unpublished node(s).'
+                . ' Use --force to delete it nevertheless.',
+                [$workspaceName->value, $nodesCount]
+            );
+            $this->quit(4);
         }
 
         $this->workspaceService->deleteWorkspace($contentRepositoryId, $workspaceName);
@@ -492,6 +496,10 @@ class WorkspaceCommandController extends CommandController
 
         $this->outputFormatted('Name: <b>%s</b>', [$workspacesInstance->workspaceName->value]);
         $this->outputFormatted('Classification: <b>%s</b>', [$workspaceMetadata->classification->value]);
+        if ($workspaceMetadata->classification === WorkspaceClassification::PERSONAL) {
+            $workspaceOwner = $workspaceMetadata->ownerUserId ? $this->userService->findUserById($workspaceMetadata->ownerUserId) : null;
+            $this->outputFormatted('Owner: <b>%s</b>', [(string)$workspaceOwner?->getName() ?: '-']);
+        }
         $this->outputFormatted('Base Workspace: <b>%s</b>', [$workspacesInstance->baseWorkspaceName?->value ?: '-']);
         $this->outputFormatted('Title: <b>%s</b>', [$workspaceMetadata->title->value]);
         $this->outputFormatted('Description: <b>%s</b>', [$workspaceMetadata->description->value]);

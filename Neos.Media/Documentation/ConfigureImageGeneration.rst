@@ -44,8 +44,8 @@ If you have configured a Imagine driver that support alternative filter (this th
           defaultOptions:
             resizeFilter: '%\Imagine\Image\ImageInterface::FILTER_UNDEFINED%'
 
-Unfortunatly Gd does not support other filter than the default one. Good candidate can be FILTER_BOX or FILTER_CATROOM. You can check the documentation of your image driver for
-more informations about each filter. Check the \Imagine\Image\ImageInterface to know with filter are supported by Imagine.
+Unfortunately Gd does not support other filters than the default one. A good candidate can be FILTER_BOX or FILTER_CATROOM. You can check the documentation of your image driver for
+more information about each filter. Check the \Imagine\Image\ImageInterface to learn which filters are supported by Imagine.
 
 Produce interlaced images
 =========================

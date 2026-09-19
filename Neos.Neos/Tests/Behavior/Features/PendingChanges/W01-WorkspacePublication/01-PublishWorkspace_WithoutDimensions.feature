@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 @flowEntities
 Feature: Publish nodes without dimensions
 
@@ -42,7 +41,7 @@ Feature: Publish nodes without dimensions
       | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Nody Mc Nodeface"}           |
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough     | 1       | 1       | 0     | 0       | {}                        |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {}                        |
@@ -53,9 +52,9 @@ Feature: Publish nodes without dimensions
       | workspaceName      | "user-workspace" |
       | newContentStreamId | "new-user-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "new-user-cs-id"
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    Then I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "live"
 
 
   Scenario: Publish nodes from user workspace to a non live workspace
@@ -85,11 +84,11 @@ Feature: Publish nodes without dimensions
       | nody-mc-nodeface           | child-node | sir-david-nodenborough | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Nody Mc Nodeface"}           |
       | sir-nodeward-nodington-iii | esquire    | lady-eleonode-rootford | Neos.ContentRepository.Testing:Node | {"text": "This is a text about Sir Nodeward Nodington III"} |
 
-    Then I expect the ChangeProjection to have the following changes in "review-cs-id":
+    Then I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough     | 1       | 1       | 0     | 0       | {}                        |
 
-    Then I expect the ChangeProjection to have the following changes in "user-cs-id":
+    Then I expect to have the following changes in workspace "user-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
@@ -99,11 +98,11 @@ Feature: Publish nodes without dimensions
       | workspaceName      | "user-workspace" |
       | newContentStreamId | "new-user-cs-id" |
 
-    Then I expect the ChangeProjection to have no changes in "user-cs-id"
-    And I expect the ChangeProjection to have no changes in "new-user-cs-id"
-    And I expect the ChangeProjection to have the following changes in "review-cs-id":
+    Then I expect to have no changes in workspace "user-workspace"
+    And I expect to have no changes in workspace "user-workspace"
+    And I expect to have the following changes in workspace "review-workspace":
       | nodeAggregateId            | created | changed | moved | deleted | originDimensionSpacePoint |
       | sir-david-nodenborough     | 1       | 1       | 0     | 0       | {}                        |
       | nody-mc-nodeface           | 1       | 1       | 0     | 0       | {}                        |
       | sir-nodeward-nodington-iii | 1       | 1       | 0     | 0       | {}                        |
-    And I expect the ChangeProjection to have no changes in "cs-identifier"
+    And I expect to have no changes in workspace "live"

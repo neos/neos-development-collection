@@ -1,6 +1,9 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,32 +13,25 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Fusion View
  *
  */
-class ProcessorTest extends AbstractFusionObjectTest
+class ProcessorTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function basicProcessorsWork()
     {
         $this->assertMultipleFusionPaths('Hello World foo', 'processors/newSyntax/basicProcessor/valueWithNested');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function basicProcessorsBeforeValueWork()
     {
         $this->assertMultipleFusionPaths('Hello World foo', 'processors/newSyntax/processorBeforeValue/valueWithNested');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extendedSyntaxProcessorsWork()
     {
         $this->assertMultipleFusionPaths('Hello World foo', 'processors/newSyntax/extendedSyntaxProcessor/valueWithNested');
@@ -43,8 +39,8 @@ class ProcessorTest extends AbstractFusionObjectTest
 
     /**
      * https://github.com/neos/neos-development-collection/pull/3847
-     * @test
      */
+    #[Test]
     public function plainValueOverriddenByPlainValueWorks()
     {
         $this->assertFusionPath('foo', 'processors/newSyntax/basicProcessor/plainValueOverriddenByPlainValue');
@@ -55,7 +51,7 @@ class ProcessorTest extends AbstractFusionObjectTest
      *
      * @return array
      */
-    public function dataProviderForUnsettingProcessors()
+    public static function dataProviderForUnsettingProcessors()
     {
         return [
             ['processors/newSyntax/unset/simple'],
@@ -65,10 +61,8 @@ class ProcessorTest extends AbstractFusionObjectTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider dataProviderForUnsettingProcessors
-     */
+    #[DataProvider('dataProviderForUnsettingProcessors')]
+    #[Test]
     public function processorsCanBeUnset($path)
     {
         $view = $this->buildView();
@@ -76,17 +70,13 @@ class ProcessorTest extends AbstractFusionObjectTest
         self::assertEquals('Foobaz', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function usingThisInProcessorWorks()
     {
         $this->assertFusionPath('my value append', 'processors/newSyntax/usingThisInProcessor');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function skippedLazyPropsInProcessor()
     {
         $view = $this->buildView();

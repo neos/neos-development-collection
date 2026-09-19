@@ -1,4 +1,4 @@
-@flowEntities @contentrepository
+@flowEntities
 Feature: Test cases for node aggregate type change edge cases
 
   Scenario: Create a (non-document) node with uri path segment, change the node aggregate's type to be a document and expect it to now have a uri path segment

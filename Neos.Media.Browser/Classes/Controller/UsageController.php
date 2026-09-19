@@ -142,7 +142,7 @@ class UsageController extends ActionController
 
             $subgraph = $contentRepository->getContentGraph($usage->getWorkspaceName())->getSubgraph(
                 $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                VisibilityConstraints::createEmpty()
             );
 
             $node = $subgraph->findNodeById($usage->getNodeAggregateId());

@@ -1,6 +1,9 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,14 +13,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for unsetting Fusion paths
  *
  */
-class UnsetTest extends AbstractFusionObjectTest
+class UnsetTest extends AbstractFusionObjectTestCase
 {
-    public function unsetExamples()
+    public static function unsetExamples()
     {
         return [
             ['valueUnset/inheritedPrototypePath', 'Baz'],
@@ -27,10 +29,8 @@ class UnsetTest extends AbstractFusionObjectTest
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider unsetExamples
-     */
+    #[DataProvider('unsetExamples')]
+    #[Test]
     public function unsetWorks($path, $expected)
     {
         $view = $this->buildView();

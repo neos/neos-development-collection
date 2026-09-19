@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
+use Neos\ContentRepository\Core\Feature\Common\DimensionSpaceInternals;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 
 class DimensionAdjustment
 {
+    use DimensionSpaceInternals;
+
     public function __construct(
         protected ContentGraphInterface $contentGraph,
         protected InterDimensionalVariationGraph $interDimensionalVariationGraph,
@@ -44,18 +45,19 @@ class DimensionAdjustment
             return [];
         }
         foreach ($this->contentGraph->findNodeAggregatesByType($nodeTypeName) as $nodeAggregate) {
-            foreach ($nodeAggregate->getNodes() as $node) {
+            $orderedOccupiedDimensionSpacePoints = $this->requireOrderedOccupiedDimensionSpacePoints($nodeAggregate);
+            foreach ($orderedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
                 foreach (
                     $nodeAggregate->getCoverageByOccupant(
-                        $node->originDimensionSpacePoint
+                        $occupiedDimensionSpacePoint
                     ) as $coveredDimensionSpacePoint
                 ) {
                     $variantType = $this->interDimensionalVariationGraph->getVariantType(
                         $coveredDimensionSpacePoint,
-                        $node->originDimensionSpacePoint->toDimensionSpacePoint()
+                        $occupiedDimensionSpacePoint->toDimensionSpacePoint()
                     );
                     if (
-                        !$node->originDimensionSpacePoint->equals($coveredDimensionSpacePoint)
+                        !$occupiedDimensionSpacePoint->equals($coveredDimensionSpacePoint)
                         && $variantType !== VariantType::TYPE_SPECIALIZATION
                     ) {
                         $message = sprintf(
@@ -68,13 +70,15 @@ class DimensionAdjustment
 
                                 You need to write a node migration to update the database to fix this case.
                             ',
-                            $node->originDimensionSpacePoint->toJson(),
+                            $occupiedDimensionSpacePoint->toJson(),
                             $coveredDimensionSpacePoint->toJson(),
                             strtoupper($variantType->value)
                         );
 
-                        yield StructureAdjustment::createForNode(
-                            $node,
+                        yield StructureAdjustment::createForNodeIdentity(
+                            $nodeAggregate->workspaceName,
+                            $occupiedDimensionSpacePoint,
+                            $nodeAggregate->nodeAggregateId,
                             StructureAdjustment::NODE_COVERS_GENERALIZATION_OR_PEERS,
                             $message
                         );

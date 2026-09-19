@@ -18,5 +18,6 @@ all Packages that are in a default (Demo Package) setup.
    Validators/index
    Signals/index
    CodingGuideLines/index
-   Configuration/Configuration.rst
+   Configuration/Configuration
    NodeMigrations
+   ContentRepositoryCommandReference

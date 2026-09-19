@@ -21,13 +21,14 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class NodeReferencesWereSetTest extends TestCase
 {
     /**
      * @param array<string,mixed> $payload
-     * @dataProvider eventPayloadProviderWithLegacySourceNodeAggregateIdFormat
      */
+    #[DataProvider('eventPayloadProviderWithLegacySourceNodeAggregateIdFormat')]
     public function testFromArray(array $payload, NodeReferencesWereSet $expectedEvent): void
     {
         self::assertEquals($expectedEvent, NodeReferencesWereSet::fromArray($payload));

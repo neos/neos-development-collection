@@ -18,9 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,13 +32,11 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
     public function build(
         array $settings,
         ContentRepository $contentRepository,
-        PropertyConverter $propertyConverter,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface
     {
         return new class (
             $settings['from'],
             $settings['to'],
-            $contentRepository
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
@@ -51,7 +47,6 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                  * New name of property
                  */
                 private readonly string $to,
-                private readonly ContentRepository $contentRepository
             )
             {
             }
@@ -59,15 +54,14 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                WorkspaceName $workspaceNameForWriting,
-                ContentStreamId $contentStreamForWriting
-            ): void
+                WorkspaceName $workspaceNameForWriting
+            ): TransformationStep
             {
                 $propertyValue = $node->properties[$this->from];
                 if ($propertyValue === null) {
-                    return;
+                    return TransformationStep::createEmpty();
                 }
-                $this->contentRepository->handle(
+                return TransformationStep::fromCommand(
                     SetNodeProperties::create(
                         $workspaceNameForWriting,
                         $node->aggregateId,

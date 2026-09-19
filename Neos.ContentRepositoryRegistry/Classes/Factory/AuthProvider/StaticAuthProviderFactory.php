@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\AuthProvider;
 
+use Neos\ContentRepository\Core\Factory\AuthProviderFactoryInterface;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Feature\Security\Dto\UserId;
 use Neos\ContentRepository\Core\Feature\Security\StaticAuthProvider;

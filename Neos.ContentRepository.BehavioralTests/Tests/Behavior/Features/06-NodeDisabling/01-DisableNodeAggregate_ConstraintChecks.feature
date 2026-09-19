@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Constraint checks on node aggregate disabling
 
   As a user of the CR I want to disable a node aggregate and expect its descendants to also be disabled.
@@ -67,7 +66,7 @@ Feature: Constraint checks on node aggregate disabling
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "NodeAggregateIsAlreadyDisabled"
+    Then the last command should have thrown an exception of type "SubtreeIsAlreadyTagged"
 
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point

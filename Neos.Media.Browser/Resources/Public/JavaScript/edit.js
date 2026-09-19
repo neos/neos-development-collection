@@ -5,18 +5,29 @@
 			pageNumPending = null,
 			pageRendering = false;
 
-		PDFJS.workerSrc = '/_Resources/Static/Packages/Neos.Media.Browser/JavaScript/pdf.worker.js';
-
 		var url = $(wrapper).attr('data-asset-preview-url');
 
-		PDFJS.getDocument(url).then(function (pdfDoc_) {
-			pdfDoc = pdfDoc_;
-			document.getElementById('neos-preview-pdf-page-count').innerHTML = pdfDoc.numPages;
-			document.getElementById('neos-preview-pdf-page').innerHTML = pageNum;
+		function renderPdfWithLib(pdfjsLib) {
+			pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
+				pdfDoc = pdfDoc_;
+				document.getElementById('neos-preview-pdf-page-count').innerHTML = pdfDoc.numPages;
+				document.getElementById('neos-preview-pdf-page').innerHTML = pageNum;
 
-			// Initial/first page rendering
-			renderPage(pageNum);
-		});
+				// Initial/first page rendering
+				renderPage(pageNum);
+			});
+		}
+
+		// Check if pdf.js is already loaded
+		if (window.pdfjsLib) {
+			renderPdfWithLib(window.pdfjsLib);
+		} else {
+			window.addEventListener('pdfjslibready', function () {
+				if (window.pdfjsLib) {
+					renderPdfWithLib(window.pdfjsLib);
+				}
+			});
+		}
 
 		$('#neos-preview-button-previous').bind('click', function (event) {
 			event.preventDefault();
@@ -56,11 +67,14 @@
 			pageRendering = true;
 			// Using promise to fetch the page
 			pdfDoc.getPage(num).then(function (page) {
-				if (page.getViewport(1.0).width < page.getViewport(1.0).height) {
-					var viewport = page.getViewport(wrapper.offsetWidth / page.getViewport(1.0).height);
+				var unscaledViewport = page.getViewport({ scale: 1.0 });
+				var scale;
+				if (unscaledViewport.width < unscaledViewport.height) {
+					scale = wrapper.offsetWidth / unscaledViewport.height;
 				} else {
-					var viewport = page.getViewport(wrapper.offsetWidth / page.getViewport(1.0).width);
+					scale = wrapper.offsetWidth / unscaledViewport.width;
 				}
+				var viewport = page.getViewport({ scale: scale });
 
 				var canvas = document.getElementById('pdf-canvas');
 				var context = canvas.getContext('2d');
@@ -74,7 +88,7 @@
 				};
 
 				var renderTask = page.render(renderContext);
-				renderTask.then(function () {
+				renderTask.promise.then(function () {
 					pageRendering = false;
 					if (pageNumPending !== null) {
 						// New page rendering is pending

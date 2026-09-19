@@ -128,7 +128,6 @@ privilegeTargets:
       # !!! matcher payload in this case is a ContentRepository SubtreeTag,
       # i.e. nodes with ths specified tag are only read if the user has the corresponding privilegeTarget assigned.
       matcher: 'disabled'
-
 roles:
 
   'Neos.Flow:Everybody':

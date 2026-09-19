@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
@@ -26,7 +25,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInt
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -70,17 +68,27 @@ trait CRTestSuiteTrait
 
     use WorkspaceCreation;
 
+    use ProjectionIntegrityViolationDetectionTrait;
+
+    /**
+     * Hack PHPUnit assertion support, see https://github.com/Behat/Behat/issues/1618
+     * @BeforeSuite
+     */
+    public static function initPhpunit(): void
+    {
+        (new \PHPUnit\TextUI\Configuration\Builder())->build([]);
+    }
+
     /**
      * @BeforeScenario
      * @throws \Exception
      */
-    public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope): void
+    public function beforeEventSourcedScenarioDispatcher(): void
     {
         if (isset($this->contentRepositories)) {
             $this->contentRepositories = [];
         }
         $this->currentContentRepository = null;
-        $this->currentVisibilityConstraints = VisibilityConstraints::default();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
         $this->currentWorkspaceName = null;
@@ -114,10 +122,48 @@ trait CRTestSuiteTrait
     /**
      * @Then /^I expect the content stream "([^"]*)" to not exist$/
      */
-    public function iExpectTheContentStreamToNotExist(string $rawContentStreamId, string $not = ''): void
+    public function iExpectTheContentStreamToNotExist(string $rawContentStreamId): void
     {
         $contentStream = $this->getContentGraphReadModel()->findContentStreamById(ContentStreamId::fromString($rawContentStreamId));
         Assert::assertNull($contentStream, sprintf('Content stream "%s" was not expected to exist, but it does', $rawContentStreamId));
+    }
+
+    /**
+     * @Then /^I expect the workspace "([^"]*)" to not exist$/
+     */
+    public function iExpectTheWorkspaceToNotExist(string $rawWorkspaceName): void
+    {
+        $workspaceByName = $this->currentContentRepository->findWorkspaceByName(WorkspaceName::fromString($rawWorkspaceName));
+        Assert::assertNull($workspaceByName, sprintf('Workspace "%s" was not expected to exist, but it does', $rawWorkspaceName));
+    }
+
+    /**
+     * @Then I expect the following workspaces to exist:
+     */
+    public function iExpectTheFollowingWorkspaces(TableNode $payloadTable): void
+    {
+        $actualComparableHash = [];
+        $workspaces = $this->currentContentRepository->findWorkspaces();
+        foreach ($workspaces as $workspace) {
+            $actualComparableHash[] = array_map(json_encode(...), [
+                'name' => $workspace->workspaceName,
+                'base workspace' => $workspace->baseWorkspaceName,
+                'status' => $workspace->status,
+                'content stream' => $workspace->currentContentStreamId,
+                'publishable changes' => $workspace->hasPublishableChanges()
+            ]);
+        }
+
+        $expectedWorkspaces = $payloadTable->getHash();
+
+        // assertEqualsCanonicalizing removes keys by using sort recursively that's why we sort manually
+        // sort by unique index to make rows easier comparable when diffing
+        // TODO should core findWorkspaces() return workspaces in defined order? -> Possibly by insert order?
+        $sortRows = fn ($rowA, $rowB) => strcmp($rowA['name'], $rowB['name']);
+        usort($actualComparableHash, $sortRows);
+        usort($expectedWorkspaces, $sortRows);
+
+        Assert::assertSame($expectedWorkspaces, $actualComparableHash);
     }
 
     /**

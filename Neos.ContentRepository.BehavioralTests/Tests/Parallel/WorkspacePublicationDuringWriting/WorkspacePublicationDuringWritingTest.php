@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\Tests\Parallel\WorkspacePublicationDuringWriting;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Platforms\MariaDBPlatform;
 use Neos\ContentRepository\BehavioralTests\Tests\Parallel\AbstractParallelTestCase;
 use Neos\ContentRepository\BehavioralTests\TestSuite\DebugEventProjection;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -40,6 +41,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
 {
@@ -75,6 +77,21 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
+
+        $dbal = $this->objectManager->get(Connection::class);
+        if ($dbal->getDatabasePlatform() instanceof MariaDBPlatform) {
+            $version = $dbal->fetchOne('SELECT VERSION()');
+            if (str_starts_with($version, '12')) {
+                /**
+                 * Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed
+                 *
+                 * Mariadb 12 reports
+                 *
+                 * An exception occurred while executing a query: SQLSTATE[HY000]: General error: 1020 Record has changed since last read in table 'cr_test_parallel_p_graph_contentstream'
+                 */
+                \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository(ContentRepositoryId::fromString('test_parallel'));
+            }
+        }
 
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 
@@ -139,10 +156,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     * @group parallel
-     */
+    #[Test]
     public function whileANodesArWrittenOnLive(): void
     {
         $this->log('writing started');
@@ -169,16 +183,13 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         $this->log('writing finished');
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::withoutRestrictions());
+        $subgraph = $this->contentRepository->getContentGraph(WorkspaceName::forLive())->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty());
         $node = $subgraph->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
         Assert::assertNotNull($node);
         Assert::assertSame($node->getProperty('title'), 'changed-title-50');
     }
 
-    /**
-     * @test
-     * @group parallel
-     */
+    #[Test]
     public function thenConcurrentPublishLeadsToException(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {
@@ -253,7 +264,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         }
 
         $node = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'))
-            ->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::withoutRestrictions())
+            ->getSubgraph(DimensionSpacePoint::createWithoutDimensions(), VisibilityConstraints::createEmpty())
             ->findNodeById(NodeAggregateId::fromString('nody-mc-nodeface'));
 
         Assert::assertSame('written-after-failed-publish', $node?->getProperty('title'));

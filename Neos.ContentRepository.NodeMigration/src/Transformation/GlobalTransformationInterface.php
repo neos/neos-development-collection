@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 interface GlobalTransformationInterface
 {
     public function execute(
+        WorkspaceName $workspaceNameForReading,
         WorkspaceName $workspaceNameForWriting,
-    ): void;
+    ): TransformationStep;
 }

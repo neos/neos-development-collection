@@ -28,7 +28,7 @@ final class Projections implements \IteratorAggregate, \Countable
         $this->projections = $projections;
     }
 
-    public static function empty(): self
+    public static function createEmpty(): self
     {
         return new self();
     }

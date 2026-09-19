@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedingSiblingNodes queries
 
   Background:
@@ -86,6 +85,7 @@ Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedi
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+    And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
     # findPrecedingSiblingNodes queries without result

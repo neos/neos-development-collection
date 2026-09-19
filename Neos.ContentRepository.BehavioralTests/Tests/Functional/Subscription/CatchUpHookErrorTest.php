@@ -16,10 +16,11 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use PHPUnit\Framework\Attributes\Test;
 
 final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function error_onBeforeEvent_isIgnoredAndCollected()
     {
         $this->eventStore->setup();
@@ -36,7 +37,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
 
         $exception = new \RuntimeException('This catchup hook is kaputt.');
         $this->catchupHookForSecondFakeProjection->expects($invokedCount = self::exactly(2))->method('onBeforeEvent')->willReturnCallback(function ($_, EventEnvelope $eventEnvelope) use ($invokedCount, $exception) {
-            match ($invokedCount->getInvocationCount()) {
+            match ($invokedCount->numberOfInvocations()) {
                 1 => self::assertSame(1, $eventEnvelope->sequenceNumber->value),
                 2 => self::assertSame(2, $eventEnvelope->sequenceNumber->value),
             };
@@ -87,7 +88,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterEvent_isIgnoredAndCollected()
     {
         $this->eventStore->setup();
@@ -104,7 +105,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         $this->catchupHookForSecondFakeProjection->expects(self::exactly(2))->method('onBeforeEvent')->with(self::isInstanceOf(ContentStreamWasCreated::class));
         $exception = new \RuntimeException('This catchup hook is kaputt.');
         $this->catchupHookForSecondFakeProjection->expects($invokedCount = self::exactly(2))->method('onAfterEvent')->willReturnCallback(function ($_, EventEnvelope $eventEnvelope) use ($invokedCount, $exception) {
-            match ($invokedCount->getInvocationCount()) {
+            match ($invokedCount->numberOfInvocations()) {
                 1 => self::assertSame(1, $eventEnvelope->sequenceNumber->value),
                 2 => self::assertSame(2, $eventEnvelope->sequenceNumber->value),
             };
@@ -154,7 +155,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onBeforeCatchUp_isIgnoredAndCollected()
     {
         $this->eventStore->setup();
@@ -211,7 +212,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterBatchCompleted_isIgnoredAndCollected()
     {
         $this->eventStore->setup();
@@ -268,7 +269,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterCatchUp_isIgnoredAndCollected()
     {
         $this->eventStore->setup();
@@ -325,7 +326,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterCatchUp_isIgnoredAndCollected_withProjectionError()
     {
         $this->eventStore->setup();
@@ -406,7 +407,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterEvent_stopsEngineAfterFirstBatch()
     {
         $this->eventStore->setup();
@@ -464,7 +465,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterEvent_withMultipleFailingHooks()
     {
         $this->eventStore->setup();
@@ -534,7 +535,7 @@ final class CatchUpHookErrorTest extends AbstractSubscriptionEngineTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function error_onAfterEvent_withMultipleFailingHooksOnOneProjection()
     {
         $this->eventStore->setup();

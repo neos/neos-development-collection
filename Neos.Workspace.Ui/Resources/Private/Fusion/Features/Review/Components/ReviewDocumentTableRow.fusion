@@ -58,7 +58,7 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
         </div>
       </td>
       <td>
-        <div class="neos-button">
+        <div class="neos-button document-toggle-button">
           <label for={"check-document-" + document.document.aggregateId} class="neos-checkbox">
             <input type="checkbox" name="moduleArguments[nodes][]" class="check-document"
                    id={"check-document-" + document.document.aggregateId}
@@ -71,8 +71,8 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
           <Neos.Workspace.Ui:Component.Icon icon="fas fa-caret-right" @if.notFirst={!iterator.isFirst}/>
           <span>
             <span class="node-icons" @if.hasIcon={document.document.documentIcon} @if.isLast={iterator.isLast}>
-                <Neos.Workspace.Ui:Component.Icon icon={document.document.documentIcon}/>
-                <i @if.nodeIsHidden={document.documentChanges.isHidden} class="icon-red fa-solid fa-circle-xmark"></i>
+              <Neos.Workspace.Ui:Component.Icon icon={document.document.documentIcon}/>
+              <i @if.nodeIsHidden={document.documentChanges.isHidden} class="icon-red fa-solid fa-circle-xmark"></i>
             </span>
             <span>
               {crumb}

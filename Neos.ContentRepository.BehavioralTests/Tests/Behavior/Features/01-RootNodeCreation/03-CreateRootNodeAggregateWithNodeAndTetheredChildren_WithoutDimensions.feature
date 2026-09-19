@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Create a root node aggregate with tethered children
 
   As a user of the CR I want to create a new root node aggregate with an initial node and tethered children.

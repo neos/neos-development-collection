@@ -12,20 +12,20 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceRepository;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\Test;
 
 final class CatchUpHookWithPersistenceTest extends AbstractSubscriptionEngineTestCase
 {
     use FlowEntitiesTrait;
 
-    /**
-     * @before
-     */
+    #[Before]
     public function setupFlowEntities()
     {
         $this->truncateAndSetupFlowEntities();
     }
 
-    /** @test */
+    #[Test]
     public function commitOnConnection_onAfterEvent()
     {
         $this->eventStore->setup();
@@ -69,7 +69,7 @@ final class CatchUpHookWithPersistenceTest extends AbstractSubscriptionEngineTes
         );
     }
 
-    /** @test */
+    #[Test]
     public function persistAll_onAfterEvent_willUseTheTransaction()
     {
         $this->eventStore->setup();

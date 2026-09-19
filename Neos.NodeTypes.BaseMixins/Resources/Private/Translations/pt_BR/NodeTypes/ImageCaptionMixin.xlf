@@ -3,11 +3,13 @@
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="pt-BR">
     <body>
       <trans-unit id="properties.hasCaption" xml:space="preserve">
-				<source>Enable caption</source>
-			<target state="translated">Ativar a legenda</target></trans-unit>
+        <source>Enable caption</source>
+        <target state="translated">Ativar legenda</target>
+      </trans-unit>
       <trans-unit id="properties.caption.ui.inline.editorOptions.placeholder" xml:space="preserve">
-				<source><![CDATA[<p>Enter caption here</p>]]></source>
-			<target state="translated"><![CDATA[<p>Insira a legenda aqui</p>]]></target></trans-unit>
+        <source><![CDATA[<p>Enter caption here</p>]]></source>
+        <target state="translated"><![CDATA[<p>Insira a legenda aqui</p>]]></target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

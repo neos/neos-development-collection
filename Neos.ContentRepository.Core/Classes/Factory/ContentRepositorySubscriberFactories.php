@@ -29,7 +29,7 @@ final class ContentRepositorySubscriberFactories implements \IteratorAggregate
         return new self(...$subscriberFactories);
     }
 
-    public static function none(): self
+    public static function createEmpty(): self
     {
         return new self();
     }

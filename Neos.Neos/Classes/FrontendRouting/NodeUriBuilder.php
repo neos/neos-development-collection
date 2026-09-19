@@ -135,7 +135,7 @@ final readonly class NodeUriBuilder
         }
 
         $routeValues = $options->routingArguments;
-        $routeValues['node'] = $nodeAddress;
+        $routeValues['node'] = $nodeAddress->toJson();
         $routeValues['@action'] = strtolower('show');
         $routeValues['@controller'] = strtolower('Frontend\Node');
         $routeValues['@package'] = strtolower('Neos.Neos');

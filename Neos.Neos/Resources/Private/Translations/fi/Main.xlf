@@ -1040,11 +1040,11 @@
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">Polku</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Polku</target>
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">Suhteellinen polku</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Suhteellinen polku</target>
       </trans-unit>
       <trans-unit id="documentTree" xml:space="preserve">
         <source>Document Tree</source>

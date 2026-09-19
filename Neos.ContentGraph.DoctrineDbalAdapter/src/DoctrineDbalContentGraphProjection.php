@@ -59,7 +59,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasD
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
@@ -71,6 +70,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Dbal\DbalSchemaDiff;
+use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -90,6 +91,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
     public function __construct(
         private readonly Connection $dbal,
+        private readonly MysqlPlatformContentRepositoryLocker $contentRepositoryLocker,
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly ContentGraphTableNames $tableNames,
         private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
@@ -191,6 +193,8 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         if ($this->dbal->isTransactionActive()) {
             throw new \RuntimeException(sprintf('Invoking %s is not allowed to be invoked recursively. Current transaction nesting %d.', __FUNCTION__, $this->dbal->getTransactionNestingLevel()));
         }
+
+        $this->contentRepositoryLocker->acquireLock(timeoutInSeconds: 120);
         $this->dbal->beginTransaction();
         $this->dbal->setRollbackOnly();
         try {
@@ -198,6 +202,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         } finally {
             // unsets rollback only flag and allows the connection to work regular again
             $this->dbal->rollBack();
+            $this->contentRepositoryLocker->releaseLock();
         }
     }
 
@@ -355,6 +360,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 -- find only nodes which have their ORIGIN at the source DimensionSpacePoint,
                 -- as we need to rewrite these origins (using copy on write)
                 AND n.origindimensionspacepointhash = :dimensionSpacePointHash
+            WHERE n.classification != "root"
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($selectRelationsStatement, [
@@ -624,29 +630,24 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             return;
         }
 
-        // delete all hierarchy edges of the root node
-        $deleteHierarchyRelationsStatement = <<<SQL
-            DELETE FROM {$this->tableNames->hierarchyRelation()}
-            WHERE
-                parentnodeanchor = :parentNodeAnchor
-                AND childnodeanchor = :childNodeAnchor
-                AND contentstreamid = :contentStreamId
-        SQL;
-        try {
-            $this->dbal->executeStatement($deleteHierarchyRelationsStatement, [
-                'parentNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value,
-                'childNodeAnchor' => $rootNodeAnchorPoint->value,
-                'contentStreamId' => $event->contentStreamId->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete hierarchy relation: %s', $e->getMessage()), 1716488943, $e);
+        $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
+            $rootNodeAnchorPoint,
+            $event->contentStreamId
+        );
+
+        $currentlyCoveredDimensionSpacePoints = [];
+        foreach ($ingoingRelations as $ingoingRelation) {
+            $currentlyCoveredDimensionSpacePoints[] = $ingoingRelation->dimensionSpacePoint;
         }
-        // recreate hierarchy edges for the root node
+
+        $newlyCoveredDimensionSpacePoints = $event->coveredDimensionSpacePoints->getDifference(DimensionSpacePointSet::fromArray($currentlyCoveredDimensionSpacePoints));
+
+        // add hierarchy edges for newly added dimensions
         $this->connectHierarchy(
             $event->contentStreamId,
             NodeRelationAnchorPoint::forRootEdge(),
             $rootNodeAnchorPoint,
-            $event->coveredDimensionSpacePoints,
+            $newlyCoveredDimensionSpacePoints,
             null
         );
     }

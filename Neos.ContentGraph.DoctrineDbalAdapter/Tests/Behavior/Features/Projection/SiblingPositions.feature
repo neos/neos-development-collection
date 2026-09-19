@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Sibling positions are properly resolved
 
   In the general DBAL adapter, hierarchy relations are sorted by an integer field. It defaults to a distance of 128,

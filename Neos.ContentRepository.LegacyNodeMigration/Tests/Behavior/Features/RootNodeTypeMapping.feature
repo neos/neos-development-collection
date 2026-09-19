@@ -1,4 +1,3 @@
-@contentrepository
 Feature: Simple migrations without content dimensions but other root nodetype name
 
   Background:

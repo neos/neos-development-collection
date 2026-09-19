@@ -74,7 +74,7 @@ class NodeShortcutResolver
         if ($resolvedTarget === $documentNodeInfo) {
             return $nodeAddress;
         }
-        return $nodeAddress->withAggregateId($documentNodeInfo->getNodeAggregateId());
+        return $nodeAddress->withAggregateId($resolvedTarget->getNodeAggregateId());
     }
 
     /**

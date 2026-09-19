@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node aggregate with node
 
   As a user of the CR I want to define NodeType constraints which will restrict the allowed child nodes

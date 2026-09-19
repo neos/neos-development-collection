@@ -14,7 +14,6 @@ namespace Neos\Neos\Domain\Service\NodeDuplication;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
@@ -29,17 +28,17 @@ final class NodeAggregateIdMapping implements \JsonSerializable
      *
      * e.g. {main => my-main-node}
      *
-     * @var array<string,NodeAggregateId>
+     * @var array<string|int,NodeAggregateId>
      */
     private array $nodeAggregateIds = [];
 
     /**
-     * @param array<string,NodeAggregateId> $nodeAggregateIds
+     * @param array<string|int,NodeAggregateId> $nodeAggregateIds
      */
     private function __construct(array $nodeAggregateIds)
     {
         foreach ($nodeAggregateIds as $oldNodeAggregateId => $newNodeAggregateId) {
-            $oldNodeAggregateId = NodeAggregateId::fromString($oldNodeAggregateId);
+            $oldNodeAggregateId = NodeAggregateId::fromString((string)$oldNodeAggregateId);
             if (!$newNodeAggregateId instanceof NodeAggregateId) {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIdMapping objects can only be composed of NodeAggregateId.',
@@ -64,23 +63,6 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     }
 
     /**
-     * Create a new id mapping, *GENERATING* new ids.
-     */
-    public static function generateForNodeSubtreeSnapshot(NodeSubtreeSnapshot $nodeSubtreeSnapshot): self
-    {
-        $nodeAggregateIdMapping = [];
-        /** @phpstan-ignore neos.cr.internal */
-        $nodeSubtreeSnapshot->walk(
-            function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdMapping) {
-                // here, we create new random NodeAggregateIds.
-                $nodeAggregateIdMapping[$nodeSubtreeSnapshot->nodeAggregateId->value] = NodeAggregateId::create();
-            }
-        );
-
-        return new self($nodeAggregateIdMapping);
-    }
-
-    /**
      * @param array<string,string|NodeAggregateId> $array
      */
     public static function fromArray(array $array): self
@@ -100,18 +82,10 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     }
 
     /**
-     * @return array<string,NodeAggregateId>
+     * @return array<string|int,NodeAggregateId>
      */
     public function jsonSerialize(): array
     {
         return $this->nodeAggregateIds;
-    }
-
-    /**
-     * @return array<int,NodeAggregateId>
-     */
-    public function getAllNewNodeAggregateIds(): array
-    {
-        return array_values($this->nodeAggregateIds);
     }
 }

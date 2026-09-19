@@ -1,0 +1,9 @@
+{
+  "name": "@neos-project/media-browser-variants",
+  "private": true,
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-image-crop": "^11.1.2"
+  }
+}

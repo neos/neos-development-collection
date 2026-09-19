@@ -2,12 +2,9 @@
 # Shows a list of changes in a workspace
 #
 prototype(Neos.Workspace.Ui:Component.ReviewTable) < prototype(Neos.Fusion:Component) {
-
   siteChanges = null
   canPublishToBaseWorkspace = true
   canPublishToWorkspace = true
-  selectedWorkspaceName = null
-  selectedWorkspaceLabel = ''
 
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
@@ -23,14 +20,12 @@ prototype(Neos.Workspace.Ui:Component.ReviewTable) < prototype(Neos.Fusion:Compo
             </a>
           </th>
           <th class="neos-action">
-            <div class="table-action">
-            <label for="check-all" class="neos-checkbox ">
+            <label for="check-all" class="neos-checkbox">
               <input type="checkbox" id="check-all"/><span></span>
             </label>
-            </div>
           </th>
-          <th>{private.i18n.id('workspaces.workspace.title')}</th>
-          <th>{private.i18n.id('workspaces.workspace.actions')}</th>
+          <th class="column-header__title">{private.i18n.id('workspaces.workspace.title')}</th>
+          <th class="column-header__actions">{private.i18n.id('workspaces.workspace.actions')}</th>
         </tr>
         </thead>
         <tbody>
@@ -40,19 +35,15 @@ prototype(Neos.Workspace.Ui:Component.ReviewTable) < prototype(Neos.Fusion:Compo
               document={document}
               documentPath={documentPath}
               canPublishToBaseWorkspace={props.canPublishToBaseWorkspace}
-              canPublishToWorkspace={props.canPublishToWorkspace}/>
+              canPublishToWorkspace={props.canPublishToWorkspace}
+            />
             <Neos.Fusion:Loop items={document.changes} itemKey="relativePath" itemName="dimensions">
               <Neos.Fusion:Loop items={dimensions} itemKey="relativePath" itemName="change">
-                <Neos.Workspace.Ui:Component.ReviewChangeTableRow
-                  change={change}
-                  relativePath={relativePath}
-                  document={document}/>
-
+                <Neos.Workspace.Ui:Component.ReviewChangeTableRow change={change}/>
               </Neos.Fusion:Loop>
             </Neos.Fusion:Loop>
           </Neos.Fusion:Loop>
         </Neos.Fusion:Loop>
-
         </tbody>
     </table>
   `

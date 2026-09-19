@@ -5,15 +5,15 @@ Configuration
 How to configure Generator Priority
 ===================================
 
-In some cases, you need to replace the current Generator by your own implementation or for exemple to replace
-the PDF Thumbnail Generator by the Icon Generator for a specific project.
+In some cases, you might need to replace the current Generator with an alternative implementation. For example, you may want to replace
+the PDF Thumbnail Generator with the Icon Generator.
 
-You can do that by configuring each Generator priority.
+You may achieve this by configuring each Generator's priority.
 
 Change the priority of an existing Generator
 --------------------------------------------
 
-You can change the priority (higher is better) for an existing Generator, by editing you ``Settings.yaml``::
+You may change the priority (highest takes precedence) for an existing Generator, by editing your ``Settings.yaml``::
 
     Neos:
       Media:

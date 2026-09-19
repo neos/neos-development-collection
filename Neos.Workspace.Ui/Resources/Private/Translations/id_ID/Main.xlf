@@ -88,8 +88,8 @@
         <target state="translated">Rahasia</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private.help" xml:space="preserve">
-        <source>Only reviewers and administrators can access and modify this workspace</source>
-        <target state="translated">Hanya pengulas dan administrator yang dapat mengakses dan memodifikasi bidang kerja ini</target>
+        <source>Only the workspace owner can access and modify this workspace</source>
+        <target state="needs-translation">Hanya pengulas dan administrator yang dapat mengakses dan memodifikasi bidang kerja ini</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.shared" xml:space="preserve">
         <source>Shared</source>
@@ -251,19 +251,31 @@
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Ulasan</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Ulasan</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Modifikasi terakhir</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Modifikasi terakhir</target>
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Menerapkan perubahan</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Menerapkan perubahan</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Status</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Status</target>
+      </trans-unit>
+      <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
+        <source>Node</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Node</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Terbitkan</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Abaikan</target>
       </trans-unit>
     </body>
   </file>

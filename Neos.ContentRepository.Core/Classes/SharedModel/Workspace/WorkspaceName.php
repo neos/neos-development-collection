@@ -31,7 +31,8 @@ final class WorkspaceName implements \JsonSerializable
     public const WORKSPACE_NAME_LIVE = 'live';
 
     /**
-     * @var array<string,self>
+     * phpstan prefix because https://github.com/neos/flow-development-collection/issues/3464
+     * @phpstan-var array<string,self>
      */
     private static array $instances = [];
 

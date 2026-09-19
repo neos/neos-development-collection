@@ -1,0 +1,174 @@
+`9.0.4 (2025-06-13) <https://github.com/neos/neos-development-collection/releases/tag/9.0.4>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Reimplement missing node route handler options from previous Neos versions <https://github.com/neos/neos-development-collection/pull/5573>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Re-adds support for the ``nodeType`` and  ``onlyMatchSiteNodes`` options for the default ``FrontendNodeRoutePartHandlerInterface`` implementation
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent sharing splitString between node routings <https://github.com/neos/neos-development-collection/pull/5572>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This change makes sure that each route has its own handler instance and prevents accidental sharing of instance properties. An optimal solution wouldn't need the ``splitString`` as instance variable anymore, but this would require a change in Flow.
+
+* Resolves: `#5571 <https://github.com/neos/neos-development-collection/issues/5571>`_
+
+* Packages: ``Workspace.Ui`` ``Neos``
+
+`BUGFIX: Disable nodes after processing all node variants for export <https://github.com/neos/neos-development-collection/pull/5563>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+A node can be disabled one dimensionspacepoint, but not in a variant node.
+
+By chance the EventNodeProcessor will create the disabled events before the variation of the (enabled) node. With the result, this node become disabled too. If the nodes would get handled in reverse order, everything would work as expects. 
+
+So I moved the export of the disable node events (SubtreeWasTagged) at the end, after all nodes incl. their variants have been processed.
+
+We already did similar with node references.
+
+* Packages: ``ContentRepository.LegacyNodeMigration``
+
+`BUGFIX: Fix checking workspaces when move nodes <https://github.com/neos/neos-development-collection/pull/5562>`_
+------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+While fixing the move of nodes in `#5561 <https://github.com/neos/neos-development-collection/issues/5561>``_I also noticed, that the workspace itself has not been checked correctly, as the workspaceName was checked against the Workspace (class) in the ``beginning of the move()-Method <https://github.com/neos/neos-development-collection/blob/`65cbf7b7e0aeedcaea68eae4332d15b719a694c9 <https://github.com/neos/neos-development-collection/commit/65cbf7b7e0aeedcaea68eae4332d15b719a694c9>`_/Neos.ContentRepository/Classes/Domain/Model/NodeData.php#L886>``_. This PR fixes this and correctly compares the workspaces at the beginning of the ``NodaData::move()` method.
+
+
+`BUGFIX: MediaBrowser's upload action shows empty flash message if file is too big <https://github.com/neos/neos-development-collection/pull/5553>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+expected (like in the standalone media browser)
+
+<img width="1118" alt="image" src="https://github.com/user-attachments/assets/bcb151bf-c240-409e-803e-36693f604fe8" />
+
+actual (media browser insider neos ui):
+
+<img width="873" alt="image" src="https://github.com/user-attachments/assets/bbc5de87-0133-47f3-b932-c6718b693d3b" />
+
+interestingly the error works in the neos ui when one uses the media browsers drag and drop
+
+<img width="747" alt="image" src="https://github.com/user-attachments/assets/312b2cc8-79b6-4fb0-bb5b-4fd1a4f125a1" />
+
+-------
+
+The existence of this bug was uncovered via https://github.com/neos/neos-development-collection/pull/5528 because previously no validation error was shown and on upload the server just died:
+
+<img width="670" alt="image" src="https://github.com/user-attachments/assets/95b5a2ec-0c5c-4c12-8d66-2d9bcf874b0a" />
+
+> Could not convert target type "Neos\\Media\\Domain\\Model\\Asset": Missing constructor argument "resource" for object of type "Neos\\Media\\Domain\\Model\\Asset".
+
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This bug was uncovered because translate() simply returns undefined, if not initialised. No error no fallback, nuthing.
+Also while ``I18n.init()`` _IS_ called, it doesnt actually initialise anything. For that 
+
+https://github.com/neos/neos-development-collection/blob/`847e4647d761249b5c48ade07fe08ad7d1db58c5 <https://github.com/neos/neos-development-collection/commit/847e4647d761249b5c48ade07fe08ad7d1db58c5>`_/Neos.Neos/Resources/Public/JavaScript/index.js#L23-L27
+
+has to be invoked and that is done by adding the link.
+
+------------------
+
+Notice also that ist not particularly keen of us to initialise I18n once in the host (neos.ui) and then in the iframe too. This is just extra work for the browser, and we dump the iframe after selecting the image.
+Now my pr doenst improve that but there are ideas outlined here https://github.com/neos/neos-ui/issues/3119 and the first step for a global translate api was already introduced via https://github.com/neos/neos-ui/pull/3804.
+Nothing for a bugfix to build up on though.
+
+
+* Packages: ``Media.Browser``
+
+`BUGFIX: Adjust fusion-form dependency <https://github.com/neos/neos-development-collection/pull/5549>`_
+--------------------------------------------------------------------------------------------------------
+
+The fusion form in version below 2.1 is incompatible with Neos 9.0. Therefore, we have to modify the constraint and disable versions prior to 2.1. Additionally, we should include 3.0 as it supports Symfony Mailer.
+
+**Review instructions**
+
+Just check dependencies in the setup.
+
+`BUGFIX: Convert Nodes object into array to return references in the same way as in Neos 8.x <https://github.com/neos/neos-development-collection/pull/5566>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Workspace.Ui`` ``ContentRepository.NodeAccess``
+
+`BUGFIX: Adjust help text label for private workspaces <https://github.com/neos/neos-development-collection/pull/5565>`_
+------------------------------------------------------------------------------------------------------------------------
+
+The private workspaces are not accessible by admins since Neos 9.0.
+
+* Fixes: `#5564 <https://github.com/neos/neos-development-collection/issues/5564>`_
+
+* Packages: ``Workspace.Ui``
+
+`BUGFIX: Convert selectbox group labels i18n values <https://github.com/neos/neos-development-collection/pull/5560>`_
+---------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+This change converts ``i18n`` values of group labels to shorthand strings like ``Neos.Demo:NodeTypes.Content.Headline:properties.tagName.selectBoxEditor.groups.h1``.
+This works together with https://github.com/neos/neos-ui/pull/3955 to make it possible to localise group labels for select box values like in the following example:
+
+```yaml
+    tagName:
+      type: string
+      defaultValue: 'h2'
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: settings
+          position: 10
+          editor: Neos.Neos/Inspector/Editors/SelectBoxEditor
+          editorOptions:
+            values:
+              h1:
+                label: h1
+                group: i18n
+              h2:
+                label: h2
+                group: i18n
+              h3:
+                label: h3
+                group: 'Neos.Demo:Main:group.label'
+              h4:
+                label: h4
+                group: Just some text
+              h5:
+                label: h5
+                group: 'Neos.Demo:Main:group.label'
+```
+
+* Packages: ``Neos``
+
+`BUGFIX: Update browser history in workspace ui <https://github.com/neos/neos-development-collection/pull/5539>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Before this change pressing back in the browser would lead to the previous Neos module instead of the previous view in the workspace ui itself, even though the url was correctly updated in the navigation bar.
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`TASK: Reduce size of login wallpapers <https://github.com/neos/neos-development-collection/pull/5509>`_
+--------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Just take a look at the login screen of the backend and decide if the quality is good enogh :)
+
+followup on https://github.com/neos/neos-development-collection/pull/5500
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.3...9.0.4>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

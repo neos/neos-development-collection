@@ -12,6 +12,10 @@
     "require": {
         "neos/contentrepository-core": "self.version"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brianium/paratest": "^6.11"
+    },
     "autoload": {
         "psr-4": {
             "Neos\\ContentRepository\\BehavioralTests\\": "Classes"

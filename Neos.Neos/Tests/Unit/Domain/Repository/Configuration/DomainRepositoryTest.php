@@ -10,6 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Repository\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
@@ -22,9 +23,7 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  */
 class DomainRepositoryTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function findByHostInvokesTheDomainMatchingStrategyToFindDomainsMatchingTheGivenHost()
     {
         $mockDomains = [];
@@ -35,12 +34,12 @@ class DomainRepositoryTest extends UnitTestCase
         $expectedDomains = [$mockDomains[0], $mockDomains[2]];
 
         $mockDomainMatchingStrategy = $this->getMockBuilder(DomainMatchingStrategy::class)->disableOriginalConstructor()->getMock();
-        $mockDomainMatchingStrategy->expects(self::any())->method('getSortedMatches')->with('myhost', $mockDomains)->will(self::returnValue($expectedDomains));
+        $mockDomainMatchingStrategy->expects(self::any())->method('getSortedMatches')->with('myhost', $mockDomains)->willReturn($expectedDomains);
 
         $mockResult = $this->createMock(QueryResultInterface::class);
-        $mockResult->expects(self::once())->method('toArray')->will(self::returnValue($mockDomains));
+        $mockResult->expects(self::once())->method('toArray')->willReturn($mockDomains);
         $domainRepository = $this->getAccessibleMock(DomainRepository::class, ['findAll'], [], '', false);
-        $domainRepository->expects(self::once())->method('findAll')->will(self::returnValue($mockResult));
+        $domainRepository->expects(self::once())->method('findAll')->willReturn($mockResult);
         $domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 
         $actualDomains = $domainRepository->findByHost('myhost');

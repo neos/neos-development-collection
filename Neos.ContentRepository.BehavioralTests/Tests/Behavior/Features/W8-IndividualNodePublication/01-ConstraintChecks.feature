@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL
 Feature: Workspace publication - complex chained functionality
 
   Background:

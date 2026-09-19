@@ -1040,11 +1040,11 @@
       </trans-unit>
       <trans-unit id="relativePathCaption" xml:space="preserve">
         <source>Relative Path</source>
-        <target state="needs-translation">相対パス</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">相対パス</target>
       </trans-unit>
       <trans-unit id="pathCaption" xml:space="preserve">
         <source>Path</source>
-        <target state="needs-translation">パス</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">パス</target>
       </trans-unit>
     </body>
   </file>

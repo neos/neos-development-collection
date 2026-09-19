@@ -41,15 +41,6 @@ final readonly class ContentDimensionValue
         }
     }
 
-    /**
-     * @internal
-     * @deprecated unused
-     */
-    public function getConstraints(ContentDimensionId $dimensionId): ?ContentDimensionConstraints
-    {
-        return $this->constraints->getConstraints($dimensionId);
-    }
-
     public function canBeCombinedWith(ContentDimensionId $dimensionId, ContentDimensionValue $otherDimensionValue): bool
     {
         return $this->constraints->allowsCombinationWith($dimensionId, $otherDimensionValue);

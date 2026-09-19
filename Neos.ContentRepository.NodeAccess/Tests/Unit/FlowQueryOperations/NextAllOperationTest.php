@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
@@ -21,7 +21,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 /**
  * Testcase for the FlowQuery NextAllOperation
  */
-class NextAllOperationTest extends AbstractQueryOperationsTest
+class NextAllOperationTest extends AbstractQueryOperationsTestCase
 {
     /**
      * @var Context
@@ -57,25 +57,23 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         $this->secondNodeInLevel = $this->mockNode('node2');
         $this->thirdNodeInLevel = $this->mockNode('node3');
 
-        $this->siteNode->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site')));
-        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
+        $this->siteNode->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/site'));
+        $this->siteNode->expects(self::any())->method('findChildNodes')->willReturn(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        ])));
+        ]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->firstNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/first')));
-        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/second')));
-        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects(self::any())->method('findNodePath')->will(self::returnValue(NodePath::fromString('/site/third')));
+        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->firstNodeInLevel->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/site/first'));
+        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->secondNodeInLevel->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/site/second'));
+        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->thirdNodeInLevel->expects(self::any())->method('findNodePath')->willReturn(NodePath::fromString('/site/third'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnEmptyResultForLastNodeInLevel()
     {
         $context = [$this->thirdNodeInLevel];
@@ -88,9 +86,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstNodeInLevel()
     {
         $context = [$this->firstNodeInLevel];
@@ -103,9 +99,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([$this->secondNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnThirdNodeInLevelForSecondNodeInLevel()
     {
         $context = [$this->secondNodeInLevel];
@@ -118,9 +112,7 @@ class NextAllOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([$this->thirdNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nextAllWillReturnSecondNodeAndThirdNodeInLevelForFirstAndSecondNodeInLevel()
     {
         $context = [$this->firstNodeInLevel, $this->secondNodeInLevel];

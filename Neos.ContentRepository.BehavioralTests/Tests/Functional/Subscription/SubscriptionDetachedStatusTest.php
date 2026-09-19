@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Configuration\ConfigurationManager;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionDetachedStatusTest extends AbstractSubscriptionEngineTestCase
 {
@@ -24,7 +25,7 @@ final class SubscriptionDetachedStatusTest extends AbstractSubscriptionEngineTes
         $this->getObject(ContentRepositoryRegistry::class)->injectSettings($originalSettings);
     }
 
-    /** @test */
+    #[Test]
     public function projectionIsDetachedOnCatchupActive()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');
@@ -110,8 +111,8 @@ final class SubscriptionDetachedStatusTest extends AbstractSubscriptionEngineTes
         );
     }
 
-    /** @test */
-    public function projectionIsDetachedOnSetup()
+    #[Test]
+    public function projectionIsDetachedOnSetupAndReattachedIfPossible()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');
         $this->fakeProjection->expects(self::once())->method('apply');
@@ -159,9 +160,15 @@ final class SubscriptionDetachedStatusTest extends AbstractSubscriptionEngineTes
             ),
             $this->subscriptionStatus('Vendor.Package:FakeProjection')
         );
+
+        // reactivate does re-attach as the projection if its found again
+        $result = $this->subscriptionEngine->reactivate(SubscriptionEngineCriteria::create([SubscriptionId::fromString('Vendor.Package:FakeProjection')]));
+        self::assertNull($result->errors);
+
+        $this->expectOkayStatus('Vendor.Package:FakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    /** @test */
+    #[Test]
     public function projectionIsDetachedOnSetupAndReattachedViaResetIfPossible()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');

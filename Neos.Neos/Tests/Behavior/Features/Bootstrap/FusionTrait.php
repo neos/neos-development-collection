@@ -12,7 +12,9 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\PyStringNode;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectedNodeTrait;
@@ -26,6 +28,7 @@ use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Neos\Fusion\Core\Cache\ContentCache;
@@ -81,10 +84,18 @@ trait FusionTrait
 
     /**
      * @When the Fusion context node is :nodeAggregateId
+     * @When /^the Fusion context node is "([^"]+)" with visibility constraints "([^"]+)"$/
      */
-    public function theFusionContextNodeIs(string $nodeAggregateId): void
+    public function theFusionContextNodeIs(string $nodeAggregateId, ?string $excludedSubtreeTagsSerialized = null): void
     {
-        $subgraph = $this->getCurrentSubgraph();
+        $visibilityConstraints = $excludedSubtreeTagsSerialized !== null ? VisibilityConstraints::excludeSubtreeTags(
+            SubtreeTags::fromStrings(...explode(',', $excludedSubtreeTagsSerialized))
+        ) : NeosVisibilityConstraints::excludeRemoved()->merge(NeosVisibilityConstraints::excludeDisabled());
+
+        $subgraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName)->getSubgraph(
+            $this->currentDimensionSpacePoint,
+            $visibilityConstraints
+        );
         $this->fusionContext['node'] = $subgraph->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
         if ($this->fusionContext['node'] === null) {
             throw new InvalidArgumentException(sprintf('Node with aggregate id "%s" could not be found in the current subgraph', $nodeAggregateId), 1696700222);

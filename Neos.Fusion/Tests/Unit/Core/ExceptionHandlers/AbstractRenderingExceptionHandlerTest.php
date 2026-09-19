@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core\ExceptionHandlers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -45,9 +45,8 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
 
     /**
      * exceptions are handled and transformed to a message
-     *
-     * @test
      */
+    #[Test]
     public function handleExceptions()
     {
         $exception = new \Exception();
@@ -61,9 +60,8 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
 
     /**
      * exceptions are handled and transformed to a message
-     *
-     * @test
      */
+    #[Test]
     public function useReferenceCodes()
     {
         $exception = new Exception();
@@ -78,9 +76,8 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
     /**
      * runtime exceptions are unpacked,
      * meaning that the inner fusion path an the inner exception is used to generate the message
-     *
-     * @test
      */
+    #[Test]
     public function unpackRuntimeException()
     {
         $exception = new Exception();
@@ -94,9 +91,8 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
 
     /**
      * StopActionException are rethrown
-     *
-     * @test
      */
+    #[Test]
     public function neverHandleStopActionException()
     {
         $this->expectException(StopActionException::class);
@@ -106,9 +102,8 @@ class AbstractRenderingExceptionHandlerTest extends UnitTestCase
 
     /**
      * SecurityException are rethrown
-     *
-     * @test
      */
+    #[Test]
     public function neverHandleSecurityException()
     {
         $this->expectException(\Neos\Flow\Security\Exception::class);

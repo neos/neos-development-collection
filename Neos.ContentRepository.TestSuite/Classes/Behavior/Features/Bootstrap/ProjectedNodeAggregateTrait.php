@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -36,7 +35,6 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect the node aggregate "([^"]*)" to exist$/
-     * @throws NodeAggregatesTypeIsAmbiguous
      */
     public function iExpectTheNodeAggregateToExist(string $serializedNodeAggregateId): void
     {
@@ -46,6 +44,18 @@ trait ProjectedNodeAggregateTrait
             Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current workspace "%s".', $nodeAggregateId->value, $this->currentWorkspaceName->value));
             return $currentNodeAggregate;
         });
+    }
+
+    /**
+     * @Then /^I expect the node aggregate "([^"]*)" to not exist$/
+     */
+    public function iExpectTheNodeAggregateToNotExist(string $serializedNodeAggregateId): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
+        $nodeAggregate = $contentGraph->findNodeAggregateById($nodeAggregateId);
+
+        Assert::assertNull($nodeAggregate?->occupiedDimensionSpacePoints, sprintf('Node aggregate "%s" was found in the current workspace "%s" but should not exist.', $nodeAggregateId->value, $this->currentWorkspaceName->value));
     }
 
     protected function initializeCurrentNodeAggregate(callable $query): void
@@ -86,17 +96,18 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect this node aggregate to disable dimension space points (.*)$/
+     * @Then /^I expect this node aggregate to have dimension space points (.*) tagged "([^"]+)"$/
      */
-    public function iExpectThisNodeAggregateToDisableDimensionSpacePoints(string $serializedExpectedDisabledDimensionSpacePoints): void
+    public function iExpectThisNodeAggregateToDisableDimensionSpacePoints(string $serializedDimensionSpacePoints, string $subtreeTag = 'disabled'): void
     {
-        $expectedDisabledDimensionSpacePoints = DimensionSpacePointSet::fromJsonString($serializedExpectedDisabledDimensionSpacePoints);
-        $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedDisabledDimensionSpacePoints) {
-            $actualDisabledDimensionSpacePoints = $nodeAggregate->getDimensionSpacePointsTaggedWith(SubtreeTag::disabled());
+        $expectedDimensionSpacePoints = DimensionSpacePointSet::fromJsonString($serializedDimensionSpacePoints);
+        $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedDimensionSpacePoints, $subtreeTag) {
+            $actualDimensionSpacePoints = $nodeAggregate->getCoveredDimensionsTaggedBy(SubtreeTag::fromString($subtreeTag), withoutInherited: true);
             Assert::assertEquals(
-                $expectedDisabledDimensionSpacePoints,
-                $actualDisabledDimensionSpacePoints,
-                'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints->toJson() . ', got ' .
-                $actualDisabledDimensionSpacePoints->toJson()
+                $expectedDimensionSpacePoints,
+                $actualDimensionSpacePoints,
+                'Expected tag ' . $subtreeTag . ' to tag dimension space point set ' . $expectedDimensionSpacePoints->toJson() . ', got ' .
+                $actualDimensionSpacePoints->toJson()
             );
         });
     }

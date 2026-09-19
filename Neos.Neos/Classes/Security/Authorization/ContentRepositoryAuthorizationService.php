@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Security\Authorization;
 
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -21,6 +20,7 @@ use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubjects;
 use Neos\Neos\Domain\Repository\WorkspaceMetadataAndRoleRepository;
+use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use Neos\Neos\Security\Authorization\Privilege\EditNodePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ReadNodePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\SubtreeTagPrivilegeSubject;
@@ -103,13 +103,14 @@ final readonly class ContentRepositoryAuthorizationService
      */
     public function getVisibilityConstraints(ContentRepositoryId $contentRepositoryId, array $roles): VisibilityConstraints
     {
-        $restrictedSubtreeTags = SubtreeTags::createEmpty();
+        // soft removals are never visible by default
+        $restrictedSubtreeTags = NeosVisibilityConstraints::excludeRemoved()->excludedSubtreeTags;
         /** @var ReadNodePrivilege $privilege */
         foreach ($this->policyService->getAllPrivilegesByType(ReadNodePrivilege::class) as $privilege) {
             if (!$this->privilegeManager->isGrantedForRoles($roles, ReadNodePrivilege::class, new SubtreeTagPrivilegeSubject($privilege->getSubtreeTags(), $contentRepositoryId))) {
                 $restrictedSubtreeTags = $restrictedSubtreeTags->merge($privilege->getSubtreeTags());
             }
         }
-        return VisibilityConstraints::fromTagConstraints($restrictedSubtreeTags);
+        return VisibilityConstraints::excludeSubtreeTags($restrictedSubtreeTags);
     }
 }

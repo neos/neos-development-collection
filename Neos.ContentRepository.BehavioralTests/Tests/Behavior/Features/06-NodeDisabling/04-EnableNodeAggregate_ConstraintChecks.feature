@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Enable a node aggregate
 
   As a user of the CR I want to enable a disabled node and expect its descendants that have been directly disabled by this node to become enabled as well.
@@ -49,7 +48,7 @@ Feature: Enable a node aggregate
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "NodeAggregateIsAlreadyEnabled"
+    Then the last command should have thrown an exception of type "SubtreeIsNotTagged"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:

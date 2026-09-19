@@ -16,12 +16,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Workspace;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 final class WorkspaceNameTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function sameNameDoesNotCreateANewInstance(): void
     {
         $instance1 = WorkspaceName::fromString('workspace-name');
@@ -29,7 +29,7 @@ final class WorkspaceNameTest extends TestCase
         self::assertSame($instance1, $instance2);
     }
 
-    private static function validWorkspaceNames(): iterable
+    public static function validWorkspaceNames(): iterable
     {
         yield ['a'];
         yield ['abcdefghijklmnopqrstuvwxyz'];
@@ -37,25 +37,21 @@ final class WorkspaceNameTest extends TestCase
         yield ['this-is-valid'];
     }
 
-    /**
-     * @test
-     * @dataProvider validWorkspaceNames
-     */
+    #[DataProvider('validWorkspaceNames')]
+    #[Test]
     public function fromStringWorksForValidValues(string $value): void
     {
         self::assertSame(WorkspaceName::fromString($value)->value, $value);
     }
 
-    /**
-     * @test
-     * @dataProvider validWorkspaceNames
-     */
+    #[DataProvider('validWorkspaceNames')]
+    #[Test]
     public function tryFromStringReturnsInstanceForValidValues(string $value): void
     {
         self::assertSame(WorkspaceName::tryFromString($value)->value, $value);
     }
 
-    private static function invalidWorkspaceNames(): iterable
+    public static function invalidWorkspaceNames(): iterable
     {
         yield 'empty string' => [''];
         yield 'leading dash' => ['-invalid'];
@@ -64,34 +60,28 @@ final class WorkspaceNameTest extends TestCase
         yield 'exceeding max length' => ['this-is-just-a-little-little-bit-too-long-'];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidWorkspaceNames
-     */
+    #[DataProvider('invalidWorkspaceNames')]
+    #[Test]
     public function fromStringFailsForInvalidValues(string $value): void
     {
         $this->expectException(\InvalidArgumentException::class);
         WorkspaceName::fromString($value);
     }
 
-    /**
-     * @test
-     * @dataProvider invalidWorkspaceNames
-     */
+    #[DataProvider('invalidWorkspaceNames')]
+    #[Test]
     public function tryFromStringReturnsNullForInvalidValues(string $value): void
     {
         self::assertNull(WorkspaceName::tryFromString($value));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function forLiveReturnsAConstantInstance(): void
     {
         self::assertSame(WorkspaceName::fromString(WorkspaceName::WORKSPACE_NAME_LIVE), WorkspaceName::forLive());
     }
 
-    private static function transliterateFromStringDataProvider(): iterable
+    public static function transliterateFromStringDataProvider(): iterable
     {
         yield 'valid name is not changed' => ['value' => 'already-valid', 'expectedResult' => 'already-valid'];
         yield 'name is lower-cased' => ['value' => 'mixedCase', 'expectedResult' => 'mixedcase'];
@@ -102,50 +92,38 @@ final class WorkspaceNameTest extends TestCase
         yield 'only special characters' => ['value' => '-', 'expectedResult' => '336d5ebc5436534e61d16e63ddfca327'];
     }
 
-    /**
-     * @test
-     * @dataProvider transliterateFromStringDataProvider
-     */
+    #[DataProvider('transliterateFromStringDataProvider')]
+    #[Test]
     public function transliterateFromStringTests(string $value, string $expectedResult): void
     {
         self::assertSame($expectedResult, WorkspaceName::transliterateFromString($value)->value);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isLiveReturnsFalseByDefault(): void
     {
         self::assertFalse(WorkspaceName::fromString('not-live')->isLive());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function isLiveReturnsTrueForLiveWorkspace(): void
     {
         self::assertTrue(WorkspaceName::forLive()->isLive());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function jsonSerializeReturnsPlainValue(): void
     {
         self::assertJsonStringEqualsJsonString(json_encode(WorkspaceName::forLive()), '"live"');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function equalsReturnsFalseIfTwoInstancesDontMatch(): void
     {
         self::assertFalse(WorkspaceName::fromString('some-workspace')->equals(WorkspaceName::fromString('some-other-workspace')));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function equalsReturnsTrueIfTwoInstancesMatch(): void
     {
         self::assertTrue(WorkspaceName::fromString('some-workspace')->equals(WorkspaceName::fromString('some-workspace')));

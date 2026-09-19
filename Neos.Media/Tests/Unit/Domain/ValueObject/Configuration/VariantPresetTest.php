@@ -10,7 +10,7 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\Adjustment;
@@ -21,9 +21,7 @@ use Neos\Media\Domain\ValueObject\Configuration\Variant;
 
 class VariantPresetTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function imageVariantLabelCanBeRetrieved(): void
     {
         $label = new Label('Demo Preset 1');
@@ -31,9 +29,7 @@ class VariantPresetTest extends UnitTestCase
         self::assertSame($label, $preset->label());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function fromConfiguration(): void
     {
         $configuration = [

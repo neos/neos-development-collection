@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2024-05-14
+This reference was automatically generated from code on 2026-09-18
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -13,7 +13,7 @@ Array
 
 Array helpers for Eel contexts
 
-The implementation uses the JavaScript specificiation where applicable, including EcmaScript 6 proposals.
+The implementation uses the JavaScript specification where applicable, including EcmaScript 6 proposals.
 
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array for a documentation and
 specification of the JavaScript implementation.
@@ -34,7 +34,7 @@ Concatenate arrays or values to a new array
 Array.every(array, callback)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Check if all elements in an array pass a test given by the calback,
+Check if all elements in an array pass a test given by the callback,
 passing each element and key as arguments
 
 Example::
@@ -243,7 +243,7 @@ Returns an array in reverse order
 Array.set(array, key, value)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Set the specified key in the the array
+Set the specified key in the array
 
 * ``array`` (iterable)
 * ``key`` (string|integer) the key that should be set
@@ -291,7 +291,7 @@ Extract a portion of an indexed array
 Array.some(array, callback)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Check if at least one element in an array passes a test given by the calback,
+Check if at least one element in an array passes a test given by the callback,
 passing each element and key as arguments
 
 Example::
@@ -495,6 +495,39 @@ Format a date to a string with a given cldr format
 * ``date`` (integer|string|\DateTime)
 * ``cldrFormat`` (string) Format string in CLDR format (see http://cldr.unicode.org/translation/date-time)
 * ``locale`` (null|string, *optional*) String locale - example (de|en|ru_RU)
+
+**Return** (string)
+
+Date.formatCldrDate(dateTime, formatLength, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a date to a string with a given cldr formatLength
+
+* ``dateTime`` (\DateTimeInterface)
+* ``formatLength`` (string, *optional*) FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
+
+**Return** (string)
+
+Date.formatCldrDateTime(dateTime, formatLength, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a datetime to a string with a given cldr formatLength
+
+* ``dateTime`` (\DateTimeInterface)
+* ``formatLength`` (string, *optional*) FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats and https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-date-formats)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
+
+**Return** (string)
+
+Date.formatCldrTime(dateTime, formatLength, locale)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Format a time to a string with a given cldr formatLength
+
+* ``dateTime`` (\DateTimeInterface)
+* ``formatLength`` (string, *optional*) FormatLength in CLDR format ("Full", "Long", "Medium", "Short") (see https://cldr.unicode.org/translation/date-time/date-time-patterns#basic-time-formats)
+* ``locale`` (null|string, *optional*) String locale - example (de|en|en_US). If not provided the current locale of I18nService is used.
 
 **Return** (string)
 
@@ -773,7 +806,7 @@ Math
 
 Math helpers for Eel contexts
 
-The implementation sticks to the JavaScript specificiation including EcmaScript 6 proposals.
+The implementation sticks to the JavaScript specification including EcmaScript 6 proposals.
 
 See https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Math for a documentation and
 specification of the JavaScript implementation.
@@ -1025,7 +1058,7 @@ Calculate the power of x by y
 Math.random()
 ^^^^^^^^^^^^^
 
-Get a random foating point number between 0 (inclusive) and 1 (exclusive)
+Get a random floating point number between 0 (inclusive) and 1 (exclusive)
 
 That means a result will always be less than 1 and greater or equal to 0, the same way Math.random() works in
 JavaScript.
@@ -1066,7 +1099,7 @@ Get the sign of the given number, indicating whether the number is positive, neg
 
 * ``x`` (integer|float) The value
 
-**Return** (integer) -1, 0, 1 depending on the sign or NAN if the given value was not numeric
+**Return** (integer|float) -1, 0, 1 depending on the sign or NAN if the given value was not numeric
 
 Math.sin(x)
 ^^^^^^^^^^^
@@ -1167,6 +1200,19 @@ Neos.Array.sortByPropertyPath(set, positionPropertyPath)
 
 Sorts the input array by the $positionProperty of each element.
 
+* ``set`` (array<mixed>)
+
+**Return** (array<mixed>)
+
+Neos.Array.toHtmlAttributesString(attributes)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Converts an array into an HTML attributes string like 'class="foo" id="bar"'
+
+* ``attributes`` (array<string>)
+
+**Return** (string)
+
 
 
 
@@ -1215,17 +1261,23 @@ A cache entry with this tag will be flushed whenever a node
 (for any variant) that is a descendant (child on any level) of one of
 the given nodes is updated.
 
-* ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
+* ``nodes`` (iterable<Node>|Node) (A single Node or array or \Traversable of Nodes)
 
 **Return** (array<int,string>)
 
 Neos.Caching.entryIdentifierForNode(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Generate a `@cache` entry identifier for a given node:
+
+    entryIdentifier {
+      documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+    }
+
 Neos.Caching.getWorkspaceChain(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``node`` (Node)
+* ``node`` (Node|null)
 
 **Return** (array<string,Workspace>)
 
@@ -1236,33 +1288,31 @@ Generate a `@cache` entry tag for a single node, array of nodes or a FlowQuery r
 A cache entry with this tag will be flushed whenever one of the
 given nodes (for any variant) is updated.
 
-* ``nodes`` (mixed) (A single Node or array or \Traversable of Nodes)
+* ``nodes`` (iterable<Node>|Node) (A single Node or array or \Traversable of Nodes)
 
-**Return** (array<int,string>)
+**Return** (array<int,string>,)
 
 Neos.Caching.nodeTagForIdentifier(identifier, contextNode)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Generate a `@cache` entry tag for a single node identifier. If a Node $contextNode is given the
-entry tag will respect the workspace hash.
+Generate a `@cache` entry tag for a single node identifier.
 
 * ``identifier`` (string)
-* ``contextNode`` (?Node, *optional*)
+* ``contextNode`` (Node)
 
-**Return** (string)
+**Return** (string[])
 
-Neos.Caching.nodeTypeTag(nodeType, contextNode)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Neos.Caching.nodeTypeTag(nodeTypes, contextNode)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Generate an `@cache` entry tag for a node type
 A cache entry with this tag will be flushed whenever a node
-(for any variant) that is of the given node type(s)
+(for any variant) that is of the given node type name(s)
 (including inheritance) is updated.
 
-* ``nodeType`` (string|NodeType|string[]|NodeType[]|\Traversable<string>|\Traversable<NodeType>)
-* ``contextNode`` (Node|null, *optional*)
+* ``nodeTypes`` (iterable<string>|string)
 
-**Return** (string|string[])
+**Return** (array<int,string>)
 
 
 
@@ -1360,7 +1410,7 @@ Example::
 Neos.Link
 ---------
 
-Eel helper for the linking service
+
 
 Implemented in: ``Neos\Neos\Fusion\Helper\LinkHelper``
 
@@ -1370,22 +1420,11 @@ Neos.Link.convertUriToObject(uri, contextNode)
 Neos.Link.getScheme(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|UriInterface)
-
-**Return** (string)
-
 Neos.Link.hasSupportedScheme(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``uri`` (string|Uri)
-
-**Return** (boolean)
-
 Neos.Link.resolveAssetUri(uri)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -1423,6 +1462,36 @@ Neos.Media.Assets.search(searchTerm, tags, collection)
 
 
 
+.. _`Eel Helpers Reference: Neos.Media.Image`:
+
+Neos.Media.Image
+----------------
+
+
+
+Implemented in: ``Neos\Media\Eel\ImageHelper``
+
+Neos.Media.Image.createThumbnail(asset, preset, width, maximumWidth, height, maximumHeight, allowCropping, allowUpScaling, async, quality, format)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns a thumbnail of the given asset, allowing integrators to access the thumbnail size and other metadata.
+
+* ``preset`` (string|null, *optional*) Name of the preset that should be used as basis for the configuration
+* ``width`` (integer|null, *optional*) Desired width of the image
+* ``maximumWidth`` (integer|null, *optional*) Desired maximum width of the image
+* ``height`` (integer|null, *optional*) Desired height of the image
+* ``maximumHeight`` (integer|null, *optional*) Desired maximum height of the image
+* ``allowCropping`` (boolean, *optional*) Whether the image should be cropped if the given sizes would hurt the aspect ratio
+* ``allowUpScaling`` (boolean, *optional*) Whether the resulting image size might exceed the size of the original image
+* ``async`` (boolean, *optional*) Whether the thumbnail can be generated asynchronously
+* ``quality`` (integer|null, *optional*) Quality of the processed image
+* ``format`` (string|null, *optional*) Format for the image, only jpg, jpeg, gif, png, wbmp, xbm, webp and bmp are supported.
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Neos.Node`:
 
 Neos.Node
@@ -1432,8 +1501,11 @@ Eel helper for ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
 
-Neos.Node.getNodeType(node)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Neos.Node.isDisabled(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Neos.Node.isNodeTypeExistent(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Neos.Node.isOfType(node, nodeType)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1441,10 +1513,20 @@ Neos.Node.isOfType(node, nodeType)
 If this node type or any of the direct or indirect super types
 has the given name.
 
+Neos.Node.label(node)
+^^^^^^^^^^^^^^^^^^^^^
+
+Renders the actual node label based on the NodeType definition in Fusion.
+
 Neos.Node.labelForNode(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+Return a builder to generate a label for a node with a chaining mechanism. To be used in NodeType definition:
+
+    'Vendor.Site:MyContent':
+      label: "${Neos.Node.labelForNode(node).prefix('foo')}"
+
+FIXME the method name is slightly ambiguous and not to confused with Neos.Node.label which renders the configured label from yaml
 
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1452,43 +1534,22 @@ Neos.Node.nearestContentCollection(node, nodePath)
 Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
 if no content collection could be found
 
+Neos.Node.nodeType(node)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Retrieving the NodeType of the given Node.
+
+If the NodeType schema changed and the NodeType does not exist anymore, NULL is returned.
+
+* ``node`` (Node)
+
+**Return** (NodeType|null)
+
 Neos.Node.serializedNodeAddress(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Neos.Node.subgraphForNode(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Rendering`:
-
-Neos.Rendering
---------------
-
-Render Content Dimension Names, Node Labels
-
-These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
-
-Implemented in: ``Neos\Neos\Fusion\Helper\RenderingHelper``
-
-Neos.Rendering.labelForNodeType(nodeTypeName)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Render the label for the given $nodeTypeName
-
-* ``nodeTypeName`` (string)
-
-**Return** (string)
-
-Neos.Rendering.renderDimensions(dimensions)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Render a human-readable description for the passed $dimensions
-
-* ``dimensions`` (array<string,mixed>)
 
 
 

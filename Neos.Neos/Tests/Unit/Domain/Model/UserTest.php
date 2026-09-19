@@ -10,7 +10,7 @@ namespace Neos\Neos\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Model\UserPreferences;
@@ -21,9 +21,7 @@ use Neos\Neos\Domain\Model\UserPreferences;
  */
 class UserTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function constructorInitializesPreferences()
     {
         $user = new User();

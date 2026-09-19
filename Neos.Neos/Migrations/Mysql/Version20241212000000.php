@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -17,8 +18,8 @@ final class Version20241212000000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MariaDBPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $tableWorkspaceMetadata = $schema->getTable('neos_neos_workspace_metadata');
@@ -29,8 +30,8 @@ final class Version20241212000000 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->abortIf(
-            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\MariaDBPlatform,
-            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\MariaDBPlatform'."
+            !$this->connection->getDatabasePlatform() instanceof \Doctrine\DBAL\Platforms\AbstractMySQLPlatform,
+            "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
         $tableWorkspaceMetadata = $schema->getTable('neos_neos_workspace_metadata');

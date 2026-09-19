@@ -34,6 +34,7 @@ class AssetUsageCatchUpHookFactory implements CatchUpHookFactoryInterface
         return new AssetUsageCatchUpHook(
             $dependencies->contentRepositoryId,
             $dependencies->projectionState,
+            $dependencies->nodeTypeManager,
             $this->assetUsageIndexingService
         );
     }

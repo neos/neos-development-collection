@@ -39,7 +39,7 @@ final class SubscriptionIds implements \IteratorAggregate, \Countable, \JsonSeri
         return new self($subscriptionIdsById);
     }
 
-    public static function none(): self
+    public static function createEmpty(): self
     {
         return self::fromArray([]);
     }

@@ -1,4 +1,3 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Variation of hidden nodes
 
   If we create variants of nodes hidden in the respective dimension space point(s),
@@ -24,7 +23,6 @@ Feature: Variation of hidden nodes
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
-    And VisibilityConstraints are set to "default"
 
   Scenario: Specialize a node where the specialization target is enabled
     Given I am in dimension space point {"language":"de"}
@@ -48,10 +46,14 @@ Feature: Variation of hidden nodes
       | sourceOrigin    | {"language":"de"}  |
       | targetOrigin    | {"language":"gsw"} |
     And I am in dimension space point {"language":"de"}
-    And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When I am in dimension space point {"language":"gsw"}
-    And I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Specialize a node where the specialization target is disabled
     Given I am in dimension space point {"language":"de"}
@@ -71,10 +73,14 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"gsw"} |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    Then I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When I am in dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
@@ -83,7 +89,9 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"gsw"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Generalize a node where the generalization target is enabled
     Given I am in dimension space point {"language":"de"}
@@ -103,11 +111,14 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"mul"} |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When I am in dimension space point {"language":"mul"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
-  #cs-identifier;the-great-nodini;{"language":"mul"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"mul"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Generalize a node where the generalization target is disabled
     Given I am in dimension space point {"language":"ltz"}
@@ -133,10 +144,14 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"de"}  |
 
     When I am in dimension space point {"language":"ltz"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"ltz"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
@@ -145,7 +160,9 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Peer vary a node where the peer target is enabled
     Given I am in dimension space point {"language":"de"}
@@ -165,10 +182,14 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"en"}  |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When I am in dimension space point {"language":"en"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""
 
   Scenario: Peer vary a node where the peer target is disabled
     Given I am in dimension space point {"language":"de"}
@@ -193,10 +214,14 @@ Feature: Variation of hidden nodes
       | targetOrigin    | {"language":"en"}  |
 
     When I am in dimension space point {"language":"de"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"de"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When I am in dimension space point {"language":"en"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged "disabled"
+    And I expect this node to exactly inherit the tags ""
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
@@ -205,4 +230,6 @@ Feature: Variation of hidden nodes
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
     When I am in dimension space point {"language":"en"}
-    Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect node aggregate identifier "the-great-nodini" to lead to node cs-identifier;the-great-nodini;{"language":"en"}
+    And I expect this node to be exactly explicitly tagged ""
+    And I expect this node to exactly inherit the tags ""

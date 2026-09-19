@@ -63,7 +63,7 @@ final class ContentCommandController extends CommandController
         try {
             $sourceSubgraph = $contentRepositoryInstance->getContentGraph($workspaceName)->getSubgraph(
                 $sourceSpacePoint,
-                VisibilityConstraints::withoutRestrictions()
+                VisibilityConstraints::createEmpty()
             );
         } catch (WorkspaceDoesNotExist) {
             $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspaceName->value]);

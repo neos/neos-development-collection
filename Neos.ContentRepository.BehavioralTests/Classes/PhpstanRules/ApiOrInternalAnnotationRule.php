@@ -21,6 +21,7 @@ class ApiOrInternalAnnotationRule implements Rule
      */
     private $namespacePrefixesWhichShouldBeEnforced = [
         'Neos\ContentRepository\Core',
+        'Neos\ContentRepository\Dbal',
         'Neos\ContentGraph',
     ];
 
@@ -60,11 +61,8 @@ class ApiOrInternalAnnotationRule implements Rule
         return [];
     }
 
-    private function nameIsWithinConfiguredNamespaces(?Node\Name $namespacedName): bool
+    private function nameIsWithinConfiguredNamespaces(Node\Name $namespacedName): bool
     {
-        if (!$namespacedName) {
-            return false;
-        }
         foreach ($this->namespacePrefixesWhichShouldBeEnforced as $namespacePrefix) {
             if (str_starts_with($namespacedName->toString(), $namespacePrefix)) {
                 return true;

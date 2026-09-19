@@ -1,0 +1,28 @@
+`9.0.2 (2025-04-08) <https://github.com/neos/neos-development-collection/releases/tag/9.0.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Skip reference properties in AssetExportProcessor <https://github.com/neos/neos-development-collection/pull/5543>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+The ``AssetExportProcessor`` loops over properties found in the raw node data.
+
+For reference(s) properties the ``NodeType`` complains when asked for the _property_ type, since references are not longer properties as before.
+
+This thus skips references, as the cannot hold an asset anyway, thus solving warnings about
+
+``Warning: Skipped node data processing for the property "foo". The property name is not part of the NodeType schema for the NodeType "Acme.Acmeom:Document.Page"``
+
+which are very misleading (as the property exists).
+
+**Review instructions**
+
+Export legacy content having a ``references``property…
+
+
+* Packages: ``Neos`` ``ContentRepository.LegacyNodeMigration``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.1...9.0.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

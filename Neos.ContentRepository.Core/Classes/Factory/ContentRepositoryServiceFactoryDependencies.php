@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInt
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\EventStore\EventStoreInterface;
+use Psr\Clock\ClockInterface;
 
 /**
  * Implementation detail of {@see ContentRepositoryServiceFactoryInterface}
@@ -45,6 +46,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         public ContentRepository $contentRepository,
         public ContentGraphReadModelInterface $contentGraphReadModel,
         public SubscriptionEngine $subscriptionEngine,
+        public ClockInterface $clock,
     ) {
     }
 
@@ -63,6 +65,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         ContentRepository $contentRepository,
         ContentGraphReadModelInterface $contentGraphReadModel,
         SubscriptionEngine $subscriptionEngine,
+        ClockInterface $clock,
     ): self {
         return new self(
             $contentRepositoryId,
@@ -76,6 +79,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
             $contentRepository,
             $contentGraphReadModel,
             $subscriptionEngine,
+            $clock,
         );
     }
 }

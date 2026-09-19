@@ -14,13 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Party\Domain\Model\ElectronicAddress;
 use Neos\Utility\Arrays;
 
 /**
@@ -50,12 +54,12 @@ class UserCommandController extends CommandController
      *
      * @return void
      */
-    public function listCommand()
+    public function listCommand(): void
     {
         $users = $this->userService->getUsers();
 
         $tableRows = [];
-        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
+        $headerRow = ['Name', 'Primary Electronic Address', 'Account Identifier(s)', 'Role(s)', 'Active'];
 
         foreach ($users as $user) {
             $tableRows[] = $this->getTableRowForUser($user);
@@ -76,22 +80,50 @@ class UserCommandController extends CommandController
      *
      * @param string $username The username of the user to show.
      *                         Usually refers to the account identifier of the user's Neos backend account.
-     * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
+     * @param string|null $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
+     * @throws Exception|StopCommandException
      */
-    public function showCommand($username, $authenticationProvider = null)
+    public function showCommand(string $username, ?string $authenticationProvider = null): void
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if (!$user instanceof User) {
-            $this->outputLine('The username "%s" is not in use', [$username]);
+            $this->outputLine('No user with the username "%s" exists', [$username]);
             $this->quit(1);
         }
         /** @var User $user */
 
-        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
-        $tableRows = [$this->getTableRowForUser($user)];
+        /** @var Collection<int,Account> $userAccounts */
+        $userAccounts = $user->getAccounts();
 
-        $this->output->outputTable($tableRows, $headerRow);
+        $this->outputLine('<b>First name:</b> %s', [$user->getName()->getFirstName()]);
+        $this->outputLine('<b>Last name:</b> %s', [$user->getName()->getLastName()]);
+        $this->outputLine('<b>Backend language:</b> %s', [$user->getPreferences()->getInterfaceLanguage() ?: 'Use system default']);
+
+        $this->outputLine();
+        $this->outputLine('<b>Electronic address(es):</b>');
+        $this->output->outputTable(
+            array_map(static fn (ElectronicAddress $electronicAddress) => [
+                $electronicAddress->getType(),
+                $electronicAddress->getIdentifier(),
+                $electronicAddress->getUsage(),
+                $electronicAddress === $user->getPrimaryElectronicAddress() ? 'yes' : 'no',
+            ], $user->getElectronicAddresses()->toArray()),
+            ['Type', 'Identifier', 'Usage', 'Primary?'],
+        );
+        $this->outputLine();
+        $this->outputLine('<b>Accounts:</b>');
+        $this->output->outputTable(
+            array_map(static fn (Account $account) => [
+                $account->getAccountIdentifier(),
+                implode(', ', $account->getRoles()),
+                $account->getAuthenticationProviderName(),
+                $account->isActive() ? 'yes' : 'no',
+                $account->getCreationDate()->format('Y-m-d'),
+                $account->getExpirationDate() !== null ? $account->getExpirationDate()->format('Y-m-d') : 'never',
+            ], $userAccounts->toArray()),
+            ['Identifier', 'Role', 'Provider', 'Active', 'Created at', 'Expires at'],
+        );
     }
 
     /**
@@ -428,15 +460,7 @@ class UserCommandController extends CommandController
         $accountIdentifiers = [];
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            $authenticationProviderName = $account->getAuthenticationProviderName();
-            if ($authenticationProviderName !== $this->userService->getDefaultAuthenticationProviderName()) {
-                $authenticationProviderLabel = ' ('
-                    . ($this->authenticationProviderSettings[$authenticationProviderName]['label']
-                        ?? $authenticationProviderName) . ')';
-            } else {
-                $authenticationProviderLabel = '';
-            }
-            $accountIdentifiers[] = $account->getAccountIdentifier() . $authenticationProviderLabel;
+            $accountIdentifiers[] = $account->getAccountIdentifier();
             foreach ($account->getRoles() as $role) {
                 /** @var Role $role */
                 $roleNames[] = $role->getIdentifier();
@@ -444,10 +468,11 @@ class UserCommandController extends CommandController
         }
         return [
             $user->getName()->getFullName(),
-            $user->getPrimaryElectronicAddress(),
+            /** @phpstan-ignore-next-line */
+            $user->getPrimaryElectronicAddress() ?: '-',
             implode(', ', $accountIdentifiers),
             implode(', ', $roleNames),
-            ($user->isActive() ? 'yes' : 'no')
+            ($user->isActive() ? 'yes' : 'no'),
         ];
     }
 }
