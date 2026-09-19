@@ -23,8 +23,8 @@ prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 
     workspace = ${node.context.workspace}
-    workspaceName = ${node.workspaceName}
-    workspaceNameByWorkspace = ${node.workspaceName}
+    workspaceName = ${node.workspaceName.value}
+    workspaceNameByWorkspace = ${node.workspaceName.value}
 
     attributes = ${node.context.workspace || site.context.workspace || documentNode.context.workspace}
 
