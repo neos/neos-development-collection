@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core;
 
 /*
@@ -10,7 +11,6 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Message;
 use Neos\Eel\EelEvaluatorInterface;
 use Neos\Eel\ProtectedContext;
@@ -24,9 +24,10 @@ use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\ValueImplementation;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class RuntimeTest extends UnitTestCase
 {
@@ -39,7 +40,7 @@ class RuntimeTest extends UnitTestCase
     {
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
-        $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
+        $runtime->expects(self::any())->method('evaluate')->willThrowException($runtimeException);
         $runtime->expects(self::once())->method('handleRenderingException')->with('foo/bar', $runtimeException)->willReturn('Exception Message');
 
         $output = $runtime->render('foo/bar');
@@ -203,7 +204,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
 
-        $runtime->renderEntryPathWithContext('foo', ['request' =>'anything']);
+        $runtime->renderEntryPathWithContext('foo', ['request' => 'anything']);
     }
 
     /**
@@ -229,7 +230,7 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield 'string cast object (\Stringable)' => [
-            'rawValue' => new class implements \Stringable {
+            'rawValue' => new class () implements \Stringable {
                 public function __toString()
                 {
                     return 'my string karsten';
@@ -322,7 +323,7 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield '\JsonSerializable' => [
-            'illegalValue' => new class implements \JsonSerializable {
+            'illegalValue' => new class () implements \JsonSerializable {
                 public function jsonSerialize(): mixed
                 {
                     return 123;
@@ -331,7 +332,7 @@ class RuntimeTest extends UnitTestCase
         ];
 
         yield 'any class' => [
-            'illegalValue' => new class {
+            'illegalValue' => new class () {
             }
         ];
 

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Asset\ValueObject;
 
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
@@ -15,7 +17,8 @@ final readonly class SerializedImageAdjustment implements \JsonSerializable
     private function __construct(
         public ImageAdjustmentType $type,
         public array $properties,
-    ) {}
+    ) {
+    }
 
     public static function fromImageAdjustment(ImageAdjustmentInterface $adjustment): self
     {

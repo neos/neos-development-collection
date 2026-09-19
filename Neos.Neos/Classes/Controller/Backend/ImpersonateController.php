@@ -22,8 +22,8 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Account;
 use Neos\Neos\Domain\Model\User;
-use Neos\Party\Domain\Service\PartyService;
 use Neos\Neos\Service\ImpersonateService;
+use Neos\Party\Domain\Service\PartyService;
 
 /**
  * The Impersonate controller

@@ -49,6 +49,8 @@ use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 #[Flow\Scope('singleton')]
 final readonly class WorkspaceService
 {
+    private ?\DateInterval $garbageCollectionGracePeriod;
+
     public function __construct(
         private ContentRepositoryRegistry $contentRepositoryRegistry,
         private WorkspaceMetadataAndRoleRepository $metadataAndRoleRepository,
@@ -56,7 +58,11 @@ final readonly class WorkspaceService
         private ContentRepositoryAuthorizationService $authorizationService,
         private SecurityContext $securityContext,
         private SoftRemovalGarbageCollector $softRemovalGarbageCollector,
+        ?string $garbageCollectionGracePeriod,
     ) {
+        $this->garbageCollectionGracePeriod = $garbageCollectionGracePeriod
+            ? new \DateInterval($garbageCollectionGracePeriod)
+            : null;
     }
 
     /**
@@ -259,7 +265,7 @@ final readonly class WorkspaceService
         $this->metadataAndRoleRepository->deleteWorkspaceMetadata($contentRepositoryId, $workspaceName);
         $this->metadataAndRoleRepository->deleteWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
 
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
     }
 
     /**

@@ -17,7 +17,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInt
  */
 class FlushSubgraphCachePoolCatchUpHookFactory implements CatchUpHookFactoryInterface
 {
-
     public function __construct(
         private readonly SubgraphCachePool $subgraphCachePool
     ) {

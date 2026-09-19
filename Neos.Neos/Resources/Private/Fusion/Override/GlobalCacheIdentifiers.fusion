@@ -1,10 +1,5 @@
 # Extension of the GlobalCacheIdentifiers prototype
 #
-# We add the names of workspaces of the current workspace chain (for example, "user-john,some-workspace,live") to the list
-# of entry identifier pieces in order to make sure that a specific combination of workspaces has its own content cache entry.
-#
 prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-  workspaceChain = ${Array.join(Array.keys(Neos.Caching.getWorkspaceChain(documentNode)), ',')}
-  workspaceChain.@if.has = ${!!documentNode}
   renderingMode = ${renderingMode.name}
 }

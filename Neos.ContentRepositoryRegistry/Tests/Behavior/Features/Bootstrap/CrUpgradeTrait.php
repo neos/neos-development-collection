@@ -16,6 +16,8 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\Upgrade\Command\CRUpgradeContextFactory;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsConcurrentWorkspaceRebases\EventsConcurrentWorkspaceRebasesUpgrade;
+use Neos\ContentRepositoryRegistry\Upgrade\EventsDeduplicateBaseWorkspaceChanges\EventsDeduplicateBaseWorkspaceChangesUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\EventsRecordedAtToUtc\EventsRecordedAtToUtcUpgrade;
 use Neos\ContentRepositoryRegistry\Upgrade\Shared\CRUpgradeContext;
 use PHPUnit\Framework\Assert;
@@ -39,6 +41,24 @@ trait CrUpgradeTrait
     }
 
     /**
+     * @When I attempt to upgrade events recordedAt to utc which I expect not to be available
+     */
+    public function iExecuteEventsRecordedAtToUtcUpgradeNotAvailable(): void
+    {
+        $upgrade = new EventsRecordedAtToUtcUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertFalse($upgrade->isAvailable(), 'Upgrade is available but was not expected to.');
+
+        $upgrade->execute(
+            force: false,
+            dryRun: false
+        );
+    }
+
+    /**
      * @When I upgrade events recordedAt to utc
      * @When /^I upgrade events recordedAt to utc (with force)$/
      */
@@ -49,8 +69,79 @@ trait CrUpgradeTrait
             $this->outputFn(...)
         );
 
+        Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
+
         $upgrade->execute(
-            force: $force
+            force: $force,
+            dryRun: false
+        );
+    }
+
+    /**
+     * @When I attempt to upgrade the events to deduplicate base-workspace-changes which I expect not to be available
+     */
+    public function iExecuteEventsDeduplicateBaseWorkspaceChangesUpgradeNotAvailable(): void
+    {
+        $upgrade = new EventsDeduplicateBaseWorkspaceChangesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertFalse($upgrade->isAvailable(), 'Upgrade is available but was not expected to.');
+
+        $upgrade->execute(
+            dryRun: false
+        );
+    }
+
+    /**
+     * @When I upgrade the events to deduplicate base-workspace-changes
+     */
+    public function iExecuteEventsDeduplicateBaseWorkspaceChangesUpgrade(): void
+    {
+        $upgrade = new EventsDeduplicateBaseWorkspaceChangesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
+
+        $upgrade->execute(
+            dryRun: false
+        );
+    }
+
+    /**
+     * @When I attempt to upgrade the events to concurrent workspace-rebases which I expect not to be available
+     */
+    public function iExecuteEventsConcurrentWorkspaceRebasesUpgradeNotAvailable(): void
+    {
+        $upgrade = new EventsConcurrentWorkspaceRebasesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertFalse($upgrade->isAvailable(), 'Upgrade is available but was not expected to.');
+
+        $upgrade->execute(
+            dryRun: false
+        );
+    }
+
+    /**
+     * @When I upgrade the events to concurrent workspace-rebases
+     */
+    public function iExecuteEventsConcurrentWorkspaceRebasesUpgrade(): void
+    {
+        $upgrade = new EventsConcurrentWorkspaceRebasesUpgrade(
+            $this->getCrUpgradeContext(),
+            $this->outputFn(...)
+        );
+
+        Assert::assertTrue($upgrade->isAvailable(), 'Upgrade is not available but was expected to.');
+
+        $upgrade->execute(
+            dryRun: false
         );
     }
 
@@ -88,6 +179,7 @@ trait CrUpgradeTrait
 
     /**
      * @Given I have the following raw events to upgrade:
+     * @Given I have the following additional raw events to upgrade:
      */
     public function iHaveTheFollowingRawEventsToUpgrade(TableNode $events)
     {

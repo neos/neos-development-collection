@@ -21,26 +21,7 @@ trait ContentStream
             'version' => 0,
             'sourceContentStreamId' => $sourceContentStreamId?->value,
             'sourceContentStreamVersion' => $sourceVersion?->value,
-            'closed' => 0,
             'hasChanges' => 0
-        ]);
-    }
-
-    private function closeContentStream(ContentStreamId $contentStreamId): void
-    {
-        $this->dbal->update($this->tableNames->contentStream(), [
-            'closed' => 1,
-        ], [
-            'id' => $contentStreamId->value
-        ]);
-    }
-
-    private function reopenContentStream(ContentStreamId $contentStreamId): void
-    {
-        $this->dbal->update($this->tableNames->contentStream(), [
-            'closed' => 0,
-        ], [
-            'id' => $contentStreamId->value
         ]);
     }
 

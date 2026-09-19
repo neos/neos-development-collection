@@ -9,7 +9,7 @@
     },
     "license": ["GPL-3.0-or-later"],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "neos/flow": "*",
         "neos/neos": "self.version",
         "neos/contentrepository-core": "self.version"

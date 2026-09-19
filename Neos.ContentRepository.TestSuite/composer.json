@@ -11,7 +11,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/utility-arrays": "~9.0.0",
+        "neos/utility-arrays": "*",
         "neos/contentrepository-core": "self.version",
         "behat/behat": "^3.5"
     },

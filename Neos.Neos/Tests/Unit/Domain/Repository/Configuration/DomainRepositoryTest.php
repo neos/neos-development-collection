@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Domain\Repository\Configuration;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Neos\Tests\Unit\Domain\Repository\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Service\DomainMatchingStrategy;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Domain Repository

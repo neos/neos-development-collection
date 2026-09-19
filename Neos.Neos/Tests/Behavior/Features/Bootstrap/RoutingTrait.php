@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -120,7 +121,7 @@ trait RoutingTrait
         }
 
         $config = Yaml::parse($configYaml->getRaw());
-        $this->routingTraitSiteConfigurationPostLoadHook = new class($config) {
+        $this->routingTraitSiteConfigurationPostLoadHook = new class ($config) {
             public function __construct(
                 private readonly array $config
             ) {
@@ -150,26 +151,6 @@ trait RoutingTrait
         $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
         assert($activeRequestHandler instanceof FunctionalTestRequestHandler, 'wrong request handler - given ' . get_class($activeRequestHandler) . ' -> You need to include BrowserTrait in the FeatureContext!');
         $activeRequestHandler->setHttpRequest($activeRequestHandler->getHttpRequest()->withUri($this->requestUrl));
-    }
-
-    /**
-     * @Then the matched node should be :nodeAggregateId in dimension :dimensionSpacePoint
-     */
-    public function theMatchedNodeShouldBeInOriginDimension(string $nodeAggregateId, string $dimensionSpacePoint): void
-    {
-        $matchedNodeAddress = $this->match($this->requestUrl);
-        Assert::assertNotNull($matchedNodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
-        Assert::assertTrue($matchedNodeAddress->workspaceName->isLive(), 'Workspace should be always live.');
-        Assert::assertSame($nodeAggregateId, $matchedNodeAddress->aggregateId->value);
-        Assert::assertSame(
-            DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            $matchedNodeAddress->dimensionSpacePoint,
-            sprintf(
-                'Dimension space point "%s" did not match the expected "%s"',
-                $matchedNodeAddress->dimensionSpacePoint->toJson(),
-                $dimensionSpacePoint
-            )
-        );
     }
 
     /**
@@ -284,9 +265,7 @@ trait RoutingTrait
             $this->currentContentRepository->id,
             WorkspaceName::forLive(),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            \str_starts_with($nodeAggregateId, '$')
-                ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]
-                : NodeAggregateId::fromString($nodeAggregateId)
+            NodeAggregateId::fromString($nodeAggregateId)
         );
         $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
         $httpRequest = $this->addRoutingParameters($httpRequest);

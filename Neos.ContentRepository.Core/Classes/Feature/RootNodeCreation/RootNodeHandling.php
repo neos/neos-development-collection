@@ -14,23 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointsWithAllowedSpecializations;
 use Neos\ContentRepository\Core\Feature\Common\DimensionSpacePointWithAllowedSpecializations;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
+use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
@@ -39,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
@@ -66,20 +64,16 @@ trait RootNodeHandling
 
     /**
      * @param CreateRootNodeAggregateWithNode $command
-     * @param CommandHandlingDependencies $commandHandlingDependencies
      * @return EventsToPublish
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyExists
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
      */
     private function handleCreateRootNodeAggregateWithNode(
         CreateRootNodeAggregateWithNode $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireProjectedNodeAggregateToNotExist(
             $contentGraph,
             $command->nodeAggregateId
@@ -129,7 +123,7 @@ trait RootNodeHandling
         }
 
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId());
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
@@ -160,10 +154,9 @@ trait RootNodeHandling
      */
     private function handleUpdateRootNodeAggregateDimensions(
         UpdateRootNodeAggregateDimensions $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $rootNodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
             $command->nodeAggregateId
@@ -172,8 +165,8 @@ trait RootNodeHandling
             throw new NodeAggregateIsNotRoot('The node aggregate ' . $rootNodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
         }
 
-        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName, $commandHandlingDependencies);
-        $relevantWorkspaces = $commandHandlingDependencies->findAllWorkspaces()->filter(
+        $this->requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment($command->workspaceName);
+        $relevantWorkspaces = $this->commandHandlingDependencies->findAllWorkspaces()->filter(
             fn (Workspace $workspace): bool => !$workspace->workspaceName->equals($command->initialWorkspaceName)
         );
         self::requireNoWorkspaceToHaveChanges($relevantWorkspaces);
@@ -184,7 +177,7 @@ trait RootNodeHandling
         foreach ($newDimensionSpacePoints as $newDimensionSpacePoint) {
             foreach ($relevantWorkspaces as $workspace) {
                 self::requireDimensionSpacePointToBeEmptyInContentStream(
-                    $commandHandlingDependencies->getContentGraph($workspace->workspaceName),
+                    $this->commandHandlingDependencies->getContentGraph($workspace->workspaceName),
                     $newDimensionSpacePoint,
                 );
             }
@@ -236,7 +229,7 @@ trait RootNodeHandling
         $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
             $contentGraph->getContentStreamId()
         );
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStream->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,
@@ -247,7 +240,6 @@ trait RootNodeHandling
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      * @return array<EventInterface>
      */
@@ -269,7 +261,7 @@ trait RootNodeHandling
                 : NodePath::fromNodeNames($tetheredNodeTypeDefinition->name);
             $childNodeAggregateId = $nodeAggregateIdsByNodePath->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
-            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter());
+            $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType, $this->getPropertyConverter(), $this->clock);
 
             $events[] = $this->createTetheredWithNodeForRoot(
                 $workspaceName,

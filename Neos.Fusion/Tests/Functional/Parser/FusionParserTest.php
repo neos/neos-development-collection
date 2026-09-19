@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\Parser;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Fusion\Tests\Functional\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Fusion\Core\FusionSourceCodeCollection;
-use Neos\Fusion\Exception;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Fusion\Core\Parser;
 use Neos\Fusion;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
+use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Exception;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion Parser

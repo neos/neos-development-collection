@@ -55,7 +55,7 @@ final readonly class DelegatingNodeLabelRenderer implements NodeLabelGeneratorIn
             $nodeLabelGenerator = $this->objectManager->get(ExpressionBasedNodeLabelGenerator::class);
             $nodeLabelGenerator->setExpression($nodeType->getConfiguration('label'));
         } else {
-            $nodeLabelGenerator = new class implements NodeLabelGeneratorInterface {
+            $nodeLabelGenerator = new class () implements NodeLabelGeneratorInterface {
                 public function getLabel(Node $node): string
                 {
                     return sprintf(

@@ -23,8 +23,8 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
@@ -90,7 +90,7 @@ trait TetheredNodeInternals
 
         $expectedTetheredNodeType = $this->nodeTypeManager->getNodeType($tetheredNodeTypeDefinition->nodeTypeName);
         $defaultProperties = $expectedTetheredNodeType
-            ? SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter())
+            ? SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType, $this->getPropertyConverter(), $this->clock)
             : SerializedPropertyValues::createEmpty();
 
         if ($childNodeAggregate === null) {
@@ -207,7 +207,8 @@ trait TetheredNodeInternals
         $nodeAggregateId = $nodeAggregateIdsByNodePaths->getNodeAggregateId($currentNodePath) ?? NodeAggregateId::create();
         $defaultValues = SerializedPropertyValues::defaultFromNodeType(
             $tetheredNodeType,
-            $this->getPropertyConverter()
+            $this->getPropertyConverter(),
+            $this->clock
         );
 
         // NodeTypeChange is not allowed on root, thus we don't handle the empty dimension case
@@ -223,7 +224,7 @@ trait TetheredNodeInternals
                 $succeedingSiblingNodeAggregateId,
             );
             $events[] = $creationOrigin
-                ? match (
+                ? (match (
                     $this->interDimensionalVariationGraph->getVariantType(
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         $creationOrigin->toDimensionSpacePoint(),
@@ -253,7 +254,7 @@ trait TetheredNodeInternals
                         $originDimensionSpacePoint,
                         $interdimensionalSiblings,
                     ),
-                }
+                })
                 : new NodeAggregateWithNodeWasCreated(
                     $contentGraph->getWorkspaceName(),
                     $contentGraph->getContentStreamId(),
@@ -318,7 +319,8 @@ trait TetheredNodeInternals
             $presentPropertyKeys = array_keys(iterator_to_array($node->properties->serialized()));
             $complementaryPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $tetheredNodeType,
-                $this->propertyConverter
+                $this->propertyConverter,
+                $this->clock
             )
                 ->unsetProperties(PropertyNames::fromArray($presentPropertyKeys));
             $obsoletePropertyNames = PropertyNames::fromArray(
@@ -343,7 +345,7 @@ trait TetheredNodeInternals
 
         // remove or tag disallowed nodes
         if ($conflictResolutionStrategy === NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE) {
-            $handleNode = fn(NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
+            $handleNode = fn (NodeAggregate $nodeAggregateToDelete, DimensionSpacePointSet $points) => new NodeAggregateWasRemoved(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $nodeAggregateToDelete->nodeAggregateId,
@@ -353,7 +355,7 @@ trait TetheredNodeInternals
             array_push($events, ...$this->handleDisallowedNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $tetheredNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
             array_push($events, ...$this->handleObsoleteTetheredNodesWhenChangingNodeType($contentGraph, $nodeAggregate, $tetheredNodeType, $alreadyRemovedNodeAggregateIds, $handleNode));
         } elseif ($conflictResolutionStrategy instanceof NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy) {
-            $handleNode = fn(NodeAggregate $nodeAggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
+            $handleNode = fn (NodeAggregate $nodeAggregateToTag, DimensionSpacePointSet $points) => new SubtreeWasTagged(
                 $contentGraph->getWorkspaceName(),
                 $contentGraph->getContentStreamId(),
                 $nodeAggregateToTag->nodeAggregateId,

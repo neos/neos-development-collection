@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -31,6 +32,7 @@ final class StructureAdjustment extends Message
      * @param string $message An english error message which is used if no other error message can be resolved
      * @param int|null $code A unique error code
      * @param array<string,mixed> $arguments Array of arguments to be replaced in message
+     * @param \Closure():Events|null $remediation
      * @api
      */
     private function __construct(

@@ -16,15 +16,13 @@ namespace Neos\Fusion\Core;
 
 use GuzzleHttp\Psr7\Message;
 use GuzzleHttp\Psr7\Response;
-use Neos\Http\Factories\StreamFactoryTrait;
-use Psr\Http\Message\ResponseInterface;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\Exception\ForwardException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
@@ -35,9 +33,11 @@ use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Http\Factories\StreamFactoryTrait;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**

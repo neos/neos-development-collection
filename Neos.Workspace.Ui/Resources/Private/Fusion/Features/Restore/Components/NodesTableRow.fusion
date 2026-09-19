@@ -1,0 +1,86 @@
+##
+# Renders a single nodes list item
+#
+prototype(Neos.Workspace.Ui:Component.NodesTableRow) < prototype(Neos.Fusion:Component) {
+  /// Neos\Workspace\Ui\ViewModel\RestoreListItem
+  restorelistItem = ${[]}
+
+  /// integer
+  level = 0
+
+  workspaceName = ''
+
+  /// boolean
+  enableRestoreButtons = true
+
+  /// boolean
+  workspaceIsOutdated = false
+
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+    restoreUri = Neos.Fusion:ActionUri {
+      action = 'restoreNodeConfirmation'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        nodeAggregateId = ${props.restorelistItem.nodeAggregateId}
+      }
+    }
+
+    restoreConfirmationPopoverId = 'restore-confirm-modal'
+  }
+
+  renderer = afx`
+    <tr>
+      <td class="node-type-column">
+        <Neos.Workspace.Ui:Component.Icon icon={props.restorelistItem.icon}/>
+      </td>
+      <td>
+        <span>{props.restorelistItem.nodeTypeLabel}</span>
+      </td>
+      <td></td>
+      <td>
+        <span>{props.restorelistItem.deletionUserName}</span>
+      </td>
+      <td>
+        <span @if.hasDeletionDate={props.restorelistItem.deleteTime}>{Date.format(props.restorelistItem.deleteTime, 'Y-m-d H:i')}</span>
+        <span @if.hasNoDeletionDate={!props.restorelistItem.deleteTime}>-</span>
+      </td>
+      <td class="restore-action-column">
+        <Neos.Workspace.Ui:Component.Button
+          title={props.workspaceIsOutdated ? private.i18n.id('restore.table.actions.workspaceIsOutdated') : private.i18n.id('restore.table.actions.restoreElement')}
+          disabled={!props.enableRestoreButtons || props.workspaceIsOutdated}
+          icon="fa-solid fa-trash-can-arrow-up"
+          attributes.hx-get={private.restoreUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.restoreConfirmationPopoverId + '")?.showPopover()'}
+        />
+      </td>
+    </tr>
+
+    <Neos.Fusion:Loop items={props.restorelistItem.details} itemName="detail">
+      <tr>
+        <td></td>
+        <td class="node-information">
+          <span >
+            <Neos.Fusion:Loop items={detail.ancestorLabels} itemName="breadcrumbItem">
+              <Neos.Workspace.Ui:Component.Icon icon="fas fa-caret-right" @if.notFirstorSecond={!(iterator.index == 0 || iterator.index == 1)} />
+              {breadcrumbItem == 'Neos.Neos:Sites' ? '' : breadcrumbItem}
+            </Neos.Fusion:Loop>
+          </span> <br />
+          <span>{detail.label}</span><br />
+
+        </td>
+        <td>
+          <Neos.Fusion:Loop items={detail.dimensionValueLabels} itemKey="key" itemName="dimension">
+            <span class="neos-label" title={dimension}>{dimension}</span>
+          </Neos.Fusion:Loop>
+        </td>
+        <td colspan="3"></td>
+      </tr>
+    </Neos.Fusion:Loop>
+  `
+}

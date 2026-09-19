@@ -31,13 +31,13 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
@@ -117,6 +117,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             RootNodeAggregateWithNodeWasCreated::class,
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasRebased::class
         ]);
@@ -174,6 +175,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         if (
             $eventInstance instanceof WorkspaceWasDiscarded
             || $eventInstance instanceof WorkspaceWasRebased
+            || $eventInstance instanceof WorkspaceBaseWorkspaceWasChanged
         ) {
             $this->scheduleCacheFlushJobForWorkspaceName($eventInstance->workspaceName);
         } elseif (

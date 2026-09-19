@@ -12,7 +12,7 @@ final class FakeCommandHookFactory implements CommandHookFactoryInterface
 {
     private static CommandHookInterface $commandHook;
 
-    public function build(CommandHooksFactoryDependencies $commandHooksFactoryDependencies,): CommandHookInterface
+    public function build(CommandHooksFactoryDependencies $commandHooksFactoryDependencies): CommandHookInterface
     {
         return static::$commandHook ?? throw new \RuntimeException('No command hook defined for Fake.');
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\View;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Fusion\Tests\Functional\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Fusion\Core\IllegalEntryFusionPathValueException;
 use Neos\Fusion\View\FusionView;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 

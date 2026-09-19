@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core\Cache;
 
 /*
@@ -10,10 +11,10 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\CacheSegmentParser;
 use Neos\Fusion\Exception;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the CacheSegmentParser

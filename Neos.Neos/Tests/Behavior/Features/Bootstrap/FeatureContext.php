@@ -34,7 +34,7 @@ class FeatureContext implements BehatContext
     use BrowserTrait;
 
     use CRTestSuiteTrait {
-        deserializeProperties  as deserializePropertiesCrTestSuiteTrait;
+        deserializeProperties as deserializePropertiesCrTestSuiteTrait;
     }
     use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\ViewHelpers\Link;
 
 /*
@@ -10,10 +11,10 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers\Link;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Neos\ViewHelpers\Link\ModuleViewHelper;
 use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;

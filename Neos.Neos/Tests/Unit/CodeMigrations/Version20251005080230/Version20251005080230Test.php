@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Tests\Unit\CodeMigrations\Version20251005080230;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Core\Migrations\Manager;
 use Neos\Flow\Core\Migrations\Version20251005080230;
 use Neos\Neos\Tests\Unit\CodeMigrations\MigrationFixtureIterator;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class Version20251005080230Test extends TestCase
@@ -49,7 +49,8 @@ class Version20251005080230Test extends TestCase
 
         $migration->prepare($targetPackageData);
         $migration->up();
-        $migration->execute();
+        // FIXME, we cannot use execute() in the tests as applySearchAndReplaceOperations() does not work on a vfs because of realpath()
+        $migration->applyEelFusionOperations();
 
         self::assertEquals(
             $expectedFusionOutputFile,
@@ -87,8 +88,8 @@ class Version20251005080230Test extends TestCase
 
         $migration->prepare($targetPackageData);
         $migration->up();
-
-        $migration->execute();
+        // FIXME, we cannot use execute() in the tests as applySearchAndReplaceOperations() does not work on a vfs because of realpath()
+        $migration->applyEelFusionOperations();
 
         self::assertEquals(
             $migratedFusionFile,

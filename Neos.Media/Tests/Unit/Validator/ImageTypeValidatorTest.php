@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Validator;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Media\Tests\Unit\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Validator\ImageTypeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the ImageTypeValidator

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 
 /*
@@ -14,8 +15,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class AbsoluteNodePathTest extends TestCase
 {

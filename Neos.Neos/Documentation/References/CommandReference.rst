@@ -145,7 +145,7 @@ Related commands
 ^^^^^^^^^^^^^^^^
 
 ``neos.flow:cache:show``
-  Display details of a cache including a detailed status if available
+  <no description available>
 
 
 
@@ -163,7 +163,7 @@ Arguments
 ^^^^^^^^^
 
 ``--cache-identifier``
-  
+
 
 
 
@@ -215,7 +215,7 @@ Related commands
 ``neos.flow:cache:show``
 ************************
 
-**Display details of a cache including a detailed status if available**
+**&lt;no description available&gt;**
 
 
 
@@ -294,7 +294,7 @@ Options
 ``neos.flow:configuration:listtypes``
 *************************************
 
-**List registered configuration types**
+**&lt;no description available&gt;**
 
 
 
@@ -898,7 +898,7 @@ Options
 ``neos.flow:middleware:list``
 *****************************
 
-**Lists all configured middleware components in the order they will be executed**
+**&lt;no description available&gt;**
 
 
 
@@ -969,7 +969,7 @@ Options
 ``neos.flow:package:rescan``
 ****************************
 
-**Rescan package availability and recreates the PackageStates configuration.**
+**&lt;no description available&gt;**
 
 
 
@@ -1177,7 +1177,7 @@ Arguments
 ``neos.flow:schema:validate``
 *****************************
 
-**Validate the given configuration file against a schema file**
+**&lt;no description available&gt;**
 
 
 
@@ -1202,7 +1202,7 @@ Options
 ``neos.flow:security:describerole``
 ***********************************
 
-**Show details of a specified role**
+**&lt;no description available&gt;**
 
 
 
@@ -1223,7 +1223,7 @@ Arguments
 ``neos.flow:security:generatekeypair``
 **************************************
 
-**Generate a public/private key pair and add it to the RSAWalletService**
+**&lt;no description available&gt;**
 
 
 
@@ -1286,7 +1286,7 @@ Related commands
 ``neos.flow:security:importpublickey``
   Import a public key
 ``neos.flow:security:generatekeypair``
-  Generate a public/private key pair and add it to the RSAWalletService
+  <no description available>
 
 
 
@@ -1317,7 +1317,7 @@ Related commands
 ``neos.flow:security:listroles``
 ********************************
 
-**List all configured roles**
+**&lt;no description available&gt;**
 
 
 
@@ -1338,7 +1338,7 @@ Options
 ``neos.flow:security:showeffectivepolicy``
 ******************************************
 
-**Shows a list of all defined privilege targets and the effective permissions**
+**&lt;no description available&gt;**
 
 
 
@@ -1388,7 +1388,7 @@ Arguments
 ``neos.flow:security:showunprotectedactions``
 *********************************************
 
-**Lists all public controller actions not covered by the active security policy**
+**&lt;no description available&gt;**
 
 
 
@@ -1470,7 +1470,7 @@ This is functionally equivalent to
 ``neos.flow:signal:listconnected``
 **********************************
 
-**Lists all connected signals with their slots.**
+**&lt;no description available&gt;**
 
 
 
@@ -1892,7 +1892,7 @@ Options
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
 ``--quiet``
-  
+
 
 
 
@@ -2045,7 +2045,7 @@ Package *NEOS.NEOS*
 ``neos.neos:domain:activate``
 *****************************
 
-**Activate a domain record by hostname (with globbing)**
+**&lt;no description available&gt;**
 
 
 
@@ -2066,7 +2066,7 @@ Arguments
 ``neos.neos:domain:add``
 ************************
 
-**Add a domain record**
+**&lt;no description available&gt;**
 
 
 
@@ -2097,7 +2097,7 @@ Options
 ``neos.neos:domain:deactivate``
 *******************************
 
-**Deactivate a domain record by hostname (with globbing)**
+**&lt;no description available&gt;**
 
 
 
@@ -2118,7 +2118,7 @@ Arguments
 ``neos.neos:domain:delete``
 ***************************
 
-**Delete a domain record by hostname (with globbing)**
+**&lt;no description available&gt;**
 
 
 
@@ -2139,7 +2139,7 @@ Arguments
 ``neos.neos:domain:list``
 *************************
 
-**Display a list of available domain records**
+**&lt;no description available&gt;**
 
 
 
@@ -2311,7 +2311,7 @@ Options
 ``neos.neos:site:list``
 ***********************
 
-**List available sites**
+**&lt;no description available&gt;**
 
 
 
@@ -2326,7 +2326,7 @@ Options
 ``neos.neos:site:pruneall``
 ***************************
 
-**This will completely prune the data of the specified content repository and remove all site-records.**
+**&lt;no description available&gt;**
 
 
 
@@ -2688,7 +2688,7 @@ Options
 ``neos.neos:workspace:createpersonal``
 **************************************
 
-**Create a new personal workspace for the specified user**
+**&lt;no description available&gt;**
 
 
 
@@ -2844,7 +2844,7 @@ Options
 ``neos.neos:workspace:list``
 ****************************
 
-**Display a list of existing workspaces**
+**&lt;no description available&gt;**
 
 
 
@@ -2921,7 +2921,7 @@ Options
 ``neos.neos:workspace:rebaseoutdated``
 **************************************
 
-**Rebase all outdated content streams**
+**&lt;no description available&gt;**
 
 
 
@@ -2933,7 +2933,7 @@ Options
 ``--content-repository``
   The name of the content repository. (Default: 'default')
 ``--force``
-  
+
 
 
 
@@ -2944,7 +2944,7 @@ Options
 ``neos.neos:workspace:setdescription``
 **************************************
 
-**Set/change the description of a workspace**
+**&lt;no description available&gt;**
 
 
 
@@ -2973,7 +2973,7 @@ Options
 ``neos.neos:workspace:settitle``
 ********************************
 
-**Set/change the title of a workspace**
+**&lt;no description available&gt;**
 
 
 
@@ -3002,7 +3002,7 @@ Options
 ``neos.neos:workspace:show``
 ****************************
 
-**Display details for the specified workspace**
+**&lt;no description available&gt;**
 
 
 
@@ -3029,7 +3029,7 @@ Options
 ``neos.neos:workspace:unassignrole``
 ************************************
 
-**Unassign a workspace role from the given user/user group**
+**&lt;no description available&gt;**
 
 
 
@@ -3066,7 +3066,7 @@ Package *NEOS.NEOS.SETUP*
 ``neos.neos.setup:setup:imagehandler``
 **************************************
 
-****
+**&lt;no description available&gt;**
 
 
 
@@ -3093,7 +3093,7 @@ Package *NEOS.SETUP*
 ``neos.setup:setup:database``
 *****************************
 
-**Configure the database connection for flow persistence**
+**&lt;no description available&gt;**
 
 
 
@@ -3122,7 +3122,7 @@ Options
 ``neos.setup:setup:index``
 **************************
 
-**Show information about the system health**
+**&lt;no description available&gt;**
 
 
 

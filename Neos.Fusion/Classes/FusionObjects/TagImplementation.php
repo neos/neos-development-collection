@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -99,7 +100,7 @@ class TagImplementation extends AbstractFusionObject
         if ($allowEmpty === null) {
             return true;
         } else {
-            return (boolean)$allowEmpty;
+            return (bool)$allowEmpty;
         }
     }
 

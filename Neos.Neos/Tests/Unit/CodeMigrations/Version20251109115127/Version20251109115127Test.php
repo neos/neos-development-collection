@@ -8,9 +8,9 @@ use Neos\Flow\Core\Migrations\Manager;
 use Neos\Flow\Core\Migrations\Version20251109115127;
 use Neos\Neos\Tests\Unit\CodeMigrations\MigrationFixtureIterator;
 use org\bovigo\vfs\vfsStream;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class Version20251109115127Test extends TestCase
 {
@@ -54,7 +54,6 @@ class Version20251109115127Test extends TestCase
 
         $migration->prepare($targetPackageData);
         $migration->up();
-        $migration->execute();
 
         self::assertEquals(
             $expectedYamlOutputFile,
@@ -92,7 +91,6 @@ class Version20251109115127Test extends TestCase
 
         $migration->prepare($targetPackageData);
         $migration->up();
-        $migration->execute();
 
         self::assertEquals(
             $expectedYamlOutputFile,
@@ -134,8 +132,6 @@ class Version20251109115127Test extends TestCase
 
         $migration->prepare($targetPackageData);
         $migration->up();
-
-        $migration->execute();
 
         self::assertEquals(
             $migratedYamlFile,

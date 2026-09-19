@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\ArbitraryNumber;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
@@ -299,7 +300,7 @@ trait ProjectedNodeTrait
                 sort($explicitTags);
                 $inheritedTags = $subtree->node->tags->onlyInherited()->toStringArray();
                 sort($inheritedTags);
-                $tags = [...array_map(static fn(string $tag) => $tag . '*', $explicitTags), ...$inheritedTags];
+                $tags = [...array_map(static fn (string $tag) => $tag . '*', $explicitTags), ...$inheritedTags];
                 $result[] = str_repeat(' ', $subtree->level) . $subtree->node->aggregateId->value . ($tags !== [] ? ' (' . implode(',', $tags) . ')' : '');
                 $subtreeStack = [...$subtree->children, ...$subtreeStack];
             }
@@ -373,14 +374,8 @@ trait ProjectedNodeTrait
             foreach ($expectedPropertyTypes->getHash() as $row) {
                 Assert::assertTrue($serialized->propertyExists($row['Key']), 'Property "' . $row['Key'] . '" not found');
                 Assert::assertEquals($row['Type'], $serialized->getProperty($row['Key'])->type, 'Serialized node property ' . $row['Key'] . ' does not match expected type.');
-                if (str_starts_with($row['Value'], 'NOT:')) {
-                    // special case. assert NOT equals:
-                    $value = json_decode(mb_substr($row['Value'], 4), true, 512, JSON_THROW_ON_ERROR);
-                    Assert::assertNotEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does match value it should not.');
-                } else {
-                    $value = json_decode($row['Value'], true, 512, JSON_THROW_ON_ERROR);
-                    Assert::assertEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does not match expected value.');
-                }
+                $value = json_decode($row['Value'], true, 512, JSON_THROW_ON_ERROR);
+                Assert::assertEquals($value, $serialized->getProperty($row['Key'])->value, 'Serialized node property ' . $row['Key'] . ' does not match expected value.');
             }
         });
     }
@@ -411,7 +406,7 @@ trait ProjectedNodeTrait
         });
     }
 
-    private function resolvePropertyValue(string $serializedPropertyValue)
+    private function resolvePropertyValue(string $serializedPropertyValue): mixed
     {
         switch ($serializedPropertyValue) {
             case 'PostalAddress:dummy':
@@ -431,6 +426,8 @@ trait ProjectedNodeTrait
                     return new Uri(\mb_substr($serializedPropertyValue, 4));
                 } elseif (\str_starts_with($serializedPropertyValue, 'DayOfWeek:')) {
                     return DayOfWeek::from(\mb_substr($serializedPropertyValue, 10));
+                } elseif (\str_starts_with($serializedPropertyValue, 'ArbitraryNumber:')) {
+                    return ArbitraryNumber::from((int)\mb_substr($serializedPropertyValue, 16));
                 }
         }
 

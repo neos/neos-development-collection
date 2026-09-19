@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Model\Dto;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\Dto\AssetConstraints;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the AssetConstraints DTO

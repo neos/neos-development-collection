@@ -1,0 +1,125 @@
+`9.1.3 (2026-02-12) <https://github.com/neos/neos-development-collection/releases/tag/9.1.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add Missing ChangePropertyTypeFromScalarToBackedEnum transformation <https://github.com/neos/neos-development-collection/pull/5725>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This was simply missing in the default settings
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+none
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: Comments must not be null when handled to string functions <https://github.com/neos/neos-development-collection/pull/5698>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Resloves: #5697
+
+* Packages: ``ContentRepository.NodeMigration``
+
+`BUGFIX: Relax descendant node type checks to allow matching tethered children on node type change <https://github.com/neos/neos-development-collection/pull/5729>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Given I have Node Types A and B that both have the same tethered descendant named whatever of type C that would not be allowed as a child if it was not tethered
+
+When I tried to change Node Type from A to B (e.g. via migration) this would fail because C is not allowed as child of B
+
+I've added a check to match the tethering configuration; in this case the node of type C can stay as a tethered child even after the type change from A to B
+
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+Check the tests or try this at home :)
+
+
+* Packages: ``ContentRepository.Core``
+
+`BUGFIX: Prevent root nodes from being copied when moving the empty DSP <https://github.com/neos/neos-development-collection/pull/5742>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Until now, root nodes were copied when moving from zero to more dimensions, leading to unexpected behavior
+
+**Upgrade instructions**
+
+If you ran into issues when executing a ``MoveDimensionSpacePoint`` migration from the empty DSP, replaying the graph projection is necessary
+
+**Review instructions**
+
+please check the tests, the implementation is rather trivial
+
+
+* Packages: ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Allow possible translation value to be null <https://github.com/neos/neos-development-collection/pull/5722>`_
+----------------------------------------------------------------------------------------------------------------------
+
+If the value of a potential translateable field is null, the trim function complains about a non-string value. So we check now upfront, if the value is null.
+
+```
+trim(): Argument `#1 <https://github.com/neos/neos-development-collection/issues/1>`_($string) must be of type string, null given
+```
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``ContentRepositoryRegistry``
+
+`BUGFIX: Allow possible translation value to be null <https://github.com/neos/neos-development-collection/pull/5726>`_
+----------------------------------------------------------------------------------------------------------------------
+
+backport of https://github.com/neos/neos-development-collection/pull/5722
+
+**Upgrade instructions**
+
+
+* Packages: ``NodeTypes.ColumnLayouts`` ``Neos``
+
+`TASK: Add tests for content cache flushing on subtree tagging <https://github.com/neos/neos-development-collection/pull/5741>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Adding additional behavioral tests for content cache flushing when adding and removing subtree tags.
+
+* Packages: ``Neos``
+
+`TASK: Improve contribution guidelines <https://github.com/neos/neos-development-collection/pull/5743>`_
+--------------------------------------------------------------------------------------------------------
+
+These are some slight adjustments to the contribution guidelines, to make them a bit easier to digest.
+I mainly added the following:
+
+- table of contents, to make finding specific content easier
+- a couple of direct links to various section headlines, where previously we had just a standin "read further down below"
+- a note block to the branching model, so it gets better visual highlighting
+
+`TASK: Improve pr template <https://github.com/neos/neos-development-collection/pull/5740>`_
+--------------------------------------------------------------------------------------------
+
+While working on my first feature I noticed that the various contribution guidelines sometimes contradict each other or are not perfectly clear.
+
+This PR is part of trying to improve this for the forking/branching-model. However I am not sure if I've got the facts right in the first place 😅 - @Sebobo ?
+
+Furthermore I do think it would be useful to consolidate all of that information into one single source of truth instead of having it repeated across multiple pages.
+Apart from the pr-template these are some of the pages which are being referenced across various docs:
+- https://discuss.neos.io/t/creating-a-pull-request/506 (referenced by `this discuss post <https://discuss.neos.io/t/code-contribution-guideline/503>``_, which istelf is being referenced by ``the contribution guidelines in this repo <https://github.com/neos/neos-development-collection/blob/9.0/CONTRIBUTING.md>`_
+- https://docs.neos.io/guide/contributing-to-neos/neos-core#contribution-workflow
+
+In my opinion it would probably make the most sense, if all necessary information was part of the ``CONTRIBUTING.md``-file. The neos docs site could also be shortened and just point to the markdown file. I would also remove the links to these discuss posts and just make sure that all information is part of the markdown file and up to date.
+The CONTRIBUTING.md file is typically the documentation I would be looking for when contributing to open source and standard practice. Though having a couple of lines directly inside the neos docs to point newcomers to this resource would still definitely make sense.
+
+What do you think?
+
+* Packages: ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.1.1...9.1.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

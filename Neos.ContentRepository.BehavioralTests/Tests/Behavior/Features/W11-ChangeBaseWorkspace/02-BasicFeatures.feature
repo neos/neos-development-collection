@@ -107,3 +107,18 @@ Feature: Change base workspace works :D what else
     And I expect this node to have the following properties:
       | Key  | Value                |
       | text | "New node in shared" |
+
+    # workspace is writeable (version checks work)
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                    |
+      | workspaceName             | "user-test"                              |
+      | nodeAggregateId           | "sir-david-nodenborough"                 |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Content" |
+      | originDimensionSpacePoint | {}                                       |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                 |
+      | initialPropertyValues     | {"text": "New node"}                     |
+    # publish events that _actually_ are written on the workspace stream
+    When the command DiscardWorkspace is executed with payload:
+      | Key                | Value                          |
+      | workspaceName      | "user-test"                    |
+      | newContentStreamId | "user-cs-identifier-discarded" |

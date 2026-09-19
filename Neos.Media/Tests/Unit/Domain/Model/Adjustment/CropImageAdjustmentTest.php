@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
 
 /*
@@ -10,8 +11,6 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
 use Imagine\Image\Palette\Color\ColorInterface;
@@ -21,6 +20,8 @@ use Imagine\Image\Point;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
 use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Crop Image Adjustment

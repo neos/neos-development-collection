@@ -1,0 +1,9 @@
+`9.2.0-beta2 (2026-07-16) <https://github.com/neos/neos-development-collection/releases/tag/9.2.0-beta2>`_
+==========================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.1.7...9.2.0-beta2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

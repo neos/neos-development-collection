@@ -1,0 +1,190 @@
+Neos.Workspace.Ui.RestoreController.show = Neos.Fusion:Component {
+  /// Neos\Workspace\Ui\ViewModel\RestoreListItems
+  restoreListItems = ${restoreListItems}
+
+  /// array
+  flashMessages = ${flashMessages}
+
+  /// Neos\Workspace\Ui\Domain\Sorting
+  sorting = ${sorting}
+
+  /// string
+  workspaceName = ${workspaceName}
+
+  /// string
+  searchTerm = ${searchTerm}
+
+  pagination = ${pagination}
+
+  /// int
+  currentPage = ${currentPage}
+
+  /// string
+  workspaceLabel = ${workspaceLabel}
+
+  /// boolean
+  enableRestoreButtons = ${enableRestoreButtons}
+
+  /// boolean
+  workspaceIsOutdated = ${workspaceIsOutdated}
+
+  backToWorkspaceOverview = Neos.Fusion:UriBuilder {
+    action = 'index'
+    controller = 'Workspace'
+    format = 'html'
+  }
+
+  i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+
+  searchTermUri = Neos.Fusion:ActionUri {
+    action = 'show'
+    controller = 'Restore'
+    format = 'html'
+    arguments {
+        workspaceName = ${workspaceName}
+        page = 1
+        searchTerm = ${searchTerm}
+        sorting = ${Json.stringify(sorting)}
+    }
+  }
+
+  showUri = Neos.Fusion:ActionUri {
+    action = 'show'
+    controller = 'Restore'
+    format = 'html'
+    arguments {
+        workspaceName = ${workspaceName}
+        page = ${currentPage}
+        searchTerm = ${searchTerm}
+        sorting = ${Json.stringify(sorting)}
+    }
+  }
+
+  clearSearchTermUri = Neos.Fusion:ActionUri {
+    action = 'show'
+    controller = 'Restore'
+    format = 'html'
+    arguments {
+        workspaceName = ${workspaceName}
+        page = 1
+        searchTerm = ''
+        sorting = ${Json.stringify(sorting)}
+    }
+  }
+  rebaseWorkspaceUri = Neos.Fusion:ActionUri {
+    action = 'rebase'
+    format = 'htmx'
+    controller = 'Workspace'
+    arguments {
+      workspaceName = ${workspaceName}
+      force = false
+    }
+  }
+
+  rebaseWorkspacePopoverId = 'workspace-rebase-modal'
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.ModuleWrapper
+      flashMessages={props.flashMessages}
+    >
+      <main class="neos-content neos-container-fluid">
+        <div class="neos-row-fluid">
+          <div class="neos-span6">
+            <legend>
+              {props.i18n.id('restore.deletedElements').arguments([workspaceLabel]).translate()}
+            </legend>
+          </div>
+          <div class="neos-span6">
+            <form
+              hx-get={props.searchTermUri}
+              @if.hasListItems={props.restoreListItems || props.searchTerm}
+              hx-target="#workspace-module-content"
+              hx-select="#workspace-module-content"
+              hx-swap="outerHTML"
+              hx-push-url="true"
+            >
+              <div class="neos-search-bar neos-pull-right">
+                <button type="submit" class="neos-button"><i class="fas fa-search"></i></button>
+                <input
+                  type="search"
+                  name="moduleArguments[searchTerm]"
+                  placeholder={props.i18n.id('restore.searchTerm').translate()}
+                  value={props.searchTerm}
+                  autofocus
+                />
+                <a
+                  href="#"
+                  @if.isNotCurrent={!props.isCurrentPage}
+                  hx-get={props.clearSearchTermUri}
+                  hx-replace-url={props.clearSearchTermUri}
+                  hx-target="#workspace-module-content"
+                  hx-select="#workspace-module-content"
+                  hx-swap="outerHTML"
+                  class="neos-button"
+                >
+                  <i class="fas fa-times"></i>
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <Neos.Workspace.Ui:Component.NodesTable
+          @if.hasListItems={props.restoreListItems}
+          restoreListItems={props.restoreListItems}
+          workspaceName={props.workspaceName}
+          sorting={props.sorting}
+          workspaceIsOutdated={props.workspaceIsOutdated}
+          enableRestoreButtons={props.enableRestoreButtons}
+          currentPage={props.currentPage}
+          searchTerm={props.searchTerm}
+        />
+        <Neos.Workspace.Ui:Component.Pagination
+          workspaceName={props.workspaceName}
+          pagination={props.pagination}
+          searchTerm={props.searchTerm}
+          sorting={props.sorting}
+        />
+
+        <div @if.hasNoListItems={!props.restoreListItems}>
+          <p>
+            {props.searchTerm ? props.i18n.id('restore.noDeletedElementsForThisSearch') : props.i18n.id('restore.noDeletedElements')}
+          </p>
+        </div>
+      </main>
+      <Neos.Workspace.Ui:Component.Footer>
+        <Neos.Workspace.Ui:Component.Button
+          label={props.i18n.id('restore.backToWorkspaceList')}
+          title={props.i18n.id('restore.backToWorkspaceList')}
+          icon="arrow-left icon-white"
+          attributes.hx-get={props.backToWorkspaceOverview}
+          attributes.hx-replace-url={props.backToWorkspaceOverview}
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-select="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+        />
+        <div class="neos-pull-right">
+          <Neos.Workspace.Ui:Component.Button
+            @if.workspaceIsOutdated={props.workspaceIsOutdated}
+            isDanger
+            label={props.i18n.id('restore.syncButtonLabel').translate()}
+            title={props.i18n.id('restore.syncButtonTitle').translate()}
+            icon="sync icon-white"
+            attributes.hx-get={props.rebaseWorkspaceUri}
+            attributes.hx-target="#popover-container"
+            attributes.hx-select="#workspace-rebase-modal"
+            attributes.hx-swap="outerHTML"
+            attributes.hx-on--after-request={'document.getElementById("' + props.rebaseWorkspacePopoverId + '")?.showPopover()'}
+            attributes.id="sync-workspace-button"
+          />
+          <div hx-get={props.showUri}
+               hx-trigger="htmx:afterOnLoad from:#sync-workspace-button"
+               hx-target="#workspace-module-content"
+               hx-select="#workspace-module-content"
+               hx-swap="outerHTML">
+          </div>
+        </div>
+      </Neos.Workspace.Ui:Component.Footer>
+    </Neos.Workspace.Ui:Component.ModuleWrapper>
+  `
+}

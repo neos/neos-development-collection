@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Validation\Validator;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Flow\Validation\Exception\InvalidSubjectException;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Validation\Validator\UserDoesNotExistValidator;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the UserDoesNotExistValidator

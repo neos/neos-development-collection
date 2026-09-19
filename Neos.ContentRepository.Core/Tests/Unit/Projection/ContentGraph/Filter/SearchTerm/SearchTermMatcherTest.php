@@ -8,9 +8,9 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class SearchTermMatcherTest extends TestCase
 {
@@ -89,7 +89,7 @@ class SearchTermMatcherTest extends TestCase
         yield 'inside array: string found inside string' => ['foo', self::value(['foo'])];
         yield 'inside array-object: string found inside string' => ['foo', self::value(new \ArrayObject(['foo']))];
 
-        foreach([
+        foreach ([
             ...iterator_to_array(self::matchingStringComparisonExamples()),
             ...iterator_to_array(self::matchingNumberLikeComparisonExamples()),
             ...iterator_to_array(self::matchingBooleanLikeComparisonExamples()),

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
 
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class PropertyNamesTest extends TestCase
 {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for Eel expressions in Fusion

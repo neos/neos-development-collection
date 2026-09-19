@@ -1,0 +1,262 @@
+`9.1.1 (2025-12-17) <https://github.com/neos/neos-development-collection/releases/tag/9.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Trashbin for the workspace module  / a.k.a. "EPIC: Trash" <https://github.com/neos/neos-development-collection/pull/5542>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+## Trashbin for the workspace module 
+This feature extends the current workspace module and adds a new view for each workspace where deleted Elements can be restored.
+Deleted Elements in this case do not mean current changes in the workspace, but Elements that have been deleted in the past. Thanks to the new Content repository that is now possible. 
+
+
+
+### New button in the workspace overview
+Note: the button is only enabled if the workspace is up-to-date
+<img width="1219" height="524" alt="Bildschirmfoto 2025-12-11 um 12 27 38" src="https://github.com/user-attachments/assets/09cd518c-872c-4e97-b4f5-193cf6b7b5f2" />
+
+### The overview of deleted nodes in each workspace
+<img width="1315" height="863" alt="Bildschirmfoto 2025-12-11 um 12 50 21" src="https://github.com/user-attachments/assets/8e2ee22c-9d41-43fe-bf39-80c261d255fa" />
+
+### Searching for deleted nodes
+<img width="1323" height="424" alt="Bildschirmfoto 2025-12-11 um 13 03 51" src="https://github.com/user-attachments/assets/a8b98b58-39b1-4240-a67b-e21a5136612e" />
+
+### Pagination if there are more than 20 deleted elements 
+<img width="1315" height="857" alt="Bildschirmfoto 2025-12-11 um 13 08 40" src="https://github.com/user-attachments/assets/2e5d9c5e-1b94-43af-967d-91e5933e1786" />
+
+### Popup that shows which parent and child elements will additionally be restored 
+<img width="1312" height="861" alt="Bildschirmfoto 2025-12-11 um 12 51 01" src="https://github.com/user-attachments/assets/be06de18-04a2-4a5f-ad11-f3a89b24537f" />
+ 
+### Synchronize workspace button
+If the workspace becomes outdated while the user is restoring elements, a button for syncing the workspace will be shown
+<img width="1317" height="863" alt="Bildschirmfoto 2025-12-11 um 12 51 46" src="https://github.com/user-attachments/assets/1a4fb073-c7e9-4157-8ff3-f599dc80721a" />
+
+
+
+## Upgrade instructions
+
+This change introduces a new content repository projection. To enable the functionality when opening the trash bin the new tables need to be setup and also the projection subscription needs to be started and will already for a running Neos include all trash items if any are found in the events.
+
+```
+./flow cr:setup
+./flow subscription:replay Neos.Workspace.Ui:TrashBinProjection
+```
+
+**Todo**
+- [x] fix phpstan errors
+- [x] fix most of the remaining todos and explain remaining todos well
+- [x] add title labels to buttons in the ui
+
+
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`FEATURE: Document new link editor for readthedocs <https://github.com/neos/neos-development-collection/pull/5709>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The Neos UI ships with https://github.com/neos/neos-ui/pull/3996 a new link editor. Its backwards-compatible to already set links and also supports the same options though in a different structure (see documentation).
+
+Following legacy options should be rewritten to use the declaration in ``linkTypes`` instead. They will be upcasted (via https://github.com/neos/neos-ui/pull/4037) at runtime if no new declaration in ``linkTypes`` is made. Using new and old syntax simultaneously will lead to old syntax being ignored fully.
+
+- ``assets`` use ``linkTypes.Asset.enabled: false`` instead to disabled asset links
+- ``nodes`` use ``linkTypes.Node.enabled: false`` instead to disabled asset links
+- ``nodeTypes`` use ``linkTypes.Node.baseNodeType`` with a NodeType filter string instead
+- ``startingPoint`` use ``linkTypes.Node.startingPoint`` instead
+- ``placeholder`` obsolete finds no application in the new link editor can be safely removed
+
+The ``anchor`` option for the inline editor to enable anchor support was removed. Instead anchors can be set via the "Advanced Options" to both Asset and Node links. For Web links the anchor is naturally part of the full link input at all times.
+
+```diff
+  inline:
+    editorOptions:
+      linking:
+-       anchor: true
+        title: true
+        relNofollow: true
+        targetBlank: true
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Add node migration transformation to change properties from scalar to BackedEnum <https://github.com/neos/neos-development-collection/pull/5692>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+this is a followup feature for https://github.com/neos/flow-development-collection/pull/3523#issuecomment-3587053387
+
+Since now we have fully fledged enum support for node properties, this now adds a node transformation that retroactively changes previously set strings (or ints) to their \\BackedEnum counterparts - given the NodeType configuration has been adjusted beforehand.
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+see tests
+
+
+* Packages: ``ContentRepository.BehavioralTests`` ``ContentRepository.NodeMigration``
+
+`FEATURE: New link value object for new link editor (inspector) <https://github.com/neos/neos-development-collection/pull/5682>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+In the Neos Ui https://github.com/neos/neos-ui/pull/3996 will introduce a new LinkEditor based on the Archaeopteryx.
+
+With https://github.com/sitegeist/Sitegeist.Archaeopteryx/pull/44 the Archaeopteryx allowed not only to use the inspector editor for simple string values but also to use the ``Sitegeist\\Archaeopteryx\\Link`` value object which allows to store additional data from the LinkEditor like title,rel target and further.
+
+Adapted to Neos this would look like:
+
+```yaml
+My.Content:
+  properties:
+    link:
+      type: 'Neos\\Neos\\Domain\\Link\\Link'
+      ui:
+        inspector:
+          editorOptions:
+            anchor: true
+            title: true
+            targetBlank: true
+            relNofollow: true
+            download: true
+```
+
+The link value object can be queried as usual. An example rendering would look the following:
+
+```
+link = ${q(node).property("link")}
+renderer = afx`
+    <a href={props.link.href} title={props.link.title} target={props.link.target} rel={props.link.rel} rel.@if={props.link.rel != []}>
+        My Text
+    </a>
+`
+```
+
+As the Archaeopteryx will now be part of the core we must discuss how or if we should also support this new feature in Neos 9.1 already.
+
+The reason this discussion/PR is opened here in Neos.Neos is that the value object is part of the NodeType definition and thus existential part of the content repository and nodes. Writing an importer would require to use the value object as well and depending on the Neos Ui package - which has no PHP API - is not correct.
+
+### Discussion
+
+This change is not finished. With Neos 9 we have the asset usage for example which inspects all node properties to keep track of assets. This code would also need to be extended to look into this new value object.
+
+When we think of relations from a node to another node - which is at the current form a link via ``node://`` protocol well also quickly realise that this is flawed as we have no simple way to validate that all outgoing links still work or cannot warn or notify when deleting a target node. This is true for the ckeditor blob but for links as a simple property it doesnt have to be this way. Neos 9 introduced references with properties on the edge. A node to node link with properties like title,rel or target can FULLY be implemented via a reference instead. And its way easier to work with real reference nodes instead of fiddling with plain ``node://`` strings or node strings that are encapsulated in a shiny ``Link`` object but just magic strings at the end still. The link editor obviously shines in that it allows to _either_ reference a node or an external website or asset. References cannot to external websites but might be able to learn assets at one point. The question is if we should introduce the concept of an apparent shiny link value object to the core when we already know it's not the holy grail?
+
+As well probably continue to face the issue of inline links in ckeditor text blobs and cannot define that primary usecase away ^^ well have to find a solution for this already. On the Dresden sprint the idea was to possibly introduce on every node a reference blob which contains entries for all used node links on that node especially regarding text blobs. But that reference blog could also track the references used in the inspector link editor and this way we could continue and be happy with a stupid ``Link`` object? :)
+
+Also for handling this new object and correctly serialising that for the Neos Ui we need to merge https://github.com/neos/neos-ui/pull/3723
+
+-> We discussed that the primary use case is that one wants to define a link to somewhere. That might be an external page or internal. Either way the fact that its an internal node is usually not relevant to the integration as the node schema will be converted to an actual http link during rendering via ``ConvertUris``. One rarely wants to have a node instance at hand here and thus actual reference edges might not be important except for the tracking of content. And for tracking node ids an idea is outlined above or we introduce an indexer like the ``AssetUsage``
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`FEATURE: Reimplementation: show contact person for inaccessible media usages <https://github.com/neos/neos-development-collection/pull/5578>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+- rewrite controller function to get data from new workspace structure
+- changes structure of ´RelatedNodes.html´ to match new structure
+
+Ticket: https://github.com/neos/neos-development-collection/issues/5437
+
+
+* Packages: ``Neos`` ``SiteKickstarter`` ``Media.Browser``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as ``['key' => 'value']``.
+
+NEOS-1460 #close
+
+`BUGFIX: Translate label for childNodes <https://github.com/neos/neos-development-collection/pull/5667>`_
+---------------------------------------------------------------------------------------------------------
+
+Added translation support for labels of autocreated childNodes
+
+## Example:
+
+yaml-File:
+```yaml
+'Neos.Demo:Content.Columns.Two':
+  ...
+  childNodes:
+    column0:
+      type: 'Neos.Demo:Collection.Content.Column'
+      label: i18n
+    column1:
+      type: 'Neos.Demo:Collection.Content.Column'
+      label: i18n
+```
+
+xlf-file:
+```xlf
+...
+<trans-unit id="childNodes.column0" xml:space="preserve">
+	<source>Left Column</source>
+</trans-unit>
+<trans-unit id="childNodes.column1" xml:space="preserve">
+	<source>Right Column</source>
+</trans-unit>
+...
+```
+
+## Changes:
+Added childNode labels in addLabelsToNodeTypeConfiguration in NodeConfigurationEnrichmentAspect and implemented function for transforming i18n to a later translated id
+
+Implemented translating of said id to the actual translation in ExpressionBasedNodeLabelGenerator in function getLabel
+
+resolved: https://github.com/neos/neos-development-collection/issues/5643
+
+## Environment
+```
+- Flow: 8.4
+- Neos: 8.4
+- PHP: 8.3
+```
+
+
+* Packages: ``Neos``
+
+`TASK: Upmerge 8.4 into 9.0 <https://github.com/neos/neos-development-collection/pull/5711>`_
+---------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``ContentRepositoryRegistry``
+
+`TASK: Adds new Neos 9.1 wallpaper <https://github.com/neos/neos-development-collection/pull/5710>`_
+----------------------------------------------------------------------------------------------------
+
+Adds the compressed images as WebP and JPEG, as well as the attribution for Johannes Nusko, who took the picture.
+
+<img width="1756" height="1080" alt="Bildschirmfoto 2025-12-15 um 14 05 27" src="https://github.com/user-attachments/assets/1e45057c-d9a4-4aaa-bc51-d676829c16ba" />
+
+* Packages: ``Neos``
+
+`TASK: Cleanup `Neos.Fusion:GlobalCacheIdentifiers` by removing `workspaceChain` <https://github.com/neos/neos-development-collection/pull/5674>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+in Neos 9 (ESCR) the workspace is no longer a fallback but a full copy of the base workspace content stream from a certain point. Any changes like base workspace change or publish or discard will lead to a full workspace cache flush (which is a new cache tag) There is no shine through from the base workspace and to explicitly request the new contents synchronise is uses (which is a RebaseWorkspaces and flushes the full workspace)
+
+cleanup to https://github.com/neos/neos-development-collection/pull/5221 which introduces ``Workspace`` content cache tags (``\\Neos\\Neos\\Fusion\\Cache\\CacheTag::forWorkspaceName()``)
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.0.8...9.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

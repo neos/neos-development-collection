@@ -14,14 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 
 /**
  * @internal implementation detail of Command Handlers
@@ -30,11 +29,10 @@ trait NodeRenaming
 {
     use ConstraintChecks;
 
-    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, CommandHandlingDependencies $commandHandlingDependencies): EventsToPublish
+    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish
     {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
             $command->nodeAggregateId
@@ -59,7 +57,7 @@ trait NodeRenaming
             ),
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,

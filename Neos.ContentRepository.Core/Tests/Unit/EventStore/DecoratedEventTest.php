@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -19,8 +20,8 @@ use Neos\EventStore\Model\Event\CausationId;
 use Neos\EventStore\Model\Event\CorrelationId;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 final class DecoratedEventTest extends TestCase
 {

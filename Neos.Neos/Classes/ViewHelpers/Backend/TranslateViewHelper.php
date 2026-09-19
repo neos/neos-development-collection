@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
+use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\FluidAdaptor\Core\ViewHelper;
+use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
 
 /**
  * Returns translated message using source message or key ID.

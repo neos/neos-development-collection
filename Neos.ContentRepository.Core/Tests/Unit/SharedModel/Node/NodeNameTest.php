@@ -13,10 +13,10 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**

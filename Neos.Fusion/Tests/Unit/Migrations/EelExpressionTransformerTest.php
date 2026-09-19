@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\Fusion\Tests\Unit\Migrations;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Fusion\Migrations\EelExpression\EelExpressionTransformer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EelExpressionTransformerTest extends TestCase

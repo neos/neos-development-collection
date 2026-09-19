@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\ContentRepository;
 
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class ContentRepositoryIdsTest extends TestCase
 {

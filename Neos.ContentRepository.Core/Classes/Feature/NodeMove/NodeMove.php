@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -30,7 +29,6 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
@@ -71,7 +69,6 @@ trait NodeMove
     ): void;
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregateCurrentlyDoesNotExist
      * @throws DimensionSpacePointNotFound
      * @throws NodeAggregateIsDescendant
@@ -80,11 +77,9 @@ trait NodeMove
      */
     private function handleMoveNodeAggregate(
         MoveNodeAggregate $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentStreamId, $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -180,7 +175,7 @@ trait NodeMove
         $events = Events::with(
             new NodeAggregateWasMoved(
                 $command->workspaceName,
-                $contentStreamId,
+                $contentGraph->getContentStreamId(),
                 $command->nodeAggregateId,
                 $command->newParentNodeAggregateId,
                 $this->resolveInterdimensionalSiblingsForMove(
@@ -198,10 +193,10 @@ trait NodeMove
         );
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $contentStreamId
+            $contentGraph->getContentStreamId()
         );
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             $contentStreamEventStreamName->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(
                 $command,

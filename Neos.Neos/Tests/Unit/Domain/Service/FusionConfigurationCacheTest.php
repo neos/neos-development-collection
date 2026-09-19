@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Domain\Service;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Neos\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\FusionConfigurationCache;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class FusionConfigurationCacheTest extends UnitTestCase

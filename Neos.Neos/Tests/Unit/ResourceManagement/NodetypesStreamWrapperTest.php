@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\ResourceManagement;
 
 /*
@@ -10,16 +11,16 @@ namespace Neos\Neos\Tests\Unit\ResourceManagement;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Package\Exception\UnknownPackageException;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\Package\FlowPackageInterface;
-use Neos\Flow\ResourceManagement\Exception;
-use org\bovigo\vfs\vfsStream;
 use Neos\Flow\Package\PackageManager;
+use Neos\Flow\ResourceManagement\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\ResourceManagement\NodeTypesStreamWrapper;
+use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests for the NodeTypesStreamWrapper class

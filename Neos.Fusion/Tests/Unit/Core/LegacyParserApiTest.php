@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
-use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Cache\ParserCache;
+use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * @deprecated with Neos 8.3 – can be completely removed with Neos 9.0 the new parser api is tested here: {@see ParserTest}
@@ -850,15 +851,15 @@ class LegacyParserApiTest extends UnitTestCase
         $parser
             ->expects($matcher)
             ->method('handleDslTranspile')->willReturnCallback(function (...$parameters) use ($matcher) {
-            if ($matcher->numberOfInvocations() === 1) {
-                $this->assertSame('dsl1', $parameters[0]);
-                $this->assertSame('example value', $parameters[1]);
-            }
-            if ($matcher->numberOfInvocations() === 2) {
-                $this->assertSame('dsl2', $parameters[0]);
-                $this->assertSame('another' . chr(10) . 'multiline' . chr(10) . 'value', $parameters[1]);
-            }
-        });
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('dsl1', $parameters[0]);
+                    $this->assertSame('example value', $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('dsl2', $parameters[0]);
+                    $this->assertSame('another' . chr(10) . 'multiline' . chr(10) . 'value', $parameters[1]);
+                }
+            });
 
         $parser->parse($sourceCode);
     }

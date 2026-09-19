@@ -27,9 +27,6 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segme
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
-/** @codingStandardsIgnoreStart */
-/** @codingStandardsIgnoreEnd */
-
 /**
  * @api
  */

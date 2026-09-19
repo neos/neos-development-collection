@@ -11,14 +11,14 @@ namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Neos\Exception;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Neos\Exception;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
-use Symfony\Component\Yaml\Yaml;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Testcase for the DefaultPropertyEditorPostprocessor

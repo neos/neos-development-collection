@@ -16,7 +16,6 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\FusionConfiguration;
-use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Neos\Domain\Model\Site;
 

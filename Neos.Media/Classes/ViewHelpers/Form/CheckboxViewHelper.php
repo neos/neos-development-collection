@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\ViewHelpers\Form;
 
 /*
@@ -104,7 +105,7 @@ class CheckboxViewHelper extends AbstractFormFieldViewHelper
             } elseif ($this->arguments['multiple'] === true) {
                 $nameAttribute .= '[]';
             } elseif ($checked === null && $propertyValue !== null) {
-                $checked = (boolean)$propertyValue === (boolean)$valueAttribute;
+                $checked = (bool)$propertyValue === (bool)$valueAttribute;
             }
         }
 

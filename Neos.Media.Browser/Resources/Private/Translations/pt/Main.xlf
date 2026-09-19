@@ -582,7 +582,7 @@
       </trans-unit>
       <trans-unit id="assetImport.importInProcess" xml:space="preserve">
         <source>Import still in process. Please wait.</source>
-        <target state="needs-translation">A importação ainda está a decorrer, Por favor aguarde.</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">A importação ainda está a decorrer, Por favor aguarde.</target>
       </trans-unit>
     </body>
   </file>

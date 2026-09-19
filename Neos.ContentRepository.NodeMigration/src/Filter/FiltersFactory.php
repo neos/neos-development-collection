@@ -48,8 +48,7 @@ class FiltersFactory
      */
     protected function constructFilterObject(
         array $filterConfiguration
-    ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
-    {
+    ): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface {
         $filterFactory = $this->resolveFilterFactory($filterConfiguration['type']);
         return $filterFactory->build($filterConfiguration['settings'] ?? [], $this->contentRepository);
     }

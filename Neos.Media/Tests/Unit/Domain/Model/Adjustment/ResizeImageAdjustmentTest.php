@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Media\Tests\Unit\Domain\Model\Adjustment;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Neos\Media\Imagine\Box;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\ResizeImageAdjustment;
 use Neos\Media\Domain\Model\ImageInterface;
+use Neos\Media\Imagine\Box;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Resize Image Adjustment
@@ -26,7 +27,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithInsetMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, []);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 83);
@@ -43,7 +44,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function widthAndHeightDeterminedByExplicitlySetWidthAndHeightWithOutboundMode()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, []);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 110);
@@ -59,7 +60,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function ifWidthIsSetHeightIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, []);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(110, 83);
@@ -73,7 +74,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function ifHeightIsSetWidthIsDeterminedByTheOriginalAspectRatio()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy']);
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, []);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box(127, 95);
@@ -87,7 +88,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function minimumHeightIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy'], [
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, [], [
             [
                 'maximumWidth' => 250,
                 'maximumHeight' => 250,
@@ -105,7 +106,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
     public function minimumWidthIsGreaterZero()
     {
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy'], [
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, [], [
             [
                 'maximumWidth' => 250,
                 'maximumHeight' => 250,
@@ -155,7 +156,7 @@ class ResizeImageAdjustmentTest extends UnitTestCase
         ];
 
         /** @var ResizeImageAdjustment $adjustment */
-        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, ['dummy'], [$options]);
+        $adjustment = $this->getAccessibleMock(ResizeImageAdjustment::class, [], [$options]);
 
         $originalDimensions = new Box(400, 300);
         $expectedDimensions = new Box($expectedWidth, $expectedHeight);

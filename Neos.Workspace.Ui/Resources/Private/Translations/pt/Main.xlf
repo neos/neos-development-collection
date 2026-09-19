@@ -465,6 +465,26 @@
         <source>The workspace has been successfully synced</source>
         <target state="translated">A área de trabalho foi sincronizada com sucesso</target>
       </trans-unit>
+      <trans-unit id="restore.table.label" xml:space="preserve">
+        <source>Element</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Título</target>
+      </trans-unit>
+      <trans-unit id="restore.table.dimensions" xml:space="preserve">
+        <source>Dimensions</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Dimensões</target>
+      </trans-unit>
+      <trans-unit id="restore.table.actions" xml:space="preserve">
+        <source>Actions</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Ações</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Cancelar</target>
+      </trans-unit>
+      <trans-unit id="restore.searchTerm" xml:space="preserve">
+        <source>Search</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Pesquisar</target>
+      </trans-unit>
       <trans-unit id="workspaces.publishChanges" xml:space="preserve">
         <source>Publish</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Publicar</target>

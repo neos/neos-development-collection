@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception\InvalidDimensionAdjustmentTargetWorkspace;
@@ -23,9 +22,9 @@ trait WorkspaceConstraintChecks
     /**
      * @throws WorkspaceDoesNotExist
      */
-    private function requireWorkspace(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): Workspace
+    private function requireWorkspace(WorkspaceName $workspaceName): Workspace
     {
-        $workspace = $commandHandlingDependencies->findWorkspaceByName($workspaceName);
+        $workspace = $this->commandHandlingDependencies->findWorkspaceByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
         }
@@ -37,23 +36,23 @@ trait WorkspaceConstraintChecks
      * @throws WorkspaceHasNoBaseWorkspaceName
      * @throws BaseWorkspaceDoesNotExist
      */
-    private function requireBaseWorkspace(Workspace $workspace, CommandHandlingDependencies $commandHandlingDependencies): Workspace
+    private function requireBaseWorkspace(Workspace $workspace): Workspace
     {
         if (is_null($workspace->baseWorkspaceName)) {
             throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->workspaceName);
         }
-        $baseWorkspace = $commandHandlingDependencies->findWorkspaceByName($workspace->baseWorkspaceName);
+        $baseWorkspace = $this->commandHandlingDependencies->findWorkspaceByName($workspace->baseWorkspaceName);
         if (is_null($baseWorkspace)) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);
         }
         return $baseWorkspace;
     }
 
-    private function requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment(WorkspaceName $workspaceName, CommandHandlingDependencies $commandHandlingDependencies): void
+    private function requireWorkspaceToBeRootOrRootBasedForDimensionAdjustment(WorkspaceName $workspaceName): void
     {
-        $workspace = $this->requireWorkspace($workspaceName, $commandHandlingDependencies);
+        $workspace = $this->requireWorkspace($workspaceName);
         if (!$workspace->isRootWorkspace()) {
-            $baseWorkspace = $this->requireBaseWorkspace($workspace, $commandHandlingDependencies);
+            $baseWorkspace = $this->requireBaseWorkspace($workspace);
             if (!$baseWorkspace->isRootWorkspace()) {
                 throw InvalidDimensionAdjustmentTargetWorkspace::becauseWorkspaceMustBeRootOrRootBased($workspace->workspaceName);
             }

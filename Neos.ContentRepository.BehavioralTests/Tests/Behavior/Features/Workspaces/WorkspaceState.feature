@@ -99,6 +99,11 @@ Feature: Workspace status
 
     Then workspaces live,shared,user-ws-one have status UP_TO_DATE
     Then workspace user-ws-two has status OUTDATED
+    When I am in workspace "user-ws-two"
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-two;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value     |
+      | text | "Original" |
 
     When the command RebaseWorkspace is executed with payload:
       | Key                    | Value                 |
@@ -106,3 +111,15 @@ Feature: Workspace status
       | rebasedContentStreamId | "user-ws-two-rebased" |
 
     Then workspaces live,shared,user-ws-one,user-ws-two have status UP_TO_DATE
+
+    When I am in workspace "live"
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value     |
+      | text | "Revision" |
+
+    When I am in workspace "user-ws-two"
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-ws-two-rebased;nody-mc-nodeface;{}
+    And I expect this node to have the following properties:
+      | Key  | Value     |
+      | text | "Revision" |

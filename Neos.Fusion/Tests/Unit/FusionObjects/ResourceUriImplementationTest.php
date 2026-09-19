@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
@@ -10,7 +11,6 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\I18n\Service;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\ResourceManagement\PersistentResource;
@@ -21,6 +21,7 @@ use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\ResourceUriImplementation;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion ResourceUri object

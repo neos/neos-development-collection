@@ -1,0 +1,77 @@
+##
+# Renders a list of nodes
+#
+prototype(Neos.Workspace.Ui:Component.NodesTable) < prototype(Neos.Fusion:Component) {
+  /// \Neos\Workspace\Ui\ViewModel\RestoreListItems
+  restoreListItems = null
+  /// Neos\Workspace\Ui\Domain\Sorting
+  sorting = null
+
+  /// string
+  workspaceName = ''
+
+  /// int
+  currentPage = 1
+
+  // string
+  searchTerm = ''
+
+  /// boolean
+  enableRestoreButtons = true
+
+  /// boolean
+  workspaceIsOutdated = false
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    sortUri = Neos.Fusion:ActionUri {
+      action = 'show'
+      controller = 'Restore'
+      format = 'html'
+      arguments {
+        sorting = ${Json.stringify(props.sorting.withInvertedSorting)}
+        workspaceName = ${props.workspaceName}
+        page = ${props.currentPage}
+        searchTerm = ${props.searchTerm}
+      }
+    }
+  }
+
+  renderer = afx`
+    <table id="nodes-table" class="workspace-ui-table" hx-swap-oob="true">
+      <thead>
+      <tr>
+        <th></th>
+        <th>
+          <button
+            type="button"
+            class="icon-button"
+            hx-get={private.sortUri}
+            hx-select="#workspace-module-content"
+            hx-target="#workspace-module-content"
+            hx-swap="outerHTML"
+          >
+            {private.i18n.id('restore.table.label')}
+            <Neos.Workspace.Ui:Component.Icon icon={props.sorting.direction.value == 'asc' ? 'sort-alpha-down' : 'sort-alpha-up'}/>
+          </button>
+        </th>
+        <th>{private.i18n.id('restore.table.dimensions')}</th>
+        <th>{private.i18n.id('restore.table.deletedBy')}</th>
+        <th>{private.i18n.id('restore.table.deletedAt')}</th>
+        <th>{private.i18n.id('restore.table.actions')}</th>
+      </tr>
+      </thead>
+      <tbody>
+        <Neos.Fusion:Loop items={props.restoreListItems} itemName="restoreListItem">
+          <Neos.Workspace.Ui:Component.NodesTableRow
+            restorelistItem={restoreListItem}
+            workspaceName={props.workspaceName}
+            enableRestoreButtons={props.enableRestoreButtons}
+            workspaceIsOutdated={props.workspaceIsOutdated}
+            @if={restoreListItem != null}
+          />
+        </Neos.Fusion:Loop>
+      </tbody>
+    </table>
+  `
+}

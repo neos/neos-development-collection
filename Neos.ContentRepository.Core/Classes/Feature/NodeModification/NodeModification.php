@@ -14,16 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -45,10 +44,8 @@ trait NodeModification
 
     private function handleSetNodeProperties(
         SetNodeProperties $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -70,15 +67,14 @@ trait NodeModification
             $command->propertyValues->getPropertiesToUnset()
         );
 
-        return $this->handleSetSerializedNodeProperties($lowLevelCommand, $commandHandlingDependencies);
+        return $this->handleSetSerializedNodeProperties($lowLevelCommand);
     }
 
     private function handleSetSerializedNodeProperties(
         SetSerializedNodeProperties $command,
-        CommandHandlingDependencies $commandHandlingDependencies,
     ): EventsToPublish {
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentGraph,
@@ -134,7 +130,7 @@ trait NodeModification
             throw new \RuntimeException('Cannot handle "SetSerializedNodeProperties" with no properties to modify', 1736798016);
         }
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand(

@@ -58,7 +58,7 @@ final class CatchUpHookFactories implements CatchUpHookFactoryInterface
 
     public function build(CatchUpHookFactoryDependencies $dependencies): CatchUpHookInterface
     {
-        $catchUpHooks = array_map(static fn(CatchUpHookFactoryInterface $catchUpHookFactory) => $catchUpHookFactory->build($dependencies), $this->catchUpHookFactories);
+        $catchUpHooks = array_map(static fn (CatchUpHookFactoryInterface $catchUpHookFactory) => $catchUpHookFactory->build($dependencies), $this->catchUpHookFactories);
         return new DelegatingCatchUpHook($dependencies->performanceTracer, ...$catchUpHooks);
     }
 }

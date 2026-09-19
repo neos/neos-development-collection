@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Functional\Domain\Repository;
 
 /*
@@ -10,19 +11,19 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
+use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageVariant;
-use Neos\Media\Domain\Repository\AssetCollectionRepository;
-use Neos\Utility\Files;
-use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Tag;
+use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Tests\Functional\AbstractTestCase;
+use Neos\Utility\Files;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for an asset repository

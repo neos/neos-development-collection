@@ -16,16 +16,16 @@ namespace Neos\ContentRepositoryRegistry\SubgraphCachingInMemory;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache\AllChildNodesByNodeIdCache;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache\NamedChildNodeByNodeIdCache;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache\NodeByNodeAggregateIdCache;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache\NodePathCache;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\InMemoryCache\ParentNodeIdByChildNodeIdCache;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Accessors to in Memory Cache

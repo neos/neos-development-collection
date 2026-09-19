@@ -5,6 +5,7 @@ prototype(Neos.Workspace.Ui:Component.FlashMessages) < prototype(Neos.Fusion:Com
     <div
       id="neos-notification-container"
       class="neos-notification-top"
+      popover="manual"
       hx-swap-oob="true"
     >
       <Neos.Fusion:Loop items={props.flashMessages} itemName="message">

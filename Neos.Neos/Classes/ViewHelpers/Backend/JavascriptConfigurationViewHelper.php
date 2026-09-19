@@ -21,11 +21,11 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Security\Context;
-use Neos\Utility\Files;
-use Neos\Utility\PositionalArraySorter;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Utility\BackendAssetsUtility;
+use Neos\Utility\Files;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -157,7 +157,7 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
 
         $matches = [];
         try {
-            if (preg_match('#resource://([^/]+)/Public/(.*)#', current($localizedResourcePathData), $matches) === 1) {
+            if (preg_match('#resource://([^/]+)/Public/(.*)#', $localizedResourcePathData[0], $matches) === 1) {
                 $packageKey = $matches[1];
                 $path = $matches[2];
                 return $this->resourceManager->getPublicPackageResourceUri($packageKey, $path);

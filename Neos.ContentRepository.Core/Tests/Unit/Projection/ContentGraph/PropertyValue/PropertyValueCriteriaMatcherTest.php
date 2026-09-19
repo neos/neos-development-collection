@@ -22,10 +22,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaMatcher;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Serializer\Serializer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Serializer;
 
 class PropertyValueCriteriaMatcherTest extends TestCase
 {
@@ -80,7 +80,7 @@ class PropertyValueCriteriaMatcherTest extends TestCase
 
     public static function negateCriteriaDataProvider(): \Generator
     {
-        $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo',true);
+        $trueCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'foo', true);
         $falseCriterium = PropertyValueEquals::create(PropertyName::fromString('stringProperty'), 'other', true);
 
         yield 'criterium is true' => [$trueCriterium, false];

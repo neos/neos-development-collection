@@ -16,8 +16,8 @@ use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\ContentSubgraphVariationWeightsAreIncomparable;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test cases for content subgraph variation weights

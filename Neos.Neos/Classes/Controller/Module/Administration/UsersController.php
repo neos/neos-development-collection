@@ -14,8 +14,8 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Exception\ForwardException;
@@ -110,7 +110,7 @@ class UsersController extends AbstractModuleController
      *
      * @param string $searchTerm
      * @param string $sortBy
-     * @param string $sortDirection
+     * @param QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING $sortDirection
      * @return void
      */
     public function indexAction(

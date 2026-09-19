@@ -24,6 +24,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Domain\AssetUsageRepository;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\Neos\Domain\Link\Link;
 use Neos\Utility\TypeHandling;
 
 /**
@@ -220,6 +221,14 @@ final class AssetUsageIndexingService
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
             return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
+
+        if ($value instanceof Link) {
+            if ($value->href->getScheme() === 'asset') {
+                return [$value->href->getHost() . $value->href->getPath()];
+            }
+            return [];
+        }
+
         if (is_subclass_of($type, ResourceBasedInterface::class)) {
             return [$this->persistenceManager->getIdentifierByObject($value)];
         }

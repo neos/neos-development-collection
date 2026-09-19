@@ -14,6 +14,7 @@ The Content Repository comes with a number of common transformations:
 - ``AddDimensionShineThrough``
 - ``AddNewProperty``
 - ``ChangeNodeType``
+- ``ChangePropertyTypeFromScalarToBackedEnum``
 - ``ChangePropertyValue``
 - ``MoveDimensionSpacePoint``
 - ``RemoveNode``
@@ -120,6 +121,41 @@ Options Reference:
   This flag allows to enforce the migration. In case of child constraint conflicts the conflicting child nodes get deleted.
 
   Default is `false`.
+
+ChangePropertyTypeFromScalarToBackedEnum
+~~~~~~~~~~~~~~
+
+Change a node property value from a scalar to a backed enum.
+
+Since Neos 9.1, backed enums are fully supported in both the CR and Neos UI.
+This transformation changes previously stored backing values (properties of type int or string) to the actual enums
+after the property type has been changed to the enum's fully qualified classname in the node type config.
+
+Example:
+First, change
+
+.. code-block:: yaml
+
+  'Acme.Site:MyNodeType':
+    properties:
+      someValue:
+        type: string
+
+to
+
+.. code-block:: yaml
+
+  'Acme.Site:MyNodeType':
+    properties:
+      someValue:
+        type: Acme\Site\SomeStringEnum
+
+, then run the transformation with property ``someValue``.
+
+Options Reference:
+
+``property`` (string)
+  The name of the property to be transformed.
 
 ChangePropertyValue
 ~~~~~~~~~~~~~~~~~~~

@@ -465,6 +465,122 @@
         <source>Event details</source>
         <target state="translated">Evenementdetails</target>
       </trans-unit>
+      <trans-unit id="restore.table.label" xml:space="preserve">
+        <source>Element</source>
+        <target state="translated">Titel</target>
+      </trans-unit>
+      <trans-unit id="restore.table.dimensions" xml:space="preserve">
+        <source>Dimensions</source>
+        <target state="translated">Dimensies</target>
+      </trans-unit>
+      <trans-unit id="restore.table.actions" xml:space="preserve">
+        <source>Actions</source>
+        <target state="translated">Acties</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="translated">Annuleren</target>
+      </trans-unit>
+      <trans-unit id="restore.searchTerm" xml:space="preserve">
+        <source>Search</source>
+        <target state="translated">Zoeken</target>
+      </trans-unit>
+      <trans-unit id="workspace.RestoreButtonTitle" xml:space="preserve">
+        <source>Show and restore deleted elements in workspace "{0}"</source>
+        <target state="translated">Toon en herstel verwijderde elementen in workspace "{0}"</target>
+      </trans-unit>
+      <trans-unit id="restore.deletedElements" xml:space="preserve">
+        <source>Deleted elements in workspace "{0}"</source>
+        <target state="translated">Verwijderde elementen in workspace "{0}"</target>
+      </trans-unit>
+      <trans-unit id="restore.label" xml:space="preserve">
+        <source>Restore</source>
+        <target state="translated">Herstellen</target>
+      </trans-unit>
+      <trans-unit id="restore.syncButtonLabel" xml:space="preserve">
+        <source>Sync workspace</source>
+        <target state="translated">Synchroniseer workspace</target>
+      </trans-unit>
+      <trans-unit id="restore.syncButtonTitle" xml:space="preserve">
+        <source>Synchronize workspace with base workspace</source>
+        <target state="translated">Synchroniseer workspace met de hoofd-workspace</target>
+      </trans-unit>
+      <trans-unit id="restore.backToWorkspaceList" xml:space="preserve">
+        <source>Back to workspace overview</source>
+        <target state="translated">Terug naar het workspace overzicht</target>
+      </trans-unit>
+      <trans-unit id="restore.noDeletedElements" xml:space="preserve">
+        <source>No deleted Elements could be found for this workspace</source>
+        <target state="translated">Er konden geen verwijderde elementen gevonden worden voor deze workspace</target>
+      </trans-unit>
+      <trans-unit id="restore.noDeletedElementsForThisSearch" xml:space="preserve">
+        <source>No deleted Elements could be found for this search term</source>
+        <target state="translated">Er konden geen verwijderde elementen gevonden worden voor deze zoekopdracht</target>
+      </trans-unit>
+      <trans-unit id="restore.table.nodeType" xml:space="preserve">
+        <source>Node Type</source>
+        <target state="translated">Nodetype</target>
+      </trans-unit>
+      <trans-unit id="restore.table.deletedBy" xml:space="preserve">
+        <source>Deleted by</source>
+        <target state="translated">Verwijderd door</target>
+      </trans-unit>
+      <trans-unit id="restore.table.deletedAt" xml:space="preserve">
+        <source>Deleted at </source>
+        <target state="translated">Verwijderd op </target>
+      </trans-unit>
+      <trans-unit id="restore.table.actions.restoreElement" xml:space="preserve">
+        <source>Restore this element to current workspace</source>
+        <target state="translated">Herstel dit element naar de huidige workspace</target>
+      </trans-unit>
+      <trans-unit id="restore.table.actions.workspaceIsOutdated" xml:space="preserve">
+        <source>You cannot restore elements in outdated workspaces</source>
+        <target state="translated">Je kan geen elementen in verouderde workspaces herstellen</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.title" xml:space="preserve">
+        <source>Restore element to workspace</source>
+        <target state="translated">Herstel element naar workspace</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.parentNodes" xml:space="preserve">
+        <source>Restore element to workspace</source>
+        <target state="translated">Herstel element naar workspace</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.text" xml:space="preserve">
+        <source>Restore "{0}" to workspace "{1}"?</source>
+        <target state="translated">Herstel "{0}" naar workspace "{1}"?</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.warning" xml:space="preserve">
+        <source>This will also restore the following deleted child nodes:</source>
+        <target state="translated">Dit herstelt ook de volgende verwijderde child nodes:</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.warningAscendant" xml:space="preserve">
+        <source>This will also restore the following deleted parent nodes and all of their descendants:</source>
+        <target state="translated">Dit herstelt ook de volgende verwijderde parent nodes en alle hiervan afhankelijke nodes:</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.confirm" xml:space="preserve">
+        <source>Restore now</source>
+        <target state="translated">Nu herstellen</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.confirmAll" xml:space="preserve">
+        <source>Restore element and all related elements </source>
+        <target state="translated">Herstel element en alle gerelateerde elementen </target>
+      </trans-unit>
+      <trans-unit id="restore.feedback.hasBeenRestored" xml:space="preserve">
+        <source>The element and all of its parent elements have been restored</source>
+        <target state="translated">Het element en alle bovenliggende elementen zijn hersteld</target>
+      </trans-unit>
+      <trans-unit id="restore.feedback.isNotRemoved" xml:space="preserve">
+        <source>Restoring the element was not necessary because it is no longer removed</source>
+        <target state="translated">Herstellen van het element was niet nodig aangezien deze niet meer was verwijderd</target>
+      </trans-unit>
+      <trans-unit id="restore.feedback.workspaceIsOutOfSync" xml:space="preserve">
+        <source>Restoring the element failed because the workspace is out of sync</source>
+        <target state="translated">Herstellen van het element is mislukt omdat de workspace niet gesynchoniseerd is</target>
+      </trans-unit>
+      <trans-unit id="restore.syncWorkspace" xml:space="preserve">
+        <source>Sync workspace</source>
+        <target state="translated">Synchroniseer workspace</target>
+      </trans-unit>
       <trans-unit id="workspaces.publishChanges" xml:space="preserve">
         <source>Publish</source>
         <target state="translated">Publiceren</target>

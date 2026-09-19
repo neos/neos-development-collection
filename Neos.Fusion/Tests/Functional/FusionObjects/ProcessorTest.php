@@ -1,8 +1,9 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /*
  * This file is part of the Neos.Fusion package.

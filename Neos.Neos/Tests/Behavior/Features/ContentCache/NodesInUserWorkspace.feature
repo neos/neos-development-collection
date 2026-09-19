@@ -296,3 +296,58 @@ Feature: Tests for the ContentCacheFlusher and cache flushing when applied in us
     <div class="neos-contentcollection">secondRender[Text Node at the start of the document]secondRender[Text Node in the middle of the document]secondRender[Text Node at the end of the document]</div>
     """
 
+  Scenario: ContentCache gets flushed when the base workspace of a workspace is changed
+    Given I have Fusion content cache enabled
+    And I am in workspace "user-editor" and dimension space point {}
+    And the Fusion context node is "test-document-with-contents"
+    And I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      prototype(Neos.Neos:Test.TextNode) {
+        cacheVerifier = "firstRender"
+      }
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">firstRender[Text Node at the start of the document]firstRender[Text Node at the end of the document]</div>
+    """
+
+    When the command CreateWorkspace is executed with payload:
+      | Key                | Value                   |
+      | workspaceName      | "preview"               |
+      | baseWorkspaceName  | "live"                  |
+      | newContentStreamId | "preview-cs-identifier" |
+    And I am in workspace "preview" and dimension space point {}
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                              | Value                                                |
+      | nodeAggregateId                  | "text-node-middle"                                   |
+      | nodeTypeName                     | "Neos.Neos:Test.TextNode"                            |
+      | parentNodeAggregateId            | "test-document-with-contents--main"                  |
+      | initialPropertyValues            | {"text": "Text Node only in the preview workspace"}  |
+      | succeedingSiblingNodeAggregateId | "text-node-end"                                      |
+      | nodeName                         | "text-node-middle"                                   |
+
+    When I am in workspace "user-editor" and dimension space point {}
+    And the command ChangeBaseWorkspace is executed with payload:
+      | Key                | Value                               |
+      | workspaceName      | "user-editor"                       |
+      | baseWorkspaceName  | "preview"                            |
+      | newContentStreamId | "user-editor-cs-rebased-to-preview" |
+    Then I expect node aggregate identifier "text-node-middle" to lead to node user-editor-cs-rebased-to-preview;text-node-middle;{}
+
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:ContentCollection {
+      prototype(Neos.Neos:Test.TextNode) {
+        cacheVerifier = "secondRender"
+      }
+      nodePath = "main"
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    <div class="neos-contentcollection">secondRender[Text Node at the start of the document]secondRender[Text Node only in the preview workspace]secondRender[Text Node at the end of the document]</div>
+    """
+

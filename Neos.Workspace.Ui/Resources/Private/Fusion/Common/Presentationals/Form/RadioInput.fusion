@@ -1,0 +1,22 @@
+prototype(Neos.Workspace.Ui:Component.Form.RadioInput) < prototype(Neos.Fusion:Component) {
+  /// string
+  name = ''
+  /// string
+  value = ''
+  /// string
+  label = ''
+  /// boolean
+  checked = false
+
+  renderer = afx`
+    <label class="neos-radio neos-inline">
+      <Neos.Fusion.Form:Radio
+        field.name={props.name}
+        field.value={props.value}
+        attributes.checked={props.checked}
+      />
+      <span></span>
+      {props.label}
+    </label>
+  `
+}

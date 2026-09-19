@@ -9,9 +9,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspaces;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
+use Neos\EventStore\Model\Event\Version;
 use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class WorkspacesTest extends TestCase
 {
@@ -245,7 +246,8 @@ class WorkspacesTest extends TestCase
             $baseWorkspace ? WorkspaceName::fromString($baseWorkspace) : null,
             ContentStreamId::create(),
             WorkspaceStatus::UP_TO_DATE,
-            false
+            false,
+            Version::first()
         );
     }
 }

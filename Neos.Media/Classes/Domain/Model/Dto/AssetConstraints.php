@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Media\Domain\Model\Dto;
 
 use Neos\Flow\Annotations as Flow;

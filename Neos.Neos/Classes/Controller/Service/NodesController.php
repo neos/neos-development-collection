@@ -27,8 +27,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\Expanded
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -71,7 +69,7 @@ class NodesController extends ActionController
     protected $contentRepositoryRegistry;
 
     /**
-     * @var array<string,string>
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,

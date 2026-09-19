@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\ViewHelpers;
 
 /*
@@ -10,18 +11,19 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception;
-use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
-use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception;
+use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Helpers\FluidView;
 use Neos\Fusion\FusionObjects\TemplateImplementation;
 use Neos\Neos\Service\ContentElementEditableService;
+use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test for the contentElement.editable ViewHelper

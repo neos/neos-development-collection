@@ -93,7 +93,6 @@ Feature: Routing functionality with multiple content dimensions
     """
 
   Scenario: Resolve homepage URL in multiple dimensions
-    When I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"
     And the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/"
 
@@ -132,18 +131,14 @@ Feature: Routing functionality with multiple content dimensions
     """
     # URL -> Node
     # special case for homepage: / should be resolved to default dimensions.
-    When I am on URL "/"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
-    When I am on URL "/de"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/de" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
     # homepage should not be available via dimension
     Then No node should match URL "/en"
     # all other english pages should have /en prefix as usual.
-    When I am on URL "/en/nody/carl"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/en/nody/carl" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
     Then No node should match URL "/nody/carl"
-    When I am on URL "/de/nody/karl-de"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/de/nody/karl-de" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
 
     # Node -> URL
     # special case for homepage: homepage should be resolved to /
@@ -153,7 +148,6 @@ Feature: Routing functionality with multiple content dimensions
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Resolve node URLs in multiple dimensions
-    When I am on URL "/"
     Then the node "carl-destinode" in dimension '{"market":"DE", "language":"en"}' should resolve to URL "/nody/carl"
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
@@ -203,27 +197,22 @@ Feature: Routing functionality with multiple content dimensions
       | Key           | Value          |
       | workspaceName | "migration-cs" |
 
-    When I am on URL "/"
     Then the node "carl-destinode" in dimension '{"market":"CH", "language":"en"}' should resolve to URL "/nody/carl"
     And the node "carl-destinode" in dimension '{"market":"CH", "language":"de_DE"}' should resolve to URL "/de/nody/karl-de"
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"de_DE"}' should resolve to URL "/de/nody/karl-de"
 
 
   Scenario: Match homepage node in default dimension
-    When I am on URL "/"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}'
 
   Scenario: Match homepage node in specific dimension
-    When I am on URL "/de"
-    Then the matched node should be "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/de" should match the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Match node in default dimension
-    When I am on URL "/nody/carl"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
+    When The URL "/nody/carl" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"en"}'
 
   Scenario: Match node in specific dimension
-    When I am on URL "/de/nody/karl-de"
-    Then the matched node should be "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
+    When The URL "/de/nody/karl-de" should match the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Add Dimension shine through, then resolving should still work
     Given I change the content dimensions in content repository "default" to:
@@ -272,7 +261,6 @@ Feature: Routing functionality with multiple content dimensions
       | Key           | Value          |
       | workspaceName | "migration-cs" |
 
-    When I am on URL "/"
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"at"}' should resolve to URL "/at/nody/karl-de"
 
@@ -283,7 +271,6 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateId           | "carl-destinode"                        |
       | originDimensionSpacePoint | {"market":"DE", "language":"de"}        |
       | propertyValues            | {"uriPathSegment": "karl-aktualisiert"} |
-    When I am on URL "/"
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-aktualisiert"
     # testcase for #4256
     And the node "carl-destinode" in dimension '{"market":"DE", "language":"at"}' should resolve to URL "/at/nody/karl-aktualisiert"
@@ -340,7 +327,6 @@ Feature: Routing functionality with multiple content dimensions
       | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
       | propertyValues            | {"uriPathSegment": "nody-fr"}    |
 
-    When I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/"
     Then the node "nody-mc-nodeface" in dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/nody-fr"
 
@@ -405,7 +391,6 @@ Feature: Routing functionality with multiple content dimensions
       | newSucceedingSiblingNodeAggregateId | null                             |
       | relationDistributionStrategy        | "scatter"                        |
 
-    When I am on URL "/"
     Then the node "sir-david-nodenborough" in dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"
     # moved node
     Then the node "nody-mc-nodeface" in dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/"

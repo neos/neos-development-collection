@@ -159,14 +159,6 @@
         <source>Publish selected changes to {0}</source>
         <target state="final">Ausgewählte Änderungen nach {0} veröffentlichen</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
-        <source>Publish</source>
-        <target state="final">Veröffentlichen</target>
-      </trans-unit>
-      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
-        <source>Discard</source>
-        <target state="final">Verwerfen</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
         <source>Discard all changes</source>
         <target state="final">Alle Änderungen verwerfen</target>
@@ -308,6 +300,34 @@
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Knoten</target>
+      </trans-unit>
+      <trans-unit id="restore.table.label" xml:space="preserve">
+        <source>Element</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Titel</target>
+      </trans-unit>
+      <trans-unit id="restore.table.dimensions" xml:space="preserve">
+        <source>Dimensions</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Dimensionen</target>
+      </trans-unit>
+      <trans-unit id="restore.table.actions" xml:space="preserve">
+        <source>Actions</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Aktionen</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Abbrechen</target>
+      </trans-unit>
+      <trans-unit id="restore.searchTerm" xml:space="preserve">
+        <source>Search</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Suche</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Veröffentlichen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Verwerfen</target>
       </trans-unit>
     </body>
   </file>

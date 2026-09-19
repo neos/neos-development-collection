@@ -16,11 +16,12 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Configuration\ConfigurationManager;
+use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionNewStatusTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @after */
+    #[After]
     public function resetContentRepositoryRegistry(): void
     {
         $originalSettings = $this->getObject(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepositoryRegistry');
@@ -43,7 +44,7 @@ final class SubscriptionNewStatusTest extends AbstractSubscriptionEngineTestCase
         $this->expectOkayStatus('Vendor.Package:FakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::none());
 
         $newFakeProjection = $this->getMockBuilder(ProjectionInterface::class)->disableAutoReturnValueGeneration()->getMock();
-        $newFakeProjection->method('getState')->willReturn(new class implements ProjectionStateInterface {});
+        $newFakeProjection->method('getState')->willReturn(new class () implements ProjectionStateInterface {});
         $newFakeProjection->expects(self::exactly(5))->method('status')->willReturnOnConsecutiveCalls(
             ProjectionStatus::setupRequired('Set me up'),
             ProjectionStatus::setupRequired('Set me up'),

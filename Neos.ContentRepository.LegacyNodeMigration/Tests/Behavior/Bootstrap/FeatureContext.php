@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 // @todo remove this require statement
@@ -103,15 +104,14 @@ class FeatureContext implements Context
         $propertyMapper = $this->getObject(PropertyMapper::class);
 
         // HACK to access the property converter
-        $crInternalsAccess = new class implements ContentRepositoryServiceFactoryInterface {
+        $crInternalsAccess = new class () implements ContentRepositoryServiceFactoryInterface {
             public PropertyConverter|null $propertyConverter;
             public EventNormalizer|null $eventNormalizer;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->propertyConverter = $serviceFactoryDependencies->propertyConverter;
                 $this->eventNormalizer = $serviceFactoryDependencies->eventNormalizer;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };
@@ -174,8 +174,7 @@ class FeatureContext implements Context
     public function iRunTheAssetMigration(): void
     {
         $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
-        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface
-        {
+        $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
             /**
              * @param array<PersistentResource> $mockResources
              */
@@ -223,7 +222,7 @@ class FeatureContext implements Context
     {
         $this->siteDataRows = array_map(
             fn (array $row) => array_map(
-                fn(string $value) => json_decode($value, true),
+                fn (string $value) => json_decode($value, true),
                 $row
             ),
             $siteDataRows->getHash()
@@ -237,7 +236,7 @@ class FeatureContext implements Context
     {
         $this->domainDataRows = array_map(static function (array $row) {
             return array_map(
-                fn(string $value) => json_decode($value, true),
+                fn (string $value) => json_decode($value, true),
                 $row
             );
         }, $domainDataRows->getHash());

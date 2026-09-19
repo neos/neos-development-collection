@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Behavior\Fixtures;
 
 /**
- * A day of week enumeratoion
+ * A day of week enumeration
  *
  * @see https://schema.org/DayOfWeek
  */

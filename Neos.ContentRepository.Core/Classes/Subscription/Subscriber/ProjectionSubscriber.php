@@ -23,4 +23,13 @@ final readonly class ProjectionSubscriber
         public ?CatchUpHookInterface $catchUpHook
     ) {
     }
+
+    public function withoutCatchupHook(): self
+    {
+        return new self(
+            id: $this->id,
+            projection: $this->projection,
+            catchUpHook: null,
+        );
+    }
 }

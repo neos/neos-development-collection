@@ -1,10 +1,11 @@
 <?php
+
 namespace Neos\Fusion\Afx\Tests\Functional;
 
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Afx\Exception\AfxException;
 use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Service\AfxService;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class AfxServiceTest extends TestCase

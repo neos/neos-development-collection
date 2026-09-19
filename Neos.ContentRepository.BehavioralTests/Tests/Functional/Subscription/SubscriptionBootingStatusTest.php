@@ -15,7 +15,6 @@ use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionBootingStatusTest extends AbstractSubscriptionEngineTestCase
 {
-
     #[Test]
     public function existingEventStoreEventsAreCaughtUpOnBoot()
     {

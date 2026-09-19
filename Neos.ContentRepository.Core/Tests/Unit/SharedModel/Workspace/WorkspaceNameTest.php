@@ -15,9 +15,9 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Workspace;
  */
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 final class WorkspaceNameTest extends TestCase
 {

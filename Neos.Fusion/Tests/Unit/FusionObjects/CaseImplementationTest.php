@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\FusionObjects;
 
 /*
@@ -11,10 +12,10 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects;
  * source code.
  */
 use Neos\Flow\Tests\UnitTestCase;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Utility\ObjectAccess;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\CaseImplementation;
+use Neos\Utility\ObjectAccess;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Case object

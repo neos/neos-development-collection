@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Service;
 
 /*
@@ -10,8 +11,6 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Asset;
@@ -20,6 +19,8 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\AudioRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Fixtures\AssetTypeWithoutRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once __DIR__ . '/../../Fixtures/AssetTypeWithoutRepository.php';
 
@@ -55,7 +56,7 @@ class AssetServiceTest extends UnitTestCase
             ->method('get')
             ->willReturn($this->createMock($expectedRepositoryClassName));
 
-        $mockAssetService = $this->getAccessibleMock(AssetService::class, ['dummy'], [], '', false);
+        $mockAssetService = $this->getAccessibleMock(AssetService::class, [], [], '', false);
         $this->inject($mockAssetService, 'objectManager', $mockObjectManager);
 
         $repository = $mockAssetService->_call('getRepository', $mockAsset);

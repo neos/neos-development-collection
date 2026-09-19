@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
@@ -382,9 +381,7 @@ trait GenericCommandExecutionAndEventPublication
             $commandArguments['coveredDimensionSpacePoint'] = \json_decode($commandArguments['coveredDimensionSpacePoint'], true, 512, JSON_THROW_ON_ERROR);
         }
         $commandArguments['dimensionSpacePoint'] = $commandArguments['dimensionSpacePoint'] ?? $this->currentDimensionSpacePoint?->coordinates;
-        if (is_string($commandArguments['nodeAggregateId'] ?? null) && str_starts_with($commandArguments['nodeAggregateId'], '$')) {
-            $commandArguments['nodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['nodeAggregateId'], 1)]?->value;
-        } elseif (!isset($commandArguments['nodeAggregateId'])) {
+        if (!isset($commandArguments['nodeAggregateId'])) {
             $commandArguments['nodeAggregateId'] = $this->getCurrentNodeAggregateId()?->value;
         }
         if ($commandClassName === CreateNodeAggregateWithNode::class) {
@@ -395,9 +392,6 @@ trait GenericCommandExecutionAndEventPublication
             }
             if (isset($commandArguments['succeedingSiblingNodeAggregateId']) && $commandArguments['succeedingSiblingNodeAggregateId'] === '') {
                 unset($commandArguments['succeedingSiblingNodeAggregateId']);
-            }
-            if (is_string($commandArguments['parentNodeAggregateId'] ?? null) && str_starts_with($commandArguments['parentNodeAggregateId'], '$')) {
-                $commandArguments['parentNodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['parentNodeAggregateId'], 1)]?->value;
             }
             if (empty($commandArguments['nodeName'])) {
                 unset($commandArguments['nodeName']);
@@ -430,9 +424,7 @@ trait GenericCommandExecutionAndEventPublication
             } elseif (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
                 $commandArguments['sourceOriginDimensionSpacePoint'] = $this->currentDimensionSpacePoint?->coordinates;
             }
-            if (is_string($commandArguments['sourceNodeAggregateId'] ?? null) && str_starts_with($commandArguments['sourceNodeAggregateId'], '$')) {
-                $commandArguments['sourceNodeAggregateId'] = $this->rememberedNodeAggregateIds[substr($commandArguments['sourceNodeAggregateId'], 1)]?->value;
-            } elseif (!isset($commandArguments['sourceNodeAggregateId'])) {
+            if (!isset($commandArguments['sourceNodeAggregateId'])) {
                 $commandArguments['sourceNodeAggregateId'] = $this->currentNodeAggregate?->nodeAggregateId->value;
             }
         }
@@ -516,15 +508,14 @@ trait GenericCommandExecutionAndEventPublication
         );
 
         // HACK can be replaced, once https://github.com/neos/neos-development-collection/pull/5341 is merged
-        $eventStoreAndSubscriptionEngine = new class implements ContentRepositoryServiceFactoryInterface {
+        $eventStoreAndSubscriptionEngine = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };

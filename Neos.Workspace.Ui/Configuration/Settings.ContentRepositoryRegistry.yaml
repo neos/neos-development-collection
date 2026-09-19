@@ -1,0 +1,7 @@
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+        projections:
+          'Neos.Workspace.Ui:TrashBinProjection':
+            factoryObjectName: Neos\Workspace\Ui\Domain\TrashBin\TrashBinProjectionFactory

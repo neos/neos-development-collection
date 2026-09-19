@@ -1,0 +1,4 @@
+Neos:
+  Neos:
+    softRemoval:
+      garbageCollectionGracePeriod: 'P7D'

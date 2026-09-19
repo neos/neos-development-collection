@@ -16,6 +16,7 @@ use Neos\ContentRepository\NodeMigration\Filter\PropertyValueFilterFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\AddDimensionShineThroughTransformationFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\AddNewPropertyConverterAwareTransformationFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\ChangeNodeTypeTransformationFactory;
+use Neos\ContentRepository\NodeMigration\Transformation\ChangePropertyTypeFromScalarToBackedEnumTransformationFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\ChangePropertyValueConverterAwareTransformationFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\MoveDimensionSpacePointTransformationFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\PropertyConverterAwareTransformationFactoryInterface;
@@ -58,6 +59,7 @@ final readonly class NodeMigrationServiceFactory implements ContentRepositorySer
                 'AddNewProperty' => AddNewPropertyConverterAwareTransformationFactory::class,
                 'ChangeNodeType' => ChangeNodeTypeTransformationFactory::class,
                 'ChangePropertyValue' => ChangePropertyValueConverterAwareTransformationFactory::class,
+                'ChangePropertyTypeFromScalarToBackedEnum' => ChangePropertyTypeFromScalarToBackedEnumTransformationFactory::class,
                 'MoveDimensionSpacePoint' => MoveDimensionSpacePointTransformationFactory::class,
                 'RemoveNode' => RemoveNodeTransformationFactory::class,
                 'RemoveProperty' => RemovePropertyTransformationFactory::class,

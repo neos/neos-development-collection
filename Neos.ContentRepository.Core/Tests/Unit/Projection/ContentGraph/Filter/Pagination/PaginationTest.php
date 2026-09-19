@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\Pagination;
 
 /*
@@ -12,9 +13,9 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class PaginationTest extends TestCase
 {

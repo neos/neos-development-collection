@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\ViewHelpers\Uri;
 
 /*
@@ -10,9 +11,9 @@ namespace Neos\Media\Tests\Unit\ViewHelpers\Uri;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Media\ViewHelpers\ImageViewHelper;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once(__DIR__ . '/../../../../../../Framework/Neos.FluidAdaptor/Tests/Unit/ViewHelpers/ViewHelperBaseTestcase.php');
 

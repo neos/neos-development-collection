@@ -164,14 +164,14 @@ class ChildrenOperation extends AbstractOperation
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findChildNodes(
-                            $contextNode->aggregateId,
-                            FindChildNodesFilter::create(
-                                nodeTypes: NodeTypeCriteria::create(
-                                    NodeTypeNames::fromStringArray($allowedNodeTypes),
-                                    NodeTypeNames::createEmpty()
+                                $contextNode->aggregateId,
+                                FindChildNodesFilter::create(
+                                    nodeTypes: NodeTypeCriteria::create(
+                                        NodeTypeNames::fromStringArray($allowedNodeTypes),
+                                        NodeTypeNames::createEmpty()
+                                    )
                                 )
-                            )
-                        );
+                            );
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[

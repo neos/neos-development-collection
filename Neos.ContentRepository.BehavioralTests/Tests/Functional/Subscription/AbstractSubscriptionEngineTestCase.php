@@ -80,7 +80,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
         );
 
         $this->fakeProjection = $this->getMockBuilder(ProjectionInterface::class)->disableAutoReturnValueGeneration()->getMock();
-        $this->fakeProjection->method('getState')->willReturn(new class implements ProjectionStateInterface {});
+        $this->fakeProjection->method('getState')->willReturn(new class () implements ProjectionStateInterface {});
 
         FakeProjectionFactory::setProjection(
             'default',
@@ -131,15 +131,14 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
             $contentRepositoryId
         );
 
-        $subscriptionEngineAndEventStoreAccessor = new class implements ContentRepositoryServiceFactoryInterface {
+        $subscriptionEngineAndEventStoreAccessor = new class () implements ContentRepositoryServiceFactoryInterface {
             public EventStoreInterface|null $eventStore;
             public SubscriptionEngine|null $subscriptionEngine;
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $this->eventStore = $serviceFactoryDependencies->eventStore;
                 $this->subscriptionEngine = $serviceFactoryDependencies->subscriptionEngine;
-                return new class implements ContentRepositoryServiceInterface
-                {
+                return new class () implements ContentRepositoryServiceInterface {
                 };
             }
         };
@@ -150,6 +149,10 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
 
     final protected function resetDatabase(Connection $connection, ContentRepositoryId $contentRepositoryId, bool $keepSchema): void
     {
+        // TODO use php api to reset when $keepSchema=true, but the subscriptions are not deleted from the database and just set to 0 and BOOTING
+        // $this->eventStore->reset();
+        // $this->subscriptionEngine->reset();
+
         $preDeleteStatement = match (true) {
             $connection->getDatabasePlatform() instanceof AbstractMySQLPlatform => 'SET FOREIGN_KEY_CHECKS = 0;',
             default => '',

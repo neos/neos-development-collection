@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Dto\RebaseErrorHandlingS
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamIsClosed;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -44,7 +43,6 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
 
 class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
-
 {
     private const SETUP_LOCK_PATH = __DIR__ . '/setup-lock';
     private const REBASE_IS_RUNNING_FLAG_PATH = __DIR__ . '/rebase-is-running-flag';
@@ -154,7 +152,8 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
             $this->contentRepository->handle(
                 RebaseWorkspace::create($workspaceName)
                     ->withRebasedContentStreamId(ContentStreamId::fromString('user-cs-rebased'))
-                    ->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE));
+                    ->withErrorHandlingStrategy(RebaseErrorHandlingStrategy::STRATEGY_FORCE)
+            );
         } finally {
             unlink(self::REBASE_IS_RUNNING_FLAG_PATH);
         }
@@ -181,7 +180,9 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
         $this->log('write started');
 
         $workspaceDuringRebase = $this->contentRepository->getContentGraph(WorkspaceName::fromString('user-test'));
-        Assert::assertSame('user-cs-id', $workspaceDuringRebase->getContentStreamId()->value,
+        Assert::assertSame(
+            'user-cs-id',
+            $workspaceDuringRebase->getContentStreamId()->value,
             'The parallel tests expects the workspace to still point to the original cs.'
         );
 
@@ -210,11 +211,7 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
         if ($actualException === null) {
             Assert::fail(sprintf('No exception was thrown. Mutated Node: %s', json_encode($node?->properties->serialized())));
         }
-
-        Assert::assertThat($actualException, self::logicalOr(
-            self::isInstanceOf(ContentStreamIsClosed::class),
-            self::isInstanceOf(ConcurrencyException::class), // todo is only thrown theoretical? but not during tests here ...
-        ));
+        self::assertInstanceOf(ConcurrencyException::class, $actualException);
 
         Assert::assertSame('title-original', $node?->getProperty('title'));
     }

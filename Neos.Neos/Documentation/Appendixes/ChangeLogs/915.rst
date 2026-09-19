@@ -1,0 +1,591 @@
+`9.1.5 (2026-05-20) <https://github.com/neos/neos-development-collection/releases/tag/9.1.5>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: `DimensionSpacePointsRepository`'s runtime cache creates invalid state after replay <https://github.com/neos/neos-development-collection/pull/5820>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+If the content repository was used in the same PHP instance as a replay was issued its possible to have a corrupted state and missing entries for the dimension space points.
+
+How is this possible if projections are pure? If we rely on runtime caches to see if a write is necessary. Ironically the runtime cache for writing only "optimizes" the events ``DimensionShineThroughWasAdded`` and  ``DimensionSpacePointWasMoved`` where there is not much to optimise as these are developer only emitted events.
+
+The actual frequent inserts in the DimensionSpacePointsRepository for updated or new hierarchies and node rows where done always via ``INSERT IGNORE`` as a new instance of the ``DimensionSpacePointsRepository`` was created via ``new`` and thus the cache not shared.
+
+This problem was noticed by accident during running the projection integrity violation detection after each scenario
+
+https://github.com/neos/neos-development-collection/pull/5808
+
+The feature
+
+```
+Neos.Neos/Tests/Behavior/Features/AssetUsage/DimensionSpacePoints/01-MoveDimensionSpacePoints.feature:103
+```
+
+Tests exactly just that, that after replay of the ``MoveDimensionSpacePoint`` everything is "OK" which failed before.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter``
+
+`BUGFIX: Use actual occupied node rows in node aggregate (as subtree tags are hierarchy) <https://github.com/neos/neos-development-collection/pull/5817>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Previously, the subtree tags were only correctly determined if the first row of the query result is also the actual occupation node row.
+
+See
+
+> !isset($nodesByOccupiedDimensionSpacePoint[$occupiedDimensionSpacePoint->hash])
+
+The attached unit tests shows that the occupations are now correctly determined.
+
+The old behaviour is still partially in place as a (temporary) hack until we find out how to continue with https://github.com/neos/neos-development-collection/pull/5489. Because if we were strict - which we should have been in the first place - building node aggregates should not be possible without all covered rows returned. Unfortunately that exactly happens when using child queries on node aggregates with multiple parents.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter``
+
+`BUGFIX: Always ensure tethered descendant node ids don't exist during command handling <https://github.com/neos/neos-development-collection/pull/5798>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Adjust test to not attempt to create illegal state
+
+Following integrity violations are detected:
+
+- Node aggregate nodewyn-tetherton is ambiguous in content stream cs-identifier and dimension space point {"language":"gsw"},
+- Node aggregate nodewyn-tetherton in content stream cs-identifier is of ambiguous type ("Neos.ContentRepository.Testing:ChildOfNodeTypeA","Neos.ContentRepository.Testing:Tethered")
+
+see https://github.com/neos/neos-development-collection/issues/5795
+
+## Test and implement that ``tetheredDescendantNodeAggregateIds`` are not occupied
+
+
+- ``CreateRootNodeAggregateWithNode`` was already implemented but not tested
+- ``CreateRootNodeAggregateWithNode`` and ``ChangeNodeAggregateType`` allowed to create illegal state in the projections
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Ignore orphaned reference relations in integrity violation <https://github.com/neos/neos-development-collection/pull/5807>`_
+-------------------------------------------------------------------------------------------------------------------------------------
+
+solves: https://github.com/neos/neos-development-collection/issues/5795
+
+As per `#5809 <https://github.com/neos/neos-development-collection/issues/5809>`_ orphaned reference edges are a design decision - at least for the released Neos 9.0 version(s). To prevent confusing users and also to allow us to run the projection integrity violation detection after each test scenario in ci, we silence the error in that specific case.
+
+**Review commit by commit please if you dont think this change is harmless;)**
+
+* Packages: ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.BehavioralTests``
+
+`BUGFIX: Stabilise behavioural CR test for PostgreSQL graph <https://github.com/neos/neos-development-collection/pull/5792>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+Based on https://github.com/neos/neos-development-collection/pull/5791
+
+Extracted from `#5751 <https://github.com/neos/neos-development-collection/issues/5751>`_
+
+- Fix assertion on DSP ``affectedCoveredDimensionSpacePoints`` in behavioural testsuite
+- Fix sequence numbers for postgres test setup
+
+the second fix, truncating the event table in the behaviour tests like that was a Provisorium already and touching this code begs the question if we can also find a better way - even only for the future, so lets discuss.
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.TestSuite``
+
+`BUGFIX: SoftRemoval: Avoid uneccessary queries which become costly with many workspaces <https://github.com/neos/neos-development-collection/pull/5799>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+In ``withVisibleInDependingWorkspacesConflicts`` we invoke for every workspace ``$contentGraph->findNodeAggregatesByIds()`` This is intended and the fastest way with the current API, but its relatively useless when ``$softRemovedNodes`` are empty as there will be no objections to be found.
+
+Found during benching with 1000 workspaces and publications.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Fusion`` ``Neos``
+
+`BUGFIX:  Add missing neos link styles in Minimal css <https://github.com/neos/neos-development-collection/pull/5780>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+When a package uses the ``Minimal`` option as the main stylesheet, some link styles were missing, and the underlines in the side navigation and the breadcrumbs were rendered while the package was active. A prominent example is ``Flowpack/Media/Ui``.
+
+This fix adds styles to specific CSS selectors to avoid breaking changes in unexpected places.
+
+Before:
+
+<img width="1460" height="767" alt="Bildschirmfoto 2026-04-14 um 11 54 44" src="https://github.com/user-attachments/assets/771efdb8-f53e-44ed-bdca-5c745083fb01" />
+
+After:
+
+<img width="1469" height="773" alt="Bildschirmfoto 2026-04-14 um 11 43 29" src="https://github.com/user-attachments/assets/2ed0da6d-a554-40a7-91da-983a42da3583" />
+
+related: Bug in `Flowpack/media-ui <https://github.com/Flowpack/media-ui/issues/272#event-24442655361>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Introduce `ProjectionIntegrityViolationDetectionRunnerFactoryInterface` to allow switching implementation via Objects.yaml <https://github.com/neos/neos-development-collection/pull/5791>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Non breaking and clean way to allow custom graphs to be implemented. Leverages the Framework to determine the implementation rather than adding the concept to the ``ContentRepository`` object itself which would be partly breaking custom implementations.
+
+The need came up with `#5751 <https://github.com/neos/neos-development-collection/issues/5751>`_
+
+And extract shared ``ProjectionIntegrityViolationDetectionTrait`` from DBAL specific implementation
+
+- removes all autoloading hacks
+- allows custom content graph implementations to be tested without DBAL adapter and autoloading issues
+- objects.yaml determines which  ProjectionIntegrityViolationDetection to use
+
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.BehavioralTests`` ``ContentRepository.TestSuite``
+
+`BUGFIX: Update version and release to 8.4 in conf.py <https://github.com/neos/neos-development-collection/pull/5794>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+The documenttation for 8.4 claimed to be 8.3 on https://neos.readthedocs.io/en/8.4/.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [x] Reviewer - The first section explains the change briefly for change-logs
+- [ ] ~~Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions~~
+
+* Packages: ``Neos``
+
+`BUGFIX: Prevent unsigned integer underflow in DocumentUriPathProjection when duplicate SubtreeWasUntagged events reach live <https://github.com/neos/neos-development-collection/pull/5779>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Before decrementing the disabled/removed counter, check whether the node was actually explicitly tagged by comparing its counter with the parent node's counter. If the node's level is not greater than the parent's, the untag is a no-op — preventing 0 - 1 on the UNSIGNED column.
+
+* Resolves: `#5778 <https://github.com/neos/neos-development-collection/issues/5778>`_
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.TestSuite``
+
+`BUGFIX: Find reference nodes by their aggregate id <https://github.com/neos/neos-development-collection/pull/5761>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Adjusts the ``nodes`` service endpoint to include a node if its id equals the specified search term
+
+* Fixes: `#5756 <https://github.com/neos/neos-development-collection/issues/5756>`_
+Related: https://github.com/neos/neos-ui/pull/4093
+
+* Packages: ``Neos``
+
+`BUGFIX: Partial Publishing node type changes did not work if child nodes were removed (because constraints did not match anymore) <https://github.com/neos/neos-development-collection/pull/5767>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+### Problem
+
+Publishing a workspace could fail with ``PartialWorkspaceRebaseFailed`` after a ``ChangeNodeAggregateType`` command was executed using the ``delete`` strategy:
+
+```
+ServerSideError: Neos\\ContentRepository\\Core\\Feature\\WorkspaceRebase\\Exception\\PartialWorkspaceRebaseFailed
+Publication failed, events cannot be reordered as filtered:
+"Node aggregate "62671e14-…" does currently not exist."
+```
+
+## Reproduction steps:
+
+1. Create a page — and ensure this auto-creates a tethered child node (e.g. a content collection)
+2. Insert content into the tethered child node (e.g. Text)
+3. Change the page's node type to one that no longer declares the tethered node (e.g. a Shortcut). This then applies ``strategy: delete``
+4. Publish all changes via "Publish All" **in the Content Module** -> this triggers a Partial Publish in all cases.
+
+The original command order on the user workspace is:
+
+- Create Page (also creates tethered ContentCollection)
+- Create Text
+- ChangeNodeAggregateType (Page -> Shortcut)
+  - auto-emits a "NodeAggregateWasRemoved"
+
+**this removes the tethered node + Text node physically from the user workspace**
+
+The ``delete`` strategy emitted ``NodeAggregateWasRemoved`` events, physically removing the tethered node and its children. **Because of this physical removal, the tethered child node's ID cannot be detected during partial publishing**, and thus the content creation (from step 2) is sorted not as "to-be-publishedCommands", but "remainingCommands".
+
+Thus, the order used during partial publish will be:
+
+- **to be published**
+  - Create Page (also creates tethered ContentCollection)
+  - ChangeNodeAggregateType (Page -> Shortcut)
+    - auto-emits a "NodeAggregateWasRemoved"
+- **remainingCommands**
+  - Create Text <-- WRONG (no existing parent, as it has been removed in a previous step)
+
+There exist multiple variations of the above bug, all caused by the same mechanism described above.
+
+### Solution
+
+A new **``markWithTag``** strategy is introduced for ``ChangeNodeAggregateType``. Instead of emitting ``NodeAggregateWasRemoved``, it emits ``SubtreeWasTagged``, which hides the disallowed nodes via a ``SubtreeTag`` ("soft delete"). The node aggregates remain in the graph, so workspace rebase can still resolve event references — no ordering conflict occurs.
+
+After publishing, soft removals are already physically removed.
+
+**NOTE: This needs a corresponding change in Neos.Neos.Ui/Classes/Domain/Model/Changes/Property.php to use this Soft Removal**: https://github.com/neos/neos-ui/pull/4099
+
+### Implementation Details
+
+I needed to convert NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy from an ENUM to a class, in order to store the additional tag-information for the new strategy.
+
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.Core``
+
+`BUGFIX: Stabilize Workspace preview for broken assets <https://github.com/neos/neos-development-collection/pull/5755>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Prevents missing assets from throwing an exception when trying to review workspace changes:
+
+### Before
+
+<img width="978" height="340" alt="image" src="https://github.com/user-attachments/assets/5d06b99a-ccbe-43df-b71f-9e05b1783dc6" />
+
+### With fix
+
+<img width="1842" height="1127" alt="image" src="https://github.com/user-attachments/assets/e33818ad-5d0e-4653-9c51-d753f44ec078" />
+
+* Fixes: `#5754 <https://github.com/neos/neos-development-collection/issues/5754>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Log `fusionPath` when absorbing exceptions during Fusion rendering <https://github.com/neos/neos-development-collection/pull/5760>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+The ``AbsorbingHandler`` is active by default and will log the current ``fusionPath`` and ``referenceCode`` to the System Log. But it is not logged with the exception itself and there is no way to correlate the two (apart from the timestamp).
+
+This fix adds ``fusionPath`` and ``referenceCode`` to the ``additionalData`` array, making them appear in the exception log, too.
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Decouple postgreSQL adapter from dev collection for beta development <https://github.com/neos/neos-development-collection/pull/5816>`_
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/neos-development-collection/pull/5751#issuecomment-4278834816
+
+See also https://github.com/neos/slicer/pull/24 which disables slicing
+
+And https://github.com/neos/contentgraph-postgresqladapter/issues/2 the roadmap to the first beta.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentGraph.PostgreSQLAdapter``
+
+`TASK: Allow configuration yaml format in behaviour tests <https://github.com/neos/neos-development-collection/pull/5832>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+The GherkinTableNodeBasedContentDimensionSource currently does not allow configuration values, which prevents tests from being written that need this.
+
+~This adds an arbitrary amount of JSON that can be used as config for dimensions and dimension values~
+
+This adds a new step which can be used as replacement:
+
+```feature
+Given using the following content dimensions yaml configuration:
+"""yaml
+language:
+  label: 'Neos.Demo:Main:contentDimensions.language'
+  icon: language
+  values:
+    'en_US':
+      label: English (US)
+      specializations:
+        'en_UK':
+          label: English (UK)
+    'de':
+      label: Deutsch
+"""
+```
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+mainly check the JSON format
+
+
+* Packages: ``ContentRepository.TestSuite``
+
+`TASK: Sane visibility constraints in behaviour tests <https://github.com/neos/neos-development-collection/pull/5815>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+Requires: https://github.com/neos/neos-development-collection/pull/5817
+
+
+### Use visibility constraints only for testing queries (see  NodeTraversal)
+
+and not for general node assertions
+
+if mixed together understanding the tests becomes quickly absurd as there are lot-of checks asserting a node does not exist, but they mean they are _hidden_. Which becomes really fun to read if the visibility constraints are multiple times modified in a test.
+
+instead writing tests should always take into account that the nodes **exist**
+
+In combination with the following steps assertions should become more readable
+
+before
+
+```
+I expect node aggregate identifier "mc-nodeface" to lead to no node
+```
+
+after
+
+```
+I expect node aggregate identifier "mc-nodeface" to lead to node cs-identifier;mc-nodeface;{}
+I expect this node to be exactly explicitly tagged "disabled"
+I expect this node to exactly inherit the tags "disabled"
+```
+
+----
+
+completely separate from that are assertions for queries. While internally the findNodeById query is also used for
+
+> I expect node aggregate identifier "mc-nodeface" to lead to node cs-identifier;mc-nodeface;{}
+
+the test describes just the expectation and the test-writer should not think about any possible filtering or exact queries.
+
+for testing queries explicitly it makes sense to take visibility constraints into account
+
+```
+And I restrict the visibility of nodes tagged "disabled" in subgraph queries
+When I execute the findChildNodes query for parent node aggregate id ...
+```
+
+TODO:
+- [ ] Ensure by no longer using VisibilityConstraints for node disabling assertions we add capable tests for NodeTraversal
+  - [ ] Add for NodeTraversal second tag on a parent node which is excluded in another scenario to show inheritance works
+
+* Packages: ``ContentRepository.TestSuite``
+
+`TASK: (Slightly) improve workspace / publishing test coverage <https://github.com/neos/neos-development-collection/pull/5813>`_
+--------------------------------------------------------------------------------------------------------------------------------
+
+Required for `#5776 <https://github.com/neos/neos-development-collection/issues/5776>`_
+We need to improve test-coverage for publication to ensure all commands only affect the one workspace they were applied in.
+This is only natural in the current 9.0 forking model where we copy the whole hierarchy but with optimisations the code becomes more complex and some tests might still pass when modifying all workspaces simultaneously accidentally.
+
+
+ - CreateRootNodeAggregateWithNode (Added)
+ - CreateNodeAggregateWithNodeAndSerializedProperties (9.0)
+ - SetSerializedNodeProperties (Added)
+ - MoveNodeAggregate (Todo, Added)
+ - RemoveNodeAggregate (9.0) One duplicate historical case removed (where RemoveNodesFromAggregate was a separate command)
+ - ChangeNodeAggregateName (Commented) Testcase repaired and enabled
+ - ChangeNodeAggregateType (Added)
+ - CreateNodeVariant (Todo)
+ - TagSubtree (9.0)
+ - UntagSubtree (9.0)
+ - UpdateRootNodeAggregateDimensions
+ - SetSerializedNodeReferences (9.0)
+
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``ContentRepository.BehavioralTests``
+
+`TASK: Use commands instead of events in behaviour tests <https://github.com/neos/neos-development-collection/pull/5810>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+... in order to prevent impossible states
+
+Followup to https://github.com/neos/neos-development-collection/pull/4335
+
+* Fixes: `#4336 <https://github.com/neos/neos-development-collection/issues/4336>`_ (finally :D)
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`TASK: Remove `@adapters=` and other obsolete tags in CR behaviour tests <https://github.com/neos/neos-development-collection/pull/5806>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+So this does not clutter the pr `#5751 <https://github.com/neos/neos-development-collection/issues/5751>`_
+We currently do not evaluate any of these tags and they are just chilling there.
+We could keep the ``@contentrepository`` tag but some test dont implement them and they work without and dont do anything.
+
+For history:
+
+With `94f72b1e2385640a1da56250590b0e8eb56c8b69 <https://github.com/neos/neos-development-collection/commit/94f72b1e2385640a1da56250590b0e8eb56c8b69>`_ we used multiple content graphs at once during testing - for the same content repository - that was possible at that time where the content graph was not a first level projection citizen.
+
+Later with https://github.com/neos/neos-development-collection/pull/4455 this was removed but the ``@adapters`` tags were kept.
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter`` ``ContentRepository.Export`` ``ContentRepository.LegacyNodeMigration`` ``TimeableNodeVisibility``
+
+`TASK: Adjust to use correct `neos/behat` subcontext in ci <https://github.com/neos/neos-development-collection/pull/5803>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+Requires https://github.com/neos/neos-development-collection/pull/5284
+
+With https://github.com/neos/behat/pull/42 the ``FLOW_CONTEXT`` is respected
+
+as we specify FLOW_CONTEXT: Testing behat now fails as the context must either not be defined or set to Testing/Behat or Testing/Behat/*
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``.github``
+
+`TASK: Remove doctrine migrate and cr setup commands from behat scripts <https://github.com/neos/neos-development-collection/pull/5284>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Alternative fix to `#5005 <https://github.com/neos/neos-development-collection/issues/5005>``_or the commits in ``#4988 <https://github.com/neos/neos-development-collection/issues/4988>`_
+
+When the ci is run without the doctrine schema setup the behat helper ``@flowEntities`` will create the schema.
+This unfortunately messes with the transaction level as debugged:
+
+```
+array(2) {
+  ["getTransactionNestingLevel"]=>
+  int(119)
+  ["isTransactionActive"]=>
+  bool(true)
+}
+```
+
+The working state - when the schema exists already - looks like this
+
+```
+array(2) {
+  ["getTransactionNestingLevel"]=>
+  int(0)
+  ["isTransactionActive"]=>
+  bool(false)
+}
+```
+
+The CI complains with errors like
+
+> A transaction is active already, can't commit events!
+
+or
+
+> Failed to acquire checkpoint lock for subscriber "Neos\\ContentRepository\\Core\\Projection\\ContentStream\\ContentStreamProjection" because a transaction is active
+
+But with https://github.com/neos/behat/pull/40 we fix the problem and reset the transactions after the migration, so that we can remove the ci hack ``./../flow doctrine:migrate``.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Log events if parallel tests failed <https://github.com/neos/neos-development-collection/pull/5750>`_
+------------------------------------------------------------------------------------------------------------
+
+To better and fully understand https://github.com/neos/neos-development-collection/issues/5713 we output the last 100 events in case of an error.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.1.4...9.1.5>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

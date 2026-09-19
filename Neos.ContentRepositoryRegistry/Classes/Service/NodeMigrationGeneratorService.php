@@ -25,7 +25,6 @@ use Neos\Utility\Files;
  */
 class NodeMigrationGeneratorService
 {
-
     public function __construct(
         private readonly PackageManager $packageManager
     ) {

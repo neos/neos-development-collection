@@ -19,7 +19,6 @@ use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Flow\Package\Package as BasePackage;
-use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;

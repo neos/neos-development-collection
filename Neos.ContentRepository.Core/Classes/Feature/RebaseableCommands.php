@@ -103,8 +103,7 @@ class RebaseableCommands implements \IteratorAggregate
                 CreateNodeVariant::class,
                 TagSubtree::class,
                 UntagSubtree::class,
-                UpdateRootNodeAggregateDimensions::class,
-                    => $command->nodeAggregateId->equals($nodeId),
+                UpdateRootNodeAggregateDimensions::class => $command->nodeAggregateId->equals($nodeId),
                 SetSerializedNodeReferences::class => $command->sourceNodeAggregateId->equals($nodeId),
                 // for non node-aggregate-changes we return false, so they are kept as remainder:
                 AddDimensionShineThrough::class,

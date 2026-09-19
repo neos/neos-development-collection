@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
 
 /*
@@ -11,13 +13,13 @@ namespace Neos\ContentRepositoryRegistry\Tests\Unit\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypesLoader;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Utility\Files;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class NodeTypesLoaderTest extends UnitTestCase

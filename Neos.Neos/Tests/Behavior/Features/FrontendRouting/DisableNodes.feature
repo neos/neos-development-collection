@@ -107,8 +107,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    When I am on URL "/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in dimension "{}"
+    When The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
@@ -150,8 +149,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    When I am on URL "/nody/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    When The URL "/nody/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Move explicit disabled node
     When the command DisableNodeAggregate is executed with payload:
@@ -182,12 +180,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "nody-mc-nodeface" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
-    When I am on URL "/nody/nody-child"
-    Then the matched node should be "nody-mc-nodeface-child" in dimension "{}"
+    When The URL "/nody/nody-child" should match the node "nody-mc-nodeface-child" in dimension "{}"
 
   Scenario: Disable leaf node and create sibling with same uri path segment
-    When I am on URL "/david-nodenborough/earl-document/leaf"
-    Then the matched node should be "leaf-mc-node" in dimension "{}"
+    When The URL "/david-nodenborough/earl-document/leaf" should match the node "leaf-mc-node" in dimension "{}"
     And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
     When the command DisableNodeAggregate is executed with payload:
@@ -207,6 +203,5 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | parentNodeAggregateId | "earl-o-documentbourgh"       |
       | initialPropertyValues | {"uriPathSegment": "leaf"}    |
 
-    When I am on URL "/david-nodenborough/earl-document/leaf"
-    Then the matched node should be "leaf-sibling" in dimension "{}"
+    When The URL "/david-nodenborough/earl-document/leaf" should match the node "leaf-sibling" in dimension "{}"
     And The node "leaf-sibling" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"

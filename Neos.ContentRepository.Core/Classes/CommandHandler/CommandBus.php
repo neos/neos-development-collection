@@ -22,8 +22,6 @@ final readonly class CommandBus
     private array $handlers;
 
     public function __construct(
-        // todo pass $commandHandlingDependencies in each command handler instead of into the commandBus
-        private CommandHandlingDependencies $commandHandlingDependencies,
         CommandHandlerInterface ...$handlers
     ) {
         $this->handlers = $handlers;
@@ -32,15 +30,13 @@ final readonly class CommandBus
     /**
      * The handler only calculate which events they want to have published,
      * but do not do the publishing themselves
-     *
-     * @return EventsToPublish|\Generator<int, EventsToPublish>
      */
-    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish|\Generator
+    public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish
     {
         // multiple handlers must not handle the same command
         foreach ($this->handlers as $handler) {
             if ($handler->canHandle($command)) {
-                return $handler->handle($command, $this->commandHandlingDependencies);
+                return $handler->handle($command);
             }
         }
         throw new \RuntimeException(sprintf('No handler found for Command "%s"', get_debug_type($command)), 1649582778);
@@ -49,7 +45,6 @@ final readonly class CommandBus
     public function withAdditionalHandlers(CommandHandlerInterface ...$handlers): self
     {
         return new self(
-            $this->commandHandlingDependencies,
             ...$this->handlers,
             ...$handlers,
         );

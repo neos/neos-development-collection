@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
  */
 trait NodeTypeChangeInternals
 {
-    use ConstraintChecks;
+    use NodeTypeConstraintChecks;
 
     /**
      * NOTE: when changing this method, also check {@see NodeTypeChange::requireConstraintsImposedByHappyPathStrategyAreMet}

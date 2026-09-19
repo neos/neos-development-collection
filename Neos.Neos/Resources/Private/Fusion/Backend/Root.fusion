@@ -7,5 +7,6 @@ Neos.Neos.LoginController.index = Neos.Neos:View.Login {
   site = ${site}
   styles = ${styles}
   username = ${username}
+  hasContentRepositoryError = ${hasContentRepositoryError}
   flashMessages = ${flashMessages}
 }

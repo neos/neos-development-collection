@@ -77,7 +77,7 @@ final class ReferenceNodesOperation implements OperationInterface
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
             $output[] = iterator_to_array($subgraph->findReferences($contextNode->aggregateId, $filter));
         }
-        $flowQuery->setContext(array_map(fn(Reference $reference) => $reference->node, array_merge(...$output)));
+        $flowQuery->setContext(array_map(fn (Reference $reference) => $reference->node, array_merge(...$output)));
     }
 
     public static function getShortName(): string

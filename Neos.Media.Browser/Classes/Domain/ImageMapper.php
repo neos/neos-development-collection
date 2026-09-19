@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Browser\Domain;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;

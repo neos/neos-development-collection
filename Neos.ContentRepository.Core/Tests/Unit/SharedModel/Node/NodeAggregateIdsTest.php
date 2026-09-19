@@ -6,8 +6,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class NodeAggregateIdsTest extends TestCase
 {

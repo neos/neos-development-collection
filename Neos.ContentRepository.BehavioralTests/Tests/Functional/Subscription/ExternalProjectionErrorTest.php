@@ -25,7 +25,7 @@ use PHPUnit\Framework\Attributes\Test;
  */
 final class ExternalProjectionErrorTest extends AbstractSubscriptionEngineTestCase
 {
-    static Connection $secondConnection;
+    public static Connection $secondConnection;
 
     #[Before]
     public function injectExternalFakeProjection(): void

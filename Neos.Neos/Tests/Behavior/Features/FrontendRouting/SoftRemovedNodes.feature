@@ -84,8 +84,7 @@ Feature: Routing behavior of soft removed nodes
       | coveredDimensionSpacePoint   | {}             |
       | nodeVariantSelectionStrategy | "allVariants"  |
       | tag                          | "removed"      |
-    When I am on URL "/david-nodenborough/earl-document/leaf"
-    Then the matched node should be "leaf-mc-node" in dimension "{}"
+    When The URL "/david-nodenborough/earl-document/leaf" should match the node "leaf-mc-node" in dimension "{}"
     And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
   Scenario: Soft remove node with child nodes
@@ -123,8 +122,7 @@ Feature: Routing behavior of soft removed nodes
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | tag                          | "removed"                |
-    When I am on URL "/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in dimension "{}"
+    When The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in dimension "{}" should not resolve to an URL
@@ -170,8 +168,7 @@ Feature: Routing behavior of soft removed nodes
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "nody-mc-nodeface"      |
       | newSucceedingSiblingNodeAggregateId | null                    |
-    When I am on URL "/nody/earl-document"
-    Then the matched node should be "earl-o-documentbourgh" in dimension "{}"
+    When The URL "/nody/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 
   Scenario: Move explicit soft removed node
     When the command TagSubtree is executed with payload:
@@ -205,12 +202,10 @@ Feature: Routing behavior of soft removed nodes
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
       | tag                          | "removed"          |
-    When I am on URL "/nody/nody-child"
-    Then the matched node should be "nody-mc-nodeface-child" in dimension "{}"
+    When The URL "/nody/nody-child" should match the node "nody-mc-nodeface-child" in dimension "{}"
 
   Scenario: Soft remove leaf node and create sibling with same uri path segment
-    When I am on URL "/david-nodenborough/earl-document/leaf"
-    Then the matched node should be "leaf-mc-node" in dimension "{}"
+    When The URL "/david-nodenborough/earl-document/leaf" should match the node "leaf-mc-node" in dimension "{}"
     And The node "leaf-mc-node" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
     When the command TagSubtree is executed with payload:
@@ -230,6 +225,5 @@ Feature: Routing behavior of soft removed nodes
       | parentNodeAggregateId | "earl-o-documentbourgh"       |
       | initialPropertyValues | {"uriPathSegment": "leaf"}    |
 
-    When I am on URL "/david-nodenborough/earl-document/leaf"
-    Then the matched node should be "leaf-sibling" in dimension "{}"
+    When The URL "/david-nodenborough/earl-document/leaf" should match the node "leaf-sibling" in dimension "{}"
     And The node "leaf-sibling" in dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"

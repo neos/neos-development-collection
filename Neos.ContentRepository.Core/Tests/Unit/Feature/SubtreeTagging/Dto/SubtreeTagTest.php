@@ -1,13 +1,13 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\SubtreeTagging\Dto;
 
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class SubtreeTagTest extends TestCase
 {
-
     #[Test]
     public function fromStringSupportsUUIDs(): void
     {

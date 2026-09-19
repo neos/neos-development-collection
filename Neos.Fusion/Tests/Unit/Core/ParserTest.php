@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core;
 
 /*
@@ -10,13 +11,13 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Exception;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Fusion Parser
@@ -852,15 +853,15 @@ class ParserTest extends UnitTestCase
         $parser
             ->expects($matcher)
             ->method('handleDslTranspile')->willReturnCallback(function (...$parameters) use ($matcher) {
-            if ($matcher->numberOfInvocations() === 1) {
-                $this->assertSame('dsl1', $parameters[0]);
-                $this->assertSame('example value', $parameters[1]);
-            }
-            if ($matcher->numberOfInvocations() === 2) {
-                $this->assertSame('dsl2', $parameters[0]);
-                $this->assertSame('another' . chr(10) . 'multiline' . chr(10) . 'value', $parameters[1]);
-            }
-        });
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame('dsl1', $parameters[0]);
+                    $this->assertSame('example value', $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame('dsl2', $parameters[0]);
+                    $this->assertSame('another' . chr(10) . 'multiline' . chr(10) . 'value', $parameters[1]);
+                }
+            });
 
         $parser->parseFromSource(FusionSourceCodeCollection::fromString($sourceCode))->toArray();
     }

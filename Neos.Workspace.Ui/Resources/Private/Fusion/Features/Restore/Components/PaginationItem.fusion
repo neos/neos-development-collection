@@ -1,0 +1,49 @@
+##
+# Renders a pagination item
+#
+prototype(Neos.Workspace.Ui:Component.PaginationItem) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = ''
+
+  /// integer
+  pageNumber = 1
+
+  /// boolean
+  isCurrentPage = false
+
+  /// string
+  searchTerm = ''
+
+  sorting = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    paginationItemUri = Neos.Fusion:ActionUri {
+      action = 'show'
+      controller = 'Restore'
+      format = 'html'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        page = ${props.pageNumber}
+        searchTerm = ${props.searchTerm}
+        sorting = ${Json.stringify(props.sorting)}
+      }
+    }
+  }
+
+  renderer = afx`
+    <li class={props.isCurrentPage ? 'current' : ''}>
+      <a
+        href="#"
+        @if.isNotCurrent={!props.isCurrentPage}
+        hx-get={private.paginationItemUri}
+        hx-replace-url={private.paginationItemUri}
+        hx-target="#workspace-module-content"
+        hx-select="#workspace-module-content"
+        hx-swap="outerHTML"
+      >
+        {props.pageNumber}</a>
+      <span @if.isCurrent={props.isCurrentPage}>{props.pageNumber}</span>
+    </li>
+  `
+}

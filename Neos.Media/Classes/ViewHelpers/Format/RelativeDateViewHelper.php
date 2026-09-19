@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\ViewHelpers\Format;
 
 /*

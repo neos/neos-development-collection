@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamClosing;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeMove;
@@ -55,8 +54,6 @@ trait CRTestSuiteTrait
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
     use GenericCommandExecutionAndEventPublication;
-
-    use ContentStreamClosing;
 
     use NodeCreation;
     use SubtreeTagging;
@@ -286,7 +283,7 @@ trait CRTestSuiteTrait
 
     final protected function getContentGraphReadModel(): ContentGraphReadModelInterface
     {
-        return $this->getContentRepositoryService(new class implements ContentRepositoryServiceFactoryInterface {
+        return $this->getContentRepositoryService(new class () implements ContentRepositoryServiceFactoryInterface {
             public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
             {
                 $contentGraphReadModel = $serviceFactoryDependencies->contentGraphReadModel;
@@ -314,7 +311,7 @@ trait CRTestSuiteTrait
     {
         return PropertyValuesToWrite::fromArray(
             array_map(
-                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
+                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? (is_array($value['value']) ? $value['__type']::fromArray($value['value']) : new $value['__type']($value['value'])) : $value,
                 $properties
             )
         );

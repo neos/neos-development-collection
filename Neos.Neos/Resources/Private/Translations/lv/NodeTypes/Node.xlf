@@ -28,7 +28,7 @@
       </trans-unit>
       <trans-unit id="groups.default" xml:space="preserve">
         <source>General</source>
-        <target state="translated">Vispārīga</target>
+        <target state="translated" state-qualifier="leveraged-mt">Vispārīga</target>
       </trans-unit>
     </body>
   </file>

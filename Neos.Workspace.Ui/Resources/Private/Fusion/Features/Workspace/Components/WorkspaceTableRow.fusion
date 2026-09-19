@@ -52,6 +52,13 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         workspaceName = ${props.workspaceListItem.name}
       }
     }
+    editWorkspaceRoleAssignmentsUri = Neos.Fusion:ActionUri {
+      action = 'editWorkspaceRoleAssignments'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
     deleteWorkspaceUri = Neos.Fusion:ActionUri {
       action = 'delete'
       format = 'htmx'
@@ -67,9 +74,18 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
         force = false
       }
     }
+    restoreUri = Neos.Fusion:ActionUri {
+      action = 'show'
+      controller = 'Restore'
+      format = 'html'
+      arguments {
+        workspaceName = ${props.workspaceListItem.name}
+      }
+    }
     rebaseWorkspacePopoverId = 'workspace-rebase-modal'
     deleteWorkspacePopoverId = 'workspace-delete-modal'
     editWorkspacePopoverId = 'workspace-edit-modal'
+    editWorkspaceRoleAssignmentsPopoverId = 'workspace-edit-role-assignments-modal'
   }
 
   renderer = afx`
@@ -132,6 +148,15 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspacePopoverId + '").showPopover()'}
         />
         <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments({workspace: props.workspaceListItem.title})}
+          icon="user-lock"
+          disabled={props.workspaceListItem.personal || props.workspaceListItem.permissions.manage == false}
+          attributes.hx-get={private.editWorkspaceRoleAssignmentsUri}
+          attributes.hx-target='#popover-container'
+          attributes.hx-swap='innerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.editWorkspaceRoleAssignmentsPopoverId + '").showPopover()'}
+        />
+        <Neos.Workspace.Ui:Component.Button
           isDanger
           title={private.i18n.id('workspaces.deleteWorkspace').arguments([props.workspaceListItem.title])}
           icon="trash-alt icon-white"
@@ -140,6 +165,16 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceTableRow) < prototype(Neos.Fusion
           attributes.hx-target='#popover-container'
           attributes.hx-swap='innerHTML'
           attributes.hx-on--after-request={'document.getElementById("' + private.deleteWorkspacePopoverId + '").showPopover()'}
+        />
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspace.RestoreButtonTitle').arguments([props.workspaceListItem.title])}
+          icon="fa-solid fa-trash-can-arrow-up"
+          disabled={!props.workspaceListItem.enableRestoreIcon || props.workspaceListItem.permissions.edit == false}
+          attributes.hx-get={private.restoreUri}
+          attributes.hx-push-url={private.restoreUri}
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-select="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
         />
         <Neos.Workspace.Ui:Component.Button
           isDanger

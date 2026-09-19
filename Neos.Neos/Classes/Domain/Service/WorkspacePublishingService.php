@@ -34,8 +34,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceContainsPublishableChanges;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace as ContentRepositoryWorkspace;
@@ -57,10 +57,16 @@ use Neos\Neos\PendingChangesProjection\Changes;
 #[Flow\Scope('singleton')]
 final class WorkspacePublishingService
 {
+    private ?\DateInterval $garbageCollectionGracePeriod;
+
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly SoftRemovalGarbageCollector $softRemovalGarbageCollector
+        private readonly SoftRemovalGarbageCollector $softRemovalGarbageCollector,
+        ?string $garbageCollectionGracePeriod,
     ) {
+        $this->garbageCollectionGracePeriod = $garbageCollectionGracePeriod
+            ? new \DateInterval($garbageCollectionGracePeriod)
+            : null;
     }
 
     /**
@@ -88,7 +94,7 @@ final class WorkspacePublishingService
     {
         $rebaseCommand = RebaseWorkspace::create($workspaceName)->withErrorHandlingStrategy($rebaseErrorHandlingStrategy);
         $this->contentRepositoryRegistry->get($contentRepositoryId)->handle($rebaseCommand);
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
     }
 
     /**
@@ -103,7 +109,7 @@ final class WorkspacePublishingService
         }
         $numberOfPendingChanges = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
         $this->contentRepositoryRegistry->get($contentRepositoryId)->handle(PublishWorkspace::create($workspaceName));
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
         return new PublishingResult($numberOfPendingChanges, $crWorkspace->baseWorkspaceName);
     }
 
@@ -133,7 +139,7 @@ final class WorkspacePublishingService
         );
 
         $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
 
         return new PublishingResult(
             count($nodeIdsToPublish),
@@ -167,7 +173,7 @@ final class WorkspacePublishingService
         );
 
         $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
 
         return new PublishingResult(
             count($nodeIdsToPublish),
@@ -186,7 +192,7 @@ final class WorkspacePublishingService
         $numberOfChangesToBeDiscarded = $this->countPendingWorkspaceChangesInternal($contentRepository, $workspaceName);
 
         $contentRepository->handle(DiscardWorkspace::create($workspaceName));
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
 
         return new DiscardingResult($numberOfChangesToBeDiscarded);
     }
@@ -214,7 +220,7 @@ final class WorkspacePublishingService
         );
 
         $this->discardNodes($contentRepository, $workspaceName, $nodeIdsToDiscard);
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
 
         return new DiscardingResult(
             count($nodeIdsToDiscard)
@@ -244,7 +250,7 @@ final class WorkspacePublishingService
         );
 
         $this->discardNodes($contentRepository, $workspaceName, $nodeIdsToDiscard);
-        $this->softRemovalGarbageCollector->run($contentRepositoryId);
+        $this->softRemovalGarbageCollector->run($contentRepositoryId, $this->garbageCollectionGracePeriod);
 
         return new DiscardingResult(
             count($nodeIdsToDiscard)
@@ -395,7 +401,7 @@ final class WorkspacePublishingService
             // A Change is publishable if the respective node has a closest ancestor that matches our
             // current ancestor scope (Document/Site)
             $actualAncestorNode = $subgraph->findClosestNode(
-                $change->getLegacyRemovalAttachmentPoint() ?? $change->nodeAggregateId,
+                $change->nodeAggregateId,
                 FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
             );
 

@@ -1274,13 +1274,6 @@ Generate a `@cache` entry identifier for a given node:
       documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
     }
 
-Neos.Caching.getWorkspaceChain(node)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``node`` (Node|null)
-
-**Return** (array<string,Workspace>)
-
 Neos.Caching.nodeTag(nodes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2260,7 +2253,7 @@ translated label.
 
 * ``id`` (string) Id to use for finding translation (trans-unit id in XLIFF)
 * ``originalLabel`` (string, *optional*) The original translation value (the untranslated source string).
-* ``arguments`` (array, *optional*) Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
+* ``arguments`` (array<mixed>, *optional*) Array of numerically indexed or named values to be inserted into placeholders. Have a look at the internationalization documentation in the definitive guide for details.
 * ``source`` (string, *optional*) Name of file with translations
 * ``package`` (string, *optional*) Target package key. If not set, the current package key will be used
 * ``quantity`` (mixed, *optional*) A number to find plural form for (float or int), NULL to not use plural forms

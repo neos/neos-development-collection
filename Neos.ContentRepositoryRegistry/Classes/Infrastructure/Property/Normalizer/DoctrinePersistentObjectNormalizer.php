@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer;
@@ -51,6 +52,7 @@ final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, D
     }
 
     /**
+     * @param array{__identifier: string, __flow_object_type: class-string}  $data
      * @param array<string,mixed> $context
      */
     public function denormalize($data, $type, ?string $format = null, array $context = [])

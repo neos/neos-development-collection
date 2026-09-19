@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\TypeConverter;
 
 /*

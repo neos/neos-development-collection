@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\Subscription\Engine;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\PerformanceTracerInterface;
+use Neos\ContentRepository\Core\Infrastructure\PerformanceTracing\TracePoint;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\Exception\SubscriptionEngineAlreadyProcessingException;
@@ -49,6 +50,18 @@ final class SubscriptionEngine
     ) {
     }
 
+    public function withoutProjectionSubscriberCatchupHooks(): self
+    {
+        return new self(
+            eventStore: $this->eventStore,
+            subscriptionStore: $this->subscriptionStore,
+            subscribers: $this->subscribers->withoutProjectionSubscriberCatchupHooks(),
+            eventNormalizer: $this->eventNormalizer,
+            performanceTracer: $this->performanceTracer,
+            logger: $this->logger,
+        );
+    }
+
     public function setup(SubscriptionEngineCriteria|null $criteria = null): Result
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
@@ -81,7 +94,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
+            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::BOOTING]), $progressCallback, $batchSize)
         );
     }
 
@@ -89,7 +102,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
+            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ACTIVE]), $progressCallback, $batchSize)
         );
     }
 
@@ -97,7 +110,7 @@ final class SubscriptionEngine
     {
         $criteria ??= SubscriptionEngineCriteria::noConstraints();
         return $this->processExclusively(
-            fn() => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
+            fn () => $this->catchUpSubscriptions($criteria, SubscriptionStatusFilter::fromArray([SubscriptionStatus::ERROR, SubscriptionStatus::DETACHED]), $progressCallback, $batchSize)
         );
     }
 
@@ -290,7 +303,7 @@ final class SubscriptionEngine
      */
     private function catchUpSubscriptions(SubscriptionEngineCriteria $criteria, SubscriptionStatusFilter $status, \Closure|null $progressCallback, int|null $batchSize): ProcessedResult
     {
-        $this->performanceTracer?->openSpan('SubscriptionEngine::catchUpSubscriptions', []);
+        $this->performanceTracer?->openSpan(TracePoint::SubscriptionEngineCatchUpSubscriptions);
         try {
             if ($batchSize !== null && $batchSize <= 0) {
                 throw new \InvalidArgumentException(sprintf('Invalid batchSize %d specified, must be either NULL or a positive integer.', $batchSize), 1733597950);
@@ -337,7 +350,7 @@ final class SubscriptionEngine
                     $this->logCatchupHookError($error);
                 }
             }
-            $this->performanceTracer?->mark('CatchUpHooks::onBeforeCatchUp');
+            $this->performanceTracer?->mark(TracePoint::CatchUpHooksOnBeforeCatchUp);
 
             while (true) {
                 /**
@@ -382,7 +395,7 @@ final class SubscriptionEngine
 
                         try {
                             $subscriber->projection->apply($domainEvent, $eventEnvelope);
-                            $this->performanceTracer?->mark('Projection::apply', ['subscription' => $subscription->id->value, 'event' => $eventEnvelope->event->type->value]);
+                            $this->performanceTracer?->mark(TracePoint::ProjectionApply, ['subscription' => $subscription->id->value, 'event' => $eventEnvelope->event->type->value, 'sequenceNumber' => $eventEnvelope->sequenceNumber->value]);
                         } catch (\Throwable $e) {
                             // ERROR Case:
                             $errors[] = Error::create($subscription->id, $e->getMessage(), $errors === [] ? $e : null, $eventEnvelope->sequenceNumber);

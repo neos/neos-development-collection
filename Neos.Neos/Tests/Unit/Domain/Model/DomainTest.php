@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Domain\Model;
 
 /*
@@ -10,10 +11,10 @@ namespace Neos\Neos\Tests\Unit\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the "Domain" domain model
@@ -35,7 +36,7 @@ class DomainTest extends UnitTestCase
         /** @var Site $mockSite */
         $mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
 
-        $domain = new Domain;
+        $domain = new Domain();
         $domain->setSite($mockSite);
         self::assertSame($mockSite, $domain->getSite());
     }

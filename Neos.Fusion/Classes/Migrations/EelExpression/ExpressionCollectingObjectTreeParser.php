@@ -2,13 +2,13 @@
 
 namespace Neos\Fusion\Migrations\EelExpression;
 
+use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractPathValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\DslExpressionValue;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)

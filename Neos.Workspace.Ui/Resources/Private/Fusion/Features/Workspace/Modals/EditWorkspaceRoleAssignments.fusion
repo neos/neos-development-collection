@@ -1,0 +1,108 @@
+prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceName = ''
+  /// string
+  workspaceTitle = ''
+  /// boolean
+  roleAssignmentsEditable = false
+  /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
+  userRoleAssignments = ${[]}
+  /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
+  groupRoleAssignments = ${[]}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'workspace-edit-role-assignments-modal'
+    workspaceTableRowId = ${'workspace-row-' + props.workspaceName}
+
+    confirmDeleteWorkspaceRoleAssignmentPopoverId = 'confirm-delete-workspace-role-assignment-popover'
+    createGroupWorkspaceRoleAssignmentPopoverId = 'create-workspace-group-role-assignment-popover'
+    createUserWorkspaceRoleAssignmentPopoverId = 'create-workspace-user-role-assignment-popover'
+
+    createUserWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'createUserWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+      }
+    }
+    createGroupWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'createGroupWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId} hx-on--load="this.showPopover();" hx-indicator="#indicator">
+      <header>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
+        <h3 class="neos-header">
+          {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments({workspace: props.workspaceTitle})}
+        </h3>
+      </header>
+      <section>
+        <h4>
+          <Neos.Workspace.Ui:Component.Icon icon='users'/>
+          {private.i18n.id('workspace.permission.group.title')}
+        </h4>
+        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable
+          @if.hasGroupPermissions={props.groupRoleAssignments}
+          workspaceTitle={props.workspaceTitle}
+          workspaceName={props.workspaceName}
+          roleAssignments={props.groupRoleAssignments}
+          roleAssignmentsEditable={props.roleAssignmentsEditable}
+        />
+        <p @if.hasNoUserRolePermissions={!props.groupRoleAssignments}>
+          {private.i18n.id('workspaces.permission.noGroupAssignmentsSet')}
+        </p>
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: props.workspaceTitle})}
+          icon="plus"
+          attributes.hx-get={private.createGroupWorkspaceRoleAssignmentUri}
+          attributes.hx-target={'#' + private.createGroupWorkspaceRoleAssignmentPopoverId}
+          attributes.hx-swap='outerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.createGroupWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
+          disabled={!props.roleAssignmentsEditable}
+        />
+      </section>
+      <section>
+        <h4>
+          <Neos.Workspace.Ui:Component.Icon icon='user'/>
+          {private.i18n.id('workspace.permission.user.title')}
+        </h4>
+        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable
+          @if.hasUserRolePermissions={props.userRoleAssignments}
+          workspaceTitle={props.workspaceTitle}
+          workspaceName={props.workspaceName}
+          roleAssignments={props.userRoleAssignments}
+          roleAssignmentsEditable={props.roleAssignmentsEditable}
+        />
+        <p @if.hasNoUserRolePermissions={!props.userRoleAssignments}>
+          {private.i18n.id('workspaces.permission.noUserAssignmentsSet')}
+        </p>
+        <Neos.Workspace.Ui:Component.Button
+          title={private.i18n.id('workspaces.createWorkspaceUserRoleAssignment').arguments({workspace: props.workspaceTitle})}
+          icon="plus"
+          attributes.hx-get={private.createUserWorkspaceRoleAssignmentUri}
+          attributes.hx-target={'#' + private.createUserWorkspaceRoleAssignmentPopoverId}
+          attributes.hx-swap='outerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.createUserWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
+          disabled={!props.roleAssignmentsEditable}
+        />
+      </section>
+      <footer>
+        <Neos.Workspace.Ui:Component.Button
+          label={private.i18n.id('close')}
+          attributes.popovertarget={private.popoverId}
+          attributes.popovertargetaction="close"
+        />
+      </footer>
+      <div popover id={private.createGroupWorkspaceRoleAssignmentPopoverId}></div>
+      <div popover id={private.createUserWorkspaceRoleAssignmentPopoverId}></div>
+      <div popover id={private.confirmDeleteWorkspaceRoleAssignmentPopoverId}></div>
+    </div>
+  `
+}

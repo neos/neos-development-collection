@@ -1,15 +1,15 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\SubtreeTagging\Dto;
 
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class SubtreeTagsTest extends TestCase
 {
-
     #[Test]
     public function createEmptyCreatesEmptyInstance(): void
     {

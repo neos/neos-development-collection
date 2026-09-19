@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Functional\Domain\Repository;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\ImportedAsset;
 use Neos\Media\Domain\Repository\ImportedAssetRepository;
 use Neos\Media\Tests\Functional\AbstractTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ImportedAssetRepositoryTest extends AbstractTestCase
 {

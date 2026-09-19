@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -187,19 +188,27 @@ class ForkingDuringWritingTest extends AbstractParallelTestCase
 
         $this->log('2. forking started');
 
+        $successfulCreated = 0;
         for ($i = 0; $i <= 200; $i++) {
-            $this->contentRepository->handle(CreateWorkspace::create(
-                WorkspaceName::fromString('user-test-' . $i),
-                WorkspaceName::forLive(),
-                ContentStreamId::fromString('user-test-cs-' . $i)
-            ));
+            try {
+                $this->contentRepository->handle(CreateWorkspace::create(
+                    WorkspaceName::fromString('user-test-' . $i),
+                    WorkspaceName::forLive(),
+                    ContentStreamId::fromString('user-test-cs-' . $i)
+                ));
+                $successfulCreated++;
+            } catch (ConcurrencyException $concurrencyException) {
+                // Expected version: [ContentStream:live-cs-id equals 7], actual version: 13. All: [[no ContentStream:user-test-cs-1], [ContentStream:live-cs-id equals 7], [no Workspace:user-test-1]]
+                $this->log(sprintf('Got likely expected exception %s: %s', self::shortClassName($concurrencyException::class), $concurrencyException->getMessage()));
+            }
         }
 
-        $this->log('2. forking finished');
+        $this->log(sprintf('2. forking %d workspaces finished', $successfulCreated));
 
         Assert::assertTrue(true, 'No exception was thrown ;)');
 
-        $workspace = $this->contentRepository->findWorkspaceByName(WorkspaceName::fromString('user-test-200'));
-        Assert::assertNotNull($workspace);
+        Assert::assertGreaterThanOrEqual(10, $successfulCreated, 'Too few workspace of 200 attempts were created');
+        $workspaces = $this->contentRepository->findWorkspaces();
+        Assert::assertCount($successfulCreated, $workspaces->getDependantWorkspaces(WorkspaceName::forLive()));
     }
 }

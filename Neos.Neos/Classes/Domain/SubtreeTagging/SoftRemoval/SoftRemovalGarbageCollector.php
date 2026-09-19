@@ -27,6 +27,8 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
+use Neos\Workspace\Ui\Domain\TrashBin\TrashItemFinder;
+use Psr\Clock\ClockInterface;
 
 /**
  * Service that detects which soft removals in a content repository can be safely transformed to hard removals
@@ -77,16 +79,17 @@ final readonly class SoftRemovalGarbageCollector
         private ContentRepositoryRegistry $contentRepositoryRegistry,
         private ImpendingHardRemovalConflictRepository $impendingConflictRepository,
         private SecurityContext $securityContext,
+        private ClockInterface $clock,
     ) {
     }
 
     /**
      * Entry point to trigger the hard removal
      */
-    public function run(ContentRepositoryId $contentRepositoryId): void
+    public function run(ContentRepositoryId $contentRepositoryId, ?\DateInterval $gracePeriod = null): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $this->securityContext->withoutAuthorizationChecks(function () use ($contentRepository) {
+        $this->securityContext->withoutAuthorizationChecks(function () use ($contentRepository, $gracePeriod) {
             try {
                 $liveContentGraph = $contentRepository->getContentGraph(WorkspaceName::forLive());
             } catch (WorkspaceDoesNotExist) {
@@ -104,7 +107,7 @@ final readonly class SoftRemovalGarbageCollector
 
             $softRemovedNodes = $this->withImpendingHardRemovalConflicts($softRemovedNodes, $contentRepository);
 
-            $this->hardRemoveNodesInDimensionsThatImposeNoConflicts($softRemovedNodes, $contentRepository);
+            $this->hardRemoveNodesInDimensionsThatImposeNoConflicts($softRemovedNodes, $contentRepository, $gracePeriod);
         });
     }
 
@@ -199,8 +202,9 @@ final readonly class SoftRemovalGarbageCollector
      * For the dimensions a node was soft-removed we calculate the dimensions that will via STRATEGY_ALL_SPECIALIZATIONS remove exactly it.
      * If a variant that is about to be removed imposes a conflict here we will skip the hard removal.
      */
-    private function hardRemoveNodesInDimensionsThatImposeNoConflicts(SoftRemovedNodes $softRemovedNodes, ContentRepository $contentRepository): void
+    private function hardRemoveNodesInDimensionsThatImposeNoConflicts(SoftRemovedNodes $softRemovedNodes, ContentRepository $contentRepository, ?\DateInterval $gracePeriod): void
     {
+        $now = $this->clock->now();
         foreach ($softRemovedNodes as $softRemovedNode) {
             // the generalisations of the non-conflicting soft removed dimensions
             $generalizationsToRemoveWithAllSpecializations = $contentRepository->getVariationGraph()->reduceSetToRelativeRoots(
@@ -215,6 +219,17 @@ final readonly class SoftRemovalGarbageCollector
                         ->getIntersection($softRemovedNode->conflictingDimensionSpacePoints)
                         ->isEmpty()
                 ) {
+                    if ($gracePeriod !== null) {
+                        $trashItemFinder = $contentRepository->projectionState(TrashItemFinder::class);
+                        $trashItem = $trashItemFinder->findItem(
+                            WorkspaceName::forLive(),
+                            $softRemovedNode->nodeAggregateId,
+                            $generalization,
+                        );
+                        if ($trashItem?->deleteTime !== null && $trashItem->deleteTime->add($gracePeriod) >= $now) {
+                            continue;
+                        }
+                    }
                     try {
                         $contentRepository->handle(RemoveNodeAggregate::create(
                             WorkspaceName::forLive(),

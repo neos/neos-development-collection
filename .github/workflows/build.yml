@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.4', '8.5']
     defaults:
       run:
         working-directory: ${{ env.NEOS_DIST_FOLDER }}
@@ -56,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.4', '8.5']
     services:
       redis:
         image: redis:alpine
@@ -93,7 +93,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.4', '8.5']
         db:
           - { engine: mysql, image: 'mariadb:10.8', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
           - { engine: pgsql, image: 'postgres:18.3', port: 5432, options: '--health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3' }
@@ -164,7 +164,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.4', '8.5']
         db:
           - { engine: mysql, image: 'mariadb:10.8', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
           # TODO: enable parallel tests also for Postgres
@@ -256,7 +256,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.4', '8.5']
         db:
           - { engine: mysql, image: 'mariadb:10.8', port: 3306, options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3' }
         include:

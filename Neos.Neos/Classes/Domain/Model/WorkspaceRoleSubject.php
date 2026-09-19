@@ -50,4 +50,9 @@ final readonly class WorkspaceRoleSubject
     {
         return $this->type === $other->type && $this->value === $other->value;
     }
+
+    public function getHash(): string
+    {
+        return md5($this->type->value . $this->value);
+    }
 }

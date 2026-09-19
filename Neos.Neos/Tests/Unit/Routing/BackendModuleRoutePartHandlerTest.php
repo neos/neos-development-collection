@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Routing;
 
 /*
@@ -10,12 +11,12 @@ namespace Neos\Neos\Tests\Unit\Routing;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Controller\Module\Administration\UsersController;
 use Neos\Neos\Controller\Module\AdministrationController;
 use Neos\Neos\Routing\BackendModuleRoutePartHandler;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Backend Module Route Part Handler

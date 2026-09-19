@@ -66,7 +66,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
     {
         return new self(
             ReferenceName::fromString($array['referenceName']),
-            ...array_map(static fn(array $reference) => SerializedNodeReference::fromArray($reference), array_values($array['references']))
+            ...array_map(static fn (array $reference) => SerializedNodeReference::fromArray($reference), array_values($array['references']))
         );
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Browser\Controller;
 
 use Neos\Flow\Annotations as Flow;

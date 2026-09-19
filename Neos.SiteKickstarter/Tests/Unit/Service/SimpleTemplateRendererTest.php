@@ -12,9 +12,9 @@ namespace Neos\SiteKickstarter\Tests\Unit\Service;
  * source code.
  */
 
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
+use PHPUnit\Framework\Attributes\Test;
 
 class SimpleTemplateRendererTest extends UnitTestCase
 {

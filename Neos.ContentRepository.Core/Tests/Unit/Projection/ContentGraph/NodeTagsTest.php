@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 
 /*
@@ -14,13 +15,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTags;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class NodeTagsTest extends TestCase
 {
-
     #[Test]
     public function createEmptyCreatesEmptyInstance(): void
     {

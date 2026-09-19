@@ -14,19 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
+use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The read only content graph for use by the {@see DoctrineDbalContentGraphProjection}. This is the class for low-level operations
@@ -38,80 +41,77 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 class ProjectionContentGraph
 {
+    private SqlTableSubqueryFactory $subqueries;
+
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
     ) {
+        $this->subqueries = SqlTableSubqueryFactory::for($this->tableNames);
     }
 
-    /**
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint of $childNodeAggregateId
-     * @param DimensionSpacePoint|null $coveredDimensionSpacePoint the dimension space point of which relation we want
-     *     to travel upwards. If not given, $originDimensionSpacePoint is used (though I am not fully sure if this is
-     *     correct)
-     */
     public function findParentNode(
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $childNodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        ?DimensionSpacePoint $coveredDimensionSpacePoint = null
+        OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($originDimensionSpacePoint->toDimensionSpacePoint())->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $parentNodeStatement = <<<SQL
             SELECT
-                p.*, ph.contentstreamid, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
+                pn.*, ph.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
-                {$this->tableNames->node()} p
-                INNER JOIN {$this->tableNames->hierarchyRelation()} ph ON ph.childnodeanchor = p.relationanchorpoint
-                INNER JOIN {$this->tableNames->hierarchyRelation()} ch ON ch.parentnodeanchor = p.relationanchorpoint
-                INNER JOIN {$this->tableNames->node()} c ON ch.childnodeanchor = c.relationanchorpoint
-                INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON p.origindimensionspacepointhash = dsp.hash
-            WHERE
-                c.nodeaggregateid = :childNodeAggregateId
-                AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
-                AND ph.contentstreamid = :contentStreamId
-                AND ch.contentstreamid = :contentStreamId
-                AND ph.dimensionspacepointhash = :coveredDimensionSpacePointHash
-                AND ch.dimensionspacepointhash = :coveredDimensionSpacePointHash
+                {$hierarchyRelationQuery->toSql()} AS ph
+                INNER JOIN {$this->tableNames->node()} pn ON ph.parentnodeanchor = pn.relationanchorpoint
+                INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON pn.origindimensionspacepointhash = dsp.hash
+            WHERE ph.childnodeanchor IN (
+                SELECT cn.relationanchorpoint FROM {$this->tableNames->node()} cn
+                    WHERE {$nodeAggregateIdCondition->toWhereSql('cn')}
+                      AND cn.origindimensionspacepointhash = {$hierarchyRelationQuery->getParameters()->getReference('dimensionSpacePointHash')}
+            )
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($parentNodeStatement, [
-                'contentStreamId' => $contentStreamId->value,
-                'childNodeAggregateId' => $childNodeAggregateId->value,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash ?? $originDimensionSpacePoint->hash
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load parent node for content stream %s, child node aggregate id %s, origin dimension space point %s from database: %s', $contentStreamId->value, $childNodeAggregateId->value, $originDimensionSpacePoint->toJson(), $e->getMessage()), 1716475976, $e);
+            throw new \RuntimeException(sprintf('Failed to load parent node for content stream %s, child node aggregate id %s, origin dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $childNodeAggregateId->value, $originDimensionSpacePoint->toJson(), $e->getMessage()), 1716475976, $e);
         }
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
     }
 
     public function findNodeInAggregate(
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $nodeInAggregateStatement = <<<SQL
             SELECT
                 n.*, h.subtreetags, dsp.dimensionspacepoint AS origindimensionspacepoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$hierarchyRelationQuery->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
                 INNER JOIN {$this->tableNames->dimensionSpacePoints()} dsp ON n.origindimensionspacepointhash = dsp.hash
             WHERE
-                n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                {$nodeAggregateIdCondition->toWhereSql('n')}
         SQL;
         try {
             $nodeRow = $this->dbal->fetchAssociative($nodeInAggregateStatement, [
-                'contentStreamId' => $contentStreamId->value,
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load node for content stream %s, aggregate id %s and covered dimension space point %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716474165, $e);
+            throw new \RuntimeException(sprintf('Failed to load node for content stream %s, aggregate id %s and covered dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716474165, $e);
         }
 
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
@@ -120,31 +120,35 @@ class ProjectionContentGraph
     public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        ContentStreamId $contentStreamId
+        ContentStreamLayers $contentStreamLayers
     ): ?NodeRelationAnchorPoint {
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $relationAnchorPointsStatement = <<<SQL
             SELECT
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$hierarchyRelationQuery->toSql()} AS h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                n.nodeaggregateid = :nodeAggregateId
+                {$nodeAggregateIdCondition->toWhereSql('n')}
                 AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                AND h.contentstreamid = :contentStreamId
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
-                'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'contentStreamId' => $contentStreamId->value,
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load node anchor points for content stream %s, node aggregate %s and origin dimension space point %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $originDimensionSpacePoint->toJson(), $e->getMessage()), 1716474224, $e);
+            throw new \RuntimeException(sprintf('Failed to load node anchor points for content stream %s, node aggregate %s and origin dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $originDimensionSpacePoint->toJson(), $e->getMessage()), 1716474224, $e);
         }
 
         if (count($relationAnchorPoints) > 1) {
-            throw new \RuntimeException(sprintf('More than one node anchor point for content stream: %s, node aggregate id: %s and origin dimension space point: %s – this should not happen and might be a conceptual problem!', $contentStreamId->value, $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1716474484);
+            throw new \RuntimeException(sprintf('More than one node anchor point for content stream: %s, node aggregate id: %s and origin dimension space point: %s – this should not happen and might be a conceptual problem!', $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1716474484);
         }
         return $relationAnchorPoints === [] ? null : NodeRelationAnchorPoint::fromInteger($relationAnchorPoints[0]);
     }
@@ -154,25 +158,29 @@ class ProjectionContentGraph
      */
     public function getAnchorPointsForNodeAggregateInContentStream(
         NodeAggregateId $nodeAggregateId,
-        ContentStreamId $contentStreamId
+        ContentStreamLayers $contentStreamLayers
     ): iterable {
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
         $relationAnchorPointsStatement = <<<SQL
             SELECT
                 DISTINCT n.relationanchorpoint
             FROM
                 {$this->tableNames->node()} n
-                INNER JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                INNER JOIN {$hierarchyRelationQuery->toSql()} h ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamid = :contentStreamId
+                {$nodeAggregateIdCondition->toWhereSql('n')}
         SQL;
         try {
             $relationAnchorPoints = $this->dbal->fetchFirstColumn($relationAnchorPointsStatement, [
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'contentStreamId' => $contentStreamId->value,
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load node anchor points for content stream %s and node aggregate id %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $e->getMessage()), 1716474706, $e);
+            throw new \RuntimeException(sprintf('Failed to load node anchor points for content stream %s and node aggregate id %s from database: %s', $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $e->getMessage()), 1716474706, $e);
         }
 
         return array_map(NodeRelationAnchorPoint::fromInteger(...), $relationAnchorPoints);
@@ -204,7 +212,7 @@ class ProjectionContentGraph
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
         if (!$parentAnchorPoint && !$childAnchorPoint) {
@@ -214,25 +222,23 @@ class ProjectionContentGraph
             );
         }
         if ($succeedingSiblingAnchorPoint) {
+            $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($succeedingSiblingAnchorPoint);
             $succeedingSiblingRelationStatement = <<<SQL
                 SELECT
                     h.*
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
-                WHERE
-                    h.childnodeanchor = :succeedingSiblingAnchorPoint
-                    AND h.contentstreamid = :contentStreamId
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                    {$hierarchyRelationQuery->toSql()} h
+                LIMIT 1
             SQL;
             try {
                 /** @var array<string,mixed> $succeedingSiblingRelation */
                 $succeedingSiblingRelation = $this->dbal->fetchAssociative($succeedingSiblingRelationStatement, [
-                    'succeedingSiblingAnchorPoint' => $succeedingSiblingAnchorPoint->value,
-                    'contentStreamId' => $contentStreamId->value,
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ], [
+                    ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
                 ]);
             } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to load succeeding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
+                throw new \RuntimeException(sprintf('Failed to load succeeding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
             }
 
             if (!$succeedingSiblingRelation) {
@@ -245,26 +251,27 @@ class ProjectionContentGraph
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
             $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger($succeedingSiblingRelation['parentnodeanchor']);
 
+            $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
             $precedingSiblingStatement = <<<SQL
                 SELECT
-                    MAX(h.position) AS position
+                    h.position
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
+                    {$hierarchyRelationQuery->toSql()} h
                 WHERE
-                    h.parentnodeanchor = :anchorPoint
-                    AND h.contentstreamid = :contentStreamId
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                    AND h.position < :position
+                    h.position < :position
+                -- select the MAX position
+                ORDER BY h.position DESC
+                LIMIT 1
             SQL;
             try {
                 $precedingSiblingData = $this->dbal->fetchAssociative($precedingSiblingStatement, [
-                    'anchorPoint' => $parentAnchorPoint->value,
-                    'contentStreamId' => $contentStreamId->value,
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                    'position' => $succeedingSiblingPosition
+                    'position' => $succeedingSiblingPosition,
+                    ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ], [
+                    ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
                 ]);
             } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to load preceding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474957, $e);
+                throw new \RuntimeException(sprintf('Failed to load preceding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474957, $e);
             }
             $precedingSiblingPosition = $precedingSiblingData ? ($precedingSiblingData['position'] ?? null) : null;
             if (!is_null($precedingSiblingPosition)) {
@@ -278,48 +285,46 @@ class ProjectionContentGraph
             }
         } else {
             if (!$parentAnchorPoint) {
+                $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($childAnchorPoint);
                 $childHierarchyRelationStatement = <<<SQL
                     SELECT
                         h.parentnodeanchor
                     FROM
-                        {$this->tableNames->hierarchyRelation()} h
-                    WHERE
-                        h.childnodeanchor = :childAnchorPoint
-                        AND h.contentstreamid = :contentStreamId
-                        AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                        {$hierarchyRelationQuery->toSql()} h
+                    LIMIT 1
                 SQL;
                 try {
                     /** @var array<string,mixed> $childHierarchyRelationData */
                     $childHierarchyRelationData = $this->dbal->fetchAssociative($childHierarchyRelationStatement, [
-                        'childAnchorPoint' => $childAnchorPoint->value,
-                        'contentStreamId' => $contentStreamId->value,
-                        'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                        ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                    ], [
+                        ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
                     ]);
                 } catch (DBALException $e) {
-                    throw new \RuntimeException(sprintf('Failed to load child hierarchy relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475001, $e);
+                    throw new \RuntimeException(sprintf('Failed to load child hierarchy relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475001, $e);
                 }
                 $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger(
                     $childHierarchyRelationData['parentnodeanchor']
                 );
             }
+            $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
             $rightmostSucceedingSiblingRelationStatement = <<<SQL
                 SELECT
-                    MAX(h.position) AS position
+                    h.position
                 FROM
-                    {$this->tableNames->hierarchyRelation()} h
-                WHERE
-                    h.parentnodeanchor = :parentAnchorPoint
-                    AND h.contentstreamid = :contentStreamId
-                    AND h.dimensionspacepointhash = :dimensionSpacePointHash
+                    {$hierarchyRelationQuery->toSql()} h
+                -- select the MAX position
+                ORDER BY h.position DESC
+                LIMIT 1
             SQL;
             try {
                 $rightmostSucceedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
-                    'parentAnchorPoint' => $parentAnchorPoint->value,
-                    'contentStreamId' => $contentStreamId->value,
-                    'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                    ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ], [
+                    ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
                 ]);
             } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to right most succeeding relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475046, $e);
+                throw new \RuntimeException(sprintf('Failed to right most succeeding relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475046, $e);
             }
 
             if ($rightmostSucceedingSiblingRelationData) {
@@ -338,27 +343,21 @@ class ProjectionContentGraph
      */
     public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $parentAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
         $outgoingHierarchyRelationsStatement = <<<SQL
-            SELECT
-                h.*
-            FROM
-                {$this->tableNames->hierarchyRelation()} h
-            WHERE
-                h.parentnodeanchor = :parentAnchorPoint
-                AND h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            {$hierarchyRelationQuery->toSql()}
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
-                'parentAnchorPoint' => $parentAnchorPoint->value,
-                'contentStreamId' => $contentStreamId->value,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
+            throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
@@ -368,27 +367,21 @@ class ProjectionContentGraph
      */
     public function getIngoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $childAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($childAnchorPoint);
         $ingoingHierarchyRelationsStatement = <<<SQL
-            SELECT
-                h.*
-            FROM
-                {$this->tableNames->hierarchyRelation()} h
-            WHERE
-                h.childnodeanchor = :childAnchorPoint
-                AND h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            {$hierarchyRelationQuery->toSql()}
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, [
-                'childAnchorPoint' => $childAnchorPoint->value,
-                'contentStreamId' => $contentStreamId->value,
-                'dimensionSpacePointHash' => $dimensionSpacePoint->hash
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space point %s from database: %s', $contentStreamId->value, $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
+            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
@@ -398,33 +391,24 @@ class ProjectionContentGraph
      */
     public function findIngoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $childAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         ?DimensionSpacePointSet $restrictToSet = null
     ): array {
-        $ingoingHierarchyRelationsStatement = <<<SQL
-            SELECT
-                h.*
-            FROM
-                {$this->tableNames->hierarchyRelation()} h
-            WHERE
-                h.childnodeanchor = :childAnchorPoint
-                AND h.contentstreamid = :contentStreamId
-        SQL;
-        $parameters = [
-            'childAnchorPoint' => $childAnchorPoint->value,
-            'contentStreamId' => $contentStreamId->value
-        ];
-        $types = [];
-
-        if ($restrictToSet) {
-            $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
-            $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withChildNodeRelationAnchor($childAnchorPoint);
+        if ($restrictToSet !== null) {
+            $hierarchyRelationQuery = $hierarchyRelationQuery->withDimensionSpacePoints($restrictToSet);
         }
+        $ingoingHierarchyRelationsStatement = <<<SQL
+            {$hierarchyRelationQuery->toSql()}
+        SQL;
         try {
-            $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
+            $rows = $this->dbal->fetchAllAssociative(
+                $ingoingHierarchyRelationsStatement,
+                $hierarchyRelationQuery->getParameters()->toDbalValues(),
+                $hierarchyRelationQuery->getParameters()->toDbalTypes()
+            );
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space points %s from database: %s', $contentStreamId->value, $childAnchorPoint->value, $restrictToSet?->toJson() ?? '[any]', $e->getMessage()), 1716476299, $e);
+            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space points %s from database: %s', $contentStreamLayers->toDebugString(), $childAnchorPoint->value, $restrictToSet?->toJson() ?? '[any]', $e->getMessage()), 1716476299, $e);
         }
         $relations = [];
         foreach ($rows as $row) {
@@ -438,33 +422,24 @@ class ProjectionContentGraph
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         ?DimensionSpacePointSet $restrictToSet = null
     ): array {
-        $outgoingHierarchyRelationsStatement = <<<SQL
-            SELECT
-                h.*
-            FROM
-                {$this->tableNames->hierarchyRelation()} h
-            WHERE
-                h.parentnodeanchor = :parentAnchorPoint
-                AND h.contentstreamid = :contentStreamId
-        SQL;
-        $parameters = [
-            'parentAnchorPoint' => $parentAnchorPoint->value,
-            'contentStreamId' => $contentStreamId->value
-        ];
-        $types = [];
-
-        if ($restrictToSet) {
-            $outgoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
-            $parameters['dimensionSpacePointHashes'] = $restrictToSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withParentNodeRelationAnchor($parentAnchorPoint);
+        if ($restrictToSet !== null) {
+            $hierarchyRelationQuery = $hierarchyRelationQuery->withDimensionSpacePoints($restrictToSet);
         }
+        $outgoingHierarchyRelationsStatement = <<<SQL
+            {$hierarchyRelationQuery->toSql()}
+        SQL;
         try {
-            $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, $parameters, $types);
+            $rows = $this->dbal->fetchAllAssociative(
+                $outgoingHierarchyRelationsStatement,
+                $hierarchyRelationQuery->getParameters()->toDbalValues(),
+                $hierarchyRelationQuery->getParameters()->toDbalTypes(),
+            );
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space points %s from database: %s', $contentStreamId->value, $parentAnchorPoint->value, $restrictToSet?->toJson() ?? '[any]', $e->getMessage()), 1716476573, $e);
+            throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space points %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $restrictToSet?->toJson() ?? '[any]', $e->getMessage()), 1716476573, $e);
         }
         $relations = [];
         foreach ($rows as $row) {
@@ -477,31 +452,31 @@ class ProjectionContentGraph
      * @return array<HierarchyRelation>
      */
     public function findOutgoingHierarchyRelationsForNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($dimensionSpacePointSet)->withPossibleParentNodeAggregateId($nodeAggregateIdCondition);
         $outgoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$hierarchyRelationQuery->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE
-                n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamid = :contentStreamId
-                AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+                {$nodeAggregateIdCondition->toWhereSql('n')}
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'contentStreamId' => $contentStreamId->value,
-                'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
             ], [
-                'dimensionSpacePointHashes' => ArrayParameterType::STRING
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+                ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $dimensionSpacePointSet->toJson(), $e->getMessage()), 1716476690, $e);
+            throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $dimensionSpacePointSet->toJson(), $e->getMessage()), 1716476690, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
@@ -510,60 +485,60 @@ class ProjectionContentGraph
      * @return array<HierarchyRelation>
      */
     public function findIngoingHierarchyRelationsForNodeAggregate(
-        ContentStreamId $contentStreamId,
+        ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $nodeAggregateId,
         ?DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
+        if ($dimensionSpacePointSet) {
+            $hierarchyRelationQuery = $hierarchyRelationQuery->withDimensionSpacePoints($dimensionSpacePointSet);
+        }
         $ingoingHierarchyRelationsStatement = <<<SQL
             SELECT
                 h.*
             FROM
-                {$this->tableNames->hierarchyRelation()} h
+                {$hierarchyRelationQuery->toSql()} h
                 INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
             WHERE
-                n.nodeaggregateid = :nodeAggregateId
-                AND h.contentstreamid = :contentStreamId
+                {$nodeAggregateIdCondition->toWhereSql('n')}
         SQL;
         $parameters = [
-            'nodeAggregateId' => $nodeAggregateId->value,
-            'contentStreamId' => $contentStreamId->value,
+            ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ...$nodeAggregateIdCondition->getParameters()->toDbalValues(),
         ];
-        $types = [];
-        if ($dimensionSpacePointSet !== null) {
-            $ingoingHierarchyRelationsStatement .= ' AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)';
-            $parameters['dimensionSpacePointHashes'] = $dimensionSpacePointSet->getPointHashes();
-            $types['dimensionSpacePointHashes'] = ArrayParameterType::STRING;
-        }
+        $types = [
+            ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+            ...$nodeAggregateIdCondition->getParameters()->toDbalTypes(),
+        ];
         try {
             $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, $parameters, $types);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamId->value, $nodeAggregateId->value, $dimensionSpacePointSet?->toJson() ?? '[any]', $e->getMessage()), 1716476743, $e);
+            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, node aggregate id %s and dimension space points %s from database: %s', $contentStreamLayers->toDebugString(), $nodeAggregateId->value, $dimensionSpacePointSet?->toJson() ?? '[any]', $e->getMessage()), 1716476743, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
 
-    /**
-     * @return array<ContentStreamId>
-     */
-    public function getAllContentStreamIdsAnchorPointIsContainedIn(
+    public function getAllContentStreamLayersAnchorPointIsContainedIn(
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
-    ): array {
-        $contentStreamIdsStatement = <<<SQL
+    ): ContentStreamLayers {
+        $contentStreamLayersStatement = <<<SQL
             SELECT
-                DISTINCT h.contentstreamid
+                DISTINCT h.contentstreamlayer
             FROM
+                -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
                 {$this->tableNames->hierarchyRelation()} h
             WHERE
                 h.childnodeanchor = :nodeRelationAnchorPoint
         SQL;
         try {
-            $contentStreamIds = $this->dbal->fetchFirstColumn($contentStreamIdsStatement, [
+            $contentStreamLayers = $this->dbal->fetchFirstColumn($contentStreamLayersStatement, [
                 'nodeRelationAnchorPoint' => $nodeRelationAnchorPoint->value,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load content stream ids for relation anchor point %s from database: %s', $nodeRelationAnchorPoint->value, $e->getMessage()), 1716478504, $e);
         }
-        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
+        return ContentStreamLayers::fromArray($contentStreamLayers);
     }
 
     /**
@@ -588,9 +563,10 @@ class ProjectionContentGraph
         }
 
         return new HierarchyRelation(
+            HierarchyRelationId::fromInt((int)$rawData['id']),
+            ContentStreamLayer::fromInt((int)$rawData['contentstreamlayer']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
-            ContentStreamId::fromString($rawData['contentstreamid']),
             DimensionSpacePoint::fromJsonString($dimensionSpacePointJson),
             $rawData['dimensionspacepointhash'],
             (int)$rawData['position'],

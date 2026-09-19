@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 
 /*
@@ -14,14 +15,13 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Serializer;
-use PHPUnit\Framework\Attributes\Test;
 
 class PropertyCollectionTest extends TestCase
 {
-
     private Serializer|MockObject $mockSerializer;
     private PropertyConverter|MockObject $mockPropertyConverter;
 

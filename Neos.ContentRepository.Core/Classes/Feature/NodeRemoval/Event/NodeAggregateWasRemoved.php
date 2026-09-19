@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsNodeAggregateId;
@@ -35,19 +34,12 @@ final readonly class NodeAggregateWasRemoved implements
     EmbedsNodeAggregateId,
     EmbedsWorkspaceName
 {
-    /**
-     * @deprecated with Neos 9 Beta 19. Must not be specified any longer. Might get removed at any point.
-     */
-    public ?NodeAggregateId $removalAttachmentPoint;
-
     public function __construct(
         public WorkspaceName $workspaceName,
         public ContentStreamId $contentStreamId,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
-        ?NodeAggregateId $removalAttachmentPoint = null
     ) {
-        $this->removalAttachmentPoint = $removalAttachmentPoint;
     }
 
     public function getContentStreamId(): ContentStreamId
@@ -72,7 +64,6 @@ final readonly class NodeAggregateWasRemoved implements
             $contentStreamId,
             $this->nodeAggregateId,
             $this->affectedCoveredDimensionSpacePoints,
-            $this->removalAttachmentPoint
         );
     }
 
@@ -83,9 +74,6 @@ final readonly class NodeAggregateWasRemoved implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedCoveredDimensionSpacePoints']),
-            isset($values['removalAttachmentPoint'])
-                ? NodeAggregateId::fromString($values['removalAttachmentPoint'])
-                : null,
         );
     }
 

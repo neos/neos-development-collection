@@ -13,7 +13,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "neos/flow": "~9.0.0",
+        "neos/flow": "*",
         "neos/contentrepository-core": "self.version",
         "neos/contentrepository-dbal": "self.version",
         "neos/contentrepositoryregistry-storageclient": "self.version",

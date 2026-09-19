@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
@@ -12,10 +13,10 @@ namespace Neos\Media\Tests\Unit\Domain\ValueObject\Configuration;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\ValueObject\Configuration\AspectRatio;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class AspectRatioTest extends UnitTestCase
 {

@@ -52,6 +52,14 @@ trait SoftRemovalGarbageCollectionTrait
     }
 
     /**
+     * @When soft removal garbage collection is run for content repository :contentRepositoryId with grace period :gracePeriod
+     */
+    public function softRemovalGarbageCollectionIsRunForContentRepositoryWithGracePeriod(string $contentRepositoryId, string $gracePeriod): void
+    {
+        $this->getObject(SoftRemovalGarbageCollector::class)->run(ContentRepositoryId::fromString($contentRepositoryId), new \DateInterval($gracePeriod));
+    }
+
+    /**
      * @BeforeScenario
      */
     final public function pruneImpendingHardRemovalConflicts(): void

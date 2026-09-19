@@ -143,11 +143,11 @@ class NodeTypeEnrichmentService
             ) {
                 $propertyConfiguration['ui']['inline']['editorOptions']['placeholder']
                     = $this->getConfigurationTranslationId(
-                    $nodeTypeLabelIdPrefix,
-                    $propertyName,
-                    'ui.inline.editorOptions.placeholder',
-                    $configurationType
-                );
+                        $nodeTypeLabelIdPrefix,
+                        $propertyName,
+                        'ui.inline.editorOptions.placeholder',
+                        $configurationType
+                    );
             }
 
             if (

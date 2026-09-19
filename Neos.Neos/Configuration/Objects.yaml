@@ -23,6 +23,21 @@ Neos\Neos\Domain\Service\FusionConfigurationCache:
 Neos\Neos\Domain\Service\FusionAutoIncludeHandler:
   className: Neos\Neos\Domain\Service\ResourceFusionAutoIncludeHandler
 
+Neos\Neos\Domain\Service\WorkspaceService:
+  arguments:
+    7:
+      setting: "Neos.Neos.softRemoval.garbageCollectionGracePeriod"
+
+Neos\Neos\Domain\SubtreeTagging\SoftRemoval\SoftRemovalGarbageCollector:
+  arguments:
+    4:
+      object: 'Neos\ContentRepositoryRegistry\Factory\Clock\SystemClock'
+
+Neos\Neos\Domain\Service\WorkspacePublishingService:
+  arguments:
+    3:
+      setting: "Neos.Neos.softRemoval.garbageCollectionGracePeriod"
+
 Neos\Fusion\Core\Cache\RuntimeContentCache:
   properties:
     serializer:

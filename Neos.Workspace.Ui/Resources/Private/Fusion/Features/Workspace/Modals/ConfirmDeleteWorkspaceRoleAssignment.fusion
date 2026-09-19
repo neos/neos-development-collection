@@ -1,0 +1,54 @@
+prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment) < prototype(Neos.Fusion:Component) {
+  /// \Neos\Workspace\Ui\ViewModel\ConfirmDeleteWorkspaceRoleAssignmentFormData
+  formData = ${confirmDeleteWorkspaceRoleAssignmentFormData}
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'confirm-delete-workspace-role-assignment-popover'
+    deleteWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'deleteWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.formData.workspaceName.value}
+        subjectValue = ${props.formData.subjectValue}
+        subjectType = ${props.formData.subjectType}
+      }
+    }
+    localisedRoleLabel = ${private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.formData.roleLabel).translate()}
+  }
+
+  renderer = afx`
+    <div popover id={private.popoverId} hx-indicator="#indicator">
+      <header>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
+        <h3 class="neos-header">
+          {private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.header').arguments({workspace: props.formData.workspaceTitle.value})}
+        </h3>
+      </header>
+      <section>
+        <p>
+          {private.i18n.arguments({
+            workspace: props.formData.workspaceTitle.value,
+            subject: props.formData.subjectLabel,
+            role: private.localisedRoleLabel
+          }).id('workspaces.deleteWorkspaceRoleAssignment.message')}
+        </p>
+      </section>
+      <footer>
+        <Neos.Workspace.Ui:Component.Button
+          label={private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.cancel')}
+          attributes.popovertarget={private.popoverId}
+          attributes.popovertargetaction="close"
+        />
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          label={private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.confirm')}
+          icon="trash-alt icon-white"
+          attributes.hx-target={'#popover-container'}
+          attributes.hx-swap='innerHTML'
+          attributes.hx-get={private.deleteWorkspaceRoleAssignmentUri}
+        />
+      </footer>
+    </div>
+  `
+}

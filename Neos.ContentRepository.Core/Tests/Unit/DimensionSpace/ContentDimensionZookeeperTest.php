@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\DimensionSpace;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 // NOTE: not sure why this is needed
 require_once(__DIR__ . '/Fixtures/ExampleDimensionSource.php');

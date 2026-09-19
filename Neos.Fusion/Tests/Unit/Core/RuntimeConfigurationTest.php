@@ -11,9 +11,9 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Fusion\Core\RuntimeConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\RuntimeConfiguration;
+use PHPUnit\Framework\Attributes\Test;
 
 class RuntimeConfigurationTest extends UnitTestCase
 {

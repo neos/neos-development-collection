@@ -1,9 +1,10 @@
 <?php
+
 namespace Neos\Fusion\Afx\Tests\Functional;
 
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Parser;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase

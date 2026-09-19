@@ -6,8 +6,8 @@ namespace Neos\Neos\Tests\Unit\Domain\Service\NodeDuplication;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\Domain\Service\NodeDuplication\NodeAggregateIdMapping;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class NodeAggregateIdMappingTest extends TestCase
 {

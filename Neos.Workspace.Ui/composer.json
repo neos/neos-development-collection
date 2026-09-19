@@ -11,13 +11,18 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "neos/neos": "self.version",
         "neos/diff": "self.version"
     },
     "autoload": {
         "psr-4": {
             "Neos\\Workspace\\Ui\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Workspace\\Ui\\Tests\\": "Tests"
         }
     },
     "extra": {

@@ -1,0 +1,80 @@
+prototype(Neos.Workspace.Ui:Component.Modal.RestoreNodeConfirmation) < prototype(Neos.Fusion:Component) {
+  /// string
+  nodeAggregateId = ''
+  /// string
+  nodeLabel = ''
+  /// string
+  workspaceName = ''
+  ///string
+  workspaceLabel = ''
+  /// array
+  additionallyRestoredAncestors = null
+  /// array
+  additionallyRestoredDescendants = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    popoverId = 'restore-confirm-modal'
+
+    restoreUri = Neos.Fusion:ActionUri {
+      action = 'restoreNode'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        nodeAggregateId = ${props.nodeAggregateId}
+      }
+    }
+  }
+
+  renderer = afx`
+    <div popover class="success" id={private.popoverId}>
+      <header>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
+        <div class="neos-header">
+          <i class="fa-solid fa-circle-question"></i>
+          <span> {private.i18n.id('restore.dialog.restore.title')}</span>
+        </div>
+      </header>
+
+      <section>
+        <p>{private.i18n.id('restore.dialog.restore.text').arguments([props.nodeLabel, props.workspaceLabel])}</p>
+        <div @if.hasRestorableChildNodes={props.additionallyRestoredDescendants} class="restored-nodes-container">
+            <p>{private.i18n.id('restore.dialog.restore.warning')}</p>
+          <ul class='restored-nodes-list'>
+            <Neos.Fusion:Loop items={props.additionallyRestoredDescendants} itemName="elementTitle" itemKey="elementId">
+              <li>{elementTitle}</li>
+            </Neos.Fusion:Loop>
+          </ul>
+        </div>
+        <div @if.alsoRestoresAncestors={props.additionallyRestoredAncestors} class="restored-nodes-container">
+          <p>{private.i18n.id('restore.dialog.restore.warningAscendant')}</p>
+          <ul class='restored-nodes-list'>
+            <Neos.Fusion:Loop items={props.additionallyRestoredAncestors} itemName="elementTitle" itemKey="elementId">
+              <li>{elementTitle}</li>
+            </Neos.Fusion:Loop>
+          </ul>
+        </div>
+      </section>
+
+      <footer>
+        <button
+          type="button"
+          class="neos-button"
+          popovertarget={private.popoverId}
+          popovertargetaction="close"
+        >
+          {private.i18n.id('restore.dialog.restore.cancel')}
+        </button>
+
+        <Neos.Workspace.Ui:Component.Button
+          isSuccess
+          label={props.additionallyRestoredDescendants || props.additionallyRestoredAncestors ? private.i18n.id('restore.dialog.restore.confirmAll') : private.i18n.id('restore.dialog.restore.confirm')}
+          attributes.hx-get={private.restoreUri}
+          attributes.hx-target="#workspace-module-content"
+          attributes.hx-swap="outerHTML"
+          attributes.hx-on--after-request={'document.getElementById("' + private.popoverId + '").hidePopover()'}
+        />
+      </footer>
+    </div>
+  `
+}

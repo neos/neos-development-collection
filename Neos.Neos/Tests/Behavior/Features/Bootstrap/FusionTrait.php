@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -20,6 +21,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectedNodeTrait;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
+use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -31,7 +33,6 @@ use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * @internal only for behat tests within the Neos.Neos package

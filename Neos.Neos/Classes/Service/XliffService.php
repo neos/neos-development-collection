@@ -14,16 +14,16 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Locale;
+use Neos\Flow\I18n\Service as LocalizationService;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\I18n\Xliff\Service\XliffReader;
 use Neos\Flow\Package\Package;
 use Neos\Flow\Package\PackageInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Files;
-use Neos\Flow\I18n\Locale;
-use Neos\Flow\I18n\Service as LocalizationService;
 use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
@@ -136,8 +136,8 @@ class XliffService
     }
 
     /**
-     * @param array<string,mixed> $labelValue
-     * @return array<string,string>
+     * @param array<int, array<string, string>> $labelValue
+     * @return array<int, string>
      */
     protected function getTranslationUnitValue(array $labelValue)
     {

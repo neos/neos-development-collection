@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Browser\ViewHelpers;
 
 /*
@@ -11,8 +12,8 @@ namespace Neos\Media\Browser\ViewHelpers;
  * source code.
  */
 
-use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 
 /**
  * Renders an <img> HTML tag from a given Asset Proxy instance
@@ -63,8 +64,8 @@ class ThumbnailViewHelper extends AbstractTagBasedViewHelper
     {
         /** @var AssetProxyInterface $assetProxy */
         $assetProxy = $this->arguments['assetProxy'];
-        $width= $this->arguments['width'];
-        $height= $this->arguments['height'];
+        $width = $this->arguments['width'];
+        $height = $this->arguments['height'];
 
         if ($width === null || $height === null) {
             $width = 250;

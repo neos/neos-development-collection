@@ -161,7 +161,7 @@ class PublishingDuringPublishingTest extends AbstractParallelTestCase
     }
 
     #[Test]
-    public function whileANodesArWrittenOnLive(): void
+    public function whileANodesArePublishedToLive(): void
     {
         $this->log('1. writing & publishing started');
 

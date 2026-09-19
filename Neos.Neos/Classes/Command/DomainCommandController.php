@@ -84,7 +84,7 @@ class DomainCommandController extends CommandController
 
         $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
         $result = $domainValidator->validate($domain);
-        if ($result->hasErrors()) {
+        if ($result?->hasErrors()) {
             foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
                 /** @var array<Error> $errors */
                 $firstError = array_pop($errors);

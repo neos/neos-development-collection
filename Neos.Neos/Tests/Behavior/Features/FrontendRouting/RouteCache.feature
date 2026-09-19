@@ -65,7 +65,6 @@ Feature: Route cache invalidation
     """
 
   Scenario: Change uri path segment invalidates route cache
-    When I am on URL "/"
     And The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
     And the command SetNodeProperties is executed with payload:
@@ -78,7 +77,6 @@ Feature: Route cache invalidation
 
 
   Scenario: Change uri path segment multiple times invalidates route cache
-    When I am on URL "/"
     And The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
     When the command SetNodeProperties is executed with payload:
@@ -99,7 +97,6 @@ Feature: Route cache invalidation
 
 
   Scenario: Move node upwards in the tree invalidates route cache
-    When I am on URL "/earl-document"
     And The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 
@@ -113,7 +110,6 @@ Feature: Route cache invalidation
     Then No node should match URL "/david-nodenborough/earl-document"
 
   Scenario: Move node downwards in the tree invalidates route cache
-    When I am on URL "/david-nodenborough/earl-document/nody"
     And The URL "/nody" should match the node "nody-mc-nodeface" in dimension "{}"
 
     When the command MoveNodeAggregate is executed with payload:
@@ -126,7 +122,6 @@ Feature: Route cache invalidation
     Then No node should match URL "/nody"
 
   Scenario: Disable node aggregate invalidates route cache
-    When I am on URL "/earl-document"
     And The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 
@@ -141,7 +136,6 @@ Feature: Route cache invalidation
 
 
   Scenario: Removed node aggregate invalidates route cache
-    When I am on URL "/earl-document"
     And The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in dimension "{}"
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in dimension "{}"
 

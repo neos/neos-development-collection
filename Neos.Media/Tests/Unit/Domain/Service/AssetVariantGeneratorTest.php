@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Service;
 
 /*
@@ -10,8 +11,6 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Adjustment\CropImageAdjustment;
@@ -23,6 +22,8 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Video;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Exception\AssetVariantGeneratorException;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the Asset Variant Generator
@@ -230,7 +231,6 @@ class AssetVariantGeneratorTest extends UnitTestCase
         $mock = $this->getMockBuilder(Image::class)
             ->setConstructorArgs([$this->createMock(PersistentResource::class)])
             ->onlyMethods(['refresh', 'getMediaType'])
-            ->addMethods(['renderResource'])
             ->getMock();
         $mock->method('getMediaType')->willReturn('image/jpeg');
 

@@ -11,10 +11,10 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -159,13 +159,15 @@ class NodeTypeTest extends TestCase
                 ]
             ]
         ]);
-        $nodeType = new NodeType(NodeTypeName::fromString('ContentRepository:Invalid'),
+        $nodeType = new NodeType(
+            NodeTypeName::fromString('ContentRepository:Invalid'),
             ['ContentRepository:Super' => $superNodeType],
             [
                 'references' => [
                     'foo' => []
                 ]
-            ]);
+            ]
+        );
         $this->expectException(NodeConfigurationException::class);
         $this->expectExceptionCode(1708022344);
         // initialize the node type
@@ -179,7 +181,8 @@ class NodeTypeTest extends TestCase
 
         $timeableNodeType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:TimeableContent'),
-            [], []
+            [],
+            []
         );
         $documentType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
@@ -192,7 +195,8 @@ class NodeTypeTest extends TestCase
 
         $hideableNodeType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:HideableContent'),
-            [], []
+            [],
+            []
         );
         $pageType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:Page'),
@@ -446,7 +450,7 @@ class NodeTypeTest extends TestCase
         ]);
         self::assertFalse($nodeType->hasProperty('someReferences'));
         self::assertTrue($nodeType->hasReference('someReferences'));
-        self::assertThrows(fn() => $nodeType->getPropertyType('someReferences'), \InvalidArgumentException::class);
+        self::assertThrows(fn () => $nodeType->getPropertyType('someReferences'), \InvalidArgumentException::class);
         self::assertEmpty($nodeType->getProperties());
         self::assertEmpty($nodeType->getDefaultValuesForProperties());
         self::assertNull($nodeType->getConfiguration('properties.someReferences'));
@@ -472,7 +476,7 @@ class NodeTypeTest extends TestCase
         // will be available as _real_ reference
         self::assertFalse($nodeType->hasProperty('referenceProperty'));
         self::assertTrue($nodeType->hasReference('referenceProperty'));
-        self::assertThrows(fn() => $nodeType->getPropertyType('referenceProperty'), \InvalidArgumentException::class);
+        self::assertThrows(fn () => $nodeType->getPropertyType('referenceProperty'), \InvalidArgumentException::class);
         self::assertEmpty($nodeType->getProperties());
         self::assertEmpty($nodeType->getDefaultValuesForProperties());
         self::assertNull($nodeType->getConfiguration('properties.referenceProperty'));
@@ -502,7 +506,7 @@ class NodeTypeTest extends TestCase
         // will be available as _real_ reference
         self::assertFalse($nodeType->hasProperty('referencesProperty'));
         self::assertTrue($nodeType->hasReference('referencesProperty'));
-        self::assertThrows(fn() => $nodeType->getPropertyType('referencesProperty'), \InvalidArgumentException::class);
+        self::assertThrows(fn () => $nodeType->getPropertyType('referencesProperty'), \InvalidArgumentException::class);
         self::assertEmpty($nodeType->getProperties());
         self::assertEmpty($nodeType->getDefaultValuesForProperties());
         self::assertNull($nodeType->getConfiguration('properties.referencesProperty'));

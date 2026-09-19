@@ -11,7 +11,6 @@ namespace Neos\Neos\Tests\Functional\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Composer\ComposerUtility;
 use Neos\Flow\I18n\Locale;
@@ -21,6 +20,7 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Service\XliffService;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the XliffService

@@ -1,0 +1,16 @@
+prototype(Neos.Workspace.Ui:Component.Popover.CloseButton) < prototype(Neos.Fusion:Component) {
+  /// string
+  id = ''
+
+  renderer = afx`
+    <button
+      type="button"
+      class="neos-close neos-button"
+      popovertarget={props.id}
+      popovertargetaction="close"
+      title={I18n.id('close').source('Main').package('Neos.Workspace.Ui')}
+    >
+      <Neos.Workspace.Ui:Component.Icon icon="times"/>
+    </button>
+  `
+}

@@ -25,14 +25,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Rebase) < prototype(Neos.Fusion:Comp
   renderer = afx`
     <div popover class="error" id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
           <i class="fas fa-bolt"></i> {private.i18n.id('workspaces.dialog.forceSyncWorkspace').arguments([props.workspaceTitle, props.baseWorkspaceTitle])}
         </div>

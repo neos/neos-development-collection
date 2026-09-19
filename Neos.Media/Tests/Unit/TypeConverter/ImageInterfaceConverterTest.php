@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\TypeConverter;
 
 /*
@@ -10,19 +11,19 @@ namespace Neos\Media\Tests\Unit\TypeConverter;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\MockObject;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\TypeConverter\ImageInterfaceConverter;
-use Neos\Flow\ResourceManagement\PersistentResource;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the ImageConverter

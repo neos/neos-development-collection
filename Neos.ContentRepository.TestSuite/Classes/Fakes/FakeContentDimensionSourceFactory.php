@@ -49,8 +49,7 @@ class FakeContentDimensionSourceFactory implements ContentDimensionSourceFactory
 
     private static function getWithoutDimensions(): ContentDimensionSourceInterface
     {
-        return new class implements ContentDimensionSourceInterface
-        {
+        return new class () implements ContentDimensionSourceInterface {
             public function getDimension(ContentDimensionId $dimensionId): ?ContentDimension
             {
                 return null;

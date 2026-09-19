@@ -887,7 +887,7 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="branding.link.title" xml:space="preserve">
         <source>Go back to your starting module</source>
-        <target state="needs-translation">Gehen Sie zurück zu Ihrem Startmodul</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Gehen Sie zurück zu Ihrem Startmodul</target>
       </trans-unit>
       <trans-unit id="sites.creationContentRepository" xml:space="preserve">
         <source>In the content repository: "{0}"</source>

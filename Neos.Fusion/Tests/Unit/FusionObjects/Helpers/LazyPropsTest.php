@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\FusionObjects\Helpers;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Helpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Fusion\FusionObjects\ValueImplementation;
-use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\FusionObjects\Helpers\LazyProps;
+use Neos\Fusion\FusionObjects\ValueImplementation;
+use PHPUnit\Framework\Attributes\Test;
 
 class LazyPropsTest extends UnitTestCase
 {

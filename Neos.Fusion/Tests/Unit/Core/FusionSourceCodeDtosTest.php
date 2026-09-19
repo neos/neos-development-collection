@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\Attributes\Test;
 
 class FusionSourceCodeDtosTest extends UnitTestCase
 {

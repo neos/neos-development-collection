@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Media\Domain\Model\Adjustment;
@@ -266,7 +267,7 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      */
     public function getAllowUpScaling(): bool
     {
-        return (boolean)$this->allowUpScaling;
+        return (bool)$this->allowUpScaling;
     }
 
     /**

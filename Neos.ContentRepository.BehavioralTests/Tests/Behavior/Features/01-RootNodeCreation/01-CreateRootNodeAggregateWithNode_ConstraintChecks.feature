@@ -43,16 +43,6 @@ Feature: Create a root node aggregate
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     Then the last command should have thrown an exception of type "WorkspaceDoesNotExist"
 
-  Scenario: Try to create a root node aggregate in a closed content stream:
-    When the event ContentStreamWasClosed was published with payload:
-      | Key             | Value           |
-      | contentStreamId | "cs-identifier" |
-    And the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key             | Value                                      |
-      | nodeAggregateId | "nody-mc-nodeface"                         |
-      | nodeTypeName    | "Neos.ContentRepository.Testing:OtherRoot" |
-    Then the last command should have thrown an exception of type "ContentStreamIsClosed"
-
   Scenario: Try to create a root node aggregate in a content stream where it is already present:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key             | Value                         |

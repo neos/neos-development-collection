@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
@@ -13,9 +14,8 @@ namespace Neos\Fusion\Core\ObjectTreeParser\Ast;
  * source code.
  */
 
-use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
-
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Core\ObjectTreeParser\AstNodeVisitorInterface;
 
 /** @internal */
 #[Flow\Proxy(false)]

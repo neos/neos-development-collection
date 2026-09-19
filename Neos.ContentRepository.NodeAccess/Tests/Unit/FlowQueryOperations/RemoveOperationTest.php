@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
@@ -20,7 +21,6 @@ use PHPUnit\Framework\Attributes\Test;
  */
 class RemoveOperationTest extends AbstractQueryOperationsTestCase
 {
-
     public function setUp(): void
     {
         $this->markTestSkipped('fix and re-enable for Neos 9.0');

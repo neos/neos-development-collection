@@ -26,7 +26,8 @@ class Version20251109115127 extends AbstractMigration
     }
 
     /**
-     * Modified and improved {@see processConfiguration} which 1. does not work with realpaths and thus works during vfs testing and 2. allows to prepend warning comments to the yaml file.
+     * FIXME Modified and improved {@see processConfiguration} which 1. does not work with realpaths and thus works during vfs testing and 2. allows to prepend warning comments to the yaml file.
+     * But 3. an even improved version should que the changes instead of executing directly in up()
      */
     final public function replaceInConfiguration(string $configurationType, \Closure $processor): void
     {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
@@ -29,5 +30,3 @@ final class DomainDataLoader implements \IteratorAggregate
         return $query->iterateAssociative();
     }
 }
-
-

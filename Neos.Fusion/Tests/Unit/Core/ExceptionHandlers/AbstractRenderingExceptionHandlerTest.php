@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core\ExceptionHandlers;
 
 /*
@@ -10,7 +11,6 @@ namespace Neos\Fusion\Tests\Unit\Core\ExceptionHandlers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Exception;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -18,6 +18,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\Fixtures\AbstractRenderingExceptionHandler;
+use PHPUnit\Framework\Attributes\Test;
 
 require_once(__DIR__ . '/../../Fixtures/AbstractRenderingExceptionHandler.php');
 

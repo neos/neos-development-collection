@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Functional\Service;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Neos\Tests\Functional\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the NodeTypeSchemaBuilder
@@ -39,7 +40,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         $configurationManager = $this->objectManager->get(ConfigurationManager::class);
         $this->nodeTypeSchemaBuilder = NodeTypeSchemaBuilder::create(
             NodeTypeManager::createFromArrayConfigurationLoader(
-                fn() => $configurationManager->getConfiguration('NodeTypes')
+                fn () => $configurationManager->getConfiguration('NodeTypes')
             )
         );
         $this->schema = $this->nodeTypeSchemaBuilder->generateNodeTypeSchema();

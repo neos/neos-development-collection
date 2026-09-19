@@ -234,11 +234,10 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
             join("\n", $lines)
         );
 
-        // FIXME requires https://github.com/neos/neos-development-collection/issues/5827
-        // Assert::assertSame(<<<MESSAGE
-        // Okay. No dangling streams found
-        //
-        // Okay. No pruneable streams in the event stream
-        // MESSAGE, join("\n", $lines));
+        Assert::assertSame(<<<MESSAGE
+        Okay. No dangling streams found
+        
+        Okay. No pruneable streams in the event stream
+        MESSAGE, join("\n", $lines));
     }
 }

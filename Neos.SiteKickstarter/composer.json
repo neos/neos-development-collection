@@ -9,11 +9,11 @@
     },
     "license": ["GPL-3.0-or-later"],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "neos/flow": "*",
         "neos/utility-files": "*",
         "neos/fluid-adaptor": "*",
-        "neos/kickstarter": "~9.0.0",
+        "neos/kickstarter": "~9.2.0",
 
         "neos/contentrepository-core": "self.version"
     },

@@ -27,9 +27,7 @@ final class Transformations
     protected array $nodeBasedTransformations = [];
 
     /**
-     * @codingStandardsIgnoreStart
      * @param array<int|string,GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface> $transformationObjects
-     * @codingStandardsIgnoreEnd
      */
     public function __construct(array $transformationObjects)
     {

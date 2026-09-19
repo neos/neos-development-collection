@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -11,10 +12,10 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Exception as FusionException;
 use Neos\Utility\Exception\InvalidPositionException;
 use Neos\Utility\PositionalArraySorter;
-use Neos\Fusion\Exception as FusionException;
-use Neos\Fusion\Core\Runtime;
 
 /**
  * Base class for Fusion objects that need access to arbitrary properties, like DataStructureImplementation.
@@ -60,7 +61,7 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     {
         $sortProperties = $this->fusionValue('__meta/sortProperties');
         if ($sortProperties !== null) {
-            return (boolean)$sortProperties;
+            return (bool)$sortProperties;
         }
 
         return true;

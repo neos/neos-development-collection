@@ -11,8 +11,8 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/eventstore": "~2.0",
-        "php": "^8.2",
+        "neos/eventstore": "~2.0.1",
+        "php": "^8.4",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
@@ -25,7 +25,7 @@
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^1.11",
         "squizlabs/php_codesniffer": "^3.6",
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {

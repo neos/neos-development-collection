@@ -16,10 +16,11 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Cli\Response;
 use Neos\Utility\ObjectAccess;
-use Symfony\Component\Console\Output\BufferedOutput;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Console\Output\BufferedOutput;
 
+// FIXME, this test should reside in Neos.ContentRepositoryRegistry, but requires the "AbstractSubscriptionEngineTestCase" which we dont want to depend on when distributing the package, its a dev dependency
 final class ContentRepositoryMaintenanceCommandControllerTest extends AbstractSubscriptionEngineTestCase
 {
     private CrCommandController $crController;

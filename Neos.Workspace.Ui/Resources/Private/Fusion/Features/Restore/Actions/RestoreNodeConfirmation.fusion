@@ -1,0 +1,30 @@
+Neos.Workspace.Ui.RestoreController.restoreNodeConfirmation = Neos.Fusion:Component {
+  /// string
+  nodeAggregateId = ${nodeAggregateId}
+
+  /// string
+  nodeLabel = ${nodeLabel}
+
+  /// array
+  workspaceName = ${workspaceName}
+
+  ///string
+  workspaceLabel = ${workspaceLabel}
+
+  /// array
+  additionallyRestoredDescendants = ${additionallyRestoredDescendants}
+
+  /// array
+  additionallyRestoredAncestors = ${additionallyRestoredAncestors}
+
+  renderer = afx`
+    <Neos.Workspace.Ui:Component.Modal.RestoreNodeConfirmation
+      nodeAggregateId={props.nodeAggregateId}
+      nodeLabel={props.nodeLabel}
+      workspaceName={props.workspaceName}
+      workspaceLabel={props.workspaceLabel}
+      additionallyRestoredAncestors={props.additionallyRestoredAncestors}
+      additionallyRestoredDescendants={props.additionallyRestoredDescendants}
+    />
+  `
+}

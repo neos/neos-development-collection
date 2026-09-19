@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 /*
@@ -10,11 +11,11 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\FrontendInterface;
+use Neos\Flow\Cache\CacheManager;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the Fusion ContentCache

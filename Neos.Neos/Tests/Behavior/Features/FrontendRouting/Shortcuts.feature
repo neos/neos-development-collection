@@ -95,20 +95,16 @@ Feature: Routing behavior of shortcut nodes
     """
 
   Scenario: Shortcut parent node
-    When I am on URL "/"
     Then the node "shortcut-parent-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
 
   Scenario: Shortcut selected target node
-    When I am on URL "/"
     Then the node "shortcut-selected-node" in dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3"
 
   Scenario: Shortcut selected target asset
     Given an asset with id "some-asset" and file name "asset.txt" exists with the content "do we need asset shortcut nodes?"
-    When I am on URL "/"
     Then the node "shortcut-selected-asset" in dimension "{}" should resolve to URL "/_Resources/Testing/Persistent/23dae371d1664f1d9cc7dd029b299ea717298103/asset.txt"
 
   Scenario: Shortcut selected target URL
-    When I am on URL "/"
     Then the node "shortcut-external-url" in dimension "{}" should resolve to URL "https://neos.io/"
 
   Scenario: Shortcut selected target relative URL
@@ -130,7 +126,6 @@ Feature: Routing behavior of shortcut nodes
     Then the node "shortcut-external-url" in dimension "{}" should resolve to URL "https://www.some-domain.tld:1234/some/url/path?some=query#some-fragment"
 
   Scenario: Shortcut first child node
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Shortcut first child node is updated when a new first child node aggregate is created
@@ -142,7 +137,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId            | "shortcut-first-child-node"          |
       | initialPropertyValues            | {"uriPathSegment": "new-child-node"} |
       | succeedingSiblingNodeAggregateId | "first-child-node"                   |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/new-child-node"
 
   Scenario: Shortcut first child node is updated when a node aggregate gets moved to be the new first child node
@@ -152,7 +146,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "shortcut-first-child-node"  |
       | newSucceedingSiblingNodeAggregateId | "first-child-node"           |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/nodeward-3"
 
   Scenario: Shortcut first child node is updated when a node aggregate gets moved to be the new first child node on the same leve
@@ -162,7 +155,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                  |
       | newParentNodeAggregateId            | null                |
       | newSucceedingSiblingNodeAggregateId | "first-child-node"  |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/second-child-node"
 
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node
@@ -172,7 +164,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                           |
       | newParentNodeAggregateId            | "shortcut-first-child-node"  |
       | newSucceedingSiblingNodeAggregateId | "second-child-node"          |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Shortcut first child node is not updated when a node aggregate gets moved behind an existing first child node on the same leve
@@ -190,7 +181,6 @@ Feature: Routing behavior of shortcut nodes
       | dimensionSpacePoint                 | {}                |
       | newParentNodeAggregateId            | null              |
       | newSucceedingSiblingNodeAggregateId | null              |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
   Scenario: Regular document node gets turned into a shortcut node
@@ -199,7 +189,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | "sir-david-nodenborough-ii" |
       | newNodeTypeName | "Neos.Neos:Shortcut"        |
       | strategy        | "happypath"                 |
-    When I am on URL "/"
     Then the node "sir-david-nodenborough-ii" in dimension "{}" should resolve to URL "/david-nodenborough-2/nodeward-3"
 
   Scenario: Shortcut node gets turned into a regular document node
@@ -208,7 +197,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | "shortcut-first-child-node"   |
       | newNodeTypeName | "Neos.Neos:Test.Routing.Page" |
       | strategy        | "happypath"                   |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "parentNode"
@@ -217,7 +205,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-first-child-node"  |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"targetMode": "parentNode"} |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
 
   Scenario: Change shortcut targetMode from "firstChildNode" to "selectedTarget" (URL)
@@ -226,7 +213,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-first-child-node"                                      |
       | originDimensionSpacePoint | {}                                                               |
       | propertyValues            | {"targetMode": "selectedTarget", "target": "http://www.neos.io"} |
-    When I am on URL "/"
     Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "http://www.neos.io/"
 
   Scenario: Change shortcut targetMode from "parentNode" to "firstChildNode"
@@ -239,7 +225,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-parent-node"           |
       | originDimensionSpacePoint | {}                               |
       | propertyValues            | {"targetMode": "firstChildNode"} |
-    When I am on URL "/"
     Then the node "shortcut-parent-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-parent-node/new-child"
 
   Scenario: Change shortcut targetMode from "parentNode" to "selectedTarget" (URL)
@@ -248,7 +233,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId           | "shortcut-parent-node"                                         |
       | originDimensionSpacePoint | {}                                                             |
       | propertyValues            | {"targetMode": "selectedTarget", "target": "https://neos.io/"} |
-    When I am on URL "/"
     Then the node "shortcut-parent-node" in dimension "{}" should resolve to URL "https://neos.io/"
 
   Scenario: Shortcut node with an invalid targetMode
@@ -260,7 +244,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                            |
       | initialPropertyValues     | {"uriPathSegment": "invalid-target-mode", "targetMode": "invalidMode"} |
       | nodeName                  | "some-node-name"                                                       |
-    When I am on URL "/"
     Then The node "invalid-target-mode" in dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" but without target
@@ -272,7 +255,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                  |
       | initialPropertyValues     | {"uriPathSegment": "invalid-missing-target", "targetMode": "selectedTarget"} |
       | nodeName                  | "some-node-name"                                                             |
-    When I am on URL "/"
     Then The node "invalid-missing-target" in dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node without child nodes and targetMode "firstChildNode"
@@ -284,7 +266,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                        |
       | initialPropertyValues     | {"uriPathSegment": "invalid-shortcut-first-child", "targetMode": "firstChildNode"} |
       | nodeName                  | "some-node-name"                                                                   |
-    When I am on URL "/"
     Then The node "invalid-shortcut-first-child-node" in dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" and a non-existing target node
@@ -296,7 +277,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                                                                |
       | initialPropertyValues     | {"uriPathSegment": "invalid-shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://non-existing-node"} |
       | nodeName                  | "some-node-name"                                                                                                           |
-    When I am on URL "/"
     Then The node "invalid-shortcut-selected-node" in dimension "{}" should not resolve to an URL
 
   Scenario: Shortcut node with targetMode "selectedTarget" and a empty target node
@@ -308,7 +288,6 @@ Feature: Routing behavior of shortcut nodes
       | parentNodeAggregateId     | "shortcuts"                                                                                               |
       | initialPropertyValues     | {"uriPathSegment": "invalid-shortcut-selected-node", "targetMode": "selectedTarget", "target": "node://"} |
       | nodeName                  | "some-node-name"                                                                                          |
-    When I am on URL "/"
     Then The node "invalid-shortcut-selected-node" in dimension "{}" should not resolve to an URL
 
   Scenario: Recursive shortcuts
@@ -317,7 +296,6 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName       | initialPropertyValues                                                                                      | nodeName |
       | level-1         | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "level1", "targetMode": "selectedTarget", "target": "node://level-2"}                   | level1   |
       | level-2         | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "level2", "targetMode": "selectedTarget", "target": "node://shortcut-first-child-node"} | level2   |
-    When I am on URL "/"
     Then the node "level-1" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
     Then the node "level-2" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
 
@@ -327,5 +305,4 @@ Feature: Routing behavior of shortcut nodes
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName       | initialPropertyValues                                                              | nodeName |
       | node-a          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "a", "targetMode": "selectedTarget", "target": "node://node-b"} | node-a   |
       | node-b          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "b", "targetMode": "selectedTarget", "target": "node://node-a"} | node-b   |
-    When I am on URL "/"
     Then The node "node-a" in dimension "{}" should not resolve to an URL

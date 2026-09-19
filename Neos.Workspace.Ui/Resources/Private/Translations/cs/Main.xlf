@@ -261,6 +261,18 @@
         <source>Status</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Stav</target>
       </trans-unit>
+      <trans-unit id="restore.table.label" xml:space="preserve">
+        <source>Element</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Titul</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Zrušit</target>
+      </trans-unit>
+      <trans-unit id="restore.searchTerm" xml:space="preserve">
+        <source>Search</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Hledat</target>
+      </trans-unit>
       <trans-unit id="workspaces.publishChanges" xml:space="preserve">
         <source>Publish</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Zveřejnit</target>

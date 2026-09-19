@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Functional\Fixtures\Controller;
 
 /*

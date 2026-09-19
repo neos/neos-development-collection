@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
@@ -10,16 +11,15 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\FilterOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the FlowQuery FilterOperation
  */
 class FilterOperationTest extends AbstractQueryOperationsTestCase
 {
-
     public function setUp(): void
     {
         $this->markTestSkipped('fix and re-enable for Neos 9.0');

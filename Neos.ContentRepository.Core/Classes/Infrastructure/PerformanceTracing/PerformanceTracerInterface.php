@@ -32,10 +32,11 @@ interface PerformanceTracerInterface
      *          $this->performanceTracer?->closeSpan();
      *      }
      *
-     * @param string $name A descriptive name for this span (e.g., "contentRepository::handle")
+     * @param string|TracePoint $name A descriptive name for this span; a {@see TracePoint} for the points the
+     *                                 Content Repository emits itself, or a plain string for ad-hoc instrumentation
      * @param array<string, mixed> $params attributes to attach to the span (e.g., ['c' => 'CreateNode'])
      */
-    public function openSpan(string $name, array $params = []): void;
+    public function openSpan(string|TracePoint $name, array $params = []): void;
 
     /**
      * Close a span, opened by {@see self::openSpan()} before.
@@ -50,8 +51,10 @@ interface PerformanceTracerInterface
      * including the operation just completed. Place mark() calls immediately AFTER the
      * operation you want to measure.
      *
-     * @param string $name A descriptive name identifying the operation that just completed
+     * @param string|TracePoint $name A descriptive name identifying the operation that just completed; a
+     *                                 {@see TracePoint} for the points the Content Repository emits itself,
+     *                                 or a plain string for ad-hoc instrumentation
      * @param array<string, mixed> $params attributes to attach to the span (e.g., ['c' => 'CreateNode'])
      */
-    public function mark(string $name, array $params = []): void;
+    public function mark(string|TracePoint $name, array $params = []): void;
 }

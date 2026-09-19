@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 /*
@@ -10,18 +11,18 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
-use Neos\Fusion\Core\FusionSourceCodeCollection;
-use Neos\Fusion\Core\FusionSourceCode;
-use Neos\Fusion\Exception;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion;
 use Neos\Fusion\Core\Cache\ParserCache;
-use org\bovigo\vfs\vfsStream;
+use Neos\Fusion\Core\FusionSourceCode;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
+use Neos\Fusion\Exception;
+use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamContent;
 use org\bovigo\vfs\vfsStreamDirectory;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Include Pattern for the Fusion Parser

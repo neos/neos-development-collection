@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -13,7 +15,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final readonly class VisitedNodeVariant
 {
-
     /**
      * @param DimensionSpacePointSet $claimedDimensionSpacePoints The dimension space points the exported creation/variation event of this variant covers
      */
@@ -23,5 +24,6 @@ final readonly class VisitedNodeVariant
         // the property names this variant holds; a variant created from it copies exactly these
         public PropertyNames $propertyNames,
         public DimensionSpacePointSet $claimedDimensionSpacePoints
-    ) {}
+    ) {
+    }
 }

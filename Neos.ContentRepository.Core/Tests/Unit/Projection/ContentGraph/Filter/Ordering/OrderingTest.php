@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\Ordering;
 
 /*
@@ -15,9 +16,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\TimestampField;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class OrderingTest extends TestCase
 {

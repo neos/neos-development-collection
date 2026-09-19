@@ -1,0 +1,41 @@
+##
+# Renders a Workspace Role Assignment list
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTable) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceTitle = ''
+  /// string
+  workspaceName = ''
+  /// array<Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem>
+  roleAssignments=${[]}
+  /// boolean
+  roleAssignmentsEditable = false
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+  }
+
+  renderer = afx`
+    <table class="workspace-ui-table role-assignments-table">
+      <thead>
+      <tr>
+        <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.subject')}</th>
+        <th>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role')}</th>
+        <th>
+          {private.i18n.id('workspaces.workspace.workspaceRoleAssignment.actions')}
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <Neos.Fusion:Loop items={props.roleAssignments} itemName="roleAssignment">
+        <Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow
+          workspaceTitle={props.workspaceTitle}
+          workspaceName={props.workspaceName}
+          roleAssignmentsEditable={props.roleAssignmentsEditable}
+          roleAssignmentFormData={roleAssignment}
+        />
+      </Neos.Fusion:Loop>
+      </tbody>
+    </table>
+  `
+}

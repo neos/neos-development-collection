@@ -6,6 +6,9 @@ privilegeTargets:
       label: Allowed to create a workspace
       matcher: 'method(Neos\Workspace\Ui\Controller\WorkspaceController->(create|new)Action())'
 
+    'Neos.Workspace.Ui:Backend.RestoreNodes':
+        matcher: 'method(Neos\Workspace\Ui\Controller\RestoreController->.*())'
+
   'Neos\Neos\Security\Authorization\Privilege\ModulePrivilege':
     'Neos.Workspace.Ui:Backend.Module.Management.Workspace':
       label: General access to the workspace module
@@ -16,6 +19,10 @@ roles:
     privileges:
       -
         privilegeTarget: 'Neos.Workspace.Ui:Backend.CreateWorkspaces'
+        permission: GRANT
+
+      -
+        privilegeTarget: 'Neos.Workspace.Ui:Backend.RestoreNodes'
         permission: GRANT
 
       -

@@ -118,8 +118,7 @@ trait FlowSecurityTrait
         // we can change the roles and privileges at runtime :D
         $policyService->reset(); // TODO also reset privilegeTargets in ->reset()
         ObjectAccess::setProperty($policyService, 'privilegeTargets', [], true);
-        $policyService->injectConfigurationManager(new class ($mergedPolicyConfiguration) extends ConfigurationManager
-        {
+        $policyService->injectConfigurationManager(new class ($mergedPolicyConfiguration) extends ConfigurationManager {
             public function __construct(
                 private array $mergedPolicyConfiguration
             ) {

@@ -1,4 +1,4 @@
-- requestFilter: 'isPackage("Neos.Workspace.Ui") && isController("Workspace")'
+- requestFilter: 'isPackage("Neos.Workspace.Ui") && (isController("Workspace")|| isController("Restore"))'
   viewObjectName: 'Neos\Fusion\View\FusionView'
   options:
     fusionPathPatterns:

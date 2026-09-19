@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
@@ -36,21 +37,27 @@ use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\I18n\Translator;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Policy\PolicyService;
+use Neos\Flow\Security\Policy\Role;
 use Neos\Fusion\View\FusionView;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Neos\Controller\Module\AbstractModuleController;
+use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Model\UserId;
 use Neos\Neos\Domain\Model\WorkspaceClassification;
 use Neos\Neos\Domain\Model\WorkspaceDescription;
 use Neos\Neos\Domain\Model\WorkspaceRole;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignment;
 use Neos\Neos\Domain\Model\WorkspaceRoleAssignments;
 use Neos\Neos\Domain\Model\WorkspaceRoleSubject;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjects;
+use Neos\Neos\Domain\Model\WorkspaceRoleSubjectType;
 use Neos\Neos\Domain\Model\WorkspaceTitle;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
@@ -65,22 +72,26 @@ use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\Neos\PendingChangesProjection\Changes;
 use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-use Neos\Workspace\Ui\ViewModel\ChangeItem;
-use Neos\Workspace\Ui\ViewModel\ContentChangeItem;
-use Neos\Workspace\Ui\ViewModel\ContentChangeItems;
-use Neos\Workspace\Ui\ViewModel\ContentChangeProperties;
-use Neos\Workspace\Ui\ViewModel\ContentChanges\AssetContentChange;
-use Neos\Workspace\Ui\ViewModel\ContentChanges\DateTimeContentChange;
-use Neos\Workspace\Ui\ViewModel\ContentChanges\ImageContentChange;
-use Neos\Workspace\Ui\ViewModel\ContentChanges\TagContentChange;
-use Neos\Workspace\Ui\ViewModel\ContentChanges\TextContentChange;
-use Neos\Workspace\Ui\ViewModel\DocumentChangeItem;
-use Neos\Workspace\Ui\ViewModel\DocumentItem;
-use Neos\Workspace\Ui\ViewModel\EditWorkspaceFormData;
-use Neos\Workspace\Ui\ViewModel\PendingChanges;
-use Neos\Workspace\Ui\ViewModel\Sorting;
-use Neos\Workspace\Ui\ViewModel\WorkspaceListItem;
-use Neos\Workspace\Ui\ViewModel\WorkspaceListItems;
+use Neos\Workspace\Ui\ViewModel\ConfirmDeleteWorkspaceRoleAssignmentFormData;
+use Neos\Workspace\Ui\ViewModel\CreateWorkspaceRoleAssignmentFormData;
+use Neos\Workspace\Ui\ViewModel\EditWorkspaceRoleAssignmentsFormData;
+use Neos\Workspace\Ui\ViewModel\Review\ChangeItem;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChangeItem;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChangeItems;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChangeProperties;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChanges\AssetContentChange;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChanges\DateTimeContentChange;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChanges\ImageContentChange;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChanges\TagContentChange;
+use Neos\Workspace\Ui\ViewModel\Review\ContentChanges\TextContentChange;
+use Neos\Workspace\Ui\ViewModel\Review\DocumentChangeItem;
+use Neos\Workspace\Ui\ViewModel\Review\DocumentItem;
+use Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem;
+use Neos\Workspace\Ui\ViewModel\Workspace\EditWorkspaceFormData;
+use Neos\Workspace\Ui\ViewModel\Workspace\PendingChanges;
+use Neos\Workspace\Ui\ViewModel\Workspace\Sorting;
+use Neos\Workspace\Ui\ViewModel\Workspace\WorkspaceListItem;
+use Neos\Workspace\Ui\ViewModel\Workspace\WorkspaceListItems;
 
 /**
  * The Neos Workspace module controller
@@ -152,10 +163,9 @@ class WorkspaceController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceListItems = $this->getWorkspaceListItems($contentRepository);
-        $workspaceListItems = match($sorting->sortBy) {
+        $workspaceListItems = match ($sorting->sortBy) {
             'title' => $workspaceListItems->sortByTitle($sorting->sortAscending),
         };
-
         $this->view->assignMultiple([
             'workspaceListItems' => $workspaceListItems,
             'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
@@ -184,7 +194,7 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspacePermissions = $this->authorizationService->getWorkspacePermissions($contentRepositoryId, $workspace, $this->securityContext->getRoles(), $currentUser->getId());
-        if(!$workspacePermissions->read){
+        if (!$workspacePermissions->read) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.changes.noPermissionToReadWorkspace'),
                 '',
@@ -237,7 +247,7 @@ class WorkspaceController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $workspaceName = $this->workspaceService->getUniqueWorkspaceName($contentRepositoryId, $title->value);
 
-        $assignments = match($visibility) {
+        $assignments = match ($visibility) {
             'shared' => WorkspaceRoleAssignments::createForSharedWorkspace($currentUser->getId()),
             'private' => WorkspaceRoleAssignments::createForPrivateWorkspace($currentUser->getId()),
             default => throw new \RuntimeException(sprintf('Invalid visibility %s given', $visibility), 1736343542)
@@ -252,7 +262,7 @@ class WorkspaceController extends AbstractModuleController
                 $baseWorkspace,
                 $assignments
             );
-        } catch (WorkspaceAlreadyExists $exception) {
+        } catch (WorkspaceAlreadyExists) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
                 '',
@@ -298,15 +308,6 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspace->workspaceName);
-        $isShared = false;
-        if ($workspaceMetadata->classification === WorkspaceClassification::SHARED) {
-            foreach ($workspaceRoleAssignments as $roleAssignment) {
-                if ($roleAssignment->role === WorkspaceRole::COLLABORATOR) {
-                    $isShared = true;
-                }
-            }
-        }
 
         $editWorkspaceDto = new EditWorkspaceFormData(
             workspaceName: $workspace->workspaceName,
@@ -315,7 +316,6 @@ class WorkspaceController extends AbstractModuleController
             workspaceHasChanges: $this->computePendingChanges($workspace, $contentRepository)->total > 0,
             baseWorkspaceName: $workspace->baseWorkspaceName,
             baseWorkspaceOptions: $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName),
-            isShared: $isShared,
         );
 
         $this->view->assign('editWorkspaceFormData', $editWorkspaceDto);
@@ -328,14 +328,12 @@ class WorkspaceController extends AbstractModuleController
      * @param WorkspaceName $workspaceName The name of the workspace that is being updated
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @param string $visibility Allow other editors to collaborate on this workspace if set to "shared"
      * @param WorkspaceName|null $baseWorkspace The base workspace to rebase this workspace onto if modified
      */
     public function updateAction(
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,
         WorkspaceDescription $description,
-        string $visibility,
         WorkspaceName|null $baseWorkspace = null,
     ): void {
         $currentUser = $this->userService->getCurrentUser();
@@ -377,29 +375,6 @@ class WorkspaceController extends AbstractModuleController
             $workspaceName,
             $description,
         );
-
-        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
-        $sharedRoleAssignment = WorkspaceRoleAssignment::createForGroup(
-            'Neos.Neos:AbstractEditor',
-            WorkspaceRole::COLLABORATOR,
-        );
-
-        match($visibility) {
-            'shared' => !$workspaceRoleAssignments->contains($sharedRoleAssignment) && $this->workspaceService->assignWorkspaceRole(
-                $contentRepositoryId,
-                $workspaceName,
-                WorkspaceRoleAssignment::createForGroup(
-                    'Neos.Neos:AbstractEditor',
-                    WorkspaceRole::COLLABORATOR,
-                )
-            ),
-            'private' => $workspaceRoleAssignments->contains($sharedRoleAssignment) && $this->workspaceService->unassignWorkspaceRole(
-                $contentRepositoryId,
-                $workspaceName,
-                WorkspaceRoleSubject::createForGroup('Neos.Neos:AbstractEditor'),
-            ),
-            default => throw new \RuntimeException(sprintf('Invalid visibility %s given', $visibility), 1736339457)
-        };
 
         if ($baseWorkspace !== null && $workspace->baseWorkspaceName?->equals($baseWorkspace) === false) {
             // Update Base Workspace
@@ -486,7 +461,7 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
             $this->throwStatus(403, 'Workspace has unpublished nodes');
-        // delete workspace on POST -> TODO: Split this into 2 actions like the create or edit workflows
+            // delete workspace on POST -> TODO: Split this into 2 actions like the create or edit workflows
         } elseif ($this->request->getHttpRequest()->getMethod() === 'POST') {
             $this->workspaceService->deleteWorkspace($contentRepositoryId, $workspaceName);
 
@@ -496,11 +471,295 @@ class WorkspaceController extends AbstractModuleController
                     [$workspaceMetadata->title->value],
                 )
             );
-        // Render a confirmation form if the request is not a POST request
+            // Render a confirmation form if the request is not a POST request
         } else {
             $this->view->assign('workspaceName', $workspace->workspaceName->value);
             $this->view->assign('workspaceTitle', $workspaceMetadata->title->value);
         }
+    }
+
+    public function editWorkspaceRoleAssignmentsAction(WorkspaceName $workspaceName): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        // Show warning if user is not allowed to manage the role assignments in the workspace
+        $currentUser = $this->userService->getCurrentUser();
+
+        $permissions = $this->authorizationService->getWorkspacePermissions(
+            $contentRepositoryId,
+            $workspaceName,
+            $this->securityContext->getRoles(),
+            $currentUser?->getId()
+        );
+
+        $roleAssignmentsEditable = $permissions->manage;
+
+        if (!$roleAssignmentsEditable) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.noPermissionToManageRoleAssignments', ['workspace' => $workspaceMetadata->title->value]),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(403);
+        }
+
+        /** @var array<RoleAssignmentListItem> $workspaceUserRoleAssignments */
+        $workspaceUserRoleAssignments = [];
+        /** @var array<RoleAssignmentListItem> $workspaceGroupRoleAssignments */
+        $workspaceGroupRoleAssignments = [];
+
+        foreach ($this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName) as $workspaceRoleAssignment) {
+            $subjectLabel = match ($workspaceRoleAssignment->subject->type) {
+                WorkspaceRoleSubjectType::USER => $this->userService->findUserById(UserId::fromString($workspaceRoleAssignment->subject->value))?->getLabel() ?? $workspaceRoleAssignment->subject->value,
+                WorkspaceRoleSubjectType::GROUP => $this->policyService->getRole($workspaceRoleAssignment->subject->value)->getLabel() ?: $workspaceRoleAssignment->subject->value,
+            };
+
+            $roleLabel = $workspaceRoleAssignment->role->value;
+            switch ($workspaceRoleAssignment->subject->type) {
+                case WorkspaceRoleSubjectType::USER:
+                    $workspaceUserRoleAssignments[] = new RoleAssignmentListItem(
+                        subjectValue: $workspaceRoleAssignment->subject->value,
+                        subjectLabel: $subjectLabel,
+                        roleLabel: $roleLabel,
+                        subjectType: $workspaceRoleAssignment->subject->type->value,
+                        deletable: $workspaceRoleAssignment->subject->value !== $currentUser?->getId()->value,
+                    );
+                    break;
+                case WorkspaceRoleSubjectType::GROUP:
+                    $workspaceGroupRoleAssignments[] = new RoleAssignmentListItem(
+                        subjectValue: $workspaceRoleAssignment->subject->value,
+                        subjectLabel: $subjectLabel,
+                        roleLabel: $roleLabel,
+                        subjectType: $workspaceRoleAssignment->subject->type->value,
+                        deletable: true,
+                    );
+                    break;
+            }
+        }
+
+        $editWorkspaceRoleAssignmentsFormData = new EditWorkspaceRoleAssignmentsFormData(
+            workspaceName: $workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            roleAssignmentsEditable: $roleAssignmentsEditable,
+            userRoleAssignments: $workspaceUserRoleAssignments,
+            groupRoleAssignments: $workspaceGroupRoleAssignments,
+        );
+
+        $this->view->assign('editWorkspaceRoleAssignmentsFormData', $editWorkspaceRoleAssignmentsFormData);
+    }
+
+    public function createUserWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments($contentRepositoryId, $workspaceName);
+        $users = $this->userService->getUsers()->toArray();
+        $usersById = array_reduce($users, static function (array $carry, User $user) {
+            $carry[$user->getId()->value] = $user->getLabel();
+            return $carry;
+        }, []);
+
+        $existingSubjects = $workspaceRoleAssignments->getSubjects();
+        $possibleSubjects = WorkspaceRoleSubjects::fromArray(
+            array_map(
+                static fn (User $user) => WorkspaceRoleSubject::createForUser($user->getId()),
+                $users
+            )
+        )->difference($existingSubjects);
+
+        $userOptions = [];
+        foreach ($possibleSubjects as $subject) {
+            $userOptions[$subject->value] = $usersById[$subject->value];
+        }
+        asort($userOptions, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $workspaceRoles = WorkspaceRole::cases();
+        /** @var array<string, string> $roleOptions where key is the Id and value is the translated label of the Role */
+        $roleOptions = [];
+        foreach ($workspaceRoles as $workspaceRole) {
+            $roleOptions[$workspaceRole->value] = $this->getModuleLabel("workspaces.workspace.workspaceRoleAssignment.role.label.$workspaceRole->value");
+        }
+        asort($roleOptions, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $this->view->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
+            workspaceName: $workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            options: $userOptions,
+            roleOptions: $roleOptions,
+        ));
+    }
+    public function createGroupWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+        $workspaceRoleAssignments = $this->workspaceService->getWorkspaceRoleAssignments(
+            $contentRepositoryId,
+            $workspaceName
+        );
+        $rolesInSystem = $this->policyService->getRoles();
+        $rolesByIdentifier = array_reduce($rolesInSystem, static function (array $carry, Role $role) {
+            $carry[$role->getIdentifier()] = $role->getLabel();
+            return $carry;
+        }, []);
+
+        $existingSubjects = $workspaceRoleAssignments->getSubjects();
+        $possibleSubjects = WorkspaceRoleSubjects::fromArray(
+            array_map(
+                static fn (Role $role) => WorkspaceRoleSubject::createForGroup($role->getIdentifier()),
+                $rolesInSystem
+            )
+        )->difference($existingSubjects);
+
+        $groupOptions = [];
+        foreach ($possibleSubjects as $subject) {
+            $groupOptions[$subject->value] = $rolesByIdentifier[$subject->value];
+        }
+        asort($groupOptions, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $workspaceRoles = WorkspaceRole::cases();
+        /** @var array<string, string> $roleOptions where key is the id and value is the translated label of the Role */
+        $roleOptions = [];
+        foreach ($workspaceRoles as $workspaceRole) {
+            $roleOptions[$workspaceRole->value] = $this->getModuleLabel("workspaces.workspace.workspaceRoleAssignment.role.label.$workspaceRole->value");
+        }
+        asort($roleOptions, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $this->view->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
+            workspaceName: $workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            options: $groupOptions,
+            roleOptions: $roleOptions,
+        ));
+    }
+
+    public function addWorkspaceRoleAssignmentAction(
+        WorkspaceName $workspaceName,
+        string $subject,
+        string $subjectType,
+        string $role,
+    ): void {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $userCanManageWorkspace = $this->authorizationService->getWorkspacePermissions(
+            $contentRepositoryId,
+            $workspaceName,
+            $this->securityContext->getRoles(),
+            $this->userService->getCurrentUser()?->getId()
+        )->manage;
+        if (!$userCanManageWorkspace) {
+            $this->throwStatus(403);
+        }
+
+        $workspaceRoleSubjectType = WorkspaceRoleSubjectType::from($subjectType);
+        try {
+            $workspaceRoleSubject = WorkspaceRoleSubject::create($workspaceRoleSubjectType, $subject);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error(
+                sprintf('Error when adding workspace role assignment: %s', $e->getMessage()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(400, 'Invalid role');
+        }
+
+        $workspaceRole = WorkspaceRole::from($role);
+        $roleAdded = false;
+        if ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::USER) {
+            $user = $this->userService->findUserById(UserId::fromString($workspaceRoleSubject->value));
+            if ($user !== null) {
+                $workspaceRoleAssignment = WorkspaceRoleAssignment::createForUser(
+                    UserId::fromString($workspaceRoleSubject->value),
+                    $workspaceRole
+                );
+                $roleAdded = $this->addWorkspaceRoleAssignment($workspaceName, $workspaceRoleAssignment);
+            }
+        } elseif ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::GROUP) {
+            $workspaceRoleAssignment = WorkspaceRoleAssignment::createForGroup(
+                $workspaceRoleSubject->value,
+                $workspaceRole
+            );
+            $roleAdded = $this->addWorkspaceRoleAssignment($workspaceName, $workspaceRoleAssignment);
+        } else {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(400, 'Invalid subject type');
+        }
+
+        if (!$roleAdded) {
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeAdded'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(400, 'Could not add role');
+        }
+        $this->forward('editWorkspaceRoleAssignments', null, null, ['workspaceName' => $workspaceName->value]);
+    }
+
+    public function confirmDeleteWorkspaceRoleAssignmentAction(
+        WorkspaceName $workspaceName,
+        string $subjectValue,
+        string $subjectType,
+        string $subjectLabel,
+        string $roleLabel,
+    ): void {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
+
+        $confirmDeleteWorkspaceRoleAssignmentFormData = new ConfirmDeleteWorkspaceRoleAssignmentFormData(
+            workspaceName: $workspaceName,
+            workspaceTitle: $workspaceMetadata->title,
+            subjectValue: $subjectValue,
+            subjectType: $subjectType,
+            subjectLabel: $subjectLabel,
+            roleLabel: $roleLabel,
+        );
+
+        $this->view->assign('confirmDeleteWorkspaceRoleAssignmentFormData', $confirmDeleteWorkspaceRoleAssignmentFormData);
+    }
+
+    public function deleteWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName, string $subjectValue, string $subjectType): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $userCanManageWorkspace = $this->authorizationService->getWorkspacePermissions(
+            $contentRepositoryId,
+            $workspaceName,
+            $this->securityContext->getRoles(),
+            $this->userService->getCurrentUser()?->getId()
+        )->manage;
+        if (!$userCanManageWorkspace) {
+            $this->throwStatus(403);
+        }
+        try {
+            $this->workspaceService->unassignWorkspaceRole(
+                $contentRepositoryId,
+                $workspaceName,
+                WorkspaceRoleSubject::create(
+                    WorkspaceRoleSubjectType::from($subjectType),
+                    $subjectValue
+                )
+            );
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf('Error when deleting workspace role assignment: %s', $e->getMessage()),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+            $this->addFlashMessage(
+                $this->getModuleLabel('workspaces.roleAssignmentCouldNotBeDeleted'),
+                '',
+                Message::SEVERITY_ERROR
+            );
+            $this->throwStatus(500, 'Role assignment could not be deleted');
+        }
+
+        $this->redirect('editWorkspaceRoleAssignments', null, null, ['workspaceName' => $workspaceName->value]);
     }
 
     /**
@@ -508,12 +767,12 @@ class WorkspaceController extends AbstractModuleController
      */
     public function publishDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $nodeAddressInstance = NodeAddress::fromJsonString($nodeAddress);
+        $contentRepositoryId = $nodeAddressInstance->contentRepositoryId;
         $this->workspacePublishingService->publishChangesInDocument(
             $contentRepositoryId,
             $selectedWorkspace,
-            $nodeAddress->aggregateId
+            $nodeAddressInstance->aggregateId
         );
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenPublished'));
@@ -527,12 +786,12 @@ class WorkspaceController extends AbstractModuleController
      */
     public function discardDocumentAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $nodeAddress = NodeAddress::fromJsonString($nodeAddress);
-        $contentRepositoryId = $nodeAddress->contentRepositoryId;
+        $nodeAddressInstance = NodeAddress::fromJsonString($nodeAddress);
+        $contentRepositoryId = $nodeAddressInstance->contentRepositoryId;
         $this->workspacePublishingService->discardChangesInDocument(
             $contentRepositoryId,
             $selectedWorkspace,
-            $nodeAddress->aggregateId
+            $nodeAddressInstance->aggregateId
         );
 
         $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangeHasBeenDiscarded'));
@@ -722,7 +981,6 @@ class WorkspaceController extends AbstractModuleController
             );
             $this->addFlashMessage($this->getModuleLabel('workspaces.workspaceHasBeenRebased'));
             $this->forward('index');
-
         } catch (WorkspaceRebaseFailed $e) {
             if ($force) {
                 $this->addFlashMessage($this->getModuleLabel('workspaces.ForceRebaseWorkspaceFailed'));
@@ -734,7 +992,6 @@ class WorkspaceController extends AbstractModuleController
                 'event' => (new \ReflectionClass($conflictingEvent->getEvent()))->getShortName() . ' ' . $conflictingEvent->getSequenceNumber()->value,
                 'eventPayload' => htmlentities(json_encode($conflictingEvent->getEvent(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT), ENT_NOQUOTES),
             ], iterator_to_array($e->conflictingEvents));
-
         }
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $workspace = $contentRepository->findWorkspaceByName($workspaceName);
@@ -765,8 +1022,6 @@ class WorkspaceController extends AbstractModuleController
             'baseWorkspaceTitle' => $baseWorkspaceMetadata->title->value,
             'conflictInformation' => $conflictInformation,
         ]);
-
-
     }
 
     /**
@@ -801,7 +1056,7 @@ class WorkspaceController extends AbstractModuleController
     protected function computePendingChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): PendingChanges
     {
         $changesCount = ['new' => 0, 'changed' => 0, 'removed' => 0];
-        foreach($this->getChangesFromWorkspace($selectedWorkspace, $contentRepository) as $change) {
+        foreach ($this->getChangesFromWorkspace($selectedWorkspace, $contentRepository) as $change) {
             if ($change->deleted) {
                 $changesCount['removed']++;
             } elseif ($change->created) {
@@ -886,7 +1141,7 @@ class WorkspaceController extends AbstractModuleController
                         '/',
                         array_reverse(
                             array_map(
-                                fn(NodeName $nodeName): string => $nodeName->value,
+                                fn (NodeName $nodeName): string => $nodeName->value,
                                 $documentPathSegments
                             )
                         )
@@ -897,13 +1152,13 @@ class WorkspaceController extends AbstractModuleController
                         '/',
                         array_reverse(
                             array_map(
-                                fn(NodeName $nodeName): string => $nodeName->value,
+                                fn (NodeName $nodeName): string => $nodeName->value,
                                 $nodePathSegments
                             )
                         )
                     );
 
-                    if(!isset($siteChanges[$siteNodeName]['documents'][$documentPath]['document'])) {
+                    if (!isset($siteChanges[$siteNodeName]['documents'][$documentPath]['document'])) {
                         $documentNodeAddress = NodeAddress::create(
                             $contentRepository->id,
                             $selectedWorkspace->workspaceName,
@@ -957,7 +1212,6 @@ class WorkspaceController extends AbstractModuleController
                     );
                 }
             }
-
         }
 
         ksort($siteChanges);
@@ -1055,7 +1309,6 @@ class WorkspaceController extends AbstractModuleController
                 $this->postProcessDiffArray($diffArray);
 
                 if (count($diffArray) > 0) {
-
                     $contentChanges[$propertyName] = new ContentChangeItem(
                         properties: new ContentChangeProperties(
                             type: 'text',
@@ -1284,6 +1537,8 @@ class WorkspaceController extends AbstractModuleController
     ): WorkspaceListItems {
         $workspaceListItems = [];
         $allWorkspaces = $contentRepository->findWorkspaces();
+        $currentUser = $this->userService->getCurrentUser();
+        $roles = $this->securityContext->getRoles();
 
         // add other, accessible workspaces
         foreach ($allWorkspaces as $workspace) {
@@ -1292,8 +1547,8 @@ class WorkspaceController extends AbstractModuleController
             $workspacesPermissions = $this->authorizationService->getWorkspacePermissions(
                 $contentRepository->id,
                 $workspace->workspaceName,
-                $this->securityContext->getRoles(),
-                $this->userService->getCurrentUser()?->getId()
+                $roles,
+                $currentUser?->getId()
             );
 
             // ignore root workspaces, because they will not be shown in the UI
@@ -1301,7 +1556,7 @@ class WorkspaceController extends AbstractModuleController
                 continue;
             }
 
-            if ($workspacesPermissions->read === false) {
+            if ($workspacesPermissions->read === false && (!$workspacesPermissions->manage || $workspaceMetadata->classification === WorkspaceClassification::PERSONAL)) {
                 continue;
             }
 
@@ -1318,6 +1573,7 @@ class WorkspaceController extends AbstractModuleController
                 $workspace->baseWorkspaceName->value,
                 $this->computePendingChanges($workspace, $contentRepository),
                 !$allWorkspaces->getDependantWorkspaces($workspace->workspaceName)->isEmpty(),
+                $workspace->status === WorkspaceStatus::UP_TO_DATE,
                 $workspaceOwner?->getLabel(),
                 $workspacesPermissions,
                 $workspaceRoleAssignments,
@@ -1326,10 +1582,35 @@ class WorkspaceController extends AbstractModuleController
         return WorkspaceListItems::fromArray($workspaceListItems);
     }
 
-    protected function getChangesFromWorkspace(Workspace $selectedWorkspace,ContentRepository $contentRepository ): Changes{
+    protected function getChangesFromWorkspace(Workspace $selectedWorkspace, ContentRepository $contentRepository): Changes
+    {
         return $contentRepository->projectionState(ChangeFinder::class)
             ->findByContentStreamId(
                 $selectedWorkspace->currentContentStreamId
             );
+    }
+
+    private function addWorkspaceRoleAssignment(WorkspaceName $workspaceName, WorkspaceRoleAssignment $workspaceRoleAssignment): bool
+    {
+        try {
+            // The assignment can fail when an assignment with the same subject already exists for the workspace
+            $this->workspaceService->assignWorkspaceRole(
+                SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId,
+                $workspaceName,
+                $workspaceRoleAssignment
+            );
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf(
+                    'Failed to assign role %s to %s in workspace %s: %s',
+                    $workspaceRoleAssignment->role->value,
+                    $workspaceRoleAssignment->subject->value,
+                    $workspaceName->value,
+                    $e->getMessage()
+                )
+            );
+            return false;
+        }
+        return true;
     }
 }

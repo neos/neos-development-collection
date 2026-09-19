@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\FusionObjects;
 
 /*
@@ -10,8 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Fusion\Exception;
 use Neos\Fusion;
+use Neos\Fusion\Exception;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 
 class ThrowingImplementation extends AbstractFusionObject

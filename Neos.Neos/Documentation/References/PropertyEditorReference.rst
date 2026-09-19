@@ -118,7 +118,6 @@ It takes all the same configuration options as the inline rich text editor under
               placeholder: '<p>placeholder</p>'
               autoparagraph: true
               linking:
-                anchor: true
                 title: true
                 relNofollow: true
                 targetBlank: true
@@ -369,48 +368,200 @@ Options Reference:
 ``disabled`` (boolean)
 	If ``true``, disables the SelectBoxEditor.
 
+.. _property-editor-reference-linkeditor:
 
-Property Type: string ``LinkEditor`` -- Link Editor for internal, external and asset links
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Property Type: string or object Neos\\Neos\\Domain\\Link\\Link ``LinkEditor`` -- Link Editor for all types of links
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If internal links to other nodes, external links or asset links shall be editable at some point, the
-``LinkEditor`` can be used to edit a link::
-
-    myLink:
-      type: string
-      ui:
-        inspector:
-          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
-
-The searchbox will accept:
-
-* node document titles
-* asset titles and tags
-* valid URLs
-* valid email addresses
-
-By default, links to generic ``Neos.Neos:Document`` nodes are allowed; but by setting the ``nodeTypes`` option,
-this can be further restricted (like with the ``reference`` editor). Additionally, links to assets can be disabled
-by setting ``assets`` to ``FALSE``. Links to external URLs are always possible. If you need a reference towards
-only an asset, use the ``asset`` property type; for a reference to another node, use the ``reference`` property type.
-Furthermore, the placeholder text can be customized by setting the ``placeholder`` option::
-
-
-    myExternalLink:
-      type: string
-      ui:
-        inspector:
-          group: 'document'
-          editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
-          editorOptions:
-            assets: FALSE
-            nodeTypes: ['Neos.Neos:Shortcut']
-            placeholder: 'Paste a link, or type to search for nodes'
+Editor to create links for nodes, assets, mails, phone or general http links.
 
 Options Reference:
 
 ``disabled`` (boolean)
-	If ``true``, disables the LinkEditor.
+	If ``true``, disables the link editor.
+``linkTypes``
+  Configure the link types (see below).
+
+All link types can be configured via ``editorOptions.linkTypes.<id of link type>``:
+
+Example:
+
+.. code-block:: yaml
+
+    Vendor.Site:LinkEditor:
+      # ...
+      properties:
+        myLink:
+          type: string
+          ui:
+            inspector:
+              editor: 'Neos.Neos/Inspector/Editors/LinkEditor'
+              editorOptions:
+                linkTypes:
+                  Node:
+                    position: 'before Web'
+
+.. note:: When using the link editor inline all options are specified inside ``inline.editorOptions.linking``.
+
+You can find the available link types and their configuration options below.
+
+Web (configuration ``linkTypes.Web``):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Web Link Type handles external links, so links that begin with `http://` or `https://`.
+
+Link Type Options Reference:
+
+``enabled`` (boolean)
+	If ``false``, disables this link type.
+``position`` (string|integer)
+	Defines order of this link type. E.g. ``"before <id of link type>"``.
+
+Node (configuration ``linkTypes.Node``):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `Node` Link Type handles internal links. The editor offers you a document tree from which you can select documents from within your site. It also offers a search and a node type filter similar to the main document tree in the left side bar of the Neos UI.
+
+The `Node` Link Type can be configured as follows:
+
+Link Type Options Reference:
+
+``enabled`` (boolean)
+	If ``false``, disables this link type.
+``position`` (string|integer)
+	Defines order of this link type. E.g. ``"before <id of link type>"``.
+``startingPoint`` (string)
+  Starting point for the node tree, by default the current site node
+``baseNodeType`` (string)
+  Base NodeType for the node tree by default behaves like the document tree and follows all child hierarchies for nodes of type ``Neos.Neos:Document``.
+``loadingDepth`` (integer)
+  Loading depth for the node tree by default behaves like the document tree and lists nodes up to a depth of ``4``.
+``allowedNodeTypes`` (array of strings)
+  A list of allowed linkable node types or super types.
+
+Example:
+
+.. code-block:: yaml
+
+    editorOptions:
+      # ..
+      linking:
+        linkTypes:
+          Node:
+            startingPoint: '/<Neos.Neos:Sites>/my-site/some-feature'
+            baseNodeType: 'Vendor.Site:Document'
+            loadingDepth: 8
+            allowedNodeTypes: ['Vendor.Site:Mixin.ReferenceableDocument']
+
+
+Asset (configuration ``linkTypes.Asset``):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `Asset` Link Type handles links to files from the Media Module. The editor will offer you a media browser from which you can select any asset from within your site.
+
+Link Type Options Reference:
+
+``enabled`` (boolean)
+	If ``false``, disables this link type.
+``position`` (string|integer)
+	Defines order of this link type. E.g. ``"before <id of link type>"``.
+
+
+Mail To (configuration ``linkTypes.MailTo``):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `MailTo` Link Type handles e-mail links, so links that start with `mailto:`. Links with the `mailto:` protocol allow not only to specify a recipient, but also to configure a subject, a message body, carbon copy (CC) recipients and blind carbon copy (BCC) recipients for the outgoing e-mail.
+
+The editor for the `MailTo` Link Type will offer all of those fields. Each field can be deactivated via configuration.
+
+The `MailTo` Link Type can be configured as follows:
+
+Link Type Options Reference:
+
+``enabled`` (boolean)
+	If ``false``, disables this link type.
+``position`` (string|integer)
+	Defines order of this link type. E.g. ``"before <id of link type>"``.
+``enabledFields`` (object)
+  Allows to disable the optional fields, by default they are enabled.
+
+Example:
+
+.. code-block:: yaml
+
+    editorOptions:
+      # ..
+      linking:
+        linkTypes:
+          MailTo:
+            enabledFields:
+              subject: false
+              cc: false
+              bcc: false
+              body: false
+
+Phone (configuration ``linkTypes.Phone``):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `Phone` link type handles phone links, which start with `tel:` and allow to start a call.
+
+Link Type Options Reference:
+
+``enabled`` (boolean)
+	If ``false``, disables this link type.
+``position`` (string|integer)
+	Defines order of this link type. E.g. ``"before <id of link type>"``.
+
+
+Value Object support of ``Neos\\Neos\\Domain\\Link\\Link``:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Additionally to the simple ``string`` type the link editor allows to store the link in a value object.
+To enable that specify ``type: Neos\\Neos\\Domain\\Link\\Link`` for the property.
+
+The value object can serialize more than just the `href`. We can allow to edit other link related options like `title` and the `target`.
+
+Advanced Options Reference:
+
+``title`` (boolean)
+  Enabling "Title" allows to set the `$title` property of the resulting `Link`-object
+``targetBlank`` (boolean)
+  Enabling "Open in new window" allows to set the `$target` property of the resulting `Link`-object to `"_blank"`
+``relNofollow`` (boolean)
+  Enabling "No follow (SEO)" allows to set the `$rel` property of the resulting `Link`-object to `["nofollow"]`
+``download`` (boolean)
+  Enabling "Force download" allows to set the `$download` property of the resulting `Link`-object
+
+Example:
+
+.. code-block:: yaml
+
+    Vendor.Site:LinkEditor:
+      # ...
+      properties:
+        myLinkObject:
+          type: Neos\\Neos\\Domain\\Link\\Link
+          ui:
+            inspector:
+              # editor is automatically set to LinkEditor
+              editorOptions:
+                title: true
+                targetBlank: true
+                relNofollow: true
+                download: true
+                linkTypes:
+                  # ...
+
+The link value object can be queried as usual. An example rendering would look the following:
+
+Example::
+
+    link = ${q(node).property("myLinkObject")}
+    renderer = afx`
+        <a href={props.link.href} title={props.link.title} target={props.link.target} rel={props.link.rel} rel.@if={props.link.rel != []}>
+            My Text
+        </a>
+    `
 
 Property Type: integer ``TextFieldEditor``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -455,22 +606,22 @@ Options Reference:
 
 ``min`` (integer)
 	The lowest value in the range of permitted values. This value must be less than or equal to the value of the max attribute.
-  
+
 ``max`` (integer)
 	The greatest value in the range of permitted values. This value must be greater than or equal to the value of the min attribute.
-  
+
 ``step`` (integer)
 	The step attribute is a number that specifies the granularity that the value must adhere to.
-  
+
 ``unit`` (string)
   The value gets displayed beside the current value, as well after the minimal value (only if ``minLabel`` is not set) and after the maximal value (only if ``maxLabel`` is not set). (The unit is just a visual indicator and will not be added to the resulting property value.)
 
 ``minLabel`` (string)
 	If set, this value is displayed instead of the minimum value.
-  
+
 ``maxLabel`` (string)
 	If set, this value is displayed instead of the maximum value.
- 
+
 ``disabled`` (boolean)
 	If set to ``true``, the range editor gets disabled.
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
 /*
@@ -10,8 +11,8 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Service\DebugStack;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the Debug object

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Factory\AuthProvider;
 
+use Neos\ContentRepository\Core\Factory\AuthProviderFactoryInterface as CoreAuthProviderFactoryInterface;
 use Neos\ContentRepository\Core\Feature\Security\AuthProviderInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
-use Neos\ContentRepository\Core\Factory\AuthProviderFactoryInterface as CoreAuthProviderFactoryInterface;
 
 /**
  * @deprecated will be removed with Neos 10.

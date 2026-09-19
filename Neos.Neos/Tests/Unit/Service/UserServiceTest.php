@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\Service;
 
 /*
@@ -10,20 +11,20 @@ namespace Neos\Neos\Tests\Unit\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
+
+use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Flow\Security\Account;
+use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService as UserDomainService;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Service\UserService;
 use Neos\Party\Domain\Repository\PartyRepository;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\Flow\Security\AccountRepository;
 use Neos\Party\Domain\Service\PartyService;
-use Neos\Flow\Security\Account;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test case for the UserService
@@ -89,7 +90,7 @@ class UserServiceTest extends UnitTestCase
         $this->mockUserDomainService = $this->getMockBuilder(UserDomainService::class)->getMock();
         $this->inject($this->userService, 'userDomainService', $this->mockUserDomainService);
 
-        $this->mockWorkspaceRepository = $this->getMockBuilder(WorkspaceRepository::class)->disableOriginalConstructor()->addMethods(['findOneByName'])->getMock();
+        $this->mockWorkspaceRepository = $this->createMock(WorkspaceRepository::class);
         $this->inject($this->userService, 'workspaceRepository', $this->mockWorkspaceRepository);
 
         $this->mockSecurityContext = $this->getMockBuilder(Context::class)->getMock();

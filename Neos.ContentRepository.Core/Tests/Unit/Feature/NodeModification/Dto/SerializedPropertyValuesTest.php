@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeModification\Dto;
 
 /*
@@ -14,8 +15,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Feature\NodeModification\Dto;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 
 class SerializedPropertyValuesTest extends TestCase
 {

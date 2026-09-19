@@ -1,0 +1,53 @@
+##
+# Renders a single WorkspaceRoleAssignment list item
+#
+prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototype(Neos.Fusion:Component) {
+  /// string
+  workspaceTitle = ''
+  /// string
+  workspaceName = ''
+  /// bool
+  roleAssignmentsEditable = false
+  /// Neos\Workspace\Ui\ViewModel\RoleAssignmentListItem
+  roleAssignmentFormData = null
+
+  @private {
+    i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
+    confirmDeleteWorkspaceRoleAssignmentPopoverId = 'confirm-delete-workspace-role-assignment-popover'
+    confirmDeleteWorkspaceRoleAssignmentUri = Neos.Fusion:ActionUri {
+      action = 'confirmDeleteWorkspaceRoleAssignment'
+      format = 'htmx'
+      arguments {
+        workspaceName = ${props.workspaceName}
+        subjectValue = ${props.roleAssignmentFormData.subjectValue}
+        subjectType = ${props.roleAssignmentFormData.subjectType}
+        subjectLabel = ${props.roleAssignmentFormData.subjectLabel}
+        roleLabel = ${props.roleAssignmentFormData.roleLabel}
+      }
+    }
+    localisedRoleLabel = ${private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.roleAssignmentFormData.roleLabel).translate()}
+  }
+
+  renderer = afx`
+    <tr>
+      <td>{props.roleAssignmentFormData.subjectLabel}</td>
+      <td>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.roleAssignmentFormData.roleLabel)}</td>
+      <td class="workspace-action-column">
+        <Neos.Workspace.Ui:Component.Button
+          isDanger
+          title={private.i18n.arguments({
+            workspace: props.workspaceTitle,
+            subject: props.roleAssignmentFormData.subjectLabel,
+            role: private.localisedRoleLabel
+          }).id('workspaces.deleteWorkspaceRoleAssignment.action')}
+          icon="trash-alt icon-white"
+          disabled={!props.roleAssignmentsEditable || !props.roleAssignmentFormData.deletable}
+          attributes.hx-get={private.confirmDeleteWorkspaceRoleAssignmentUri}
+          attributes.hx-target={'#' + private.confirmDeleteWorkspaceRoleAssignmentPopoverId}
+          attributes.hx-swap='outerHTML'
+          attributes.hx-on--after-request={'document.getElementById("' + private.confirmDeleteWorkspaceRoleAssignmentPopoverId + '").showPopover()'}
+        />
+      </td>
+    </tr>
+  `
+}

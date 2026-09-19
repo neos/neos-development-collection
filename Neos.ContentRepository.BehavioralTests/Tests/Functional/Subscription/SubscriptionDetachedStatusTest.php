@@ -14,11 +14,12 @@ use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Configuration\ConfigurationManager;
+use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionDetachedStatusTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @after */
+    #[After]
     public function resetContentRepositoryRegistry(): void
     {
         $originalSettings = $this->getObject(ConfigurationManager::class)->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepositoryRegistry');

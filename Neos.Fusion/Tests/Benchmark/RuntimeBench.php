@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Benchmark;
 
 /*
@@ -11,15 +12,14 @@ namespace Neos\Fusion\Tests\Benchmark;
  * source code.
  */
 
-use Neos\Fusion\FusionObjects\ValueImplementation;
-use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Utility\ObjectAccess;
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Eel\CompilingEvaluator;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\RuntimeFactory;
+use Neos\Fusion\FusionObjects\ValueImplementation;
+use Neos\Utility\ObjectAccess;
 
 /**
  * A benchmark to test the Fusion runtime

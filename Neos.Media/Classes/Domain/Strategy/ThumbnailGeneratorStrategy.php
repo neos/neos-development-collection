@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Domain\Strategy;
 
 /*
@@ -100,7 +101,7 @@ class ThumbnailGeneratorStrategy
                 $priority = $generatorClassName::getPriority();
             }
             $generators[] = [
-                'priority' => (integer)$priority,
+                'priority' => (int)$priority,
                 'className' => $generatorClassName
             ];
         }

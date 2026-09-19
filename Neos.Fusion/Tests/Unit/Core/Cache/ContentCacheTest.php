@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core\Cache;
 
 /*
@@ -10,8 +11,6 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Cache\Backend\TransientMemoryBackend;
 use Neos\Cache\CacheAwareInterface;
 use Neos\Cache\EnvironmentConfiguration;
@@ -21,6 +20,8 @@ use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Fusion\Exception\CacheException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Test case for the ContentCache
@@ -169,17 +170,17 @@ class ContentCacheTest extends UnitTestCase
         $matcher = self::atLeast(2);
         $mockCache->expects($matcher)
             ->method('set')->willReturnCallback(function (...$parameters) use ($matcher, $invalidContent, $validContent) {
-            if ($matcher->numberOfInvocations() === 1) {
-                $this->assertSame($invalidContent, $parameters[1]);
-                $this->assertSame(['mytag1', 'mytag2'], $parameters[2]);
-                $this->assertSame(null, $parameters[3]);
-            }
-            if ($matcher->numberOfInvocations() === 2) {
-                $this->assertSame($validContent, $parameters[1]);
-                $this->assertSame(['mytag2'], $parameters[2]);
-                $this->assertSame(86400, $parameters[3]);
-            }
-        });
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertSame($invalidContent, $parameters[1]);
+                    $this->assertSame(['mytag1', 'mytag2'], $parameters[2]);
+                    $this->assertSame(null, $parameters[3]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertSame($validContent, $parameters[1]);
+                    $this->assertSame(['mytag2'], $parameters[2]);
+                    $this->assertSame(86400, $parameters[3]);
+                }
+            });
 
         $output = $contentCache->processCacheSegments($content);
 

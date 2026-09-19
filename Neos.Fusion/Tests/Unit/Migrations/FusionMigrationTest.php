@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\Fusion\Tests\Unit\Migrations;
 
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Fusion\Migrations\FusionMigrationTrait;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class FusionMigrationTest extends TestCase

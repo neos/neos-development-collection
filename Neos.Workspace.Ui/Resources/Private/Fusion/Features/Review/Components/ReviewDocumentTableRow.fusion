@@ -13,6 +13,15 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
   @private {
     i18n = ${I18n.id('').source('Main').package('Neos.Workspace.Ui')}
 
+    openNodeInBackendAction = Neos.Fusion:ActionUri {
+      request = ${request.mainRequest}
+      package = 'Neos.Neos.Ui'
+      controller = 'Backend'
+      action = 'index'
+      arguments {
+        node = ${document.document.documentNodeAddress}
+      }
+    }
     openNodeInPreviewAction = Neos.Fusion:ActionUri {
       request = ${request.mainRequest}
       package = 'Neos.Neos'
@@ -75,7 +84,16 @@ prototype(Neos.Workspace.Ui:Component.ReviewDocumentTableRow) < prototype(Neos.F
               <i @if.nodeIsHidden={document.documentChanges.isHidden} class="icon-red fa-solid fa-circle-xmark"></i>
             </span>
             <span>
-              {crumb}
+              <a
+                href={private.openNodeInBackendAction}
+                target="_blank"
+                @if.isLast={iterator.isLast}
+                @if.notRemoved={!document.documentChanges.isRemoved}>
+                {crumb}
+              </a>
+              <span @if.shouldRenderAsSpan={!iterator.isLast || document.documentChanges.isRemoved}>
+                {crumb}
+              </span>
             </span>
           </span>
         </Neos.Fusion:Loop>

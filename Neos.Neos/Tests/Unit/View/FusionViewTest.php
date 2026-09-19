@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Tests\Unit\View;
 
 /*
@@ -10,19 +11,20 @@ namespace Neos\Neos\Tests\Unit\View;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
+
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Security\Context;
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Exception;
 use Neos\Neos\View\FusionView;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\Fusion\Core\Runtime;
+use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -98,7 +100,7 @@ class FusionViewTest extends UnitTestCase
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
         $this->expectException(Exception::class);
-        $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
+        $view = $this->getAccessibleMock(FusionView::class, []);
         $view->render();
     }
 
@@ -106,7 +108,7 @@ class FusionViewTest extends UnitTestCase
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
         $this->expectException(Exception::class);
-        $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
+        $view = $this->getAccessibleMock(FusionView::class, []);
         $view->_set('variables', ['value' => 'foo']);
         $view->render();
     }

@@ -9,7 +9,6 @@ use Neos\ContentRepository\Core\CommandHandler\Commands;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\PublishedEvents;
-use Neos\ContentRepository\Core\Feature\ContentStreamClosing\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
@@ -67,7 +66,7 @@ class CommandHookTest extends AbstractExtensibilityTestCase
             ],
             [
                 'command' => PublishWorkspace::create(WorkspaceName::fromString('user')),
-                'eventClassNames' => [ContentStreamWasClosed::class, RootNodeAggregateWithNodeWasCreated::class, ContentStreamWasForked::class, WorkspaceWasPublished::class, ContentStreamWasRemoved::class]
+                'eventClassNames' => [RootNodeAggregateWithNodeWasCreated::class, ContentStreamWasForked::class, WorkspaceWasPublished::class, ContentStreamWasRemoved::class]
             ],
         ];
 

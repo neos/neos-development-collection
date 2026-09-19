@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper;
 
 /*
@@ -10,9 +11,9 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use Neos\Fusion\Exception;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Fusion;
+use Neos\Fusion\Exception;
 
 class UtilityHelper implements ProtectedContextAwareInterface
 {

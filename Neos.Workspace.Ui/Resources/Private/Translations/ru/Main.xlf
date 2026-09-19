@@ -273,6 +273,22 @@
         <source>Node</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Элемент</target>
       </trans-unit>
+      <trans-unit id="restore.table.label" xml:space="preserve">
+        <source>Element</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Название</target>
+      </trans-unit>
+      <trans-unit id="restore.table.dimensions" xml:space="preserve">
+        <source>Dimensions</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Размеры</target>
+      </trans-unit>
+      <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Отмена</target>
+      </trans-unit>
+      <trans-unit id="restore.searchTerm" xml:space="preserve">
+        <source>Search</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Поиск</target>
+      </trans-unit>
       <trans-unit id="workspaces.publishChanges" xml:space="preserve">
         <source>Publish</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Опубликовать</target>

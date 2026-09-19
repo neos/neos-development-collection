@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\Tests\Unit\Core\Parser;
 
 /*
@@ -10,14 +11,14 @@ namespace Neos\Fusion\Tests\Unit\Core\Parser;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
+use Neos\Flow\Tests\UnitTestCase;
+use Neos\Fusion\Core\Cache\ParserCache;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
+use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 use Neos\Fusion\Core\ObjectTreeParser\ExceptionMessage\MessageLinePart;
 use Neos\Fusion\Core\Parser;
-use Neos\Fusion\Core\Cache\ParserCache;
-use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class ParserExceptionTest extends UnitTestCase
 {

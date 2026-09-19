@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Fusion\FusionObjects;
 
 /*
@@ -80,7 +81,7 @@ class ResourceUriImplementation extends AbstractFusionObject
      */
     public function isLocalize()
     {
-        return (boolean)$this->fusionValue('localize');
+        return (bool)$this->fusionValue('localize');
     }
 
     /**

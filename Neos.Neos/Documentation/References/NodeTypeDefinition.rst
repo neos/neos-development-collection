@@ -314,7 +314,20 @@ The following options are allowed for defining a NodeType:
           key would create soft line breaks instead (equivalent to configuring an editable on a span tag).
 
         ``linking``
-          A way to configure additional options available for a link, e.g. target or rel attributes.
+          Options for the link editor (Note that ``formatting.a`` must be enabled).
+
+          Advanced Options Reference:
+
+          ``title`` (boolean)
+            Enabling "Title" allows to set the `title` attribute of the resulting `<a>`-Tag
+          ``targetBlank`` (boolean)
+            Enabling "Open in new window" allows to set the `target` attribute of the resulting `<a>`-Tag to `_blank`
+          ``relNofollow`` (boolean)
+            Enabling "No follow (SEO)" allows to set the `rel` attribute of the resulting `<a>`-Tag to `nofollow`
+          ``download`` (boolean)
+            Enabling "Force download" allows to set the `download` attribute of the resulting `<a>`-Tag
+
+          Additionally the configuration in ``linkTypes`` allows to further configure the types of link, see :ref:`property-editor-reference-linkeditor`.
 
         ``formatting``
           Various formatting options (see example below for all available options).
@@ -326,7 +339,6 @@ The following options are allowed for defining a NodeType:
             placeholder: i18n
             autoparagraph: true
             linking:
-              anchor: true
               title: true
               relNofollow: true
               targetBlank: true

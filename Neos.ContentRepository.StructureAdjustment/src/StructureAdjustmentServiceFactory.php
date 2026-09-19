@@ -10,18 +10,19 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 /**
  * @implements ContentRepositoryServiceFactoryInterface<StructureAdjustmentService>
  */
-class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFactoryInterface
+final class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): StructureAdjustmentService
     {
         return new StructureAdjustmentService(
-            $serviceFactoryDependencies->contentRepository,
+            $serviceFactoryDependencies->contentGraphReadModel,
             $serviceFactoryDependencies->eventStore,
             $serviceFactoryDependencies->eventNormalizer,
             $serviceFactoryDependencies->subscriptionEngine,
             $serviceFactoryDependencies->nodeTypeManager,
             $serviceFactoryDependencies->interDimensionalVariationGraph,
             $serviceFactoryDependencies->propertyConverter,
+            $serviceFactoryDependencies->clock,
         );
     }
 }

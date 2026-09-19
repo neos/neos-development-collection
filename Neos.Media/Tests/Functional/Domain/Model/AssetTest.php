@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Media\Tests\Functional\Domain\Model;
@@ -12,10 +13,8 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
-use Neos\Flow\Persistence\Repository;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
@@ -23,6 +22,7 @@ use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Tests\Functional\AbstractTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for an asset model
@@ -146,11 +146,20 @@ class AssetTest extends AbstractTestCase
         $mockExternalAssetSource = $this->getMockBuilder(AssetSourceInterface::class)->disableOriginalConstructor()->getMock();
         $this->inject($asset, 'assetSources', ['test-source' => $mockExternalAssetSource]);
 
-        $mockImportedAssetRepository = $this->getMockBuilder(Repository::class)->disableOriginalConstructor()->addMethods(['findOneByLocalAssetIdentifier'])->getMock();
-        $this->inject($asset, 'importedAssetRepository', $mockImportedAssetRepository);
+        // ImportedAssetRepository is final and cannot be doubled, so this records the lookup itself.
+        $importedAssetRepository = new class () {
+            public array $lookedUpIdentifiers = [];
 
-        $mockImportedAssetRepository->expects(self::atLeastOnce())->method('findOneByLocalAssetIdentifier')->with($asset->getIdentifier())->willReturn(null);
+            public function findOneByLocalAssetIdentifier(string $localAssetIdentifier)
+            {
+                $this->lookedUpIdentifiers[] = $localAssetIdentifier;
+                return null;
+            }
+        };
+        $this->inject($asset, 'importedAssetRepository', $importedAssetRepository);
+
         self::assertNull($asset->getAssetProxy());
+        self::assertSame([$asset->getIdentifier()], $importedAssetRepository->lookedUpIdentifiers);
     }
 
     /**

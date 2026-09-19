@@ -14,14 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeCreation;
 
-use Neos\ContentRepository\Core\CommandHandler\CommandHandlingDependencies;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
-use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Feature\Common\NodeCreationInternals;
 use Neos\ContentRepository\Core\Feature\Common\NodeReferencingInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -32,6 +30,7 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -39,7 +38,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -75,7 +73,6 @@ trait NodeCreation
 
     private function handleCreateNodeAggregateWithNode(
         CreateNodeAggregateWithNode $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
         $this->requireNodeType($command->nodeTypeName);
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
@@ -100,7 +97,7 @@ trait NodeCreation
             $lowLevelCommand = $lowLevelCommand->withNodeName($command->nodeName);
         }
 
-        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $commandHandlingDependencies);
+        return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand);
     }
 
     private function validateProperties(?PropertyValuesToWrite $propertyValues, NodeTypeName $nodeTypeName): void
@@ -128,16 +125,13 @@ trait NodeCreation
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        CommandHandlingDependencies $commandHandlingDependencies
     ): EventsToPublish {
-        $this->requireContentStream($command->workspaceName, $commandHandlingDependencies);
-        $contentGraph = $commandHandlingDependencies->getContentGraph($command->workspaceName);
-        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId(), $commandHandlingDependencies);
+        $contentGraph = $this->commandHandlingDependencies->getContentGraph($command->workspaceName);
+        $expectedVersion = $this->getExpectedVersionOfContentStream($contentGraph->getContentStreamId());
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
@@ -199,7 +193,7 @@ trait NodeCreation
             );
         }
 
-        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter());
+        $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter(), $this->clock);
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 
         $events = [
@@ -221,7 +215,7 @@ trait NodeCreation
             null
         ));
 
-        return new EventsToPublish(
+        return EventsToPublish::createEventsForStreamAndExpectedVersion(
             ContentStreamEventStreamName::fromContentStreamId($contentGraph->getContentStreamId())
                 ->getEventStreamName(),
             RebaseableCommand::enrichWithCommand($command, Events::fromArray($events)),
@@ -258,7 +252,6 @@ trait NodeCreation
     }
 
     /**
-     * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFound
      * @return array<EventInterface>
      */
@@ -281,7 +274,8 @@ trait NodeCreation
                 ?? NodeAggregateId::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType(
                 $childNodeType,
-                $this->getPropertyConverter()
+                $this->getPropertyConverter(),
+                $this->clock
             );
 
             $events[] = new NodeAggregateWithNodeWasCreated(

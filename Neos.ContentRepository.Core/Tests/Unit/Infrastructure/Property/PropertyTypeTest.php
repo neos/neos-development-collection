@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Property;
 
 /*
@@ -21,9 +22,9 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 require_once(__DIR__ . '/../../Fixtures/PostalAddress.php');
 

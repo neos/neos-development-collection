@@ -35,10 +35,11 @@ final class LogFileTracer implements PerformanceTracerInterface
     {
     }
 
-    public function openSpan(string $name, array $params = []): void
+    public function openSpan(string|TracePoint $name, array $params = []): void
     {
         $this->ensureFileOpen();
 
+        $name = TracePoint::nameOf($name);
         $startTime = microtime(true);
         $paramsStr = empty($params) ? '' : ' ' . json_encode($params);
 
@@ -79,10 +80,11 @@ final class LogFileTracer implements PerformanceTracerInterface
         ));
     }
 
-    public function mark(string $name, array $params = []): void
+    public function mark(string|TracePoint $name, array $params = []): void
     {
         $this->ensureFileOpen();
 
+        $name = TracePoint::nameOf($name);
         $currentTime = microtime(true);
         $duration = $this->lastMarkTime > 0
             ? ($currentTime - $this->lastMarkTime) * 1000

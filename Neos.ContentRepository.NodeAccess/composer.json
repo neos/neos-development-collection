@@ -11,7 +11,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/flow": "~9.0.0",
+        "neos/flow": "*",
         "neos/contentrepository-core": "self.version"
     },
     "autoload": {

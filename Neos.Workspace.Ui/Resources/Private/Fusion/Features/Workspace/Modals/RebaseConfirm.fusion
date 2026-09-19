@@ -24,14 +24,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.RebaseConfirm) < prototype(Neos.Fusi
   renderer = afx`
     <div popover class="error" id={private.popoverId}>
       <header>
-        <button
-          type="button"
-          class="neos-close neos-button"
-          popovertarget={private.popoverId}
-          popovertargetaction="close"
-        >
-          <Neos.Workspace.Ui:Component.Icon icon="times"/>
-        </button>
+        <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
           <i class="fas fa-exclamation-triangle"></i> {private.i18n.id('workspaces.dialog.ConfirmationDropConflictingChanges').arguments([props.workspaceTitle])}
         </div>

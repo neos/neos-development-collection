@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Domain\Model;
 
 /*
@@ -11,13 +12,13 @@ namespace Neos\Media\Domain\Model;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Service\ThumbnailService;
-use Neos\Utility\Arrays;
 use Neos\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
+use Neos\Utility\Arrays;
 
 /**
  * A system-generated preview version of an Asset
@@ -194,7 +195,7 @@ class Thumbnail implements ImageInterface
      */
     public function setWidth($width)
     {
-        $this->width = (integer)$width;
+        $this->width = (int)$width;
     }
 
     /**
@@ -203,7 +204,7 @@ class Thumbnail implements ImageInterface
      */
     public function setHeight($height)
     {
-        $this->height = (integer)$height;
+        $this->height = (int)$height;
     }
 
     /**
@@ -212,7 +213,7 @@ class Thumbnail implements ImageInterface
      */
     public function setQuality($quality)
     {
-        $this->quality = (integer)$quality;
+        $this->quality = (int)$quality;
     }
 
     /**

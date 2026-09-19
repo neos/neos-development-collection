@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Media\Tests\Functional\Domain\Model;
@@ -12,11 +13,11 @@ namespace Neos\Media\Tests\Functional\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Tests\Functional\AbstractTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class TagTest extends AbstractTestCase
 {

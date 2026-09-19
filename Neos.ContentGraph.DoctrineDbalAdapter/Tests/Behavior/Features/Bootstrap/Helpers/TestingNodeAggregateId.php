@@ -19,7 +19,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
  */
 final class TestingNodeAggregateId
 {
-    const NON_EXISTENT = 'i-do-not-exist';
+    public const NON_EXISTENT = 'i-do-not-exist';
 
     private string $value;
 
