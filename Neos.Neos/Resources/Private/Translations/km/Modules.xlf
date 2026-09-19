@@ -83,10 +83,9 @@
         <source>Owner</source>
         <target state="final">ម្ចាស់</target>
       </trans-unit>
-      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.workspace.visibility" xml:space="preserve" approved="no">
         <source>Visibility</source>
-        <target state="final">
-ដែលអាចមើលឃើញ</target>
+        <target state="translated">ដែលអាចមើលឃើញ</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.visibility.private" xml:space="preserve" approved="yes">
         <source>Private</source>
