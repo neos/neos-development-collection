@@ -229,10 +229,7 @@ trait ConstraintChecks
         );
 
         if (!$nodeAggregate) {
-            throw new NodeAggregateCurrentlyDoesNotExist(
-                'Node aggregate "' . $nodeAggregateId->value . '" does currently not exist.',
-                1541678486
-            );
+            throw NodeAggregateCurrentlyDoesNotExist::butWasExpectedTo($nodeAggregateId);
         }
 
         return $nodeAggregate;

@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
@@ -50,6 +52,22 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
             fn (array $itemValues): InterdimensionalSibling => InterdimensionalSibling::fromArray($itemValues),
             $values
         ));
+    }
+
+    public static function fromTargetLocationForDimensionSpacePoints(
+        TargetLocationInSubgraph $targetLocation,
+        DimensionSpacePointSet $dimensionSpacePoints,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        ContentGraphInterface $contentGraph,
+    ): self {
+        $siblings = [];
+        $sourceSubgraph = $contentGraph->getSubgraph($sourceDimensionSpacePoint, VisibilityConstraints::createEmpty());
+        foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
+            $subgraph = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::createEmpty());
+            $siblings[] = $targetLocation->resolveInterdimensionalSibling($subgraph, $sourceSubgraph);
+        }
+
+        return new self(...$siblings);
     }
 
     public static function fromDimensionSpacePointSetWithoutSucceedingSiblings(
