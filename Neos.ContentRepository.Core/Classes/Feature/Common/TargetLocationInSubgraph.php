@@ -14,6 +14,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 /**
  * A structurally valid target location of a node in a subgraph, meaning
@@ -56,6 +57,28 @@ final readonly class TargetLocationInSubgraph
             parentNodeAggregateId: $parentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
             precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
+        );
+    }
+
+    public static function createForTetheredChildNodeAggregate(
+        NodeAggregateId $parentNodeAggregateId,
+        NodeAggregateId $tetheredChildNodeAggregateId,
+        ContentSubgraphInterface $sourceSubgraph,
+    ): self {
+        return new self(
+            parentNodeAggregateId: $parentNodeAggregateId,
+            succeedingSiblingNodeAggregateId: $sourceSubgraph->findSucceedingSiblingNodes(
+                $tetheredChildNodeAggregateId,
+                FindSucceedingSiblingNodesFilter::create(
+                    pagination: Pagination::fromLimitAndOffset(1, 0)
+                )
+            )->first()?->aggregateId,
+            precedingSiblingNodeAggregateId: $sourceSubgraph->findPrecedingSiblingNodes(
+                $tetheredChildNodeAggregateId,
+                FindPrecedingSiblingNodesFilter::create(
+                    pagination: Pagination::fromLimitAndOffset(1, 0)
+                )
+            )->first()?->aggregateId,
         );
     }
 
@@ -106,18 +129,21 @@ final readonly class TargetLocationInSubgraph
             if ($succeedingSibling) {
                 $succeedingSiblingId = $succeedingSibling->aggregateId;
             } else {
-                foreach (
-                    $sourceSubgraph->findPrecedingSiblingNodes(
-                        $this->precedingSiblingNodeAggregateId,
-                        FindPrecedingSiblingNodesFilter::create(),
-                    ) as $furtherSourcePrecedingSibling
-                ) {
+                $precedingSiblings = $sourceSubgraph->findPrecedingSiblingNodes(
+                    $this->precedingSiblingNodeAggregateId,
+                    FindPrecedingSiblingNodesFilter::create(),
+                );
+                $precedingSiblingIds = $precedingSiblings->toNodeAggregateIds()
+                    ->merge(NodeAggregateIds::fromArray([$this->precedingSiblingNodeAggregateId]));
+                foreach ($precedingSiblings as $furtherSourcePrecedingSibling) {
                     $succeedingSibling = $subgraph->findSucceedingSiblingNodes(
                         $furtherSourcePrecedingSibling->aggregateId,
                         FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
                     )->first();
                     if ($succeedingSibling) {
-                        $succeedingSiblingId = $succeedingSibling->aggregateId;
+                        if (!$precedingSiblingIds->contain($succeedingSibling->aggregateId)) {
+                            $succeedingSiblingId = $succeedingSibling->aggregateId;
+                        }
                         break;
                     }
                 }

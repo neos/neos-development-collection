@@ -201,6 +201,29 @@ class TargetLocationInSubgraphTest extends TestCase
             ),
             'expectedException' => null,
         ];
+
+        yield 'everything' => [
+            'parentNodeAggregateId' => $parentNodeAggregateId,
+            'succeedingSiblingNodeAggregateId' => $succeedingSiblingId,
+            'precedingSiblingNodeAggregateId' => $precedingSiblingId,
+            'contentGraph' => self::createContentGraph(
+                nodes: [
+                    $parentNodeAggregateId->value => $parentNode,
+                    $succeedingSiblingId->value => $succeedingSiblingNode,
+                    $precedingSiblingId->value => $precedingSiblingNode,
+                ],
+                parents: [
+                    self::SUBJECT_ID => $parentNode,
+                ],
+                succeedingSiblings: [
+                    self::SUBJECT_ID => Nodes::fromArray([$succeedingSiblingNode]),
+                ],
+                precedingSiblings: [
+                    self::SUBJECT_ID => Nodes::fromArray([$precedingSiblingNode]),
+                ],
+            ),
+            'expectedException' => null,
+        ];
     }
 
     /**

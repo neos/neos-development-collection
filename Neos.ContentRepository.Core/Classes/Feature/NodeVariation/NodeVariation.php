@@ -18,10 +18,14 @@ use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotF
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeVariationInternals;
+use Neos\ContentRepository\Core\Feature\Common\TargetLocationInSubgraph;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -79,8 +83,28 @@ trait NodeVariation
             $parentNodeAggregate,
             $command->targetOrigin->toDimensionSpacePoint()
         );
+        $succeedingSiblingNodeAggregateId = $contentGraph->getSubgraph($command->sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())
+            ->findSucceedingSiblingNodes($command->nodeAggregateId, FindSucceedingSiblingNodesFilter::create())->first()?->aggregateId;
+        $targetLocation = TargetLocationInSubgraph::create(
+            nodeAggregateId: $command->nodeAggregateId,
+            dimensionSpacePoint: $command->sourceOrigin->toDimensionSpacePoint(),
+            parentNodeAggregateId: $parentNodeAggregate->nodeAggregateId,
+            succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
+            /**
+             * By convention, we only try to resolve a succeeding sibling from the preceding siblings
+             * only if a succeeding sibling exists.
+             * This is a deliberate decision matching the tests and to be replaced by explicitly setting the siblings
+             * once the command allows specific targets.
+             */
+            precedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId ?
+                $contentGraph->getSubgraph($command->sourceOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())
+                    ->findPrecedingSiblingNodes($command->nodeAggregateId, FindPrecedingSiblingNodesFilter::create())->first()?->aggregateId
+                : null,
+            contentGraph: $contentGraph,
+        );
 
         $events = $this->createEventsForVariations(
+            $targetLocation,
             $contentGraph,
             $command->sourceOrigin,
             $command->targetOrigin,

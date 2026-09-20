@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -55,6 +56,7 @@ trait TetheredNodeInternals
     abstract protected function getPropertyConverter(): PropertyConverter;
 
     abstract protected function createEventsForVariations(
+        TargetLocationInSubgraph $targetLocation,
         ContentGraphInterface $contentGraph,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
@@ -179,6 +181,14 @@ trait TetheredNodeInternals
         $arbitraryOccupiedDimensionSpacePoint = array_shift($occupiedDimensionSpacePoints);
 
         return $this->createEventsForVariations(
+            targetLocation: TargetLocationInSubgraph::createForTetheredChildNodeAggregate(
+                parentNodeAggregateId: $parentNodeAggregateId,
+                tetheredChildNodeAggregateId: $tetheredNodeAggregateId,
+                sourceSubgraph: $contentGraph->getSubgraph(
+                    $arbitraryOccupiedDimensionSpacePoint->toDimensionSpacePoint(),
+                    VisibilityConstraints::createEmpty()
+                ),
+            ),
             contentGraph: $contentGraph,
             sourceOrigin: $arbitraryOccupiedDimensionSpacePoint,
             targetOrigin: $originDimensionSpacePoint,
