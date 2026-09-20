@@ -104,7 +104,7 @@ trait NodeVariationInternals
             $contentGraph,
             $sourceOrigin,
             $targetOrigin,
-            $parentNodeAggregate->nodeAggregateId,
+            $parentNodeAggregate?->nodeAggregateId,
             $precedingSiblingNodeAggregateId,
             $succeedingSiblingNodeAggregateId,
             $nodeAggregate,
@@ -199,7 +199,7 @@ trait NodeVariationInternals
             $contentGraph,
             $sourceOrigin,
             $targetOrigin,
-            $parentNodeAggregate->nodeAggregateId,
+            $parentNodeAggregate?->nodeAggregateId,
             $precedingSiblingNodeAggregateId,
             $succeedingSiblingNodeAggregateId,
             $nodeAggregate,
@@ -259,7 +259,6 @@ trait NodeVariationInternals
                 $sourceOrigin,
                 $targetOrigin,
                 null,
-
                 $sourceSubgraph->findPrecedingSiblingNodes(
                     $tetheredChildNodeAggregate->nodeAggregateId,
                     FindPrecedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0))
@@ -295,7 +294,7 @@ trait NodeVariationInternals
             $contentGraph,
             $sourceOrigin,
             $targetOrigin,
-            $parentNodeAggregate->nodeAggregateId,
+            $parentNodeAggregate?->nodeAggregateId,
             $precedingSiblingNodeAggregateId,
             $succeedingSiblingNodeAggregateId,
             $nodeAggregate,

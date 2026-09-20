@@ -184,6 +184,8 @@ trait TetheredNodeInternals
             contentGraph: $contentGraph,
             sourceOrigin: $arbitraryOccupiedDimensionSpacePoint,
             targetOrigin: $originDimensionSpacePoint,
+            precedingSiblingNodeAggregateId: null,
+            succeedingSiblingNodeAggregateId: null,
             nodeAggregate: $childNodeAggregate,
             parentNodeAggregate: null,
         );
@@ -236,6 +238,7 @@ trait TetheredNodeInternals
                         $nodeAggregateId,
                         $creationOrigin,
                         $originDimensionSpacePoint,
+                        null,
                         $interdimensionalSiblings,
                     ),
                     VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated(

@@ -73,17 +73,20 @@ trait NodeVariation
             }
             if ($parentNodeAggregateId) {
                 $parentNodeRecord = $this->projectionContentGraph->findNodeInAggregate(
-                    $contentStreamId,
+                    $contentStreamLayers,
                     $parentNodeAggregateId,
                     $hierarchyRelation->dimensionSpacePoint
                 );
-                $succeedingSiblingNodeRecord = $this->projectionContentGraph->findNodeInAggregate(
-                    $contentStreamId,
-                    $specializationSiblings->getSucceedingSiblingIdForDimensionSpacePoint($hierarchyRelation->dimensionSpacePoint),
-                    $hierarchyRelation->dimensionSpacePoint,
-                );
+                $succeedingSiblingId = $specializationSiblings->getSucceedingSiblingIdForDimensionSpacePoint($hierarchyRelation->dimensionSpacePoint);
+                $succeedingSiblingNodeRecord = $succeedingSiblingId
+                    ? $this->projectionContentGraph->findNodeInAggregate(
+                        $contentStreamLayers,
+                        $succeedingSiblingId,
+                        $hierarchyRelation->dimensionSpacePoint,
+                    )
+                    : null;
                 if (is_null($parentNodeRecord)) {
-                    throw new \RuntimeException(sprintf('Failed to create node specialization variant for node "%s" in sub graph %s@%s because the parent node is missing', $nodeAggregateId->value, $specializationOrigin->toJson(), $contentStreamId->value), 1735420123);
+                    throw new \RuntimeException(sprintf('Failed to create node specialization variant for node "%s" in sub graph %s@%s because the parent node is missing', $nodeAggregateId->value, $specializationOrigin->toJson(), $contentStreamLayers->toDebugString()), 1735420123);
                 }
                 $hierarchyRelation->assignNewParentNode(
                     $parentNodeRecord->relationAnchorPoint,
@@ -91,7 +94,7 @@ trait NodeVariation
                         $parentNodeRecord->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
                         $succeedingSiblingNodeRecord?->relationAnchorPoint,
-                        $contentStreamId,
+                        $contentStreamLayers,
                         $hierarchyRelation->dimensionSpacePoint,
                     ),
                     $this->dbal,

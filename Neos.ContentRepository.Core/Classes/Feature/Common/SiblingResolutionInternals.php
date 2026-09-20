@@ -155,4 +155,49 @@ trait SiblingResolutionInternals
 
         return new InterdimensionalSiblings(...$interdimensionalSiblings);
     }
+
+    public function resolveInterdimensionalSiblings(
+        NodeAggregateId $nodeAggregateId,
+        /** siblings resolution is an _edge_ operation, so the source does not need an origin DSP */
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        DimensionSpacePointSet $affectedDimensionSpacePoints,
+        /** can be passed to evaluate the siblings under a new parent */
+        ?NodeAggregateId $parentNodeAggregateId,
+        /** can be passed to evaluate the siblings as closest to an explicit succeeding sibling */
+        ?NodeAggregateId $succeedingSiblingId,
+        /** can be passed to evaluate the siblings as closest to an explicit preceding sibling */
+        ?NodeAggregateId $precedingSiblingId,
+        ContentGraphInterface $contentGraph,
+    ): InterdimensionalSiblings {
+        $sourceSubgraph = $contentGraph->getSubgraph(
+            $sourceDimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions(),
+        );
+
+        /** the given succeeding sibling might not cover all affected DSPs, so we fetch alternatives */
+        $alternativeSucceedingSiblingIds = $succeedingSiblingId
+            ? $sourceSubgraph->findSucceedingSiblingNodes(
+                $succeedingSiblingId,
+                FindSucceedingSiblingNodesFilter::create()
+            )->toNodeAggregateIds()
+            : null;
+
+        /** the given preceding sibling might not cover all affected DSPs, so we fetch alternatives */
+        $alternativePrecedingSiblingIds = $precedingSiblingId
+            ? $sourceSubgraph->findPrecedingSiblingNodes(
+                $precedingSiblingId,
+                FindPrecedingSiblingNodesFilter::create()
+            )->toNodeAggregateIds()
+            : null;
+
+        $interdimensionalSiblings = [];
+        foreach ($affectedDimensionSpacePoints as $dimensionSpacePoint) {
+            $variantSubgraph = $contentGraph->getSubgraph(
+                $dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions(),
+            );
+        }
+
+        return new InterdimensionalSiblings(...$interdimensionalSiblings);
+    }
 }

@@ -397,6 +397,7 @@ final class EventExportProcessor implements ProcessorInterface
                     $nodeAggregateId,
                     $alreadyVisitedOriginDimensionSpacePoint,
                     $originDimensionSpacePoint,
+                    null,
                     InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings(
                         $coveredDimensionSpacePoints
                     )
