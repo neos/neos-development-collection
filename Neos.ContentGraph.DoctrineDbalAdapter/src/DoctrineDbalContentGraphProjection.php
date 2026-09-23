@@ -13,6 +13,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\ContentStrea
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SortPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Workspace;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
@@ -85,6 +86,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use NodeRemoval;
     use NodeVariation;
     use SubtreeTagging;
+    use SortPath;
     use Workspace;
 
     public const RELATION_DEFAULT_OFFSET = 128;
@@ -308,7 +310,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   contentstreamlayer,
                   parentnodeanchor,
                   childnodeanchor,
-                  position,
+                  sortpath,
                   subtreetags,
                   dimensionspacepointhash
                 )
@@ -317,7 +319,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   :contentStreamLayerToMergeInto AS contentstreamlayer,
                   h.parentnodeanchor,
                   h.childnodeanchor,
-                  h.position,
+                  h.sortpath,
                   h.subtreetags,
                   h.dimensionspacepointhash
                 -- using table instead of HierarchyRelationStatement because merging is a low level operation and combines exactly two layers without taking any other layers into account
@@ -328,7 +330,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 ON DUPLICATE KEY UPDATE
                   parentnodeanchor = VALUES(parentnodeanchor),
                   childnodeanchor = VALUES(childnodeanchor),
-                  position = VALUES(position),
+                  sortpath = VALUES(sortpath),
                   subtreetags = VALUES(subtreetags),
                   dimensionspacepointhash = VALUES(dimensionspacepointhash)
                 SQL;
@@ -428,7 +430,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               contentstreamlayer,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
               subtreetags,
               dimensionspacepointhash
             )
@@ -436,7 +438,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               :targetContentStreamLayer as contentstreamlayer,
               h.parentnodeanchor,
               h.childnodeanchor,
-              h.position,
+              h.sortpath,
               h.subtreetags,
               :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM
@@ -504,7 +506,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               contentstreamlayer,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
               subtreetags,
               dimensionspacepointhash
             )
@@ -513,7 +515,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
               :targetContentStreamLayer as contentstreamlayer,
               h.parentnodeanchor,
               h.childnodeanchor,
-              h.position,
+              h.sortpath,
               h.subtreetags,
               :newDimensionSpacePointHash AS dimensionspacepointhash
             FROM {$hierarchyRelationQuery->toSql()} AS h
@@ -919,7 +921,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   id,
                   parentnodeanchor,
                   childnodeanchor,
-                  position,
+                  sortpath,
                   subtreetags,
                   dimensionspacepointhash,
                   contentstreamlayer
@@ -930,7 +932,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                   IF(h.parentnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.parentnodeanchor) as parentnodeanchor,
                   -- if our (copied) node is the child, we update h.childNodeAnchor
                   IF(h.childnodeanchor = :originalNodeAnchor, :newNodeAnchor, h.childnodeanchor) as childnodeanchor,
-                  h.position,
+                  h.sortpath,
                   h.subtreetags,
                   h.dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer
@@ -1094,13 +1096,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         ?NodeRelationAnchorPoint $succeedingSiblingNodeAnchorPoint,
     ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
-            $position = $this->getRelationPosition(
+            $sortPath = $this->determineRelationNodeSortPath(
                 $parentNodeAnchorPoint,
-                null,
                 $succeedingSiblingNodeAnchorPoint,
                 $contentStreamLayers,
                 $dimensionSpacePoint
-            );
+            )->nodeSortPath;
 
             $parentSubtreeTags = $this->subtreeTagsForHierarchyRelation($contentStreamLayers, $parentNodeAnchorPoint, $dimensionSpacePoint);
             $inheritedSubtreeTags = NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all());
@@ -1112,7 +1113,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $childNodeAnchorPoint,
                 $dimensionSpacePoint,
                 $dimensionSpacePoint->hash,
-                $position,
+                $sortPath,
                 $inheritedSubtreeTags,
             );
 
@@ -1120,81 +1121,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
     }
 
-    private function getRelationPosition(
-        ?NodeRelationAnchorPoint $parentAnchorPoint,
-        ?NodeRelationAnchorPoint $childAnchorPoint,
-        ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
-        ContentStreamLayers $contentStreamLayers,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): int {
-        $position = $this->projectionContentGraph->determineHierarchyRelationPosition(
-            $parentAnchorPoint,
-            $childAnchorPoint,
-            $succeedingSiblingAnchorPoint,
-            $contentStreamLayers,
-            $dimensionSpacePoint
-        );
 
-        if ($position % 2 !== 0) {
-            $position = $this->getRelationPositionAfterRecalculation(
-                $parentAnchorPoint,
-                $childAnchorPoint,
-                $succeedingSiblingAnchorPoint,
-                $contentStreamLayers,
-                $dimensionSpacePoint
-            );
-        }
-
-        return $position;
-    }
-
-    private function getRelationPositionAfterRecalculation(
-        ?NodeRelationAnchorPoint $parentAnchorPoint,
-        ?NodeRelationAnchorPoint $childAnchorPoint,
-        ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
-        ContentStreamLayers $contentStreamLayers,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): int {
-        if (!$childAnchorPoint && !$parentAnchorPoint) {
-            throw new \InvalidArgumentException(
-                'You must either specify a parent or child node anchor'
-                . ' to get relation positions after recalculation.',
-                1519847858
-            );
-        }
-        $offset = 0;
-        $position = 0;
-        $hierarchyRelations = $parentAnchorPoint
-            ? $this->projectionContentGraph->getOutgoingHierarchyRelationsForNodeAndSubgraph(
-                $parentAnchorPoint,
-                $contentStreamLayers,
-                $dimensionSpacePoint
-            )
-            : $this->projectionContentGraph->getIngoingHierarchyRelationsForNodeAndSubgraph(
-                $childAnchorPoint,
-                $contentStreamLayers,
-                $dimensionSpacePoint
-            );
-
-        usort(
-            $hierarchyRelations,
-            static fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int => $relationA->position <=> $relationB->position
-        );
-
-        foreach ($hierarchyRelations as $relation) {
-            $offset += self::RELATION_DEFAULT_OFFSET;
-            if (
-                $succeedingSiblingAnchorPoint
-                && $relation->childNodeAnchor->equals($succeedingSiblingAnchorPoint)
-            ) {
-                $position = $offset;
-                $offset += self::RELATION_DEFAULT_OFFSET;
-            }
-            $relation->assignNewPosition($offset, $this->dbal, $this->tableNames);
-        }
-
-        return $position;
-    }
 
     private function copyHierarchyRelationToDimensionSpacePoint(
         HierarchyRelation $sourceHierarchyRelation,
@@ -1213,13 +1140,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $newChild,
             $dimensionSpacePoint,
             $dimensionSpacePoint->hash,
-            $this->getRelationPosition(
+            $this->determineRelationNodeSortPath(
                 $newParent,
-                $newChild,
                 $newSucceedingSibling,
                 $contentStreamLayers,
                 $dimensionSpacePoint
-            ),
+            )->nodeSortPath,
             $inheritedSubtreeTags,
         );
         $copy->addToDatabase($this->dbal, $this->tableNames);

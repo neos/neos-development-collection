@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
@@ -6,6 +7,11 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 /**
  * PHP Port of "Fractional Indexing" by David Greenspan with a base 62 implementation
  * @See https://observablehq.com/@dgreensp/implementing-fractional-indexing
+ *
+ * Implementation follows as close as possible to the original. Only public API "generateKeyBetween()" has been
+ * tightened types and always returns a key or throws an exception.
+ *
+ * @internal
  */
 class FractionalIndexing
 {
@@ -22,7 +28,7 @@ class FractionalIndexing
      * digits is a string such as '0123456789' for base 10. Digits must be in
      * ascending character code order!
      */
-    public static function generateKeyBetween(?string $a, ?string $b, string $digits = self::BASE_62_DIGITS): ?string
+    public static function generateKeyBetween(?string $a, ?string $b, string $digits = self::BASE_62_DIGITS): string
     {
         if ($a !== null) {
             self::validateOrderKey($a);
@@ -44,7 +50,11 @@ class FractionalIndexing
             if ($ib === self::SMALLEST_INTEGER) {
                 return $ib . self::midpoint('', $fb, $digits);
             }
-            return strcmp($ib, $b) < 0 ? $ib : self::decrementInteger($ib, $digits);
+            $decremented = self::decrementInteger($ib, $digits);
+            if ($decremented === null) {
+                throw new \RuntimeException('Cannot generate an order key below the smallest integer: ' . $b, 1790263266);
+            }
+            return strcmp($ib, $b) < 0 ? $ib : $decremented;
         }
 
         if ($b === null) {
@@ -63,7 +73,7 @@ class FractionalIndexing
         }
 
         $i = self::incrementInteger($ia, $digits);
-        return strcmp($i, $b) < 0 ? $i : $ia . self::midpoint($fa, null, $digits);
+        return ($i !== null && strcmp($i, $b) < 0) ? $i : $ia . self::midpoint($fa, null, $digits);
     }
 
     /**
@@ -74,8 +84,10 @@ class FractionalIndexing
      * If one or the other is null, returns consecutive "integer"
      * keys.  Otherwise, returns relatively short keys between
      * a and b.
+     *
+     * @return array<int, string>
      */
-    public static function generateNKeysBetween($a, $b, $n, $digits = self::BASE_62_DIGITS)
+    public static function generateNKeysBetween(?string $a, ?string $b, int $n, string $digits = self::BASE_62_DIGITS): array
     {
         if ($n === 0) {
             return [];
@@ -102,7 +114,7 @@ class FractionalIndexing
 
             return array_reverse($result);
         }
-        $mid = floor($n / 2);
+        $mid = intdiv($n, 2);
         $c = self::generateKeyBetween($a, $b, $digits);
         return [
             ...self::generateNKeysBetween($a, $c, $mid, $digits),
@@ -123,7 +135,7 @@ class FractionalIndexing
         }
     }
 
-    private static function getIntegerPart(?string $key): string
+    private static function getIntegerPart(string $key): string
     {
         $integerPartLength = self::getIntegerLength($key[0]);
         if ($integerPartLength > strlen($key)) {
@@ -135,11 +147,11 @@ class FractionalIndexing
     /**
      * note that this may return null, as there is a smallest integer
      */
-    private static function decrementInteger(?string $x, string $digits): ?string
+    private static function decrementInteger(string $x, string $digits): ?string
     {
         self::validateInteger($x);
         $digs = str_split($x);
-        $head = array_shift($digs);
+        $head = (string)array_shift($digs);
 
         $borrow = true;
         for ($i = count($digs) - 1; $borrow && $i >= 0; $i--) {
@@ -175,11 +187,11 @@ class FractionalIndexing
     /**
      * note that this may return null, as there is a largest integer
      */
-    private static function incrementInteger(?string $x, string $digits): ?string
+    private static function incrementInteger(string $x, string $digits): ?string
     {
         self::validateInteger($x);
         $digs = str_split($x);
-        $head = array_shift($digs);
+        $head = (string)array_shift($digs);
 
         $carry = true;
         for ($i = count($digs) - 1; $carry && $i >= 0; $i--) {
@@ -260,7 +272,7 @@ class FractionalIndexing
         return $digits[$digitA] . self::midpoint(substr($a, 1), null, $digits);
     }
 
-    private static function validateInteger(?string $int): void
+    private static function validateInteger(string $int): void
     {
         if (strlen($int) !== self::getIntegerLength($int[0])) {
             throw new \RuntimeException('invalid integer part of order key: ' . $int);

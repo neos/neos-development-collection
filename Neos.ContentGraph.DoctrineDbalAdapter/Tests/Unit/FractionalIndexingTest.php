@@ -1,7 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\Tests\Unit;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Unit;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\FractionalIndexing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -10,7 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class FractionalIndexingTest extends TestCase
 {
-
     #[DataProvider('dataForTestGenerateKeyBetween')]
     #[Test]
     public function testGenerateKeyBetween($a, $b, $expected)
@@ -119,9 +119,9 @@ class FractionalIndexingTest extends TestCase
         yield [1000000, 'd3B81'];
     }
 
-    #[DataProvider('dataForTestGenerateKeyBetweenInsertAlwaysIntoSameGap')]
+    #[DataProvider('dataForTestGenerateKeyBetweenInsertAlwaysIntoSameGapFixedLeftBound')]
     #[Test]
-    public function testGenerateKeyBetweenInsertAlwaysIntoSameGap(int $iterations, string $expected)
+    public function testGenerateKeyBetweenInsertAlwaysIntoSameGapBeforeFixedLeftBound(int $iterations, string $expected)
     {
 
         $a = FractionalIndexing::generateKeyBetween(null, null);
@@ -134,16 +134,47 @@ class FractionalIndexingTest extends TestCase
         $this->assertEquals($expected, $b);
     }
 
-    public static function dataForTestGenerateKeyBetweenInsertAlwaysIntoSameGap()
+    public static function dataForTestGenerateKeyBetweenInsertAlwaysIntoSameGapFixedLeftBound()
     {
         yield [1, 'a0V']; // 3 chars
         yield [10, 'a004']; // 4 chars
         yield [100, 'a000000000000000004']; // 19 chard
         yield [128, 'a0000000000000000000000G']; // 24 chars
+        yield [204, 'a00000000000000000000000000000000001']; // 36 chars
+        yield [205, 'a00000000000000000000000000000000000V']; // 37 chars
         // 169 chars
         yield [1000, 'a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004'];
         // 1669 chars
         yield [10000, 'a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004'];
+    }
+
+    #[DataProvider('dataForTestGenerateKeyBetweenInsertAlwaysIntoSameGapFixedRightBound')]
+    #[Test]
+    public function testGenerateKeyBetweenInsertAlwaysIntoSameGapBeforeFixedRightBound(int $iterations, string $expected)
+    {
+
+        $a = FractionalIndexing::generateKeyBetween(null, null);
+        $b = FractionalIndexing::generateKeyBetween($a, null);
+
+        for ($i = 0; $i < $iterations; $i++) {
+            $a = FractionalIndexing::generateKeyBetween($a, $b);
+        }
+
+        $this->assertEquals($expected, $a);
+    }
+
+    public static function dataForTestGenerateKeyBetweenInsertAlwaysIntoSameGapFixedRightBound()
+    {
+        yield [1, 'a0V']; // 3 chars
+        yield [10, 'a0zz']; // 4 chars
+        yield [100, 'a0zzzzzzzzzzzzzzzzzzzz']; // 22 chard
+        yield [128, 'a0zzzzzzzzzzzzzzzzzzzzzzzzzt']; // 28 chars
+        yield [170, 'a0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz']; // 36 chars
+        yield [171, 'a0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzV']; // 37 chars
+        // 202 chars
+        yield [1000, 'a0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz'];
+        // 2002 chars
+        yield [10000, 'a0zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz'];
     }
 
     #[DataProvider('dataForTestGenerateNKeysBetween')]

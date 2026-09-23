@@ -22,6 +22,8 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 trait NodeVariation
 {
+    use SortPath;
+
     private function createNodeSpecializationVariant(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $specializationOrigin, InterdimensionalSiblings $specializationSiblings, EventEnvelope $eventEnvelope): void
     {
         // Do the actual specialization
@@ -103,13 +105,12 @@ trait NodeVariation
                     $specializedNode->relationAnchorPoint,
                     $uncoveredDimensionSpacePoint,
                     $uncoveredDimensionSpacePoint->hash,
-                    $this->projectionContentGraph->determineHierarchyRelationPosition(
+                    $this->determineRelationNodeSortPath(
                         $parentNode->relationAnchorPoint,
-                        $specializedNode->relationAnchorPoint,
                         $specializationSucceedingSiblingNode?->relationAnchorPoint,
                         $contentStreamLayers,
                         $uncoveredDimensionSpacePoint
-                    ),
+                    )->nodeSortPath,
                     NodeTags::create(SubtreeTags::createEmpty(), $parentSubtreeTags->all()),
                 );
                 $hierarchyRelation->addToDatabase($this->dbal, $this->tableNames);
