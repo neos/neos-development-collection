@@ -148,7 +148,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->ordering !== null) {
             $this->applyOrdering($queryBuilder, $filter->ordering);
         }
-        $queryBuilder->addOrderBy('h.position');
+        $queryBuilder->addOrderBy('h.sortpath');
         return $this->fetchNodes($queryBuilder);
     }
 
@@ -285,20 +285,21 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
+    // TODO: Adopt to path
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
 
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, h.sortpath')
             ->from($this->tableNames->node(), 'n')
             ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->whereCondition('n', $nodeAggregateIdCondition);
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
+            ->select('c.*, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.sortpath')
             ->from('tree', 'p')
             ->innerJoinTableSubquery('p', $this->hierarchyRelationQuery, 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->tableNames->node(), 'c', 'c.relationanchorpoint = h.childnodeanchor');
@@ -313,8 +314,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
             ->from('tree')
-            ->orderBy('level')
-            ->addOrderBy('position');
+            ->orderBy('sortpath');
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
         /** @var array<string, Subtree[]> $subtreesByParentNodeId */
@@ -431,7 +431,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->pagination !== null) {
             $this->applyPagination($queryBuilderCte, $filter->pagination);
         }
-        $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
+        $queryBuilderCte->addOrderBy('level')->addOrderBy('sortpath');
         $nodeRows = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
         return $this->nodeFactory->mapNodeRowsToNodes(
             $nodeRows,
@@ -703,7 +703,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, h.sortpath')
             ->from($this->tableNames->node(), 'n')
             // we need to join with the hierarchy relation, because we need the node name.
             ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleParentNodeAggregateId($nodeAggregateIdCondition), 'h', 'h.childnodeanchor = n.relationanchorpoint')
@@ -713,7 +713,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
+            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.sortpath')
             ->from('tree', 'pn')
             ->innerJoinTableSubquery('pn', $this->hierarchyRelationQuery, 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor');

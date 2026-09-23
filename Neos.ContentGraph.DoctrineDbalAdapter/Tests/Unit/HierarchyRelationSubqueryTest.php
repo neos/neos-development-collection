@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\Tests\Unit;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Unit;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\ParameterType;

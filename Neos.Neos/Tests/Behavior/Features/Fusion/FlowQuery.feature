@@ -361,7 +361,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     """
     Then I expect the following Fusion rendering result:
     """
-    typeFilter: a1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6,a1b1a
+    typeFilter: a1a,a1a2,a1a3,a1a4,a1a5,a1a6,a1b2,a1b1a
     combinedFilter: a1b1a
     identifier: a1b1a
     name: a1b
