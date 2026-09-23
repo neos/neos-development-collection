@@ -334,7 +334,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->peerOrigin,
-            $event->peerSucceedingSiblings
+            $event->peerSucceedingSiblings,
+            false
         );
     }
 
@@ -347,7 +348,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->generalizationOrigin,
-            $event->variantSucceedingSiblings
+            $event->variantSucceedingSiblings,
+            true
         );
     }
 
@@ -360,7 +362,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $event->nodeAggregateId,
             $event->sourceOrigin,
             $event->specializationOrigin,
-            $event->specializationSiblings
+            $event->specializationSiblings,
+            true
         );
     }
 
@@ -369,6 +372,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         InterdimensionalSiblings $interdimensionalSiblings,
+        bool $transferDeletedAndRemovedLevels
     ): void {
         $sourceNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAggregateId,
@@ -394,6 +398,27 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 $sourceNode->getParentNodeAggregateId(),
                 $interdimensionalSibling->dimensionSpacePoint->hash
             ));
+
+            // deleted and removed level are defined from the parent node values
+            // if subtree tags are to be transferred (as in createSpecialization)
+            // the parent values are raised for all tags set for the handled node
+            if ($transferDeletedAndRemovedLevels) {
+                $parentSourceNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+                    $sourceNode->getParentNodeAggregateId(),
+                    $sourceNode->getDimensionSpacePointHash()
+                ));
+                $isSourceNodeExplicitlyDisabled = $parentSourceNode ? $this->isNodeExplicitlyDisabled($sourceNode, $parentSourceNode) : false;
+                $isSourceNodeExplicitlyRemoved = $parentSourceNode ? $this->isNodeExplicitlyRemoved($sourceNode, $parentSourceNode) : false;
+                // transfer disabled- and removed-level from parent and combine with source
+                $targetNode = $targetNode
+                    ->withDisabledLevel(($parentNode?->getDisableLevel() ?: 0) + ($isSourceNodeExplicitlyDisabled ? 1 : 0))
+                    ->withRemovedLevel(($parentNode?->getRemovedLevel() ?: 0) + ($isSourceNodeExplicitlyRemoved ? 1 : 0));
+            } else {
+                $targetNode = $targetNode
+                    ->withDisabledLevel($parentNode?->getDisableLevel() ?: 0)
+                    ->withRemovedLevel($parentNode?->getRemovedLevel() ?: 0);
+            }
+
             if ($parentNode !== null) {
                 $uriPathSegments = explode('/', $sourceNode->getUriPath());
                 $uriPathSegment = $uriPathSegments[array_key_last($uriPathSegments)];
@@ -680,7 +705,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 uriPath = TRIM('/' FROM {$this->concatSql(
                     ':newParentUriPath',
                     "'/'",
-                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"   
+                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"
                 )}),
                 disabled = disabled + {$disabledDelta},
                 removed = removed + {$removedDelta}
