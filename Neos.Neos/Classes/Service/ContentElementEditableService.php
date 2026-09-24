@@ -50,10 +50,6 @@ class ContentElementEditableService
 
     public function wrapContentProperty(Node $node, string $property, string $content): string
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->contentRepositoryId
-        );
-
         // TODO: permissions
         //if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
         //    return $content;

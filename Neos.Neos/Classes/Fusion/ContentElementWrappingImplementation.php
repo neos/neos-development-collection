@@ -49,16 +49,6 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     }
 
     /**
-     * Additional attributes to be rendered in the ContentElementWrapping
-     *
-     * @return array<string,string>
-     */
-    public function getAdditionalAttributes(): array
-    {
-        return $this->fusionValue('additionalAttributes') ?? [];
-    }
-
-    /**
      * Evaluate this Fusion object and return the result
      *
      * @return mixed
@@ -78,6 +68,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             return $content;
         }
 
+        // TODO: Move this check to the service and only check once for the privilege for the current request
         if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             return $content;
         }
@@ -85,8 +76,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
         return $this->contentElementWrappingService->wrapContentObject(
             $node,
             $content,
-            $this->getContentElementFusionPath(),
-            $this->getAdditionalAttributes()
+            $this->getContentElementFusionPath()
         );
     }
 
