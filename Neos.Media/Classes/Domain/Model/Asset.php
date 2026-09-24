@@ -195,6 +195,11 @@ class Asset implements AssetInterface
         return $this->persistenceManager->getIdentifierByObject($this);
     }
 
+    public function getId(): AssetId
+    {
+        return AssetId::fromString($this->getIdentifier());
+    }
+
     /**
      * @return string
      */
