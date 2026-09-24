@@ -36,7 +36,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCr
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeMove;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeReferencing;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRemoval;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRenaming;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\SubtreeTagging;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
@@ -63,7 +62,6 @@ trait CRTestSuiteTrait
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
-    use NodeRemoval;
     use NodeRenaming;
 
     use WorkspaceCreation;

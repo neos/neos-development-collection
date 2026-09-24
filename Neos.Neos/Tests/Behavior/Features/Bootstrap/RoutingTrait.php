@@ -31,6 +31,8 @@ use Neos\Flow\Mvc\Routing\RouterInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
+use Neos\Http\Factories\ServerRequestFactory;
+use Neos\Http\Factories\UriFactory;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteConfiguration;
@@ -51,10 +53,11 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Routing related Behat steps. This trait is impure and resets the SiteRepository
+ * Routing related Behat steps.
  *
- * Requires the {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()} to be a {@see FunctionalTestRequestHandler}.
- * For this the {@see BrowserTrait} can be used.
+ * This trait is impure
+ *  - it resets the SiteRepository
+ *  - it sets up a {@see FunctionalTestRequestHandler}
  *
  * @internal only for behat tests within the Neos.Neos package
  */
@@ -74,6 +77,20 @@ trait RoutingTrait
      * @return T
      */
     abstract private function getObject(string $className): object;
+
+    /**
+     * @BeforeScenario
+     */
+    public function setupFunctionalTestRequestHandlerForEveryScenario()
+    {
+        $bootstrap = $this->getObject(\Neos\Flow\Core\Bootstrap::class);
+
+        $requestHandler = new \Neos\Flow\Tests\FunctionalTestRequestHandler($bootstrap);
+        $serverRequestFactory = new ServerRequestFactory(new UriFactory());
+        $request = $serverRequestFactory->createServerRequest('GET', 'http://localhost');
+        $requestHandler->setHttpRequest($request);
+        $bootstrap->setActiveRequestHandler($requestHandler);
+    }
 
     /**
      * @Given A site exists for node name :nodeName
@@ -148,7 +165,7 @@ trait RoutingTrait
             $this->requestUrl = $this->requestUrl->withScheme('http')->withHost('localhost');
         }
         $activeRequestHandler = self::$bootstrap->getActiveRequestHandler();
-        assert($activeRequestHandler instanceof FunctionalTestRequestHandler, 'wrong request handler - given ' . get_class($activeRequestHandler) . ' -> You need to include BrowserTrait in the FeatureContext!');
+        assert($activeRequestHandler instanceof FunctionalTestRequestHandler, 'wrong request handler - given ' . get_class($activeRequestHandler));
         $activeRequestHandler->setHttpRequest($activeRequestHandler->getHttpRequest()->withUri($this->requestUrl));
     }
 
