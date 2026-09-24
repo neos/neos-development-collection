@@ -14,7 +14,7 @@ default:
         - "%paths.base%/Features/Crazy"
         - "%paths.base%/Features/Localization"
         - "%paths.base%/Features/Security"
-        - "%paths.base%/Features/Workspace"
+        - "%paths.base%/Features/Workspaces"
       contexts:
         - FeatureContext
 
