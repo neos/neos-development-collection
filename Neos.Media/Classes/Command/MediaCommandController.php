@@ -150,7 +150,7 @@ class MediaCommandController extends CommandController
         $resourceInfos = $result->fetchAllAssociative();
 
         if ($resourceInfos === []) {
-            !$quiet || $this->outputLine('Found no resources which need to be imported.');
+            !$quiet && $this->outputLine('Found no resources which need to be imported.');
             $this->quit();
         }
 
@@ -158,11 +158,11 @@ class MediaCommandController extends CommandController
             $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], PersistentResource::class);
 
             if ($resource === null) {
-                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
+                !$quiet && $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
             if (!$resource->getStream()) {
-                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
+                !$quiet && $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
 
@@ -173,7 +173,7 @@ class MediaCommandController extends CommandController
                 $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             } else {
                 $this->assetRepository->add($resourceObj);
-                !$quiet || $this->outputLine('Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
+                !$quiet && $this->outputLine('Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             }
         }
     }
