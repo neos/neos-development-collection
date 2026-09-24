@@ -370,7 +370,7 @@ Options Reference:
 
 .. _property-editor-reference-linkeditor:
 
-Property Type: string or object Neos\\Neos\\Domain\\Link\\Link ``LinkEditor`` -- Link Editor for all types of links
+Property Type: string or object Neos\Neos\Domain\Link\Link ``LinkEditor`` -- Link Editor for all types of links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Editor to create links for nodes, assets, mails, phone or general http links.
@@ -513,11 +513,11 @@ Link Type Options Reference:
 	Defines order of this link type. E.g. ``"before <id of link type>"``.
 
 
-Value Object support of ``Neos\\Neos\\Domain\\Link\\Link``:
+Value Object support of ``Neos\Neos\Domain\Link\Link``:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Additionally to the simple ``string`` type the link editor allows to store the link in a value object.
-To enable that specify ``type: Neos\\Neos\\Domain\\Link\\Link`` for the property.
+To enable that specify ``type: Neos\Neos\Domain\Link\Link`` for the property.
 
 The value object can serialize more than just the `href`. We can allow to edit other link related options like `title` and the `target`.
 
@@ -540,7 +540,7 @@ Example:
       # ...
       properties:
         myLinkObject:
-          type: Neos\\Neos\\Domain\\Link\\Link
+          type: Neos\Neos\Domain\Link\Link
           ui:
             inspector:
               # editor is automatically set to LinkEditor
@@ -557,11 +557,18 @@ The link value object can be queried as usual. An example rendering would look t
 Example::
 
     link = ${q(node).property("myLinkObject")}
+    @process.convertUris = Neos.Neos:ConvertUris
     renderer = afx`
         <a href={props.link.href} title={props.link.title} target={props.link.target} rel={props.link.rel} rel.@if={props.link.rel != []}>
             My Text
         </a>
     `
+
+When rendering values created with the LinkEditor in Fusion, internal URIs
+(e.g. ``node://<uuid>`` or ``asset://<uuid>``) must be converted to public URLs.
+
+This can be done by adding the ``@process.convertUris = Neos.Neos:ConvertUris`` processor.
+
 
 Property Type: integer ``TextFieldEditor``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
