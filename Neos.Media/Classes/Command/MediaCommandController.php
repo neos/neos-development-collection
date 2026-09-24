@@ -15,7 +15,7 @@ namespace Neos\Media\Command;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
@@ -146,12 +146,11 @@ class MediaCommandController extends CommandController
             ON t.resource = r.persistence_object_identifier
             WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
         ';
-        $statement = $this->dbalConnection->prepare($sql);
-        $statement->execute();
-        $resourceInfos = $statement->fetchAll();
+        $result = $this->dbalConnection->executeQuery($sql);
+        $resourceInfos = $result->fetchAllAssociative();
 
         if ($resourceInfos === []) {
-            !$quiet || $this->outputLine('Found no resources which need to be imported.');
+            !$quiet && $this->outputLine('Found no resources which need to be imported.');
             $this->quit();
         }
 
@@ -159,11 +158,11 @@ class MediaCommandController extends CommandController
             $resource = $this->persistenceManager->getObjectByIdentifier($resourceInfo['persistence_object_identifier'], PersistentResource::class);
 
             if ($resource === null) {
-                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
+                !$quiet && $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. No resource object with identifier %s could be retrieved from the Persistence Manager.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
             if (!$resource->getStream()) {
-                !$quiet || $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
+                !$quiet && $this->outputLine('Warning: PersistentResource for file "%s" seems to be corrupt. The actual data of resource %s could not be found in the resource storage.', [$resourceInfo['filename'], $resourceInfo['persistence_object_identifier']]);
                 continue;
             }
 
@@ -174,7 +173,7 @@ class MediaCommandController extends CommandController
                 $this->outputLine('Simulate: Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             } else {
                 $this->assetRepository->add($resourceObj);
-                !$quiet || $this->outputLine('Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
+                !$quiet && $this->outputLine('Adding new resource "%s" (type: %s)', [$resourceObj->getResource()->getFilename(), $className]);
             }
         }
     }
