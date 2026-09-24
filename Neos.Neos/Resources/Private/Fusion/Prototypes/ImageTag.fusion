@@ -1,4 +1,7 @@
-# ImageTag object works exactly the same way as image ViewHelper in the Neos.Media package
+# ImageTag object
+# This object generated a image tag including the size attributes for the generated thumbnail.
+# In case of async generation it falls back to the ImageUri object to generate the src attribute until the thumbnail is ready.
+# In that case the size attributes will be missing until the thumbnail is generated.
 prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
   asset = 'pass-the-media-asset'
   maximumWidth = 2560
@@ -10,7 +13,8 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
   async = false
   quality = NULL
   preset = NULL
-  @context.thumbnail = ${this.asset ? Neos.Media.Image.createThumbnail(
+  @context {
+    thumbnail = ${this.asset ? Neos.Media.Image.createThumbnail(
     this.asset,
     this.preset,
     this.width,
@@ -22,16 +26,49 @@ prototype(Neos.Neos:ImageTag) < prototype(Neos.Fusion:Tag) {
     this.async,
     this.quality,
     this.format
-  ) : null}
+    ) : null}
+    asset = ${this.asset}
+    width = ${this.width}
+    maximumWidth = ${this.maximumWidth}
+    height = ${this.height}
+    maximumHeight = ${this.maximumHeight}
+    allowCropping = ${this.allowCropping}
+    allowUpScaling = ${this.allowUpScaling}
+    async = ${this.async}
+    quality = ${this.quality}
+    format = ${this.format}
+    preset = ${this.preset}
+  }
 
   tagName = 'img'
   attributes {
     loading = 'lazy'
     alt = ''
-    src = Neos.Fusion:ResourceUri {
-      resource = ${thumbnail.resource}
+    src = Neos.Fusion:Case {
+      resource {
+        condition = ${thumbnail.resource}
+        renderer = Neos.Fusion:ResourceUri {
+          resource = ${thumbnail.resource}
+        }
+      }
+      asyncFallback {
+        condition = true
+        renderer = Neos.Neos:ImageUri {
+          asset = ${asset}
+          width = ${width}
+          maximumWidth = ${maximumWidth}
+          height = ${height}
+          maximumHeight = ${maximumHeight}
+          allowCropping = ${allowCropping}
+          allowUpScaling = ${allowUpScaling}
+          async = ${async}
+          quality = ${quality}
+          format = ${format}
+          preset = ${preset}
+        }
+      }
     }
-    width = ${thumbnail.width}
-    height = ${thumbnail.height}
+    width = ${thumbnail.width || null}
+    height = ${thumbnail.height || null}
   }
 }
