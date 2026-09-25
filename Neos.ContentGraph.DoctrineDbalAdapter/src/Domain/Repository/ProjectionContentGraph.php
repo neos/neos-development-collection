@@ -41,6 +41,7 @@ class ProjectionContentGraph
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository
     ) {
     }
 
@@ -434,7 +435,7 @@ class ProjectionContentGraph
     }
 
     /**
-     *  @return array<int, HierarchyRelation>
+     * @return array<int, HierarchyRelation>
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
@@ -571,27 +572,13 @@ class ProjectionContentGraph
      */
     private function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
-        $dimensionSpacePointStatement = <<<SQL
-            SELECT
-                dimensionspacepoint
-            FROM
-                {$this->tableNames->dimensionSpacePoints()}
-            WHERE
-                hash = :hash
-        SQL;
-        try {
-            $dimensionSpacePointJson = $this->dbal->fetchOne($dimensionSpacePointStatement, [
-                'hash' => $rawData['dimensionspacepointhash']
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load dimension space point for hash %s from database: %s', $rawData['dimensionspacepointhash'], $e->getMessage()), 1716476830, $e);
-        }
+        $dimensionSpacePoint = $this->dimensionSpacePointsRepository->getOriginDimensionSpacePointByHash($rawData['dimensionspacepointhash']);
 
         return new HierarchyRelation(
             NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
             ContentStreamId::fromString($rawData['contentstreamid']),
-            DimensionSpacePoint::fromJsonString($dimensionSpacePointJson),
+            $dimensionSpacePoint->toDimensionSpacePoint(),
             $rawData['dimensionspacepointhash'],
             (int)$rawData['position'],
             NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
