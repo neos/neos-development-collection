@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Result;
@@ -141,15 +142,50 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
-        $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
-        if ($filter->pagination !== null) {
-            $this->applyPagination($queryBuilder, $filter->pagination);
-        }
-        if ($filter->ordering !== null) {
-            $this->applyOrdering($queryBuilder, $filter->ordering);
-        }
-        $queryBuilder->addOrderBy('h.position');
-        return $this->fetchNodes($queryBuilder);
+        $query = <<<SQL
+        SELECT n.*, h.subtreetags
+        FROM (SELECT h.*
+            FROM {$this->tableNames->hierarchyRelation()} as h
+               INNER JOIN (
+                  SELECT id, MAX(contentstreamlayer) as contentstreamlayer
+                    FROM {$this->tableNames->hierarchyRelation()} FORCE INDEX (UNIQ_id_layer)
+                  WHERE (contentstreamlayer IN (:contentStreamLayers))
+                  GROUP BY id
+              ) AS activeLayer
+              ON h.id = activeLayer.id AND
+              h.contentstreamlayer = activeLayer.contentstreamlayer
+            ) as h
+            INNER JOIN {$this->tableNames->node()} n ON h.childnodeanchor = n.relationanchorpoint
+            STRAIGHT_JOIN (
+              SELECT pn.relationanchorpoint
+                 FROM {$this->tableNames->node()} pn
+              WHERE pn.nodeaggregateid = :nodeAggregateId
+            ) AS tmp
+            ON h.parentnodeanchor = tmp.relationanchorpoint
+        WHERE h.dimensionspacepointhash = :dimensionSpacePointHash
+          AND (NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', '$."disabled"'))
+          AND (NOT JSON_CONTAINS_PATH(h.subtreetags, 'one', '$."removed"'))
+        ORDER BY h.position ASC
+        SQL;
+
+        $nodeRows = $this->dbal->fetchAllAssociative(
+            $query,
+            [
+                'contentStreamLayers' => $this->contentStreamLayers->toIntArray(),
+                'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
+                'nodeAggregateId' => $parentNodeAggregateId->value
+            ],
+            [
+                'contentStreamLayers' => ArrayParameterType::INTEGER
+            ]
+        );
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->workspaceName,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
