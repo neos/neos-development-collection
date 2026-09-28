@@ -13,6 +13,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagina
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
@@ -29,6 +31,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 final readonly class TargetLocationInSubgraph
 {
     private function __construct(
+        public NodeAggregateId $nodeAggregateId,
         public ?NodeAggregateId $parentNodeAggregateId,
         public ?NodeAggregateId $succeedingSiblingNodeAggregateId,
         public ?NodeAggregateId $precedingSiblingNodeAggregateId,
@@ -43,17 +46,38 @@ final readonly class TargetLocationInSubgraph
         ?NodeAggregateId $precedingSiblingNodeAggregateId,
         ContentGraphInterface $contentGraph,
     ): self {
+        $subgraph = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::createEmpty());
         if ($parentNodeAggregateId) {
+            if ($parentNodeAggregateId->equals($nodeAggregateId)) {
+                throw new \InvalidArgumentException('Cannot target node as its own parent', 1789940221);
+            }
             self::requireNodeInSubgraph($parentNodeAggregateId, $dimensionSpacePoint, $contentGraph);
         }
         if ($succeedingSiblingNodeAggregateId) {
+            if ($succeedingSiblingNodeAggregateId->equals($nodeAggregateId)) {
+                throw new \InvalidArgumentException('Cannot target node as its own succeeding sibling', 1789940239);
+            }
             self::requireNodeInSubgraph($succeedingSiblingNodeAggregateId, $dimensionSpacePoint, $contentGraph);
+            if ($parentNodeAggregateId) {
+                self::requireNodeToBeChild($succeedingSiblingNodeAggregateId, $parentNodeAggregateId, $subgraph);
+            } else {
+                self::requireNodeToBeSibling($nodeAggregateId, $succeedingSiblingNodeAggregateId, $subgraph);
+            }
         }
         if ($precedingSiblingNodeAggregateId) {
+            if ($precedingSiblingNodeAggregateId->equals($nodeAggregateId)) {
+                throw new \InvalidArgumentException('Cannot target node as its own preceding sibling', 1789940256);
+            }
             self::requireNodeInSubgraph($precedingSiblingNodeAggregateId, $dimensionSpacePoint, $contentGraph);
+            if ($parentNodeAggregateId) {
+                self::requireNodeToBeChild($precedingSiblingNodeAggregateId, $parentNodeAggregateId, $subgraph);
+            } else {
+                self::requireNodeToBeSibling($nodeAggregateId, $precedingSiblingNodeAggregateId, $subgraph);
+            }
         }
 
         return new self(
+            nodeAggregateId: $nodeAggregateId,
             parentNodeAggregateId: $parentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $succeedingSiblingNodeAggregateId,
             precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
@@ -66,6 +90,7 @@ final readonly class TargetLocationInSubgraph
         ContentSubgraphInterface $sourceSubgraph,
     ): self {
         return new self(
+            nodeAggregateId: $tetheredChildNodeAggregateId,
             parentNodeAggregateId: $parentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $sourceSubgraph->findSucceedingSiblingNodes(
                 $tetheredChildNodeAggregateId,
@@ -99,6 +124,46 @@ final readonly class TargetLocationInSubgraph
         }
     }
 
+    /**
+     * @throws NodeAggregateIsNoChild
+     */
+    private static function requireNodeToBeChild(
+        NodeAggregateId $nodeAggregateId,
+        NodeAggregateId $parentNodeAggregateId,
+        ContentSubgraphInterface $subgraph,
+    ): void {
+        if (
+            $subgraph->findParentNode($nodeAggregateId)?->aggregateId->value
+            !== $parentNodeAggregateId->value
+        ) {
+            throw NodeAggregateIsNoChild::butWasExpectedToBeInDimensionSpacePoint(
+                $nodeAggregateId,
+                $parentNodeAggregateId,
+                $subgraph->getDimensionSpacePoint(),
+            );
+        }
+    }
+
+    /**
+     * @throws NodeAggregateIsNoSibling
+     */
+    private static function requireNodeToBeSibling(
+        NodeAggregateId $nodeAggregateId,
+        NodeAggregateId $siblingNodeAggregateId,
+        ContentSubgraphInterface $subgraph,
+    ): void {
+        if (
+            $subgraph->findParentNode($nodeAggregateId)?->aggregateId->value
+            !== $subgraph->findParentNode($siblingNodeAggregateId)?->aggregateId->value
+        ) {
+            throw NodeAggregateIsNoSibling::butWasExpectedToBeInDimensionSpacePoint(
+                $siblingNodeAggregateId,
+                $nodeAggregateId,
+                $subgraph->getDimensionSpacePoint(),
+            );
+        }
+    }
+
     public function resolveInterdimensionalSibling(
         ContentSubgraphInterface $subgraph,
         ContentSubgraphInterface $sourceSubgraph
@@ -114,7 +179,10 @@ final readonly class TargetLocationInSubgraph
                         FindSucceedingSiblingNodesFilter::create(),
                     ) as $furtherSucceedingSibling
                 ) {
-                    if ($subgraph->findNodeById($furtherSucceedingSibling->aggregateId)) {
+                    if (
+                        !$furtherSucceedingSibling->aggregateId->equals($this->nodeAggregateId)
+                        && $subgraph->findNodeById($furtherSucceedingSibling->aggregateId)
+                    ) {
                         $succeedingSiblingId = $furtherSucceedingSibling->aggregateId;
                         break;
                     }
@@ -126,7 +194,7 @@ final readonly class TargetLocationInSubgraph
                 $this->precedingSiblingNodeAggregateId,
                 FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
             )->first();
-            if ($succeedingSibling) {
+            if ($succeedingSibling && !$succeedingSibling->aggregateId->equals($this->nodeAggregateId)) {
                 $succeedingSiblingId = $succeedingSibling->aggregateId;
             } else {
                 $precedingSiblings = $sourceSubgraph->findPrecedingSiblingNodes(
@@ -141,7 +209,10 @@ final readonly class TargetLocationInSubgraph
                         FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
                     )->first();
                     if ($succeedingSibling) {
-                        if (!$precedingSiblingIds->contain($succeedingSibling->aggregateId)) {
+                        if (
+                            !$succeedingSibling->aggregateId->equals($this->nodeAggregateId)
+                            && !$precedingSiblingIds->contain($succeedingSibling->aggregateId)
+                        ) {
                             $succeedingSiblingId = $succeedingSibling->aggregateId;
                         }
                         break;

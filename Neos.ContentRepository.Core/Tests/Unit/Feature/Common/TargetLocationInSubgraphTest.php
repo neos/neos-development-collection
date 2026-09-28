@@ -33,7 +33,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoChild;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNoSibling;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -139,7 +140,7 @@ class TargetLocationInSubgraphTest extends TestCase
         ];
 
         $succeedingSiblingId = NodeAggregateId::fromString('succeeding-mc-nodeface');
-        yield 'missingSucceedingSiblingId' => [
+        yield 'missingSucceedingSibling' => [
             'parentNodeAggregateId' => null,
             'succeedingSiblingNodeAggregateId' => $succeedingSiblingId,
             'precedingSiblingNodeAggregateId' => null,
@@ -153,6 +154,48 @@ class TargetLocationInSubgraphTest extends TestCase
         ];
 
         $succeedingSiblingNode = self::createNode($succeedingSiblingId);
+
+        yield 'succeedingSiblingWhichIsNoSibling' => [
+            'parentNodeAggregateId' => null,
+            'succeedingSiblingNodeAggregateId' => $succeedingSiblingId,
+            'precedingSiblingNodeAggregateId' => null,
+            'contentGraph' => self::createContentGraph(
+                nodes: [
+                    $succeedingSiblingId->value => $succeedingSiblingNode
+                ],
+                parents: [
+                    self::SUBJECT_ID => $parentNode,
+                ],
+                succeedingSiblings: [],
+                precedingSiblings: [],
+            ),
+            'expectedException' => NodeAggregateIsNoSibling::butWasExpectedToBeInDimensionSpacePoint(
+                $succeedingSiblingId,
+                NodeAggregateId::fromString(self::SUBJECT_ID),
+                DimensionSpacePoint::createWithoutDimensions(),
+            ),
+        ];
+
+        yield 'succeedingSiblingWhichIsNoChildOfTheNewParent' => [
+            'parentNodeAggregateId' => $parentNodeAggregateId,
+            'succeedingSiblingNodeAggregateId' => $succeedingSiblingId,
+            'precedingSiblingNodeAggregateId' => null,
+            'contentGraph' => self::createContentGraph(
+                nodes: [
+                    $parentNodeAggregateId->value => $parentNode,
+                    $succeedingSiblingId->value => $succeedingSiblingNode,
+                ],
+                parents: [],
+                succeedingSiblings: [],
+                precedingSiblings: [],
+            ),
+            'expectedException' => NodeAggregateIsNoChild::butWasExpectedToBeInDimensionSpacePoint(
+                $succeedingSiblingId,
+                $parentNodeAggregateId,
+                DimensionSpacePoint::createWithoutDimensions(),
+            ),
+        ];
+
         yield 'onlySucceedingSibling' => [
             'parentNodeAggregateId' => null,
             'succeedingSiblingNodeAggregateId' => $succeedingSiblingId,
@@ -185,6 +228,48 @@ class TargetLocationInSubgraphTest extends TestCase
         ];
 
         $precedingSiblingNode = self::createNode($precedingSiblingId);
+
+        yield 'precedingSiblingWhichIsNoSibling' => [
+            'parentNodeAggregateId' => null,
+            'succeedingSiblingNodeAggregateId' => null,
+            'precedingSiblingNodeAggregateId' => $precedingSiblingId,
+            'contentGraph' => self::createContentGraph(
+                nodes: [
+                    $precedingSiblingId->value => $precedingSiblingNode
+                ],
+                parents: [
+                    self::SUBJECT_ID => $parentNode,
+                ],
+                succeedingSiblings: [],
+                precedingSiblings: [],
+            ),
+            'expectedException' => NodeAggregateIsNoSibling::butWasExpectedToBeInDimensionSpacePoint(
+                $precedingSiblingId,
+                NodeAggregateId::fromString(self::SUBJECT_ID),
+                DimensionSpacePoint::createWithoutDimensions(),
+            ),
+        ];
+
+        yield 'precedingSiblingWhichIsNoChildOfTheNewParent' => [
+            'parentNodeAggregateId' => $parentNodeAggregateId,
+            'succeedingSiblingNodeAggregateId' => null,
+            'precedingSiblingNodeAggregateId' => $precedingSiblingId,
+            'contentGraph' => self::createContentGraph(
+                nodes: [
+                    $parentNodeAggregateId->value => $parentNode,
+                    $precedingSiblingId->value => $precedingSiblingNode,
+                ],
+                parents: [],
+                succeedingSiblings: [],
+                precedingSiblings: [],
+            ),
+            'expectedException' => NodeAggregateIsNoChild::butWasExpectedToBeInDimensionSpacePoint(
+                $precedingSiblingId,
+                $parentNodeAggregateId,
+                DimensionSpacePoint::createWithoutDimensions(),
+            ),
+        ];
+
         yield 'onlyPrecedingSibling' => [
             'parentNodeAggregateId' => null,
             'succeedingSiblingNodeAggregateId' => null,
@@ -214,13 +299,11 @@ class TargetLocationInSubgraphTest extends TestCase
                 ],
                 parents: [
                     self::SUBJECT_ID => $parentNode,
+                    $succeedingSiblingId->value => $parentNode,
+                    $precedingSiblingId->value => $parentNode,
                 ],
-                succeedingSiblings: [
-                    self::SUBJECT_ID => Nodes::fromArray([$succeedingSiblingNode]),
-                ],
-                precedingSiblings: [
-                    self::SUBJECT_ID => Nodes::fromArray([$precedingSiblingNode]),
-                ],
+                succeedingSiblings: [],
+                precedingSiblings: [],
             ),
             'expectedException' => null,
         ];
@@ -432,7 +515,7 @@ class TargetLocationInSubgraphTest extends TestCase
 
             public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
             {
-                return $this->nodes[$childNodeAggregateId->value] ?? null;
+                return $this->parents[$childNodeAggregateId->value] ?? null;
             }
 
             public function findSucceedingSiblingNodes(
