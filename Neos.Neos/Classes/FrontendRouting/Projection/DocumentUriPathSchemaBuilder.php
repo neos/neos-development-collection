@@ -59,7 +59,7 @@ final class DocumentUriPathSchemaBuilder
         ]);
 
         $table
-            ->addUniqueIndex(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
+            ->setPrimaryKey(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
             ->addIndex([
                 'parentnodeaggregateid',
                 'precedingnodeaggregateid',
