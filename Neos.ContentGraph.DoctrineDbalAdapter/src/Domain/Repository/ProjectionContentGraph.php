@@ -572,14 +572,15 @@ class ProjectionContentGraph
      */
     private function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
-        $dimensionSpacePoint = $this->dimensionSpacePointsRepository->getOriginDimensionSpacePointByHash($rawData['dimensionspacepointhash']);
+        $dimensionSpacePoint = $this->dimensionSpacePointsRepository->getOriginDimensionSpacePointByHash(
+            $rawData['dimensionspacepointhash']
+        )->toDimensionSpacePoint();
 
         return new HierarchyRelation(
             NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
             ContentStreamId::fromString($rawData['contentstreamid']),
-            $dimensionSpacePoint->toDimensionSpacePoint(),
-            $rawData['dimensionspacepointhash'],
+            $dimensionSpacePoint,
             (int)$rawData['position'],
             NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
         );
