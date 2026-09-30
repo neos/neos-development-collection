@@ -24,6 +24,7 @@ final class Version20240906102606 extends AbstractMigration
 
         $sql = <<<SQL
             CREATE TABLE `neos_asset_usage` (
+                 `id` bigint unsigned NOT NULL AUTO_INCREMENT,
                  `contentrepositoryid` char(16) DEFAULT NULL,
                  `assetid` varchar(40) NOT NULL DEFAULT '',
                  `originalassetid` varchar(40) DEFAULT NULL,
@@ -32,6 +33,7 @@ final class Version20240906102606 extends AbstractMigration
                  `origindimensionspacepoint` json DEFAULT (JSON_OBJECT()),
                  `origindimensionspacepointhash` varbinary(32) NOT NULL DEFAULT '',
                  `propertyname` varchar(255) NOT NULL DEFAULT '',
+                 PRIMARY KEY (`id`),
                  UNIQUE KEY `IDX_14C94F11044B499EB28F27DAEAC5D4BB` (`contentrepositoryid`, `assetid`,`originalassetid`,`workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`,`propertyname`),
                  KEY `IDX_55757035ADC144B7ED5AC6744F7D18CF` (`contentrepositoryid`, `workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`),
                  KEY `IDX_0A70B9E69F347EB3D7CA716B10767577` (`contentrepositoryid`),
