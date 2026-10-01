@@ -100,4 +100,97 @@ class NodeSortPathTest extends TestCase
             NodeSortPath::fromString('a0/a0/a0/a0/a0/a0/0123456789012345678901234567890123456')->nodeSortKeyExceedsMaxKeyLength()
         );
     }
+
+    public static function providerGetDepth(): array
+    {
+        return [
+            ['a0', 0],
+            ['a0/b5', 1],
+            ['a0/a5/b5', 2],
+            ['a0/a5/a4/b5', 3],
+            ['a0/a5ZZZa4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4/a4/b5', 3],
+        ];
+    }
+
+    #[DataProvider('providerGetDepth')]
+    #[Test]
+    public function getDepth(string $nodeSortPath, int $expected): void
+    {
+        $nodeSortPath = NodeSortPath::fromString($nodeSortPath);
+        $this->assertEquals($expected, $nodeSortPath->getDepth());
+    }
+
+    #[Test]
+    public function getAncestors()
+    {
+        $nodeSortPath = NodeSortPath::fromString('a0/a0/aZZZZZZZ/a0/aZZZZt');
+        $ancestors = $nodeSortPath->getAncestors();
+
+        $expected = [
+            NodeSortPath::fromString('a0/a0/aZZZZZZZ/a0'),
+            NodeSortPath::fromString('a0/a0/aZZZZZZZ'),
+            NodeSortPath::fromString('a0/a0'),
+            NodeSortPath::fromString('a0'),
+        ];
+        $this->assertCount(4, $ancestors);
+        $this->assertEquals($expected, $ancestors);
+    }
+
+    #[Test]
+    public function getAncestorsOfRoot()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        NodeSortPath::fromString('a0')->getAncestors();
+    }
+
+    public static function providerGetParent(): array
+    {
+        return [
+            ['a0/b5', 'a0'],
+            ['a0/a5/b5', 'a0/a5'],
+            ['a0/a5/a4/b5', 'a0/a5/a4'],
+            ['a0/a5ZZZa4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4/a4/b5', 'a0/a5ZZZa4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4/a4'],
+        ];
+    }
+
+    #[DataProvider('providerGetParent')]
+    #[Test]
+    public function getParent(string $nodeSortPath, string $expected): void
+    {
+        $nodeSortPath = NodeSortPath::fromString($nodeSortPath);
+        $this->assertEquals($expected, $nodeSortPath->getParent()->value);
+    }
+
+    #[Test]
+    public function getParentOfRoot()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        NodeSortPath::fromString('a0')->getParent();
+    }
+
+    public static function providerEquals(): array
+    {
+        return [
+            ['a0/b5', 'a0/b5', true],
+            ['a0/b5', 'a0', false],
+            ['a0', 'a0/b5', false],
+            ['a0/a5/b5', 'a0/a5/b5', true],
+            ['a0/a5/b5', 'a0/a5', false],
+            ['a0/a5/b5', 'a0', false],
+            ['a0/a5', 'a0/a5/b5', false],
+            ['a0', 'a0/a5/b5', false],
+            ['a0/a5/a4/b5', 'a0/a5/a4/b5', true],
+            ['a1/a5/a4/b5', 'a0/a5/a4/b5', false],
+            ['a0/a5ZZZa4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4/a4/b5', 'a0/a5ZZZa4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4/a4/b5', true],
+        ];
+    }
+
+    #[DataProvider('providerEquals')]
+    #[Test]
+    public function equals(string $nodeSortPathA, string $nodeSortPathB, bool $expected): void
+    {
+        $nodeSortPathA = NodeSortPath::fromString($nodeSortPathA);
+        $nodeSortPathB = NodeSortPath::fromString($nodeSortPathB);
+        $this->assertEquals($expected, $nodeSortPathA->equals($nodeSortPathB));
+    }
 }

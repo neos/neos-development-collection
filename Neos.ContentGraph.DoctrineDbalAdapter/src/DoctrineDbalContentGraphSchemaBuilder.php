@@ -66,6 +66,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
             (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
             (new Column('sortpath', self::type(Types::BINARY)))->setLength(NodeSortPath::MAX_LENGTH)->setNotnull(false),
+            (new Column('depth', self::type(Types::SMALLINT)))->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform)->setNotnull(false),

@@ -21,8 +21,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
  * Ordering the hierarchy relations of a subgraph by this value yields depth-first document order,
  * and the descendants of a node are a contiguous range.
  *
- * A path has one segment per level below the root edge: `a0` is a root node (depth 1, no separator),
- * `a0/a0` is its first child.
+ * A path has one segment per level below the root edge: `a0` is a root node (depth 0, no separator),
+ * `a0/a0` is its first child (depth 1, one separator).
  *
  * @internal
  */
@@ -137,14 +137,14 @@ final readonly class NodeSortPath
             throw new \InvalidArgumentException('Cannot get parent of root NodeSortPath', 1790261364);
         }
 
-        $parents = [];
+        $ancestors = [];
         $current = $this;
         do {
             $current = $current->getParent();
-            $parents[] = $current;
+            $ancestors[] = $current;
         } while (!$current->isRoot());
 
-        return $parents;
+        return $ancestors;
     }
 
 
@@ -194,6 +194,19 @@ final readonly class NodeSortPath
         if (strlen($value) > self::MAX_LENGTH) {
             throw new \InvalidArgumentException('Length of NodeSortPath exceeds max length: ' . strlen($value));
         }
+    }
+
+    /**
+     * The depth of the path. If only one segment exists (root), the depth is 0.
+     *
+     * E.g.
+     *  - a0 => 0
+     *  - a0/a0 => 1
+     *  ...
+     */
+    public function getDepth(): int
+    {
+        return substr_count($this->value, self::SEPARATOR);
     }
 
     /**

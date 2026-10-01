@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -130,28 +129,7 @@ final readonly class NodeQueryBuilder
 
     public function addNodeTypeCriteria(QueryBuilder $queryBuilder, ExpandedNodeTypeCriteria $constraintsWithSubNodeTypes, string $nodeTableAlias = 'n'): void
     {
-        $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
-        $allowanceQueryPart = '';
-        if (!$constraintsWithSubNodeTypes->explicitlyAllowedNodeTypeNames->isEmpty()) {
-            $allowanceQueryPart = $queryBuilder->expr()->in($nodeTablePrefix . 'nodetypename', ':explicitlyAllowedNodeTypeNames');
-            $queryBuilder->setParameter('explicitlyAllowedNodeTypeNames', $constraintsWithSubNodeTypes->explicitlyAllowedNodeTypeNames->toStringArray(), ArrayParameterType::STRING);
-        }
-        $denyQueryPart = '';
-        if (!$constraintsWithSubNodeTypes->explicitlyDisallowedNodeTypeNames->isEmpty()) {
-            $denyQueryPart = $queryBuilder->expr()->notIn($nodeTablePrefix . 'nodetypename', ':explicitlyDisallowedNodeTypeNames');
-            $queryBuilder->setParameter('explicitlyDisallowedNodeTypeNames', $constraintsWithSubNodeTypes->explicitlyDisallowedNodeTypeNames->toStringArray(), ArrayParameterType::STRING);
-        }
-        if ($allowanceQueryPart && $denyQueryPart) {
-            if ($constraintsWithSubNodeTypes->isWildCardAllowed) {
-                $queryBuilder->andWhere($queryBuilder->expr()->or($allowanceQueryPart, $denyQueryPart));
-            } else {
-                $queryBuilder->andWhere($queryBuilder->expr()->and($allowanceQueryPart, $denyQueryPart));
-            }
-        } elseif ($allowanceQueryPart && !$constraintsWithSubNodeTypes->isWildCardAllowed) {
-            $queryBuilder->andWhere($allowanceQueryPart);
-        } elseif ($denyQueryPart) {
-            $queryBuilder->andWhere($denyQueryPart);
-        }
+        $queryBuilder->andWhereCondition(NodeTypeCriteriaCondition::create($constraintsWithSubNodeTypes), $nodeTableAlias);
     }
 
     public function addSearchTermConstraints(QueryBuilder $queryBuilder, SearchTerm $searchTerm, string $nodeTableAlias = 'n'): void

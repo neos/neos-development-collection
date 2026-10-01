@@ -80,6 +80,7 @@ final readonly class HierarchyRelation
                 'contentstreamlayer' => $this->contentStreamLayer->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePointHash,
                 'sortpath' => $this->sortPath->value,
+                'depth' => $this->sortPath->getDepth(),
                 'subtreetags' => $subtreeTagsJson,
             ]);
         } catch (DBALException $e) {
@@ -125,6 +126,7 @@ final readonly class HierarchyRelation
         ];
         if ($sortPath !== null) {
             $data['sortpath'] = $sortPath->value;
+            $data['depth'] = $sortPath->getDepth();
         }
         try {
             $databaseConnection->update(
@@ -143,7 +145,8 @@ final readonly class HierarchyRelation
             $databaseConnection->update(
                 $tableNames->hierarchyRelation(),
                 [
-                    'sortpath' => $sortPath->value
+                    'sortpath' => $sortPath->value,
+                    'depth' => $sortPath->getDepth()
                 ],
                 $this->getDatabaseId()
             );

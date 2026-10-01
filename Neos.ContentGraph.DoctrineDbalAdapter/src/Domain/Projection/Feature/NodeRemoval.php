@@ -77,6 +77,7 @@ trait NodeRemoval
                   parentnodeanchor,
                   childnodeanchor,
                   sortpath,
+                  depth,
                   subtreetags,
                   dimensionspacepointhash,
                   contentstreamlayer
@@ -86,6 +87,7 @@ trait NodeRemoval
                   NULL as parentnodeanchor,
                   NULL as childnodeanchor,
                   NULL as sortpath,
+                  NULL as depth,
                   NULL as subtreetags,
                   NULL as dimensionspacepointhash,
                   :targetContentStreamLayer as contentstreamlayer

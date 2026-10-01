@@ -17,6 +17,7 @@ use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayer;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeSortPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -67,7 +68,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $subtreeTagToRemove = SubtreeTag::fromString($dataset['subtreeTag']);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $subtreeTags = NodeFactory::extractNodeTagsFromJson($record['subtreetags']);
-        unset($record['subtreetags'], $record['sortpath']);
+        unset($record['subtreetags'], $record['sortpath'], $record['depth']);
 
         if (!$subtreeTags->contain($subtreeTagToRemove)) {
             throw new \RuntimeException(sprintf('Failed to remove subtree tag "%s" because that tag is not set', $subtreeTagToRemove->value), 1708618267);
@@ -103,7 +104,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        unset($record['sortpath'], $record['subtreetags']);
+        unset($record['sortpath'], $record['subtreetags'], $record['depth']);
 
         $newParentHierarchyRelation = $this->findHierarchyRelationByIds(
             $this->requireSingleWriteLayer(
@@ -131,7 +132,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
-        unset($record['sortpath'], $record['subtreetags']);
+        unset($record['sortpath'], $record['subtreetags'], $record['depth']);
 
         $this->dbal->update(
             $this->tableNames()->hierarchyRelation(),
@@ -188,6 +189,7 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
+        $nodeSortPath = NodeSortPath::fromString($dataset['newSortPath']);
 
         $contentStreamLayer = $this->requireSingleWriteLayer(
             ContentStreamId::fromString($dataset['contentStreamId'])
@@ -201,7 +203,8 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
         $this->dbal->update(
             $this->tableNames()->hierarchyRelation(),
             [
-                'sortpath' => $dataset['newSortPath']
+                'sortpath' => $nodeSortPath->value,
+                'depth' => $nodeSortPath->getDepth()
             ],
             $record
         );
@@ -282,13 +285,15 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
                 $dimensionSpacePoint,
                 NodeAggregateId::fromString($dataset['childNodeAggregateId'])
             );
+        $nodeSortPath = NodeSortPath::fromString($dataset['sortpath'] ?? ($parentHierarchyRelation !== null ? $parentHierarchyRelation['sortpath'] : 'a0'));
 
         return [
             'contentstreamlayer' => $contentStreamLayer->value,
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['childnodeanchor'] : 9999999,
             'childnodeanchor' => $childHierarchyRelation !== null ? $childHierarchyRelation['childnodeanchor'] : 8888888,
-            'sortpath' => $dataset['sortpath'] ?? ($parentHierarchyRelation !== null ? $parentHierarchyRelation['sortpath'] : 'a0'),
+            'sortpath' => $nodeSortPath->value,
+            'depth' => $nodeSortPath->getDepth(),
             'subtreetags' => $parentHierarchyRelation !== null ? $parentHierarchyRelation['subtreetags'] : '{}',
         ];
     }

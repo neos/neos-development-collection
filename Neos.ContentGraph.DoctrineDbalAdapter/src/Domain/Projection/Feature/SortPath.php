@@ -172,6 +172,7 @@ trait SortPath
               parentnodeanchor,
               childnodeanchor,
               sortpath,
+              depth,
               subtreetags,
               dimensionspacepointhash,
               contentstreamlayer
@@ -181,17 +182,19 @@ trait SortPath
               h.parentnodeanchor,
               h.childnodeanchor,
               CONCAT(:newSortPath, SUBSTRING(h.sortpath, :oldSortPathLength + 1)) AS sortpath,
+              h.depth + :depthDelta AS depth,
               h.subtreetags,
               h.dimensionspacepointhash,
               :targetContentStreamLayer AS contentstreamlayer
             FROM
               {$hierarchyRelationQuery->toSql()} h
-            ON DUPLICATE KEY UPDATE sortpath = VALUES(sortpath)
+            ON DUPLICATE KEY UPDATE sortpath = VALUES(sortpath), depth = VALUES(depth)
             SQL;
         try {
             $this->dbal->executeStatement($repathStatement, [
                 'newSortPath' => $newSortPath->value,
                 'oldSortPathLength' => strlen($oldSortPath->value),
+                'depthDelta' => $newSortPath->getDepth() - $oldSortPath->getDepth(),
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ...$rangeParameters,
                 ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
