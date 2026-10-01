@@ -23,6 +23,7 @@ final class Version20240906102606 extends AbstractMigration
         );
 
         $table = $schema->createTable('neos_asset_usage');
+        $table->addColumn('id', 'bigint', ['autoincrement' => true, 'notnull' => true]);
         $table->addColumn('contentrepositoryid', 'string', ['length' => 16, 'notnull' => false]);
         $table->addColumn('assetid', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->addColumn('originalassetid', 'string', ['length' => 40, 'notnull' => false]);
@@ -31,6 +32,7 @@ final class Version20240906102606 extends AbstractMigration
         $table->addColumn('origindimensionspacepoint', 'json', ['notnull' => false]);
         $table->addColumn('origindimensionspacepointhash', 'string', ['length' => 32, 'notnull' => true, 'default' => '']);
         $table->addColumn('propertyname', 'string', ['length' => 255, 'notnull' => true, 'default' => '']);
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['contentrepositoryid', 'assetid', 'originalassetid', 'workspacename', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'],
             'IDX_14C94F11044B499EB28F27DAEAC5D4BB'
