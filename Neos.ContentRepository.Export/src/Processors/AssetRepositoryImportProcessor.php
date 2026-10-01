@@ -86,6 +86,12 @@ final class AssetRepositoryImportProcessor implements ProcessorInterface
         }
         /** @var PersistentResource|null $resource */
         $resource = $this->resourceRepository->findBySha1AndCollectionName($serializedAsset->resource->sha1, $serializedAsset->resource->collectionName)[0] ?? null;
+        if ($resource !== null && $this->assetRepository->findOneByResourceSha1($resource->getSha1()) !== null) {
+            // The existing resource is already referenced by another asset. A resource can
+            // only belong to a single asset, so a fresh resource has to be imported for this
+            // asset (this happens when two assets share the same file, i.e. the same sha1).
+            $resource = null;
+        }
         if ($resource === null) {
             $content = $context->files->read('/Resources/' . $serializedAsset->resource->sha1);
             $resource = $this->resourceManager->importResourceFromContent($content, $serializedAsset->resource->filename, $serializedAsset->resource->collectionName);
