@@ -947,7 +947,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 $childNodeAnchorPoint,
                 $contentStreamId,
                 $dimensionSpacePoint,
-                $dimensionSpacePoint->hash,
                 $position,
                 $inheritedSubtreeTags,
             );
@@ -1047,7 +1046,6 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $newChild,
             $contentStreamId,
             $dimensionSpacePoint,
-            $dimensionSpacePoint->hash,
             $this->getRelationPosition(
                 $newParent,
                 $newChild,
