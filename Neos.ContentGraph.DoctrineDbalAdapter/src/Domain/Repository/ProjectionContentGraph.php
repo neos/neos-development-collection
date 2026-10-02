@@ -24,6 +24,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeSortPath;
+use Neos\ContentGraph\DoctrineDbalAdapter\FractionalIndexing;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -208,137 +210,50 @@ class ProjectionContentGraph
         return $nodeRow ? NodeRecord::fromDatabaseRow($nodeRow) : null;
     }
 
-    public function determineHierarchyRelationPosition(
-        ?NodeRelationAnchorPoint $parentAnchorPoint,
-        ?NodeRelationAnchorPoint $childAnchorPoint,
+    public function determineHierarchySortPath(
+        NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
         DimensionSpacePoint $dimensionSpacePoint
-    ): int {
-        if (!$parentAnchorPoint && !$childAnchorPoint) {
-            throw new \InvalidArgumentException(
-                'You must specify either parent or child node anchor to determine a hierarchy relation position',
-                1519847447
-            );
-        }
+    ): NodeSortPath {
+
         if ($succeedingSiblingAnchorPoint) {
-            $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($succeedingSiblingAnchorPoint);
-            $succeedingSiblingRelationStatement = <<<SQL
-                SELECT
-                    h.*
-                FROM
-                    {$hierarchyRelationQuery->toSql()} h
-                LIMIT 1
-            SQL;
-            try {
-                /** @var array<string,mixed> $succeedingSiblingRelation */
-                $succeedingSiblingRelation = $this->dbal->fetchAssociative($succeedingSiblingRelationStatement, [
-                    ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
-                ], [
-                    ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to load succeeding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
+
+            [$succeedingSiblingRelationData, $precedingSiblingRelationData] = $this->getDirectSiblingsRelationData($contentStreamLayers, $dimensionSpacePoint, $parentAnchorPoint, $succeedingSiblingAnchorPoint);
+
+            $succeedingSiblingSortPath = NodeSortPath::fromString($succeedingSiblingRelationData['sortpath']);
+            $precedingSiblingSortPath = null;
+            if ($precedingSiblingRelationData['sortpath'] ?? false) {
+                $precedingSiblingSortPath = NodeSortPath::fromString($precedingSiblingRelationData['sortpath']);
             }
 
-            if (!$succeedingSiblingRelation) {
-                throw new \RuntimeException(
-                    sprintf('Could not fetch succeeding sibling relation for anchor point: %s with dimensionSpacePointHash : %s', $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->hash),
-                    1696405259
-                );
-            }
-
-            $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
-            $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger($succeedingSiblingRelation['parentnodeanchor']);
-
-            $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
-            $precedingSiblingStatement = <<<SQL
-                SELECT
-                    h.position
-                FROM
-                    {$hierarchyRelationQuery->toSql()} h
-                WHERE
-                    h.position < :position
-                -- select the MAX position
-                ORDER BY h.position DESC
-                LIMIT 1
-            SQL;
-            try {
-                $precedingSiblingData = $this->dbal->fetchAssociative($precedingSiblingStatement, [
-                    'position' => $succeedingSiblingPosition,
-                    ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
-                ], [
-                    ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to load preceding sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474957, $e);
-            }
-            $precedingSiblingPosition = $precedingSiblingData ? ($precedingSiblingData['position'] ?? null) : null;
-            if (!is_null($precedingSiblingPosition)) {
-                $precedingSiblingPosition = (int)$precedingSiblingPosition;
-            }
-
-            if (is_null($precedingSiblingPosition)) {
-                $position = $succeedingSiblingPosition - DoctrineDbalContentGraphProjection::RELATION_DEFAULT_OFFSET;
-            } else {
-                $position = ($succeedingSiblingPosition + $precedingSiblingPosition) / 2;
-            }
+            $newSortPathFragment = FractionalIndexing::generateKeyBetween($precedingSiblingSortPath?->getNodeSortKey(), $succeedingSiblingSortPath->getNodeSortKey());
+            $sortPath = $succeedingSiblingSortPath->withReplacedNodeSortKey($newSortPathFragment);
         } else {
-            if (!$parentAnchorPoint) {
-                $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($childAnchorPoint);
-                $childHierarchyRelationStatement = <<<SQL
-                    SELECT
-                        h.parentnodeanchor
-                    FROM
-                        {$hierarchyRelationQuery->toSql()} h
-                    LIMIT 1
-                SQL;
-                try {
-                    /** @var array<string,mixed> $childHierarchyRelationData */
-                    $childHierarchyRelationData = $this->dbal->fetchAssociative($childHierarchyRelationStatement, [
-                        ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
-                    ], [
-                        ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
-                    ]);
-                } catch (DBALException $e) {
-                    throw new \RuntimeException(sprintf('Failed to load child hierarchy relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475001, $e);
-                }
-                $parentAnchorPoint = NodeRelationAnchorPoint::fromInteger(
-                    $childHierarchyRelationData['parentnodeanchor']
-                );
-            }
-            $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
-            $rightmostSucceedingSiblingRelationStatement = <<<SQL
-                SELECT
-                    h.position
-                FROM
-                    {$hierarchyRelationQuery->toSql()} h
-                -- select the MAX position
-                ORDER BY h.position DESC
-                LIMIT 1
-            SQL;
-            try {
-                $rightmostSucceedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
-                    ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
-                ], [
-                    ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to right most succeeding relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475046, $e);
-            }
-
-            if ($rightmostSucceedingSiblingRelationData) {
-                $position = ((int)$rightmostSucceedingSiblingRelationData['position'])
-                    + DoctrineDbalContentGraphProjection::RELATION_DEFAULT_OFFSET;
+            $rightmostPrecedingSiblingRelationData = $this->getRightmostPrecedingSiblingRelationData($contentStreamLayers, $dimensionSpacePoint, $parentAnchorPoint);
+            if ($rightmostPrecedingSiblingRelationData['sortpath'] ?? false) {
+                $rightmostPrecedingSiblingSortPath = NodeSortPath::fromString($rightmostPrecedingSiblingRelationData['sortpath']);
+                $newSortPathFragment = FractionalIndexing::generateKeyBetween($rightmostPrecedingSiblingSortPath->getNodeSortKey(), null);
+                $sortPath = $rightmostPrecedingSiblingSortPath->withReplacedNodeSortKey($newSortPathFragment);
             } else {
-                $position = 0;
+                $newSortPathFragment = FractionalIndexing::generateKeyBetween(null, null);
+                if (!$parentAnchorPoint->equals(NodeRelationAnchorPoint::forRootEdge())) {
+                    $parentRelationData = $this->getParentRelationData($contentStreamLayers, $dimensionSpacePoint, $parentAnchorPoint);
+                    $parentSortPath = NodeSortPath::fromString($parentRelationData['sortpath']);
+                    $sortPath = $parentSortPath->withAddedNodeSortKeySegment($newSortPathFragment);
+                } else {
+                    $sortPath = NodeSortPath::fromString($newSortPathFragment);
+                }
+
             }
         }
 
-        return $position;
+        return $sortPath;
     }
 
     /**
+     * Returns outgoing hierarchy relations in ascending order by sort path.
+     *
      * @return array<HierarchyRelation>
      */
     public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
@@ -348,7 +263,10 @@ class ProjectionContentGraph
     ): array {
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
         $outgoingHierarchyRelationsStatement = <<<SQL
-            {$hierarchyRelationQuery->toSql()}
+            SELECT h.* 
+            FROM 
+                {$hierarchyRelationQuery->toSql()} h
+            ORDER BY h.sortpath
         SQL;
         try {
             $rows = $this->dbal->fetchAllAssociative($outgoingHierarchyRelationsStatement, [
@@ -358,30 +276,6 @@ class ProjectionContentGraph
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load outgoing hierarchy relations for content stream %s, parent anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
-        }
-        return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
-    }
-
-    /**
-     * @return array<HierarchyRelation>
-     */
-    public function getIngoingHierarchyRelationsForNodeAndSubgraph(
-        NodeRelationAnchorPoint $childAnchorPoint,
-        ContentStreamLayers $contentStreamLayers,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): array {
-        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($childAnchorPoint);
-        $ingoingHierarchyRelationsStatement = <<<SQL
-            {$hierarchyRelationQuery->toSql()}
-        SQL;
-        try {
-            $rows = $this->dbal->fetchAllAssociative($ingoingHierarchyRelationsStatement, [
-                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
-            ], [
-                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load ingoing hierarchy relations for content stream %s, child anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $childAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475151, $e);
         }
         return array_map($this->mapRawDataToHierarchyRelation(...), $rows);
     }
@@ -418,7 +312,7 @@ class ProjectionContentGraph
     }
 
     /**
-     *  @return array<int, HierarchyRelation>
+     * @return array<int, HierarchyRelation>
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
@@ -569,8 +463,109 @@ class ProjectionContentGraph
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
             DimensionSpacePoint::fromJsonString($dimensionSpacePointJson),
             $rawData['dimensionspacepointhash'],
-            (int)$rawData['position'],
+            NodeSortPath::fromString($rawData['sortpath']),
             NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
         );
+    }
+
+    /**
+     * Returns the sort paths of the succeeding sibling and its direct predecessor below the given parent.
+     * The succeeding sibling must be a child of the parent, otherwise the lookup fails.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    private function getDirectSiblingsRelationData(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, NodeRelationAnchorPoint $parentAnchorPoint, NodeRelationAnchorPoint $succeedingSiblingAnchorPoint): array
+    {
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint);
+        $childrenHierarchyRelationQuery = $hierarchyRelationQuery->withParentNodeRelationAnchor($parentAnchorPoint);
+        // Find Succeeding siblings within children of the parentNodeAnchor to ensure succeedingSiblingAnchorPoint is a child of parentNodeAnchor
+        $succeedingSiblingRelationQuery = $childrenHierarchyRelationQuery->withChildNodeRelationAnchor($succeedingSiblingAnchorPoint);
+        $directSiblingRelationStatement = <<<SQL
+                SELECT
+                    h.sortpath
+                FROM
+                    {$childrenHierarchyRelationQuery->toSql()} h
+                WHERE h.sortpath <= (
+                    SELECT sortpath FROM {$succeedingSiblingRelationQuery->toSql()} s LIMIT 1
+                )
+                ORDER BY h.sortpath DESC
+                LIMIT 2
+            SQL;
+        try {
+            /** @var array<string,mixed> $directSiblingRelations */
+            $directSiblingRelations = $this->dbal->fetchAllAssociative($directSiblingRelationStatement, [
+                ...$childrenHierarchyRelationQuery->getParameters()->toDbalValues(),
+                ...$succeedingSiblingRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$childrenHierarchyRelationQuery->getParameters()->toDbalTypes(),
+                ...$succeedingSiblingRelationQuery->getParameters()->toDbalTypes(),
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load direct sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
+        }
+
+        if (!$directSiblingRelations) {
+            throw new \RuntimeException(
+                sprintf('Could not fetch succeeding sibling relation for anchor point: %s with dimensionSpacePointHash : %s', $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->hash),
+                1696405259
+            );
+        }
+
+        return array_pad($directSiblingRelations, 2, null);
+    }
+
+    /**
+     * @return array<string,mixed>|null
+     */
+    private function getRightmostPrecedingSiblingRelationData(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, NodeRelationAnchorPoint $parentAnchorPoint): ?array
+    {
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
+        $rightmostSucceedingSiblingRelationStatement = <<<SQL
+                SELECT
+                    h.sortpath
+                FROM
+                    {$hierarchyRelationQuery->toSql()} h
+                -- select the MAX sortpath
+                ORDER BY h.sortpath DESC
+                LIMIT 1
+            SQL;
+        try {
+            $rightmostPrecedingSiblingRelationData = $this->dbal->fetchAssociative($rightmostSucceedingSiblingRelationStatement, [
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to right most succeeding relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475046, $e);
+        }
+        return $rightmostPrecedingSiblingRelationData !== false ? $rightmostPrecedingSiblingRelationData : null;
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function getParentRelationData(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, NodeRelationAnchorPoint $parentAnchorPoint): array
+    {
+        $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withChildNodeRelationAnchor($parentAnchorPoint);
+        $parentRelationStatement = <<<SQL
+                SELECT
+                    h.sortpath
+                FROM
+                    {$hierarchyRelationQuery->toSql()} h
+                LIMIT 1
+            SQL;
+        try {
+            $parentRelationData = $this->dbal->fetchAssociative($parentRelationStatement, [
+                ...$hierarchyRelationQuery->getParameters()->toDbalValues(),
+            ], [
+                ...$hierarchyRelationQuery->getParameters()->toDbalTypes(),
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch parent relation for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716475046, $e);
+        }
+        if ($parentRelationData === false) {
+            throw new \RuntimeException(sprintf('Failed to fetch parent relation for content stream %s, anchor point %s and dimension space point %s from database.', $contentStreamLayers->toDebugString(), $parentAnchorPoint->value, $dimensionSpacePoint->toJson()), 1790352642);
+        }
+        return $parentRelationData;
     }
 }

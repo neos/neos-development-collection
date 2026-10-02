@@ -266,16 +266,16 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 h.contentstreamid,
                 h.dimensionspacepointhash,
                 h.parentnodeanchor,
-                COUNT(h.position)
+                COUNT(h.sortpath)
             FROM
                 {$this->allContentStreamHierarchiesSql()} AS h
             GROUP BY
                 h.contentstreamid,
-                h.position,
+                h.sortpath,
                 h.parentnodeanchor,
                 h.dimensionspacepointhash
             HAVING
-                COUNT(position) > 1
+                COUNT(sortpath) > 1
         SQL;
         try {
             $ambiguouslySortedHierarchyRelationRecords = $this->dbal->executeQuery($ambiguouslySortedHierarchyRelationStatement);

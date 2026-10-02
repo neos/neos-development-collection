@@ -35,7 +35,8 @@ trait SubtreeTagging
               id,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
+              depth,
               subtreetags,
               dimensionspacepointhash,
               contentstreamlayer
@@ -44,7 +45,8 @@ trait SubtreeTagging
               h.id,
               h.parentnodeanchor,
               h.childnodeanchor,
-              h.position,
+              h.sortpath,
+              h.depth,
               JSON_INSERT(h.subtreetags, :tagPath, null) as subtreetags,
               h.dimensionspacepointhash,
               :targetContentStreamLayer as contentstreamlayer
@@ -102,7 +104,8 @@ trait SubtreeTagging
               id,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
+              depth,
               subtreetags,
               dimensionspacepointhash,
               contentstreamlayer
@@ -111,7 +114,8 @@ trait SubtreeTagging
               h.id,
               h.parentnodeanchor,
               h.childnodeanchor,
-              h.position,
+              h.sortpath,
+              h.depth,
               JSON_SET(h.subtreetags, :tagPath, true) as subtreetags,
               h.dimensionspacepointhash,
               :targetContentStreamLayer as contentstreamlayer
@@ -145,7 +149,8 @@ trait SubtreeTagging
               id,
               parentnodeanchor,
               childnodeanchor,
-              position,
+              sortpath,
+              depth,
               subtreetags,
               dimensionspacepointhash,
               contentstreamlayer
@@ -154,7 +159,8 @@ trait SubtreeTagging
               h2.id,
               h2.parentnodeanchor,
               h2.childnodeanchor,
-              h2.position,
+              h2.sortpath,
+              h2.depth,
               h2.subtreetags,
               h2.dimensionspacepointhash,
               h2.contentstreamlayer
@@ -164,7 +170,8 @@ trait SubtreeTagging
                   h.id,
                   h.parentnodeanchor,
                   h.childnodeanchor,
-                  h.position,
+                  h.sortpath,
+                  h.depth,
                   IF(subquery.inheritsTag, JSON_SET(h.subtreetags, :tagPath, null), JSON_REMOVE(h.subtreetags, :tagPath)) as subtreetags,
                   h.subtreetags as currentsubtreetags,
                   h.dimensionspacepointhash,
@@ -231,14 +238,15 @@ trait SubtreeTagging
         $moveSubtreeTagsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id, parentnodeanchor, childnodeanchor,
-              position, subtreetags, dimensionspacepointhash,
+              sortpath, depth, subtreetags, dimensionspacepointhash,
               contentstreamlayer
             )
             SELECT
               h2.id,
               h2.parentnodeanchor,
               h2.childnodeanchor,
-              h2.position,
+              h2.sortpath,
+              h2.depth,
               h2.subtreetags,
               h2.dimensionspacepointhash,
               h2.contentstreamlayer
@@ -248,7 +256,8 @@ trait SubtreeTagging
                   h.id,
                   h.parentnodeanchor,
                   h.childnodeanchor,
-                  h.position,
+                  h.sortpath,
+                  h.depth,
                   h.dimensionspacepointhash,
                   (
                     SELECT
