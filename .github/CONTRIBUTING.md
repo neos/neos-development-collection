@@ -72,11 +72,11 @@ You can find us on [Github](https://github.com/neos) and we also use it as our m
 
 ## Translate and document
 
-You can contribute to the translation process, by creating an account at [Crowdin](https://crowdin.com/project/neos).
+You can contribute to the translation process by creating an account at [Weblate](https://translate.neos.io).
 
-On a regularly basis we synchronize the translation from Crowdin to our Git repositories (internally XLIFF is used for storing translations). See the [description of the translation process](https://www.neos.io/contribute/translating-neos.html) on our website for details.
+On a regular basis we synchronize the translations from Weblate to our Git repositories (internally XLIFF is used for storing translations). See the [description of the translation process](https://www.neos.io/contribute/translating-neos.html) on our website for details.
 
-## You have some knowledge, try to help other
+## You have some knowledge, try to help others
 
 Answer questions about the products use and development.
 
