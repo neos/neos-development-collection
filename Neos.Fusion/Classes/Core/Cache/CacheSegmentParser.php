@@ -95,6 +95,7 @@ class CacheSegmentParser
         $this->output .= $part;
         $this->outerSegmentContent .= $part;
         // we no longer need the content
+        /** @phpstan-ignore unset.possiblyHookedProperty (class is internal and will not be subclassed) */
         unset($this->content);
     }
 

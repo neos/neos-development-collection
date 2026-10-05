@@ -56,11 +56,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-
-			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:getAuthenticationProviders\\(\\) should return array\\<string\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
 			message: "#^Method Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\UsersController\\:\\:updateAccountAction\\(\\) has parameter \\$password with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
@@ -139,11 +134,6 @@ parameters:
 			message: "#^The internal method \"Neos\\\\ContentRepository\\\\Core\\\\DimensionSpace\\\\WeightedDimensionSpacePoint\\:\\:getIdentityHash\" is called\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/Presentation/Dimensions/VisualWeightedDimensionSpacePoint.php
-
-		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
 
 		-
 			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:cast\\(\\) should return resource but returns false\\.$#"

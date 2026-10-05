@@ -199,7 +199,7 @@ class RestoreController extends AbstractModuleController
         }
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceLabel' => $workspaceMetadata->title->value,
             'restoreListItems' => $listItems ? RestoreListItems::fromArray($listItems) : array(),
@@ -299,7 +299,7 @@ class RestoreController extends AbstractModuleController
             $nodeForLabel = reset($nodes) ?: null;
         }
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceLabel' => $workspaceMetadata->title->value,
             'nodeAggregateId' => $nodeAggregateId->value,
             'nodeLabel' => $nodeForLabel

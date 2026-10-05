@@ -31,17 +31,17 @@ final readonly class ChangeItems implements \IteratorAggregate, \Countable
     ) {
     }
 
+    public static function fromItems(ChangeItem ... $items): self
+    {
+        return new self($items);
+    }
+
     /**
      * @param array<ChangeItem> $items
      */
     public static function fromArray(array $items): self
     {
-        foreach ($items as $item) {
-            if (!$item instanceof ChangeItem) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', ChangeItem::class, get_debug_type($item)), 1718295710);
-            }
-        }
-        return new self($items);
+        return self::fromItems(...$items);
     }
 
     public function getIterator(): \Traversable

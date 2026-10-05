@@ -44,6 +44,7 @@ abstract class AbstractDataSource implements DataSourceInterface
      */
     public static function getIdentifier()
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_string(static::$identifier)) {
             throw new Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
         }

@@ -84,7 +84,7 @@ class ObjectTreeParser
      * The Lexer will look up the regex for the token and try to match it on the current string.
      * First match wins.
      *
-     * @param int $tokenType
+     * @param int<1, 31> $tokenType
      * @return bool
      */
     protected function accept(int $tokenType): bool
@@ -101,7 +101,7 @@ class ObjectTreeParser
      * The Lexer will look up the regex for the token and try to match it on the current string.
      * First match wins.
      *
-     * @param int $tokenType
+     * @param int<1, 31> $tokenType
      * @return Token
      * @throws ParserUnexpectedCharException
      */
@@ -117,7 +117,7 @@ class ObjectTreeParser
 
     /**
      * Checks, if the token type matches the current, if so consume it and return true.
-     * @param int $tokenType
+     * @param int<1,31> $tokenType
      * @return bool
      */
     protected function lazyExpect(int $tokenType): bool
@@ -205,7 +205,7 @@ class ObjectTreeParser
      * StatementList
      *  = ( Statement )*
      *
-     * @param ?int $stopLookahead When this tokenType is encountered the loop will be stopped
+     * @param ?int<1,31> $stopLookahead When this tokenType is encountered the loop will be stopped
      */
     protected function parseStatementList(?int $stopLookahead = null): StatementList
     {

@@ -132,7 +132,7 @@ class SitesController extends AbstractModuleController
             }
             $sitePackagesAndSites[$siteResourcePackageKey]['sites'][] = $site;
         }
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'sitePackagesAndSites' => $sitePackagesAndSites,
             'multipleSites' => count($sites) > 1
         ]);
@@ -160,7 +160,7 @@ class SitesController extends AbstractModuleController
             );
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'site' => $site,
             'sitePackage' => $sitePackage ?? [],
             'domains' => $this->domainRepository->findBySite($site),
@@ -260,7 +260,7 @@ class SitesController extends AbstractModuleController
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'defaultContentRepositoryForNewSites' => $contentRepositoryId->value,
             'sitePackages' => $sitePackages,
             'documentNodeTypes' => $documentNodeTypes
@@ -394,7 +394,7 @@ class SitesController extends AbstractModuleController
      */
     public function editDomainAction(Domain $domain)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'domain' => $domain,
             'schemes' => [null => '', 'http' => 'HTTP', 'https' => 'HTTPS']
         ]);
@@ -430,7 +430,7 @@ class SitesController extends AbstractModuleController
      */
     public function newDomainAction(?Domain $domain = null, ?Site $site = null)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'domain' => $domain,
             'site' => $site,
             'schemes' => [null => '', 'http' => 'HTTP', 'https' => 'HTTPS']

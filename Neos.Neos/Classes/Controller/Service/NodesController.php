@@ -193,7 +193,7 @@ class NodesController extends ActionController
                 }
             }
         }
-        $this->view->assign('nodes', $nodes);
+        $this->view?->assign('nodes', $nodes);
     }
 
 
@@ -240,7 +240,7 @@ class NodesController extends ActionController
 
         $nodeAddress = NodeAddress::fromNode($node)->toJson();
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'node' => $node,
             'nodeContextPath' => $nodeAddress,
             'convertedNodeProperties' => $convertedNodeProperties
@@ -387,7 +387,6 @@ class NodesController extends ActionController
         // TODO: TEST THAT AUTO CREATED CHILD NODES WORK (though this should not have influence)
 
         foreach (array_reverse($identifiersFromRootlineToTranslate) as $identifier) {
-            assert($identifier instanceof NodeAggregateId);
             // NOTE: for creating node variants, we need to find the ORIGIN DSP
             // of the source node (in order to unambiguously identify it);
             // so we need to load it from the source subgraph

@@ -100,7 +100,7 @@ class MenuHelper
             */
             $uri = null;
             $active = false;
-            /** @var $site Site */
+            /** @var Site $site */
             if ($site->hasActiveDomains()) {
                 $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
                     return $domain->getHostname();

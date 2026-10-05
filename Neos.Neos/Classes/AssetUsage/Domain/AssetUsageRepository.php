@@ -109,13 +109,16 @@ final class AssetUsageRepository
                     $row['propertyname']
                 );
             }
-        }, function () use ($queryBuilder) {
-            /** @var string $count */
+        },
+            function () use ($queryBuilder) {
+            /** @var numeric-string $count */
             $count = $this->dbal->fetchOne(
                 'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s',
                 $queryBuilder->getParameters()
             );
-            return (int)$count;
+            /** @var int<0, max> $result */
+            $result = (int)$count;
+            return $result;
         });
     }
 

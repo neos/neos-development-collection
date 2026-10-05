@@ -571,6 +571,9 @@ class Runtime
      * @param \Neos\Fusion\FusionObjects\AbstractFusionObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluation
      * @throws Exception
+     * @throws StopActionException
+     * @throws ForwardException
+     * @throws SecurityException
      */
     protected function evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject)
     {
@@ -694,7 +697,7 @@ class Runtime
         /** @var AbstractFusionObject $fusionObject */
         $fusionObject = new $fusionObjectClassName($this, $fusionPath, $fusionObjectType);
         if ($this->shouldAssignPropertiesToFusionObject($fusionObject)) {
-            /** @var $fusionObject AbstractArrayFusionObject */
+            /** @var AbstractArrayFusionObject $fusionObject*/
             if (isset($fusionConfiguration['__meta']['ignoreProperties'])) {
                 $evaluatedIgnores = $this->evaluate($fusionPath . '/__meta/ignoreProperties', $fusionObject);
                 $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : []);
@@ -987,19 +990,21 @@ class Runtime
             $this->legacyActionResponseForCurrentRendering = null;
         }
 
-        // transfer possible headers that have been set dynamically
-        foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
-            if ($httpResponseOrStream instanceof StreamInterface) {
-                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+        if ($toBeMergedLegacyActionResponse) {
+            // transfer possible headers that have been set dynamically
+            foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
+                if ($httpResponseOrStream instanceof StreamInterface) {
+                    $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+                }
+                $httpResponseOrStream = $httpResponseOrStream->withAddedHeader($name, $values);
             }
-            $httpResponseOrStream = $httpResponseOrStream->withAddedHeader($name, $values);
-        }
-        // if the status code is 200 we assume it's the default and will not overrule it
-        if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
-            if ($httpResponseOrStream instanceof StreamInterface) {
-                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+            // if the status code is 200 we assume it's the default and will not overrule it
+            if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
+                if ($httpResponseOrStream instanceof StreamInterface) {
+                    $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+                }
+                $httpResponseOrStream = $httpResponseOrStream->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
             }
-            $httpResponseOrStream = $httpResponseOrStream->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
         }
 
         return $httpResponseOrStream;

@@ -146,7 +146,7 @@ class ImpersonateController extends ActionController
         $account = $accounts->first();
         $this->impersonateService->impersonate($account);
         $impersonateStatus = $this->getImpersonateStatus();
-        $this->view->assign('value', $impersonateStatus);
+        $this->view?->assign('value', $impersonateStatus);
     }
 
     /**
@@ -182,13 +182,13 @@ class ImpersonateController extends ActionController
         }
 
         $this->impersonateService->restoreOriginalIdentity();
-        $this->view->assign('value', $response);
+        $this->view?->assign('value', $response);
     }
 
     public function statusAction(): void
     {
         $impersonateStatus = $this->getImpersonateStatus();
-        $this->view->assign('value', $impersonateStatus);
+        $this->view?->assign('value', $impersonateStatus);
     }
 
     /**

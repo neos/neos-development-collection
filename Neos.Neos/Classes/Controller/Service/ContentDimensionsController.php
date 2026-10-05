@@ -69,7 +69,7 @@ class ContentDimensionsController extends ActionController
                 $interDimensionalVariationGraph->getDimensionSpacePoints()
             );
         } else {
-            $this->view->assign(
+            $this->view?->assign(
                 'contentDimensionsPresets',
                 $interDimensionalVariationGraph->getDimensionSpacePoints()
             );
@@ -140,8 +140,8 @@ class ContentDimensionsController extends ActionController
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', $contentDimensionsAndPresets);
         } else {
-            $this->view->assign('dimensionName', $dimensionName);
-            $this->view->assign('contentDimensionsPresets', $contentDimensionsAndPresets);
+            $this->view?->assign('dimensionName', $dimensionName);
+            $this->view?->assign('contentDimensionsPresets', $contentDimensionsAndPresets);
         }
     }
 }

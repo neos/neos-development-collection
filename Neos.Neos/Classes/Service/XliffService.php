@@ -102,6 +102,7 @@ class XliffService
             $labels = [];
 
             foreach ($this->packagesRegisteredForAutoInclusion as $packageKey => $sourcesToBeIncluded) {
+                /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
                 if (!is_array($sourcesToBeIncluded)) {
                     continue;
                 }
