@@ -82,7 +82,7 @@ class AssetCollectionController extends ActionController
      */
     public function editAction(AssetCollection $assetCollection)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'assetCollection' => $assetCollection,
             'tags' => $this->tagRepository->findAll()
         ]);

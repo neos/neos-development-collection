@@ -28,7 +28,6 @@ use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
@@ -113,7 +112,6 @@ class PageHandler extends AbstractRenderingExceptionHandler
      */
     protected function wrapHttpResponse(\Exception $exception, string $bodyContent): string
     {
-        /** @var ResponseInterface $response */
         $response = new \GuzzleHttp\Psr7\Response(
             $exception instanceof FlowException ? $exception->getStatusCode() : 500,
             ['Cache-Control' => 'no-store'],

@@ -705,7 +705,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return false;
         }
         if ($parentNode === null) {
-            return $node->getDisableLevel() !== 0;
+            return true;
         }
         return $node->getDisableLevel() - $parentNode->getDisableLevel() !== 0;
     }
@@ -716,7 +716,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return false;
         }
         if ($parentNode === null) {
-            return $node->getRemovedLevel() !== 0;
+            return true;
         }
         return $node->getRemovedLevel() - $parentNode->getRemovedLevel() !== 0;
     }

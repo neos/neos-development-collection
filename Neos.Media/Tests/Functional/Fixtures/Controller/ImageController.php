@@ -131,6 +131,6 @@ class ImageController extends ActionController
      */
     public function showImageVariantAction(ImageVariant $imageVariant)
     {
-        $this->view->assign('imageVariant', $imageVariant);
+        $this->view?->assign('imageVariant', $imageVariant);
     }
 }

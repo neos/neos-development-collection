@@ -130,7 +130,6 @@ final class UriPathResolver implements DimensionResolverInterface
             $segmentParts = [];
             $dimensionSpacePointCoordinates = [];
             foreach ($validCombination as $dimensionName => $value) {
-                assert($value instanceof SegmentMappingElement);
                 if (!empty($value->uriPathSegmentValue)) {
                     $segmentParts[] = $value->uriPathSegmentValue;
                 }

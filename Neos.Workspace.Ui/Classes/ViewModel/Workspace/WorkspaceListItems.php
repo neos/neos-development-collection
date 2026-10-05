@@ -31,17 +31,17 @@ final readonly class WorkspaceListItems implements \IteratorAggregate, \Countabl
     ) {
     }
 
+    public static function fromItems(WorkspaceListItem ... $items): self
+    {
+        return new self($items);
+    }
+
     /**
      * @param array<WorkspaceListItem> $items
      */
     public static function fromArray(array $items): self
     {
-        foreach ($items as $item) {
-            if (!$item instanceof WorkspaceListItem) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', WorkspaceListItem::class, get_debug_type($item)), 1718295710);
-            }
-        }
-        return new self($items);
+        return self::fromItems(...$items);
     }
 
     public function sortByTitle(bool $ascending = true): self

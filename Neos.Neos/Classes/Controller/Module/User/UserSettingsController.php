@@ -98,7 +98,7 @@ class UserSettingsController extends AbstractModuleController
     {
         $this->assignElectronicAddressOptions();
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'user' => $this->currentUser
         ]);
     }
@@ -128,7 +128,7 @@ class UserSettingsController extends AbstractModuleController
      */
     public function editAccountAction(Account $account)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'account' => $account,
             'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName())
         ]);
@@ -178,7 +178,7 @@ class UserSettingsController extends AbstractModuleController
     public function newElectronicAddressAction(User $user)
     {
         $this->assignElectronicAddressOptions();
-        $this->view->assign('user', $user);
+        $this->view?->assign('user', $user);
     }
 
     /**
@@ -241,7 +241,7 @@ class UserSettingsController extends AbstractModuleController
             $electronicAddressUsageTypes[$type] = $type;
         }
         array_unshift($electronicAddressUsageTypes, '');
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'electronicAddressTypes' => $electronicAddressTypes,
             'electronicAddressUsageTypes' => $electronicAddressUsageTypes
         ]);

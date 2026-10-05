@@ -149,7 +149,7 @@ class UsersController extends AbstractModuleController
                 ))->execute();
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'currentUser' => $this->currentUser,
             'users' => $users,
             'searchTerm' => $searchTerm,
@@ -169,7 +169,7 @@ class UsersController extends AbstractModuleController
      */
     public function showAction(User $user): void
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user
         ]);
@@ -183,7 +183,7 @@ class UsersController extends AbstractModuleController
      */
     public function newAction(?User $user = null): void
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user,
             'roles' => $this->getAllowedRoles(),
@@ -266,7 +266,7 @@ class UsersController extends AbstractModuleController
 
         $this->assignElectronicAddressOptions();
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'currentUser' => $this->currentUser,
             'user' => $user,
             'availableRoles' => $this->getAllowedRoles()
@@ -365,7 +365,7 @@ class UsersController extends AbstractModuleController
             $this->redirect('index');
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'account' => $account,
             'user' => $user,
             'availableRoles' => $this->getAllowedRoles()
@@ -450,7 +450,7 @@ class UsersController extends AbstractModuleController
     public function newElectronicAddressAction(User $user): void
     {
         $this->assignElectronicAddressOptions();
-        $this->view->assign('user', $user);
+        $this->view?->assign('user', $user);
     }
 
     /**
@@ -537,7 +537,7 @@ class UsersController extends AbstractModuleController
             $electronicAddressUsageTypes[$type] = $type;
         }
         array_unshift($electronicAddressUsageTypes, '');
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'electronicAddressTypes' => $electronicAddressTypes,
             'electronicAddressUsageTypes' => $electronicAddressUsageTypes
         ]);

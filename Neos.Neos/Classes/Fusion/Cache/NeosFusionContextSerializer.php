@@ -44,7 +44,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = [])
     {
         if ($type === Node::class) {
-            /** @var $data array<string, mixed> */
+            /** @var array<string, mixed> $data */
             return $this->tryDeserializeNode($data);
         }
         return $this->fusionContextSerializer->denormalize($data, $type, $format, $context);

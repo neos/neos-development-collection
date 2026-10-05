@@ -94,7 +94,7 @@ class TagController extends ActionController
      */
     public function editAction(Tag $tag)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'tag' => $tag,
             'assetCollections' => $this->assetCollectionRepository->findAll()
         ]);
