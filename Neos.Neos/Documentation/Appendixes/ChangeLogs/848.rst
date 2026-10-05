@@ -1,0 +1,121 @@
+`8.4.8 (2026-10-05) <https://github.com/neos/neos-development-collection/releases/tag/8.4.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Add enshrined/svg-sanitize dependency <https://github.com/neos/neos-development-collection/pull/5982>`_
+----------------------------------------------------------------------------------------------------------------
+
+This was lost with `#5978 <https://github.com/neos/neos-development-collection/issues/5978>`_
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [x] Reviewer - The first section explains the change briefly for change-logs
+- [ ] ~Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions~
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix exception message in Neos.Neos:ConvertUris <https://github.com/neos/neos-development-collection/pull/5949>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+This fixes an exception message in ``Neos.Neos:ConvertUris`` (wrong ``get_debug_type()``). It also adds tests for scenarios that behave differently in the current Neos 9 release.
+
+**Upgrade instructions**
+n/a
+
+**Review instructions**
+
+See https://github.com/neos/neos-development-collection/pull/5926#discussion_r3727980323
+
+Sorry for not also adjusting the documentation. It took me quite a while to check it in the Neos 9 branch and I currently don't have the time to check it again for Neos 8.3.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`TASK: Point contributing guide at Weblate instead of Crowdin <https://github.com/neos/neos-development-collection/pull/5992>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Hi! The contributing guide still points at Crowdin which has been replaced by Weblate.
+
+**Upgrade instructions**
+
+-
+**Review instructions**
+
+Please note (for upmerging) that this file was later moved to the project root.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Update to PHPUnit 11 <https://github.com/neos/neos-development-collection/pull/5950>`_
+---------------------------------------------------------------------------------------------
+
+See upgrade to PHPUnit 11 in Flow https://github.com/neos/flow-development-collection/pull/3563
+
+**Upgrade instructions**
+
+The only thing you might need to adjust (besides catering to all the changes in PhpUnit 11), is the signature of ``getAccessibleMock()`` in our base testcase class. The arguments
+
+- ``$callAutoload``
+- ``$callOriginalMethods``
+- ``$proxyTarget``
+
+have been removed, as the underlying PHPUnit methods are deprecated.
+
+**Review instructions**
+
+All tests should still pass – have fun verifying they still do test the correct stuff.
+
+
+* Packages: ``.github``
+
+`TASK: Update used actions, tweak workflows <https://github.com/neos/neos-development-collection/pull/5954>`_
+-------------------------------------------------------------------------------------------------------------
+
+This updates the version of used actions and tweaks some other things in the workflows.
+
+
+* Packages: ``Neos`` ``.github``
+
+`FIX: Update svg sanitizer <https://github.com/neos/neos-development-collection/pull/5978>`_
+--------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+Simply run ``composer update`` to install the new version.
+
+**Review instructions**
+
+In the SVG Sanitizer class, some security advisories have been found.
+This update fixes the following security advisories:
+- https://github.com/darylldoyle/svg-sanitizer/security/advisories/GHSA-9rjx-3jch-6vjf
+- https://github.com/darylldoyle/svg-sanitizer/security/advisories/GHSA-m9xh-6747-9r6f
+- https://github.com/darylldoyle/svg-sanitizer/security/advisories/GHSA-qhmf-972w-m957
+- https://github.com/darylldoyle/svg-sanitizer/security/advisories/GHSA-v383-3rw5-q8rf
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``NodeTypes.Html`` ``Media.Browser``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.4.7...8.4.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
