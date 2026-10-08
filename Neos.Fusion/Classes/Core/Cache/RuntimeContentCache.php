@@ -187,6 +187,7 @@ class RuntimeContentCache
                          *   To make that happen the state "$self->inCacheEntryPoint" must be reset to null.
                          */
                         $previouslyInCacheEntryPoint = $self->inCacheEntryPoint;
+                        $previouslyAddCacheSegmentMarkersToPlaceholders = $self->addCacheSegmentMarkersToPlaceholders;
                         $self->inCacheEntryPoint = null;
 
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
@@ -194,6 +195,9 @@ class RuntimeContentCache
                         $result = $this->runtime->evaluate($additionalData['path']);
                         $this->runtime->popContext();
                         $self->inCacheEntryPoint = $previouslyInCacheEntryPoint;
+                        // The nested entry point resets this flag in postProcess(); restore it so the outer,
+                        // not-yet-cached segment keeps cache segment markers for the remaining cache hits.
+                        $self->addCacheSegmentMarkersToPlaceholders = $previouslyAddCacheSegmentMarkersToPlaceholders;
                         return $result;
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
