@@ -10,6 +10,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Cache\Frontend\FrontendInterface;
@@ -699,5 +700,50 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('2', $secondRenderResult);
         self::assertSame('3', $thirdRenderResult);
         self::assertSame('4', $fourthRenderResult);
+    }
+
+    public static function nestedCachedSegmentsWithDynamicSegmentsDataProvider(): array
+    {
+        return [
+            'cached outer, cached segments containing dynamic segments' => ['cachedOuterWithCachedSegmentsContainingDynamicSegments'],
+            'dynamic outer, cached segments containing dynamic segments' => ['dynamicOuterWithCachedSegmentsContainingDynamicSegments'],
+            'cached outer, cached segment containing dynamic segment followed by dynamic segment' => ['cachedOuterWithCachedSegmentContainingDynamicSegmentAndDynamicSibling'],
+            'cached outer, cached segment containing dynamic segment with disabled discriminator' => ['cachedOuterWithCachedSegmentContainingDisabledDynamicSegment'],
+            'cached outer, cached segment containing uncached segment' => ['cachedOuterWithCachedSegmentContainingUncachedSegment'],
+        ];
+    }
+
+    /**
+     * An outer cached or dynamic segment is re-rendered while its nested cached segments are still cached.
+     * Resolving a dynamic segment inside the first nested segment must not cause the following nested segments
+     * to be embedded into the outer cache entry without cache segment markers. Otherwise they could not be
+     * flushed by their own tags anymore and would stay outdated until the outer segment is flushed.
+     */
+    #[Test]
+    #[DataProvider('nestedCachedSegmentsWithDynamicSegmentsDataProvider')]
+    public function nestedSegmentsAreStillFlushableAfterOuterSegmentWasRerendered(string $fusionPath)
+    {
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('someContextVariable', 'prettyUnused');
+        $view->setFusionPath('contentCache/nesting/' . $fusionPath);
+
+        /** @var ActionRequest $actionRequest */
+        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest->setArgument('testArgument', '1');
+        $firstRenderResult = $view->render();
+
+        $this->contentCache->flushByTag('outer');
+        $secondRenderResult = $view->render();
+
+        $actionRequest->setArgument('testArgument', '2');
+        $this->contentCache->flushByTag('leaf');
+        $thirdRenderResult = $view->render();
+        $fourthRenderResult = $view->render();
+
+        self::assertSame('First|1|Second|1', $firstRenderResult);
+        self::assertSame('First|1|Second|1', $secondRenderResult);
+        self::assertSame('First|2|Second|2', $thirdRenderResult);
+        self::assertSame('First|2|Second|2', $fourthRenderResult);
     }
 }
