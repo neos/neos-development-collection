@@ -18,6 +18,9 @@ Feature: Adjust node types with a node migration
             nodeTypes:
               'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': true
               '*': false
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ContentCollection': false
     'Neos.ContentRepository.Testing:OtherDocument':
       childNodes:
           main:
@@ -26,6 +29,9 @@ Feature: Adjust node types with a node migration
               nodeTypes:
                 'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': true
                 '*': false
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ContentCollection': false
     'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': []
 
     Neos.ContentRepository.Testing:ContentCollection:
@@ -83,7 +89,9 @@ Feature: Adjust node types with a node migration
               nodeTypes:
                 'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': true
                 '*': false
-
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ContentCollection': false
     'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': []
 
     Neos.ContentRepository.Testing:ContentCollection:
