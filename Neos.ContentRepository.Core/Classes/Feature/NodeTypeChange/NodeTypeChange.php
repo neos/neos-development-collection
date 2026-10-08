@@ -340,13 +340,16 @@ trait NodeTypeChange
                 $childNodeTypeForConstraintChecks = $this->requireNodeType($childNodeAggregate->nodeTypeName);
             }
             if (
-                $childNodeAggregate->classification->isTethered()
-                && $childNodeAggregate->nodeName
-                && $newNodeType->tetheredNodeTypeDefinitions->get($childNodeAggregate->nodeName)?->nodeTypeName
-                    === $childNodeAggregate->nodeTypeName
+                $nodeAggregate->classification->isTethered()
+                || (
+                    $childNodeAggregate->classification->isTethered()
+                    && $childNodeAggregate->nodeName
+                    && $newNodeType->tetheredNodeTypeDefinitions->get($childNodeAggregate->nodeName)?->nodeTypeName
+                       === $childNodeAggregate->nodeTypeName
+                )
             ) {
-                // this tethered child node aggregate matches the tethered node declaration of the new node type
-                // and thus can stay the same and will simply be ignored
+                // Children of tethered nodes are governed by the grandparent's tethered constraints.
+                // Tethered children matching the new node type's declaration stay the same and are ignored.
             } else {
                 $this->requireNodeTypeConstraintsImposedByParentToBeMet(
                     $newNodeType,
@@ -392,17 +395,16 @@ trait NodeTypeChange
                 }
             }
 
-            foreach ($newNodeType->tetheredNodeTypeDefinitions as $tetheredNodeTypeDefinition) {
-                foreach ($childNodeAggregates as $childNodeAggregate) {
-                    if ($childNodeAggregate->nodeName?->equals($tetheredNodeTypeDefinition->name)) {
-                        $this->requireConstraintsImposedByHappyPathStrategyAreMet(
-                            $contentGraph,
-                            $childNodeAggregate,
-                            $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName),
-                            $expectIdenticallyTypedDescendantsToBeChangedAsWell,
-                        );
-                    }
-                }
+            $tetheredNodeTypeDefinition = $childNodeAggregate->nodeName
+                ? $newNodeType->tetheredNodeTypeDefinitions->get($childNodeAggregate->nodeName)
+                : null;
+            if ($tetheredNodeTypeDefinition !== null) {
+                $this->requireConstraintsImposedByHappyPathStrategyAreMet(
+                    $contentGraph,
+                    $childNodeAggregate,
+                    $this->requireNodeType($tetheredNodeTypeDefinition->nodeTypeName),
+                    $expectIdenticallyTypedDescendantsToBeChangedAsWell,
+                );
             }
         }
     }
