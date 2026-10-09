@@ -220,7 +220,7 @@ trait NodeTraversalTrait
         $contentGraph = $this->currentContentRepository->getContentGraph($this->currentWorkspaceName);
         $actualNodeAggregates = $contentGraph->findParentNodeAggregates($entryNodeAggregateId);
 
-        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), $actualNodeAggregates, 'findParentNodeAggregates returned an unexpected result');
+        self::assertNodeAggregatesEqualTable($expectedNodes->getHash(), self::sortNodeAggregatesById($actualNodeAggregates), 'findParentNodeAggregates returned an unexpected result');
     }
 
     /**
