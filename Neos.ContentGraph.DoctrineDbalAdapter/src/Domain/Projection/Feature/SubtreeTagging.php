@@ -203,6 +203,8 @@ trait SubtreeTagging
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to move subtree tags for content stream %s, new parent node aggregate id %s and dimension space point %s: %s', $contentStreamId->value, $newParentNodeAggregateId->value, $coveredDimensionSpacePoint->toJson(), $e->getMessage()), 1716482574, $e);
+        } finally {
+            $this->dbal->executeQuery('set optimizer_switch=@@GLOBAL.optimizer_switch;');
         }
     }
 
