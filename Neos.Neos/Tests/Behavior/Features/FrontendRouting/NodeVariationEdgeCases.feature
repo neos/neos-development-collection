@@ -378,3 +378,346 @@ Feature: Test cases for node variation edge cases
       | "65901ded4f068dac14ad0dce4f459b29" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
       | "9a723c057afa02982dae9d0b541739be" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
       | "c60c44685475d0e2e4f2b964e6158ce2" | "youngest" | "lady-eleonode-rootford/shernode-homes/youngest-mc-nodeface" | "youngest-mc-nodeface"   | "shernode-homes"         | "younger-mc-nodeface"    | null                      | "Neos.Neos:Document" |
+
+  Scenario: Variants created from disabled source variants must transfer the disabled information like the contentgraph:projection
+    # peer variant - not transferred
+    # generalization and specialization - transferred
+    Given using the following content dimensions:
+      | Identifier | Values             | Generalizations    |
+      | language   | de, en, gsw, en_US | en_US->en, gsw->de |
+    And using the following node types:
+    """yaml
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Document':
+      properties:
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {"language":"de"}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                    |
+      | nodeAggregateId           | "shernode-homes"         |
+      | nodeTypeName              | "Neos.Neos:Site"         |
+      | parentNodeAggregateId     | "lady-eleonode-rootford" |
+      | originDimensionSpacePoint | {"language":"de"}        |
+      | nodeName                  | "site"                   |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value             |
+      | nodeAggregateId | "shernode-homes"  |
+      | sourceOrigin    | {"language":"de"} |
+      | targetOrigin    | {"language":"en"} |
+
+    #
+    # peer variant
+    #
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                      |
+      | nodeAggregateId           | "hidden-peer"              |
+      | nodeTypeName              | "Neos.Neos:Document"       |
+      | parentNodeAggregateId     | "shernode-homes"           |
+      | originDimensionSpacePoint | {"language":"gsw"}         |
+      | initialPropertyValues     | {"uriPathSegment": "peer"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "hidden-peer"      |
+      | coveredDimensionSpacePoint   | {"language":"gsw"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                |
+      | nodeAggregateId | "hidden-peer"        |
+      | sourceOrigin    | {"language":"gsw"}   |
+      | targetOrigin    | {"language":"en_US"} |
+
+    #
+    # create a specialization
+    #
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                |
+      | nodeAggregateId           | "hidden-specialist"                  |
+      | nodeTypeName              | "Neos.Neos:Document"                 |
+      | parentNodeAggregateId     | "shernode-homes"                     |
+      | originDimensionSpacePoint | {"language":"de"}                    |
+      | initialPropertyValues     | {"uriPathSegment": "specialization"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value               |
+      | nodeAggregateId              | "hidden-specialist" |
+      | coveredDimensionSpacePoint   | {"language":"de"}   |
+      | nodeVariantSelectionStrategy | "allVariants"       |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value               |
+      | nodeAggregateId | "hidden-specialist" |
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"gsw"}  |
+
+    #
+    # create a generalization
+    #
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                |
+      | nodeAggregateId           | "hidden-general"                     |
+      | nodeTypeName              | "Neos.Neos:Document"                 |
+      | parentNodeAggregateId     | "shernode-homes"                     |
+      | originDimensionSpacePoint | {"language":"en_US"}                 |
+      | initialPropertyValues     | {"uriPathSegment": "generalization"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "hidden-general"     |
+      | coveredDimensionSpacePoint   | {"language":"en_US"} |
+      | nodeVariantSelectionStrategy | "allVariants"        |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                |
+      | nodeAggregateId | "hidden-general"     |
+      | sourceOrigin    | {"language":"en_US"} |
+      | targetOrigin    | {"language":"en"}    |
+
+    # peer variants do not copy subtree tags
+    Then I am in dimension space point {"language":"en_US"}
+    And I expect the node with aggregate identifier "hidden-peer" to not contain the tag "disabled"
+
+    # specialization & generalization variants copy subtree tags
+    Then I am in dimension space point {"language":"gsw"}
+    And I expect the node with aggregate identifier "hidden-specialist" to be explicitly tagged "disabled"
+    Then I am in dimension space point {"language":"en_US"}
+    And I expect the node with aggregate identifier "hidden-general" to be explicitly tagged "disabled"
+
+    And I expect the documenturipath table to contain exactly:
+      | uripath          | nodeaggregateid          | dimensionspacepointhash  | disabled |
+      | ""               | "lady-eleonode-rootford" | hash{"language":"en_US"} | 0        |
+      | ""               | "lady-eleonode-rootford" | hash{"language":"de"}    | 0        |
+      | ""               | "lady-eleonode-rootford" | hash{"language":"en"}    | 0        |
+      | ""               | "lady-eleonode-rootford" | hash{"language":"gsw"}   | 0        |
+      | ""               | "shernode-homes"         | hash{"language":"en_US"} | 0        |
+      | ""               | "shernode-homes"         | hash{"language":"de"}    | 0        |
+      | ""               | "shernode-homes"         | hash{"language":"en"}    | 0        |
+      | ""               | "shernode-homes"         | hash{"language":"gsw"}   | 0        |
+      | "generalization" | "hidden-general"         | hash{"language":"en_US"} | 1        |
+      | "generalization" | "hidden-general"         | hash{"language":"en"}    | 1        |
+      | "peer"           | "hidden-peer"            | hash{"language":"en_US"} | 0        |
+      | "peer"           | "hidden-peer"            | hash{"language":"gsw"}   | 1        |
+      | "specialization" | "hidden-specialist"      | hash{"language":"de"}    | 1        |
+      | "specialization" | "hidden-specialist"      | hash{"language":"gsw"}   | 1        |
+
+  Scenario: Variants created must combine respect the copied tags in with tags inherited from parent in the target dsp
+    Given using the following content dimensions:
+      | Identifier | Values             | Generalizations    |
+      | language   | de, en, gsw, en_US | en_US->en, gsw->de |
+    And using the following node types:
+    """yaml
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Document':
+      properties:
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {"language":"de"}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                    |
+      | nodeAggregateId           | "shernode-homes"         |
+      | nodeTypeName              | "Neos.Neos:Site"         |
+      | parentNodeAggregateId     | "lady-eleonode-rootford" |
+      | originDimensionSpacePoint | {"language":"de"}        |
+      | nodeName                  | "site"                   |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value             |
+      | nodeAggregateId | "shernode-homes"  |
+      | sourceOrigin    | {"language":"de"} |
+      | targetOrigin    | {"language":"en"} |
+
+    #
+    # peer variant of hidden node below a parent hidden in target dimensions
+    #
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value              |
+      | nodeAggregateId           | "peer-parent"      |
+      | nodeTypeName              | "Neos.Neos:Site"   |
+      | parentNodeAggregateId     | "shernode-homes"   |
+      | originDimensionSpacePoint | {"language":"gsw"} |
+      | nodeName                  | "peer-parent"      |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                |
+      | nodeAggregateId | "peer-parent"        |
+      | sourceOrigin    | {"language":"gsw"}   |
+      | targetOrigin    | {"language":"en_US"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "peer-parent"        |
+      | coveredDimensionSpacePoint   | {"language":"en_US"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                      |
+      | nodeAggregateId           | "hidden-peer"              |
+      | nodeTypeName              | "Neos.Neos:Document"       |
+      | parentNodeAggregateId     | "peer-parent"              |
+      | originDimensionSpacePoint | {"language":"gsw"}         |
+      | initialPropertyValues     | {"uriPathSegment": "peer"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value              |
+      | nodeAggregateId              | "hidden-peer"      |
+      | coveredDimensionSpacePoint   | {"language":"gsw"} |
+      | nodeVariantSelectionStrategy | "allVariants"      |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                |
+      | nodeAggregateId | "hidden-peer"        |
+      | sourceOrigin    | {"language":"gsw"}   |
+      | targetOrigin    | {"language":"en_US"} |
+
+    #
+    # create a specialization
+    #
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value               |
+      | nodeAggregateId           | "specialist-parent" |
+      | nodeTypeName              | "Neos.Neos:Site"    |
+      | parentNodeAggregateId     | "shernode-homes"    |
+      | originDimensionSpacePoint | {"language":"de"}   |
+      | nodeName                  | "specialist-parent" |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value               |
+      | nodeAggregateId | "specialist-parent" |
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"gsw"}  |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "specialist-parent"  |
+      | coveredDimensionSpacePoint   | {"language":"gsw"}   |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                |
+      | nodeAggregateId           | "hidden-specialist"                  |
+      | nodeTypeName              | "Neos.Neos:Document"                 |
+      | parentNodeAggregateId     | "specialist-parent"                  |
+      | originDimensionSpacePoint | {"language":"de"}                    |
+      | initialPropertyValues     | {"uriPathSegment": "specialization"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value               |
+      | nodeAggregateId              | "hidden-specialist" |
+      | coveredDimensionSpacePoint   | {"language":"de"}   |
+      | nodeVariantSelectionStrategy | "allVariants"       |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value               |
+      | nodeAggregateId | "hidden-specialist" |
+      | sourceOrigin    | {"language":"de"}   |
+      | targetOrigin    | {"language":"gsw"}  |
+
+    #
+    # create a generalization
+    #
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value             |
+      | nodeAggregateId           | "general-parent"  |
+      | nodeTypeName              | "Neos.Neos:Site"  |
+      | parentNodeAggregateId     | "shernode-homes"  |
+      | originDimensionSpacePoint | {"language":"en"} |
+      | nodeName                  | "general-parent"  |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                |
+      | nodeAggregateId | "general-parent"     |
+      | sourceOrigin    | {"language":"en"}    |
+      | targetOrigin    | {"language":"en_US"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "general-parent"     |
+      | coveredDimensionSpacePoint   | {"language":"en_US"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                |
+      | nodeAggregateId           | "hidden-general"                     |
+      | nodeTypeName              | "Neos.Neos:Document"                 |
+      | parentNodeAggregateId     | "general-parent"                     |
+      | originDimensionSpacePoint | {"language":"en_US"}                 |
+      | initialPropertyValues     | {"uriPathSegment": "generalization"} |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | nodeAggregateId              | "hidden-general"     |
+      | coveredDimensionSpacePoint   | {"language":"en_US"} |
+      | nodeVariantSelectionStrategy | "allVariants"        |
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                |
+      | nodeAggregateId | "hidden-general"     |
+      | sourceOrigin    | {"language":"en_US"} |
+      | targetOrigin    | {"language":"en"}    |
+
+    # peer variants do not copy subtree tags
+    Then I am in dimension space point {"language":"gsw"}
+    And I expect the node with aggregate identifier "peer-parent" to not contain the tag "disabled"
+    And I expect the node with aggregate identifier "hidden-peer" to be explicitly tagged "disabled"
+
+    Then I am in dimension space point {"language":"en_US"}
+    And I expect the node with aggregate identifier "peer-parent" to be explicitly tagged "disabled"
+    And I expect the node with aggregate identifier "hidden-peer" to inherit the tag "disabled"
+
+    # specialization variants copy subtree tags
+    Then I am in dimension space point {"language":"de"}
+    And I expect the node with aggregate identifier "specialist-parent" to not contain the tag "disabled"
+    And I expect the node with aggregate identifier "hidden-specialist" to be explicitly tagged "disabled"
+
+    Then I am in dimension space point {"language":"gsw"}
+    And I expect the node with aggregate identifier "specialist-parent" to be explicitly tagged "disabled"
+    And I expect the node with aggregate identifier "hidden-specialist" to be explicitly tagged "disabled"
+
+    # generalization variants copy subtree tags
+    Then I am in dimension space point {"language":"en_US"}
+    And I expect the node with aggregate identifier "general-parent" to be explicitly tagged "disabled"
+    And I expect the node with aggregate identifier "hidden-general" to be explicitly tagged "disabled"
+
+    Then I am in dimension space point {"language":"en"}
+    And I expect the node with aggregate identifier "general-parent" to not contain the tag "disabled"
+    And I expect the node with aggregate identifier "hidden-general" to be explicitly tagged "disabled"
+
+    And I expect the documenturipath table to contain exactly:
+      | uripath                            | nodeaggregateid          | dimensionspacepointhash  | disabled |
+      | ""                                 | "lady-eleonode-rootford" | hash{"language":"en_US"} | 0        |
+      | ""                                 | "lady-eleonode-rootford" | hash{"language":"de"}    | 0        |
+      | ""                                 | "lady-eleonode-rootford" | hash{"language":"en"}    | 0        |
+      | ""                                 | "lady-eleonode-rootford" | hash{"language":"gsw"}   | 0        |
+      | ""                                 | "shernode-homes"         | hash{"language":"en_US"} | 0        |
+      | ""                                 | "shernode-homes"         | hash{"language":"de"}    | 0        |
+      | ""                                 | "shernode-homes"         | hash{"language":"en"}    | 0        |
+      | ""                                 | "shernode-homes"         | hash{"language":"gsw"}   | 0        |
+      | "general-parent"                   | "general-parent"         | hash{"language":"en_US"} | 1        |
+      | "general-parent"                   | "general-parent"         | hash{"language":"en"}    | 0        |
+      | "general-parent/generalization"    | "hidden-general"         | hash{"language":"en_US"} | 2        |
+      | "general-parent/generalization"    | "hidden-general"         | hash{"language":"en"}    | 1        |
+      | "peer-parent"                      | "peer-parent"            | hash{"language":"en_US"} | 1        |
+      | "peer-parent"                      | "peer-parent"            | hash{"language":"gsw"}   | 0        |
+      | "peer-parent/peer"                 | "hidden-peer"            | hash{"language":"en_US"} | 1        |
+      | "peer-parent/peer"                 | "hidden-peer"            | hash{"language":"gsw"}   | 1        |
+      | "specialist-parent"                | "specialist-parent"      | hash{"language":"de"}    | 0        |
+      | "specialist-parent"                | "specialist-parent"      | hash{"language":"gsw"}   | 1        |
+      | "specialist-parent/specialization" | "hidden-specialist"      | hash{"language":"de"}    | 1        |
+      | "specialist-parent/specialization" | "hidden-specialist"      | hash{"language":"gsw"}   | 2        |
