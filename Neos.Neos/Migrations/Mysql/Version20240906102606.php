@@ -15,6 +15,10 @@ final class Version20240906102606 extends AbstractMigration
         return 'Creates table for asset usage';
     }
 
+    // This migration has been changed afterward, to allow running it also with `sql_require_primary_key = ON`.
+    // See: https://github.com/neos/neos-development-collection/issues/5988
+    // Version20260930150314 will fix the old state of this migration in case this was already executed without
+    // creating the Primary Key.
     public function up(Schema $schema): void
     {
         $this->abortIf(
@@ -24,7 +28,7 @@ final class Version20240906102606 extends AbstractMigration
 
         $sql = <<<SQL
             CREATE TABLE `neos_asset_usage` (
-                 `contentrepositoryid` char(16) DEFAULT NULL,
+                 `contentrepositoryid` char(16) NOT NULL,
                  `assetid` varchar(40) NOT NULL DEFAULT '',
                  `originalassetid` varchar(40) DEFAULT NULL,
                  `workspacename` char(36) NOT NULL,
@@ -32,7 +36,7 @@ final class Version20240906102606 extends AbstractMigration
                  `origindimensionspacepoint` json DEFAULT (JSON_OBJECT()),
                  `origindimensionspacepointhash` varbinary(32) NOT NULL DEFAULT '',
                  `propertyname` varchar(255) NOT NULL DEFAULT '',
-                 UNIQUE KEY `IDX_14C94F11044B499EB28F27DAEAC5D4BB` (`contentrepositoryid`, `assetid`,`originalassetid`,`workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`,`propertyname`),
+                 PRIMARY KEY (`contentrepositoryid`, `assetid`,`workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`,`propertyname`),
                  KEY `IDX_55757035ADC144B7ED5AC6744F7D18CF` (`contentrepositoryid`, `workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`),
                  KEY `IDX_0A70B9E69F347EB3D7CA716B10767577` (`contentrepositoryid`),
                  KEY `IDX_9FC89003DB4D99EB02993595B732415D` (`assetid`),
