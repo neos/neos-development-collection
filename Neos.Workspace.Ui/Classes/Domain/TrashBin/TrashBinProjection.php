@@ -274,6 +274,22 @@ class TrashBinProjection implements ProjectionInterface
         DimensionSpacePointSet $affectedDimensionSpacePoints,
         ?EventMetadata $eventMetadata,
     ): void {
+        // A node aggregate may be tagged "removed" again although it already is (e.g. when changing the node type of
+        // its parent with the MarkWithTag strategy). Keep the existing record and its original delete time and user.
+        $existingRecord = $this->dbal->executeQuery(
+            'SELECT 1 FROM ' . $this->itemTableName . ' WHERE workspace_name = :workspaceName
+            AND node_aggregate_id = :nodeAggregateId
+            AND affected_dimension_space_points_hash = :affectedDimensionSpacePointsHash',
+            [
+                'workspaceName' => $workspaceName->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
+                'affectedDimensionSpacePointsHash' => $this->getDimensionSpacePointSetHash($affectedDimensionSpacePoints),
+            ],
+        )->fetchOne();
+        if ($existingRecord !== false) {
+            return;
+        }
+
         $this->dbal->insert(
             $this->itemTableName,
             [
