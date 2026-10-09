@@ -55,7 +55,6 @@ final readonly class HierarchyRelation
             parentNodeAnchor: $parentNodeAnchor ?? $this->parentNodeAnchor,
             childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
             dimensionSpacePoint: $dimensionSpacePoint ?? $this->dimensionSpacePoint,
-            dimensionSpacePointHash: $dimensionSpacePointHash ?? $this->dimensionSpacePointHash,
             position: $position ?? $this->position,
             subtreeTags: $subtreeTags ?? $this->subtreeTags,
         );
