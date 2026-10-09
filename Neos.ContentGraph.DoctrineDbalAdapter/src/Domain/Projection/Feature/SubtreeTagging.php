@@ -146,8 +146,9 @@ trait SubtreeTagging
 
     private function moveSubtreeTags(ContentStreamId $contentStreamId, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
+        // Mysql hack (NO_MERGE), too eager to optimize https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html
         $moveSubtreeTagsStatement = <<<SQL
-            UPDATE {$this->tableNames->hierarchyRelation()} h,
+            UPDATE /*+ NO_MERGE(r) */ {$this->tableNames->hierarchyRelation()} h,
             (
               WITH RECURSIVE cte AS (
                 SELECT
@@ -194,8 +195,6 @@ trait SubtreeTagging
               AND h.dimensionspacepointhash = :dimensionSpacePointHash
         SQL;
         try {
-            // Mysql hack, too eager to optimize https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html
-            $this->dbal->executeQuery('set optimizer_switch="derived_merge=off"');
             $this->dbal->executeStatement($moveSubtreeTagsStatement, [
                 'contentStreamId' => $contentStreamId->value,
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
