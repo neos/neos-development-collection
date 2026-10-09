@@ -73,7 +73,7 @@ class DoctrineDbalContentGraphSchemaBuilder
 
         return $table
             ->addIndex(['id'])
-            ->setPrimaryKey(['id', 'contentstreamlayer'], 'UNIQ_id_layer')
+            ->setPrimaryKey(['id', 'contentstreamlayer'])
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamlayer'])
             ->addIndex(['parentnodeanchor'])
