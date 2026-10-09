@@ -164,6 +164,7 @@ class ImageUriImplementation extends AbstractFusionObject
         $asset = $this->getAsset();
         $preset = $this->getPreset();
 
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
         if (!$asset instanceof AssetInterface) {
             throw new \Exception('No asset given for rendering.', 1415184217);
         }

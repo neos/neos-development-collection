@@ -33,17 +33,16 @@ final readonly class Changes implements \IteratorAggregate, \Countable
     ) {
     }
 
+    public static function fromItems(Change ... $changes): self
+    {
+        return new self(array_values($changes));
+    }
     /**
      * @param list<Change> $changes
      */
     public static function fromArray(array $changes): self
     {
-        foreach ($changes as $change) {
-            if (!$change instanceof Change) {
-                throw new \InvalidArgumentException(sprintf('Changes can only consist of %s instances, given: %s', Change::class, get_debug_type($change)), 1727273148);
-            }
-        }
-        return new self($changes);
+        return self::fromItems(...$changes);
     }
 
     public function getIterator(): \Traversable

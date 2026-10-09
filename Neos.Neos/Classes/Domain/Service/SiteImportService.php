@@ -117,6 +117,7 @@ final readonly class SiteImportService
                 'executed' => $executedMigrationCount,
                 'available' => $availableMigrationCount
             ] = $this->doctrineService->getMigrationStatus();
+            /** @phpstan-ignore catch.neverThrown (Annotations can be wrong) */
         } catch (DBALException | \PDOException) {
             throw new \RuntimeException('Not database connected. Please check your database connection settings or run `./flow setup` for further information.', 1684075689386);
         }

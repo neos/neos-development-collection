@@ -55,16 +55,16 @@ class ConfigurationController extends AbstractModuleController
     public function indexAction($type = 'Settings')
     {
         $availableConfigurationTypes = $this->configurationManager->getAvailableConfigurationTypes();
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'type' => $type,
             'availableConfigurationTypes' => $availableConfigurationTypes
         ]);
 
         if (in_array($type, $availableConfigurationTypes)) {
-            $this->view->assign('configuration', $this->configurationManager->getConfiguration($type));
+            $this->view?->assign('configuration', $this->configurationManager->getConfiguration($type));
 
             try {
-                $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
+                $this->view?->assign('validationResult', $this->configurationSchemaValidator->validate($type));
             } catch (SchemaValidationException $exception) {
                 $this->addFlashMessage(
                     htmlspecialchars($exception->getMessage()),

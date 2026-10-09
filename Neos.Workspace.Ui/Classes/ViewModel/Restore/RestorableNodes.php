@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @implements \IteratorAggregate<int,RestorableNode>
+ * @implements \IteratorAggregate<RestorableNode>
  * @internal for communication within the Workspace UI only
  */
 #[Flow\Proxy(false)]

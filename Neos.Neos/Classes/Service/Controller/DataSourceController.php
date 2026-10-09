@@ -69,7 +69,7 @@ class DataSourceController extends AbstractServiceController
 
         $values = $dataSource->getData($this->deserializeNodeFromNodeAddress($node), $arguments);
 
-        $this->view->assign('value', $values);
+        $this->view?->assign('value', $values);
     }
 
     private function deserializeNodeFromNodeAddress(?string $stringFormattedNodeAddress): ?Node

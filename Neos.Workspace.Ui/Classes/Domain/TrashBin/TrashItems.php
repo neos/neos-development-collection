@@ -54,11 +54,6 @@ final readonly class TrashItems implements \IteratorAggregate, \Countable
      */
     public static function fromArray(array $items): self
     {
-        foreach ($items as $item) {
-            if (!$item instanceof TrashItem) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', TrashItem::class, get_debug_type($item)), 1718295710);
-            }
-        }
-        return new self($items);
+        return self::list(...$items);
     }
 }

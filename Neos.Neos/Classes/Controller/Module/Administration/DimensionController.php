@@ -54,7 +54,7 @@ class DimensionController extends AbstractModuleController
             default => null,
         };
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'availableGraphTypes' => ['intraDimension', 'interDimension'],
             'type' => $type,
             'selectedDimensionSpacePointHash' => $dimensionSpacePointHash,

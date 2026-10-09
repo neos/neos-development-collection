@@ -183,7 +183,7 @@ class ContentCacheFlusher
             $tagsToFlush[$nodeTypeNameCacheIdentifier->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameCacheIdentifier->value,
-                ($referenceNodeIdentifier?->value ?? ''),
+                ($referenceNodeIdentifier->value ?? ''),
                 $nodeTypeName->value
             );
         }

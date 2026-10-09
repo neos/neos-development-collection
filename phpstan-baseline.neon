@@ -141,11 +141,6 @@ parameters:
 			path: Neos.Neos/Classes/Presentation/Dimensions/VisualWeightedDimensionSpacePoint.php
 
 		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php
-
-		-
 			message: "#^Method Neos\\\\Neos\\\\ResourceManagement\\\\NodeTypesStreamWrapper\\:\\:cast\\(\\) should return resource but returns false\\.$#"
 			count: 1
 			path: Neos.Neos/Classes/ResourceManagement/NodeTypesStreamWrapper.php

@@ -161,7 +161,7 @@ class NodeController extends ActionController
 
         $this->view->setOption('renderingModeName', $renderingMode->name);
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'value' => $nodeInstance,
             'site' => $site,
         ]);
@@ -229,7 +229,7 @@ class NodeController extends ActionController
 
         $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'value' => $nodeInstance,
             'site' => $site,
         ]);
@@ -255,7 +255,7 @@ class NodeController extends ActionController
                     $nodeContextPath
                 ), 1437051934);
             }
-            $this->view->assign('value', $node);
+            $this->view?->assign('value', $node);
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {

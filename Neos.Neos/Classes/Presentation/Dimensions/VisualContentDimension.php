@@ -127,8 +127,8 @@ final readonly class VisualContentDimension
 
         $x = ($leftOffset + $rightOffset) / 2;
         $y = $depth * 110 + 42;
-        $width = max($width, $x + 42 + 10);
-        $height = max($height, $y + 42 + 10);
+        $width = max($width, (int)$x + 42 + 10);
+        $height = max($height, (int)$y + 42 + 10);
 
         $currentNode = new VisualIntraDimensionalNode(
             $nodeId,

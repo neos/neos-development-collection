@@ -11,9 +11,6 @@ use Neos\Flow\Annotations as Flow;
 final readonly class Sorting implements \JsonSerializable, ProtectedContextAwareInterface
 {
     public function __construct(
-        /**
-         * @phpstan-var 'title'
-         */
         public string $sortBy,
         public bool $sortAscending
     ) {
