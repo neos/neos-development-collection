@@ -24,6 +24,7 @@ use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
+use Neos\Media\Domain\Strategy\ThumbnailGeneratorStrategy;
 use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
@@ -49,6 +50,12 @@ class ThumbnailService
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
+
+    /**
+     * @Flow\Inject
+     * @var ThumbnailGeneratorStrategy
+     */
+    protected $generatorStrategy;
 
     /**
      * @Flow\Inject
@@ -120,6 +127,7 @@ class ThumbnailService
                 && $configuration->getFormat() === null
                 && $maximumWidth === $asset->getWidth()
                 && $maximumHeight === $asset->getHeight()
+                && $this->generatorStrategy->isThumbnailGenerationClaimed($asset, $configuration) === false
             ) {
                 return $asset;
             }
