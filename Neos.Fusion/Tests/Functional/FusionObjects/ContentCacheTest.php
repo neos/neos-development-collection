@@ -746,4 +746,34 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         self::assertSame('First|2|Second|2', $thirdRenderResult);
         self::assertSame('First|2|Second|2', $fourthRenderResult);
     }
+
+    /**
+     * An outer cached segment is re-rendered while its nested cached segments are still cached.
+     * The dynamic segments inside those nested cache hits are resolved as independent entry points and
+     * must be taken from their own cache entries, as long as they were not flushed themselves.
+     */
+    #[Test]
+    public function dynamicSegmentsInNestedCacheHitsAreTakenFromCacheWhenOuterSegmentIsRerendered()
+    {
+        $view = $this->buildView();
+        $view->setOption('enableContentCache', true);
+        $view->assign('someContextVariable', 'prettyUnused');
+        $view->setFusionPath('contentCache/nesting/cachedOuterWithCachedSegmentsContainingDynamicSegments');
+
+        /** @var ActionRequest $actionRequest */
+        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest->setArgument('testArgument', '1');
+        $firstRenderResult = $view->render();
+
+        $actionRequest->setArgument('testArgument', '2');
+        $this->contentCache->flushByTag('outer');
+        $secondRenderResult = $view->render();
+
+        $this->contentCache->flushByTag('leaf');
+        $thirdRenderResult = $view->render();
+
+        self::assertSame('First|1|Second|1', $firstRenderResult);
+        self::assertSame('First|1|Second|1', $secondRenderResult, 'Dynamic segments must not be re-rendered if only the outer segment was flushed');
+        self::assertSame('First|2|Second|2', $thirdRenderResult);
+    }
 }
