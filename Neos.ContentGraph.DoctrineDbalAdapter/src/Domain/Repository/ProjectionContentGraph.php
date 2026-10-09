@@ -46,6 +46,7 @@ class ProjectionContentGraph
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository
     ) {
         $this->subqueries = SqlTableSubqueryFactory::for($this->tableNames);
     }
@@ -418,7 +419,7 @@ class ProjectionContentGraph
     }
 
     /**
-     *  @return array<int, HierarchyRelation>
+     * @return array<int, HierarchyRelation>
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
@@ -546,29 +547,16 @@ class ProjectionContentGraph
      */
     private function mapRawDataToHierarchyRelation(array $rawData): HierarchyRelation
     {
-        $dimensionSpacePointStatement = <<<SQL
-            SELECT
-                dimensionspacepoint
-            FROM
-                {$this->tableNames->dimensionSpacePoints()}
-            WHERE
-                hash = :hash
-        SQL;
-        try {
-            $dimensionSpacePointJson = $this->dbal->fetchOne($dimensionSpacePointStatement, [
-                'hash' => $rawData['dimensionspacepointhash']
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load dimension space point for hash %s from database: %s', $rawData['dimensionspacepointhash'], $e->getMessage()), 1716476830, $e);
-        }
+        $dimensionSpacePoint = $this->dimensionSpacePointsRepository->getOriginDimensionSpacePointByHash(
+            $rawData['dimensionspacepointhash']
+        )->toDimensionSpacePoint();
 
         return new HierarchyRelation(
             HierarchyRelationId::fromInt((int)$rawData['id']),
             ContentStreamLayer::fromInt((int)$rawData['contentstreamlayer']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromInteger((int)$rawData['childnodeanchor']),
-            DimensionSpacePoint::fromJsonString($dimensionSpacePointJson),
-            $rawData['dimensionspacepointhash'],
+            $dimensionSpacePoint,
             (int)$rawData['position'],
             NodeFactory::extractNodeTagsFromJson($rawData['subtreetags']),
         );

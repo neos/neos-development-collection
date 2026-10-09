@@ -195,9 +195,9 @@
         <source>There are no unpublished changes in this workspace.</source>
         <target state="final">Brak nieopublikowanych zmian w tym obszarze roboczym.</target>
       </trans-unit>
-      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+      <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="no">
         <source>Do you really want to discard all changes in the "{0}" workspace?</source>
-        <target state="final">Czy na pewno zaniechać wszystkie zmiany w obszarze roboczym "{0}" ? </target>
+        <target state="translated">Czy na pewno zaniechać wszystkie zmiany w obszarze roboczym "{0}" ?</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
