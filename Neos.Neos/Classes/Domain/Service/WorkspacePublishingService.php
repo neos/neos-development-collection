@@ -132,6 +132,13 @@ final class WorkspacePublishingService
             $ancestorNodeTypeName
         );
 
+        if (
+            $nodeIdsToPublish->isEmpty()
+            && $this->allPendingChangesBelongToAnotherScope($contentRepository, $workspaceName, $ancestorNodeTypeName)
+        ) {
+            return new PublishingResult(0, $crWorkspace->baseWorkspaceName);
+        }
+
         $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
         $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
@@ -165,6 +172,13 @@ final class WorkspacePublishingService
             $documentId,
             $ancestorNodeTypeName
         );
+
+        if (
+            $nodeIdsToPublish->isEmpty()
+            && $this->allPendingChangesBelongToAnotherScope($contentRepository, $workspaceName, $ancestorNodeTypeName)
+        ) {
+            return new PublishingResult(0, $crWorkspace->baseWorkspaceName);
+        }
 
         $this->publishNodes($contentRepository, $workspaceName, $nodeIdsToPublish);
         $this->softRemovalGarbageCollector->run($contentRepositoryId);
@@ -213,6 +227,13 @@ final class WorkspacePublishingService
             NodeTypeNameFactory::forSite()
         );
 
+        if (
+            $nodeIdsToDiscard->isEmpty()
+            && $this->allPendingChangesBelongToAnotherScope($contentRepository, $workspaceName, $ancestorNodeTypeName)
+        ) {
+            return new DiscardingResult(0);
+        }
+
         $this->discardNodes($contentRepository, $workspaceName, $nodeIdsToDiscard);
         $this->softRemovalGarbageCollector->run($contentRepositoryId);
 
@@ -242,6 +263,13 @@ final class WorkspacePublishingService
             $documentId,
             $ancestorNodeTypeName
         );
+
+        if (
+            $nodeIdsToDiscard->isEmpty()
+            && $this->allPendingChangesBelongToAnotherScope($contentRepository, $workspaceName, $ancestorNodeTypeName)
+        ) {
+            return new DiscardingResult(0);
+        }
 
         $this->discardNodes($contentRepository, $workspaceName, $nodeIdsToDiscard);
         $this->softRemovalGarbageCollector->run($contentRepositoryId);
@@ -378,6 +406,52 @@ final class WorkspacePublishingService
     {
         $crWorkspace = $this->requireContentRepositoryWorkspace($contentRepository, $workspaceName);
         return $contentRepository->projectionState(ChangeFinder::class)->countByContentStreamId($crWorkspace->currentContentStreamId);
+    }
+
+    /**
+     * Whether every pending change of this workspace can be attributed to an ancestor of the given type.
+     *
+     * This is only consulted when nothing was resolved for the requested scope, in order to tell two very
+     * different situations apart:
+     *
+     * - every change belongs to *another* site or document (e.g. the editor is working in a different site
+     *   of a multi-site content repository). Publishing or discarding the requested scope is then a no-op.
+     * - a change cannot be attributed to any ancestor of that type, for instance because its node no longer
+     *   exists in the workspace. Such a change would silently be left behind, so we must not skip the
+     *   command and let it fail loudly instead.
+     *
+     * @see https://github.com/neos/neos-development-collection/issues/5459 for the underlying problem of
+     *      changes that cannot be attributed to their document or site.
+     */
+    private function allPendingChangesBelongToAnotherScope(
+        ContentRepository $contentRepository,
+        WorkspaceName $workspaceName,
+        NodeTypeName $ancestorNodeTypeName
+    ): bool {
+        $contentGraph = $contentRepository->getContentGraph($workspaceName);
+        foreach ($this->pendingWorkspaceChangesInternal($contentRepository, $workspaceName) as $change) {
+            if ($change->originDimensionSpacePoint === null) {
+                // a change to the node aggregate itself – it can only be attributed if the aggregate still exists
+                if ($contentGraph->findNodeAggregateById($change->nodeAggregateId) === null) {
+                    return false;
+                }
+                continue;
+            }
+
+            $subgraph = $contentGraph->getSubgraph(
+                $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+                VisibilityConstraints::createEmpty()
+            );
+            $ancestorNode = $subgraph->findClosestNode(
+                $change->getLegacyRemovalAttachmentPoint() ?? $change->nodeAggregateId,
+                FindClosestNodeFilter::create(nodeTypes: $ancestorNodeTypeName->value)
+            );
+            if ($ancestorNode === null) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function isChangePublishableWithinAncestorScope(
