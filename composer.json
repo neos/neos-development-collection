@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "9.2.x-dev",
+        "neos/flow-development-collection": "9.3.x-dev",
         "doctrine/dbal": "^3.1.4",
         "doctrine/migrations": "*",
         "neos/eventstore": "~2.0.1",
@@ -23,7 +23,7 @@
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
         "behat/behat": "^3.5",
-        "neos/behat": "~9.2.0",
+        "neos/behat": "~9.3.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "^5.4|^6.0",
         "neos/fluid-adaptor": "*",
@@ -42,7 +42,7 @@
         "neos/party": "^7.1",
         "neos/fusion-form": "^2.1 || ^3.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.2.0"
+        "neos/kickstarter": "~9.3.0"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",

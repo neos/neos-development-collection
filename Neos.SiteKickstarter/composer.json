@@ -13,7 +13,7 @@
         "neos/flow": "*",
         "neos/utility-files": "*",
         "neos/fluid-adaptor": "*",
-        "neos/kickstarter": "~9.2.0",
+        "neos/kickstarter": "~9.3.0",
 
         "neos/contentrepository-core": "self.version"
     },
