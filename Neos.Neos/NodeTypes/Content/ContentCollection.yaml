@@ -1,6 +1,8 @@
 # A content collection is a collection of "Neos.Neos:Content" (and its subclasses),
 # i.e. contains variable number of children.
 'Neos.Neos:ContentCollection':
+  # The aggregate mode keeps child nodes from getting lost in other dimensions after move operations, when the collection itself only exists as fallback in those dimensions.
+  aggregate: true
   superTypes:
     'Neos.Neos:Node': true
   ui:
