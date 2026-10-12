@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\DimensionSpace;
 
 use Neos\ContentRepository\Core\Dimension;
+use Neos\JsonSchema\ObjectSchema;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * A point in the dimension space with coordinates DimensionName => DimensionValue.
@@ -22,7 +25,7 @@ use Neos\ContentRepository\Core\Dimension;
  *
  * @api
  */
-abstract class AbstractDimensionSpacePoint implements \JsonSerializable
+abstract class AbstractDimensionSpacePoint implements ProvidesSchema, \JsonSerializable
 {
     protected function __construct(
         /**
@@ -49,29 +52,16 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable
      */
     final protected static function validateCoordinates(array $coordinates): void
     {
-        foreach ($coordinates as $dimensionName => $dimensionValue) {
-            if (!is_string($dimensionName)) {
-                throw new \InvalidArgumentException(
-                    sprintf('Dimension name "%s" is not a string', $dimensionName),
-                    1639733101
-                );
-            }
-            if ($dimensionName === '') {
-                throw new \InvalidArgumentException('Dimension name must not be empty', 1639733123);
-            }
-            if (!is_string($dimensionValue)) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Dimension value for %s is not a string but: %s',
-                        $dimensionName,
-                        get_debug_type($dimensionValue)
-                    ),
-                    1506076562
-                );
-            }
-            if ($dimensionValue === '') {
-                throw new \InvalidArgumentException('Dimension value must not be empty', 1506076563);
-            }
+        $validationResult = self::schema()->validate($coordinates);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Invalid dimension space point coordinates %s: %s',
+                    json_encode($coordinates, JSON_PARTIAL_OUTPUT_ON_ERROR),
+                    $validationResult->issues
+                ),
+                1506076562
+            );
         }
     }
 
@@ -136,6 +126,15 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable
         return $legacyDimensions;
     }
 
+    public static function schema(): ObjectSchema
+    {
+        static $schema = null;
+        return $schema ??= ObjectSchema::create(
+            comment: 'A point without dimensions is serialized as an empty list ("[]") rather than an empty object',
+            additionalProperties: StringSchema::create(minLength: 1),
+            propertyNames: StringSchema::create(minLength: 1),
+        );
+    }
 
     /**
      * @return array<string,string>
