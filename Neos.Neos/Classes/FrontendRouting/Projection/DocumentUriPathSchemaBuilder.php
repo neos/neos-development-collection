@@ -59,7 +59,7 @@ final class DocumentUriPathSchemaBuilder
         ]);
 
         $table
-            ->setPrimaryKey(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
+            ->setPrimaryKey(['nodeaggregateid', 'dimensionspacepointhash'])
             ->addIndex([
                 'parentnodeaggregateid',
                 'precedingnodeaggregateid',
