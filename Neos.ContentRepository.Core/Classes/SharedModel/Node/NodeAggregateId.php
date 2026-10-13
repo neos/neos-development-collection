@@ -15,19 +15,16 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * The NodeAggregateId supersedes the Node Identifier from Neos <= 9.x.
  *
  * @api
  */
-final readonly class NodeAggregateId implements \JsonSerializable
+final readonly class NodeAggregateId implements ProvidesSchema, \JsonSerializable
 {
-    /**
-     * A preg pattern to match against node aggregate identifiers
-     */
-    private const PATTERN = '/^([a-z0-9\-]{1,64})$/';
-
     private function __construct(
         public string $value
     ) {
@@ -40,12 +37,9 @@ final readonly class NodeAggregateId implements \JsonSerializable
 
     public static function fromString(string $value): self
     {
-        if (!self::hasValidFormat($value)) {
-            throw new \InvalidArgumentException(
-                'Invalid node aggregate identifier "' . $value
-                . '" (a node aggregate identifier must only contain lowercase characters, numbers and the "-" sign).',
-                1505840197862
-            );
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid node aggregate identifier "%s": %s', $value, $validationResult->issues), 1791889843);
         }
         return new self($value);
     }
@@ -67,7 +61,19 @@ final readonly class NodeAggregateId implements \JsonSerializable
 
     private static function hasValidFormat(string $value): bool
     {
-        return preg_match(self::PATTERN, $value) === 1;
+        return self::schema()->validate($value)->valid;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Identifier of a node aggregate',
+            examples: ['a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', 'sites'],
+            minLength: 1,
+            maxLength: 64,
+            pattern: '^[a-z0-9\-]+$',
+        );
     }
 
     public function __toString(): string
