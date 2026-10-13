@@ -198,12 +198,14 @@ class RuntimeContentCache
 
                         $unserializedContext = $self->unserializeContext($additionalData['context']);
                         $this->runtime->pushContextArray($unserializedContext);
-                        $result = $this->runtime->evaluate($additionalData['path']);
-                        $this->runtime->popContext();
-
-                        $self->inCacheEntryPoint = $previouslyInCacheEntryPoint;
-                        $self->addCacheSegmentMarkersToPlaceholders = $previouslyAddCacheSegmentMarkersToPlaceholders;
-                        return $result;
+                        try {
+                            return $this->runtime->evaluate($additionalData['path']);
+                        } finally {
+                            // Restore the state even if the evaluation throws, so it does not leak into the outer segment
+                            $this->runtime->popContext();
+                            $self->inCacheEntryPoint = $previouslyInCacheEntryPoint;
+                            $self->addCacheSegmentMarkersToPlaceholders = $previouslyAddCacheSegmentMarkersToPlaceholders;
+                        }
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
                     }
