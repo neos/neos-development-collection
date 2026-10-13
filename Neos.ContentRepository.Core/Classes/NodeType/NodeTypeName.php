@@ -14,12 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
+
 /**
  * Name of a Node Type; e.g. "Neos.Neos:Content"
  *
  * @api
  */
-final class NodeTypeName implements \JsonSerializable
+final class NodeTypeName implements ProvidesSchema, \JsonSerializable
 {
     public const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
 
@@ -31,8 +34,9 @@ final class NodeTypeName implements \JsonSerializable
     private function __construct(
         public readonly string $value
     ) {
-        if ($value === '') {
-            throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid node type name "%s": %s', $value, $validationResult->issues), 1505835958);
         }
     }
 
@@ -54,6 +58,16 @@ final class NodeTypeName implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Name of a node type',
+            examples: ['Neos.Neos:Document', 'Vendor.Site:Content.Text'],
+            minLength: 1,
+        );
     }
 
     public function __toString(): string

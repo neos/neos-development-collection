@@ -130,6 +130,8 @@ abstract class AbstractDimensionSpacePoint implements ProvidesSchema, \JsonSeria
     {
         static $schema = null;
         return $schema ??= ObjectSchema::create(
+            description: 'A point in the dimension space, mapping dimension names to dimension values',
+            examples: [['language' => 'de'], ['language' => 'en', 'country' => 'us']],
             comment: 'A point without dimensions is serialized as an empty list ("[]") rather than an empty object',
             additionalProperties: StringSchema::create(minLength: 1),
             propertyNames: StringSchema::create(minLength: 1),

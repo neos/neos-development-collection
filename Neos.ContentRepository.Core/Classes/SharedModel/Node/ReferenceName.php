@@ -14,16 +14,20 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
+
 /**
  * @api
  */
-final readonly class ReferenceName implements \JsonSerializable
+final readonly class ReferenceName implements ProvidesSchema, \JsonSerializable
 {
     private function __construct(
         public string $value
     ) {
-        if ($value === '') {
-            throw new \InvalidArgumentException('Reference name must not be empty.', 1661950814);
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid reference name "%s": %s', $value, $validationResult->issues), 1661950814);
         }
     }
 
@@ -35,6 +39,16 @@ final readonly class ReferenceName implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Name of a node reference as declared in the node type',
+            examples: ['relatedArticles'],
+            minLength: 1,
+        );
     }
 
     public function __toString(): string
