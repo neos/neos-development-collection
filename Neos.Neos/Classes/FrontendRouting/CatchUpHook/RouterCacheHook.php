@@ -122,7 +122,10 @@ final class RouterCacheHook implements CatchUpHookInterface
             fn (PropertyName $propertyName) => $propertyName->value,
             iterator_to_array($event->propertiesToUnset)
         ));
-        if (!isset($newPropertyValues['uriPathSegment']) && !isset($unsetPropertyValues['uriPathSegment'])) {
+        if (!isset($newPropertyValues['uriPathSegment']) && !isset($unsetPropertyValues['uriPathSegment'])
+            && !isset($newPropertyValues['targetMode']) && !isset($unsetPropertyValues['targetMode'])
+            && !isset($newPropertyValues['target']) && !isset($unsetPropertyValues['target'])
+        ) {
             return;
         }
 
