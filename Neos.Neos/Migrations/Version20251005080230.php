@@ -277,6 +277,12 @@ class Version20251005080230 extends AbstractMigration
          * Neos.Neos-FusionObject changes
          */
         $this->renameOnlyFusionPrototypeInstantiations('Neos.Neos:PrimaryContent', 'Neos.Neos:ContentCollection', '"Neos.Neos:PrimaryContent" has been removed without a complete replacement. We replaced all usages with "Neos.Neos:ContentCollection" but not the prototype definition. Please check the replacements and if you have overridden the "Neos.Neos:PrimaryContent" prototype and rewrite it for your needs.');
+
+        /**
+         * Node comparison
+         * E.g documentNode == site
+         */
+        $this->replaceEelExpression('/([^\w]|\s|^)(documentNode|node|site)(\s?[!=]+\s?)(documentNode|node|site)([^\w]|\s|$)/', "$1$2.aggregateId.value$3$4.aggregateId.value$5");
     }
 
     public function disableAddingTodoComments(): void
