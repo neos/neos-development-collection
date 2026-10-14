@@ -132,6 +132,12 @@ class NodeController extends ActionController
         $nodeAddress = NodeAddress::fromJsonString($node);
 
         $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
+        if ($renderingMode->isPreview) {
+            $visibilityConstraints = $this->contentRepositoryAuthorizationService->getVisibilityConstraints($contentRepository->id, $this->securityContext->getRoles());
+            $visibilityConstraints = $visibilityConstraints->merge(NeosVisibilityConstraints::excludeDisabled());
+            $subgraph = $contentRepository->getContentGraph($nodeAddress->workspaceName)
+                ->getSubgraph($nodeAddress->dimensionSpacePoint, $visibilityConstraints);
+        }
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
 
