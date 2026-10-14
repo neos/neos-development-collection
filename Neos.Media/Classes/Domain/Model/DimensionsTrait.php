@@ -19,13 +19,13 @@ use Doctrine\ORM\Mapping as ORM;
 trait DimensionsTrait
 {
     /**
-     * @var integer
+     * @var integer|null
      * @ORM\Column(nullable=true)
      */
     protected $width = 0;
 
     /**
-     * @var integer
+     * @var integer|null
      * @ORM\Column(nullable=true)
      */
     protected $height = 0;
@@ -33,7 +33,7 @@ trait DimensionsTrait
     /**
      * Width of the image in pixels
      *
-     * @return integer
+     * @return integer|null
      */
     public function getWidth()
     {
@@ -43,7 +43,7 @@ trait DimensionsTrait
     /**
      * Height of the image in pixels
      *
-     * @return integer
+     * @return integer|null
      */
     public function getHeight()
     {

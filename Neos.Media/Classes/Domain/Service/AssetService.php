@@ -33,11 +33,11 @@ use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Model\Thumbnail;
 use Neos\Media\Domain\Model\ThumbnailConfiguration;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Service\Imagor\ImagorService;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\Exception\AssetVariantGeneratorException;
 use Neos\Media\Exception\ThumbnailServiceException;
-use Neos\RedirectHandler\Storage\RedirectStorageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\MediaTypes;
 use Psr\Log\LoggerInterface;
@@ -105,9 +105,19 @@ class AssetService
 
     /**
      * @Flow\Inject
+     */
+    protected ImagorService $imagorService;
+
+    /**
+     * @Flow\Inject
      * @var AssetVariantGenerator
      */
     protected $assetVariantGenerator;
+
+    /**
+     * @Flow\InjectConfiguration("imagor.enabled")
+     */
+    protected bool $isImagorEnabled = false;
 
     /**
      * Returns the repository for an asset
@@ -131,17 +141,21 @@ class AssetService
      * Calculates the dimensions of the thumbnail to be generated and returns the thumbnail URI.
      * In case of Images this is a thumbnail of the image, in case of other assets an icon representation.
      *
-     * @param AssetInterface $asset
-     * @param ThumbnailConfiguration $configuration
-     * @param ActionRequest $request Request argument must be provided for asynchronous thumbnails
+     * @param  AssetInterface  $asset
+     * @param  ThumbnailConfiguration  $configuration
+     * @param  ActionRequest|null  $request  Request argument must be provided for asynchronous thumbnails
      * @return array|null Array with keys "width", "height" and "src" if the thumbnail generation work or null
      * @throws AssetServiceException
-     * @throws ThumbnailServiceException
-     * @throws MissingActionNameException
      * @throws HttpException
+     * @throws MissingActionNameException
+     * @throws ThumbnailServiceException
      */
     public function getThumbnailUriAndSizeForAsset(AssetInterface $asset, ThumbnailConfiguration $configuration, ?ActionRequest $request = null): ?array
     {
+        if($asset instanceof ImageInterface && $this->isImagorEnabled) {
+            return $this->imagorService->getThumbnailUriAndSize($asset, $configuration);
+        }
+
         $thumbnailImage = $this->thumbnailService->getThumbnail($asset, $configuration);
         if (!$thumbnailImage instanceof ImageInterface) {
             return null;
