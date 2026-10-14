@@ -1,0 +1,536 @@
+{
+    "lady-eleonode-rootford": {
+        "033e5de7b423f45bb4f5a09f73af839e": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "sir-nodeward-nodington-iii"
+                ]
+            }
+        },
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "sir-nodeward-nodington-iii"
+                ]
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "sir-nodeward-nodington-iii"
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "sir-nodeward-nodington-iii"
+                ]
+            }
+        }
+    },
+    "sir-david-nodenborough": {
+        "033e5de7b423f45bb4f5a09f73af839e": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nody-mc-nodeface": {
+        "033e5de7b423f45bb4f5a09f73af839e": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-mediocre",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "parent": {
+                "_discriminator": "sir-nodeward-nodington-iii",
+                "aggregateId": "sir-nodeward-nodington-iii",
+                "name": "esquire"
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire-child",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-o-nodeface": "nody-o-nodeface"
+                }
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-mediocre",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-mediocre",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nodimus-mediocre": {
+        "033e5de7b423f45bb4f5a09f73af839e": {
+            "node": {
+                "_discriminator": "nodimus-mediocre",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "nodimus-mediocre",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "nodimus-mediocre",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            }
+        }
+    },
+    "nody-o-nodeface": {
+        "033e5de7b423f45bb4f5a09f73af839e": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "sir-nodeward-nodington-iii": {
+        "033e5de7b423f45bb4f5a09f73af839e": {
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    }
+                ]
+            }
+        },
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "children": {
+                "nodes": [
+                    "nodimus-prime",
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    }
+                ]
+            }
+        },
+        "fbe53ddc3305685fbb4dbf529f283a0e": {
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    }
+                ]
+            }
+        },
+        "9a723c057afa02982dae9d0b541739be": {
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nodimus-prime": {
+        "65901ded4f068dac14ad0dce4f459b29": {
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

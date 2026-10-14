@@ -1,0 +1,88 @@
+{
+    "sir-david-nodenborough": {
+        "d751713988987e9331980363e24189ce": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "sir-david-nodenborough",
+                "originDimensionSpacePoint": [],
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                "properties": {
+                    "addedProperties": {
+                        "defaultText": {
+                            "value": "my default",
+                            "type": "string"
+                        },
+                        "text": {
+                            "value": "initial text",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        }
+    },
+    "lady-eleonode-rootford": {
+        "d751713988987e9331980363e24189ce": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": [],
+                        "aggregateId": "sir-david-nodenborough",
+                        "originDimensionSpacePoint": [],
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes",
+                        "properties": {
+                            "addedProperties": {
+                                "defaultText": {
+                                    "value": "my default",
+                                    "type": "string"
+                                },
+                                "text": {
+                                    "value": "initial text",
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "name": "node",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
