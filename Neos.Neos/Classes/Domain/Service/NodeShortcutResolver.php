@@ -65,6 +65,9 @@ class NodeShortcutResolver
                     break;
                 case 'parentNode':
                     $node = $node->getParent();
+                    if ($node === null) {
+                        return null;
+                    }
                     break;
                 case 'firstChildNode':
                 default:
