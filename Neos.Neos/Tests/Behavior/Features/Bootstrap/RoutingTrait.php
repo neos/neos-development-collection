@@ -256,9 +256,8 @@ trait RoutingTrait
      */
     public function tableContainsExactly(TableNode $expectedRows): void
     {
-        /** @var Connection $dbal */
-        $dbal = $this->getObject(EntityManagerInterface::class)->getConnection();
-        $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
+        $dbal = $this->getObject(Connection::class);
+        $columns = implode(', ', $expectedRows->getRow(0));
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
             $this->currentContentRepository->id
         );
