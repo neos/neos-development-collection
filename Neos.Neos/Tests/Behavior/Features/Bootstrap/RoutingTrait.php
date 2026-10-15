@@ -195,8 +195,6 @@ trait RoutingTrait
         Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
     }
 
-    private $eventListenerRegistered = false;
-
     private function match(UriInterface $uri): ?NodeAddress
     {
         $router = $this->getObject(RouterInterface::class);
