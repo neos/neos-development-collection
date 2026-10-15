@@ -265,6 +265,7 @@ trait RoutingTrait
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 if (str_starts_with($cell, 'hash')) {
+                    // Feature to allow to write | hash{"example":"source"} | in a cell instead of knowing the actual internal hash
                     return DimensionSpacePoint::fromJsonString(substr($cell, strlen('hash')))->hash;
                 }
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
