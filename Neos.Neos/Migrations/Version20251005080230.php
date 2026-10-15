@@ -282,7 +282,8 @@ class Version20251005080230 extends AbstractMigration
          * Node comparison
          * E.g documentNode == site
          */
-        $this->replaceEelExpression('/([^\w]|\s|^)(documentNode|node|site)(\s?[!=]+\s?)(documentNode|node|site)([^\w]|\s|$)/', "$1$2.aggregateId.value$3$4.aggregateId.value$5");
+        $this->replaceEelExpression('/([^\w]|\s|^)(documentNode|node|site)(\s?==\s?)(documentNode|node|site)([^\w]|\s|$)/', "$1Neos.Node.equals($2, $4)$5");
+        $this->replaceEelExpression('/([^\w]|\s|^)(documentNode|node|site)(\s?!=\s?)(documentNode|node|site)([^\w]|\s|$)/', "$1!Neos.Node.equals($2, $4)$5");
     }
 
     public function disableAddingTodoComments(): void
