@@ -26,12 +26,12 @@ final class Version20260930150314 extends AbstractMigration
             "Migration can only be executed safely on '\Doctrine\DBAL\Platforms\AbstractMySQLPlatform'."
         );
 
-        if ($schema->getTable('neos_asset_usage')->hasIndex('IDX_14C94F11044B499EB28F27DAEAC5D4BB')) {
-            $this->addSql('ALTER TABLE `neos_asset_usage` DROP INDEX IDX_14C94F11044B499EB28F27DAEAC5D4BB');
-        }
-
         if ($schema->getTable('neos_asset_usage')->getPrimaryKey() === null) {
             $this->addSql('ALTER TABLE `neos_asset_usage` MODIFY `contentrepositoryid` char(16) NOT NULL, ADD PRIMARY KEY (`contentrepositoryid`, `assetid`,`workspacename`,`nodeaggregateid`,`origindimensionspacepointhash`,`propertyname`)');
+        }
+
+        if ($schema->getTable('neos_asset_usage')->hasIndex('IDX_14C94F11044B499EB28F27DAEAC5D4BB')) {
+            $this->addSql('ALTER TABLE `neos_asset_usage` DROP INDEX IDX_14C94F11044B499EB28F27DAEAC5D4BB');
         }
     }
 
