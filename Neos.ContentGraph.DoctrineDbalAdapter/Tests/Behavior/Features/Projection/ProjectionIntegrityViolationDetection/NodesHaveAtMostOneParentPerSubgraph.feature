@@ -54,5 +54,6 @@ Feature: Run integrity violation detection regarding parent relations
       | parentNodeAggregateId | "sir-nodeward-nodington-iii" |
       | childNodeAggregateId  | "nody-mc-nodeface"           |
     And I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 1 error
-    And I expect integrity violation detection result error number 1 to have code 1597925698
+    Then I expect the integrity violation detection result to contain exactly 2 error
+    And I expect integrity violation detection result error number 1 to have code 1597909228
+    And I expect integrity violation detection result error number 2 to have code 1597925698

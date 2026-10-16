@@ -133,14 +133,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             ));
         }
 
-        $result->merge(
-            $this->contentStreamLayersIntegrityIsProvided()
-        );
+        $result->merge($this->contentStreamLayersIntegrityIsProvided());
+        $result->merge($this->sortPathAndDepthIntegrityIsProvided());
 
         return $result;
     }
 
-    public function contentStreamLayersIntegrityIsProvided(): Result
+    private function contentStreamLayersIntegrityIsProvided(): Result
     {
         $contentStreamIdsWithRedundantLayersStatement = <<<SQL
             SELECT subquery.contentStreamIds, MIN(subquery.contentStreamLayer) AS minContentStreamLayer, MAX(subquery.contentStreamLayer) as maxContentStreamLayer
@@ -257,6 +256,49 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         return $result;
     }
 
+    private function sortPathAndDepthIntegrityIsProvided(): Result
+    {
+        $result = new Result();
+
+        $sql = <<<SQL
+            SELECT
+                    h.id,
+                    h.contentstreamid,
+                    h.contentstreamlayer,
+                    h.dimensionspacepointhash,
+                    h.sortpath,
+                    h.depth,
+                    ph.sortpath AS parentsortpath,
+                    ph.depth AS parentdepth
+                FROM {$this->allContentStreamHierarchiesSql()} AS h
+                LEFT JOIN {$this->allContentStreamHierarchiesSql()} AS ph
+                    ON ph.childnodeanchor = h.parentnodeanchor
+                    AND ph.contentstreamid = h.contentstreamid
+                    AND ph.dimensionspacepointhash = h.dimensionspacepointhash
+                WHERE
+                    h.sortpath IS NOT NULL
+                    AND (
+                        -- depth is equal the segments count in sortpath
+                        h.depth <> LENGTH(h.sortpath) - LENGTH(REPLACE(h.sortpath, '/', ''))
+                        -- parent depth is one less than current
+                        OR h.depth <> ph.depth + 1
+                        -- parent sortpath is prefix of current sortpath
+                        OR LEFT(h.sortpath, LENGTH(ph.sortpath) + 1) <> CONCAT(ph.sortpath, '/')
+                );
+            SQL;
+        try {
+            $sortPathAndDepthIntegrityViolations = $this->dbal->fetchAllAssociative($sql);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load sortPath and depth integrity violations: %s', $e->getMessage()), 1776353433, $e);
+        }
+
+        foreach ($sortPathAndDepthIntegrityViolations as $row) {
+            $result->addError($a = new Error('SortPath or depth of row %d do not match their parent values or they are not consistent with each other. (sortPath: %s, parent sortPath: %s, depth: %d, parent depth: %s)', self::ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED, [$row['id'], $row['sortpath'], $row['depth'], $row['parentsortpath'], $row['parentdepth']]));
+        }
+
+        return $result;
+    }
+
     public function siblingsAreDistinctlySorted(): Result
     {
         $result = new Result();
@@ -266,16 +308,16 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 h.contentstreamid,
                 h.dimensionspacepointhash,
                 h.parentnodeanchor,
-                COUNT(h.position)
+                COUNT(h.sortpath)
             FROM
                 {$this->allContentStreamHierarchiesSql()} AS h
             GROUP BY
                 h.contentstreamid,
-                h.position,
+                h.sortpath,
                 h.parentnodeanchor,
                 h.dimensionspacepointhash
             HAVING
-                COUNT(position) > 1
+                COUNT(sortpath) > 1
         SQL;
         try {
             $ambiguouslySortedHierarchyRelationRecords = $this->dbal->executeQuery($ambiguouslySortedHierarchyRelationStatement);
@@ -869,7 +911,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
      * @return array<NodeAggregateId>
      */
     protected function findProjectedNodeAggregateIdsInContentStream(
-        ContentStreamLayers $contentStreamLayers
+        ContentStreamLayers $contentStreamLayers,
     ): array {
         $contentStreamHierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers);
         $nodeAggregateIdsStatement = <<<SQL
