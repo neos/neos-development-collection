@@ -42,7 +42,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
         switch ($outputMode) {
             case self::OUTPUT_MODE_CONSOLE:
                 foreach ($result->getErrors() as $error) {
-                    $this->outputLine($error->getMessage());
+                    $this->outputLine($error->render());
                 }
                 break;
             case self::OUTPUT_MODE_LOG:
@@ -57,7 +57,7 @@ final class ContentGraphIntegrityCommandController extends CommandController
                     $fileContent = 'The content graph showed no integrity violations.';
                 } else {
                     foreach ($result->getErrors() as $error) {
-                        $fileContent .= $error->getMessage() . "\n";
+                        $fileContent .= $error->render() . "\n";
                     }
                 }
 
