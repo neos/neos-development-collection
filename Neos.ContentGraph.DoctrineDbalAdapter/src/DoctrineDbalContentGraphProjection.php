@@ -302,6 +302,37 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
 
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
+            // Drop non-referenced nodes (which will not have a hierarchy relation after the merge)
+            $deleteNodesStatement = <<<SQL
+            DELETE n FROM {$this->tableNames->node()} n
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
+            INNER JOIN (
+              SELECT childnodeanchor FROM {$this->tableNames->hierarchyRelation()} AS h
+                INNER JOIN (
+                  SELECT id, MIN(contentstreamlayer) AS mergeIntoLayer, MAX(contentstreamlayer) AS mergeFromLayer FROM {$this->tableNames->hierarchyRelation()}
+                  WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                  GROUP BY id
+                  HAVING mergeIntoLayer != mergeFromLayer
+                ) AS reducedHierarchies
+                ON reducedHierarchies.id = h.id
+                AND reducedHierarchies.mergeIntoLayer = h.contentstreamlayer
+                WHERE NOT EXISTS(
+                  SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS allH
+                  WHERE allH.contentstreamlayer != :contentStreamLayerToMergeInto
+                    AND allH.childnodeanchor = h.childnodeanchor
+                )
+            ) AS reducedExclusive
+            ON reducedExclusive.childnodeanchor = n.relationanchorpoint
+            SQL;
+            try {
+                $this->dbal->executeStatement($deleteNodesStatement, [
+                    'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
+                    'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to delete non-referenced merged nodes: %s', $e->getMessage()), 1792164936, $e);
+            }
+
             $mergeHierarchyRelationsStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()} (
                   id,
@@ -376,10 +407,16 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         $deleteNodesStatement = <<<SQL
             DELETE n FROM {$this->tableNames->node()} n
             -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
-            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
-              ON h.childnodeanchor = n.relationanchorpoint
-                AND h.contentstreamlayer != :targetContentStreamLayer
-            WHERE h.childnodeanchor IS NULL
+            WHERE EXISTS(
+              SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                WHERE h.contentstreamlayer = :targetContentStreamLayer
+                AND h.childnodeanchor = n.relationanchorpoint
+            )
+            AND NOT EXISTS(
+              SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                WHERE h.contentstreamlayer != :targetContentStreamLayer
+                AND h.childnodeanchor = n.relationanchorpoint
+            )
             SQL;
         try {
             $this->dbal->executeStatement($deleteNodesStatement, [
@@ -392,7 +429,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced reference relations (i.e. because the referenced nodes will be gone)
         $deleteReferencesStatement = <<<SQL
             DELETE r FROM {$this->tableNames->referenceRelation()} r
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
               LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = r.nodeanchorpoint
                 AND h.contentstreamlayer != :targetContentStreamLayer
