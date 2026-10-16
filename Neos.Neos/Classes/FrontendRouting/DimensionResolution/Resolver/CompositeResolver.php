@@ -48,7 +48,6 @@ final class CompositeResolver implements DimensionResolverInterface
         RequestToDimensionSpacePointContext $context
     ): RequestToDimensionSpacePointContext {
         foreach ($this->resolvers as $resolver) {
-            assert($resolver instanceof DimensionResolverInterface);
             $context = $resolver->fromRequestToDimensionSpacePoint($context);
         }
         return $context;
@@ -61,7 +60,6 @@ final class CompositeResolver implements DimensionResolverInterface
         UriConstraints $uriConstraints,
     ): UriConstraints {
         foreach (array_reverse($this->resolvers) as $resolver) {
-            assert($resolver instanceof DimensionResolverInterface);
             $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints(
                 $filteredDimensionSpacePoint,
                 $targetNodeInfo,

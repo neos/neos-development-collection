@@ -193,7 +193,7 @@ class NodesController extends ActionController
                 }
             }
         }
-        $this->view->assign('nodes', $nodes);
+        $this->view?->assign('nodes', $nodes);
     }
 
 
@@ -240,7 +240,7 @@ class NodesController extends ActionController
 
         $nodeAddress = NodeAddress::fromNode($node)->toJson();
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'node' => $node,
             'nodeContextPath' => $nodeAddress,
             'convertedNodeProperties' => $convertedNodeProperties

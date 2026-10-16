@@ -23,8 +23,8 @@ use Neos\Flow\Annotations as Flow;
 final readonly class TagContentChange
 {
     /**
-     * @param list<string> $addedTags
-     * @param list<string> $removedTags
+     * @param array<int, string> $addedTags
+     * @param array<int, string> $removedTags
      */
     public function __construct(
         public array $addedTags,

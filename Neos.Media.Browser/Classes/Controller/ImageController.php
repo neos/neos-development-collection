@@ -55,7 +55,7 @@ class ImageController extends AssetController
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, ?Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, ?AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
-        $this->view->assign('filterOptions', []);
+        $this->view?->assign('filterOptions', []);
         parent::indexAction($view, $sortBy, $sortDirection, 'Image', $tagMode, $tag, $searchTerm, $collectionMode, $assetCollection, $assetSourceIdentifier);
     }
 

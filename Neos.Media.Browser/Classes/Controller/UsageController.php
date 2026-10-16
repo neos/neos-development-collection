@@ -209,7 +209,7 @@ class UsageController extends ActionController
             ];
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'totalUsageCount' => count($usageReferences),
             'nodeUsageClass' => AssetUsageReference::class,
             'asset' => $asset,

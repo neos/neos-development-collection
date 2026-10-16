@@ -287,7 +287,7 @@ class AssetController extends ActionController
 
             if (trim($searchTerm) !== '') {
                 $assetProxies = $assetProxyRepository->findBySearchTerm($searchTerm);
-                $this->view->assign('searchTerm', $searchTerm);
+                $this->view?->assign('searchTerm', $searchTerm);
             } elseif ($this->browserState->get('tagMode') === self::TAG_NONE) {
                 $assetProxies = $assetProxyRepository->findUntagged();
             } elseif ($this->browserState->get('activeTag') !== null) {
@@ -301,10 +301,10 @@ class AssetController extends ActionController
             $searchResultCount = $assetProxies->count();
             $untaggedCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countUntagged() : 0);
         } catch (AssetSourceConnectionExceptionInterface $e) {
-            $this->view->assign('connectionError', $e);
+            $this->view?->assign('connectionError', $e);
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'tags' => $tags,
             'allCollectionsCount' => $allCollectionsCount,
             'allCount' => $allCount,
@@ -334,7 +334,7 @@ class AssetController extends ActionController
             $maximumFileUploadSize = null;
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'tags' => $this->tagRepository->findAll(),
             'assetCollections' => $this->assetCollectionRepository->findAll(),
             'maximumFileUploadSize' => $maximumFileUploadSize,
@@ -354,7 +354,7 @@ class AssetController extends ActionController
             $maximumFileUploadSize = null;
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'asset' => $asset,
             'maximumFileUploadSize' => $maximumFileUploadSize,
             'createAssetRedirectsOptionEnabled' => $this->packageManager->isPackageAvailable('Neos.RedirectHandler') && $this->settings['features']['createAssetRedirectsOption']['enable'],
@@ -380,13 +380,13 @@ class AssetController extends ActionController
         try {
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
 
-            $this->view->assignMultiple([
+            $this->view?->assignMultiple([
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
                 'assetContainsMaliciousContent' => $this->checkForMaliciousContent($assetProxy)
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
-            $this->view->assign('connectionError', $e);
+            $this->view?->assign('connectionError', $e);
         }
     }
 
@@ -429,7 +429,7 @@ class AssetController extends ActionController
                 }
             }
 
-            $this->view->assignMultiple([
+            $this->view?->assignMultiple([
                 'tags' => $tags,
                 'assetProxy' => $assetProxy,
                 'assetCollections' => $this->assetCollectionRepository->findAll(),
@@ -439,7 +439,7 @@ class AssetController extends ActionController
                 'canShowVariants' => ($assetProxy instanceof NeosAssetProxy) && ($assetProxy->getAsset() instanceof VariantSupportInterface)
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
-            $this->view->assign('connectionError', $e);
+            $this->view?->assign('connectionError', $e);
         }
     }
 
@@ -471,7 +471,7 @@ class AssetController extends ActionController
                 return (new ImageMapper($imageVariant))->getMappingResult();
             }, $originalAsset->getVariants());
 
-            $this->view->assignMultiple([
+            $this->view?->assignMultiple([
                 'assetProxy' => $assetProxy,
                 'asset' => $originalAsset,
                 'assetSource' => $assetSource,
@@ -482,7 +482,7 @@ class AssetController extends ActionController
                 'isSubRequest' => !$this->request->isMainRequest()
             ]);
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
-            $this->view->assign('connectionError', $e);
+            $this->view?->assign('connectionError', $e);
         }
     }
 
@@ -627,7 +627,7 @@ class AssetController extends ActionController
             $this->assetRepository->update($asset);
             $success = true;
         }
-        $this->view->assign('value', $success);
+        $this->view?->assign('value', $success);
     }
 
     /**
@@ -645,7 +645,7 @@ class AssetController extends ActionController
             $this->assetCollectionRepository->update($assetCollection);
             $success = true;
         }
-        $this->view->assign('value', $success);
+        $this->view?->assign('value', $success);
     }
 
     /**
@@ -877,9 +877,9 @@ class AssetController extends ActionController
         }
 
         foreach (['view', 'sortBy', 'sortDirection'] as $optionName) {
-            $this->view->assign($optionName, $this->browserState->get($optionName));
+            $this->view?->assign($optionName, $this->browserState->get($optionName));
         }
-        $this->view->assign('filter', (string)$this->assetConstraints->applyToAssetTypeFilter($this->browserState->get('filter')));
+        $this->view?->assign('filter', (string)$this->assetConstraints->applyToAssetTypeFilter($this->browserState->get('filter')));
     }
 
     /**
@@ -901,17 +901,17 @@ class AssetController extends ActionController
     {
         if ($tagMode === self::TAG_GIVEN && $tag !== null) {
             $this->browserState->set('activeTag', $tag);
-            $this->view->assign('activeTag', $tag);
+            $this->view?->assign('activeTag', $tag);
         } elseif ($tagMode === self::TAG_NONE || $tagMode === self::TAG_ALL) {
             $this->browserState->set('activeTag', null);
-            $this->view->assign('activeTag', null);
+            $this->view?->assign('activeTag', null);
         }
         $this->browserState->set('tagMode', $tagMode);
 
         // Unset active tag if it isn't available in the active asset collection
         if ($activeAssetCollection !== null && $this->browserState->get('activeTag') && !$activeAssetCollection->getTags()->contains($this->browserState->get('activeTag'))) {
             $this->browserState->set('activeTag', null);
-            $this->view->assign('activeTag', null);
+            $this->view?->assign('activeTag', null);
         }
 
         if (!$this->browserState->get('activeTag') && $this->browserState->get('tagMode') === self::TAG_GIVEN) {
@@ -940,10 +940,10 @@ class AssetController extends ActionController
     {
         if ($collectionMode === self::COLLECTION_GIVEN && $assetCollection !== null) {
             $this->browserState->set('activeAssetCollection', $assetCollection);
-            $this->view->assign('activeAssetCollection', $assetCollection);
+            $this->view?->assign('activeAssetCollection', $assetCollection);
         } elseif ($collectionMode === self::COLLECTION_ALL) {
             $this->browserState->set('activeAssetCollection', null);
-            $this->view->assign('activeAssetCollection', null);
+            $this->view?->assign('activeAssetCollection', null);
         }
         $this->browserState->set('collectionMode', $collectionMode);
     }

@@ -52,7 +52,7 @@ class DateStringConverter extends AbstractTypeConverter
     /**
      * {@inheritdoc}
      *
-     * @param \DateTime $source
+     * @param \DateTimeInterface $source
      * @param string $targetType
      * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
@@ -64,10 +64,11 @@ class DateStringConverter extends AbstractTypeConverter
         array $convertedChildProperties = [],
         ?PropertyMappingConfigurationInterface $configuration = null
     ): ?string {
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
         if (!$source instanceof \DateTimeInterface) {
             return null;
         }
-        $value = clone $source;
+        $value = \DateTimeImmutable::createFromInterface($source);
         return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTimeInterface::W3C);
     }
 }

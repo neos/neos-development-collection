@@ -91,7 +91,7 @@ class AssetsController extends ActionController
             $this->tagRepository->findBySearchTerm($searchTerm)->toArray()
         );
 
-        $this->view->assign('assets', $assets);
+        $this->view?->assign('assets', $assets);
     }
 
     /**
@@ -108,6 +108,6 @@ class AssetsController extends ActionController
             $this->throwStatus(404);
         }
 
-        $this->view->assign('asset', $asset);
+        $this->view?->assign('asset', $asset);
     }
 }

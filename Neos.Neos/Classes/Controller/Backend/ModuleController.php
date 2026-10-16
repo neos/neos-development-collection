@@ -128,7 +128,7 @@ class ModuleController extends ActionController
 
             $sites = $this->menuHelper->buildSiteList($this->controllerContext);
 
-            $this->view->assignMultiple([
+            $this->view?->assignMultiple([
                 'moduleClass' => implode('-', $modules),
                 'moduleContents' => $moduleResponse->getBody()->getContents(),
                 'title' => $moduleRequest->hasArgument('title')

@@ -41,12 +41,7 @@ final readonly class RestoreListItems implements \IteratorAggregate, \Countable
      */
     public static function fromArray(array $items): self
     {
-        foreach ($items as $item) {
-            if (!$item instanceof RestoreListItem) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', RestoreListItem::class, get_debug_type($item)), 1718295710);
-            }
-        }
-        return new self($items);
+        return self::create(...$items);
     }
 
     public function getIterator(): \Traversable

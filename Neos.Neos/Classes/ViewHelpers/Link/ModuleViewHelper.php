@@ -113,10 +113,7 @@ class ModuleViewHelper extends AbstractTagBasedViewHelper
             'argumentsToBeExcludedFromQueryString' => $this->arguments['argumentsToBeExcludedFromQueryString']
         ]);
         $uri = $this->uriModuleViewHelper->render();
-        if ($uri !== null) {
-            $this->tag->addAttribute('href', $uri);
-        }
-
+        $this->tag->addAttribute('href', $uri);
         $this->tag->setContent($this->renderChildren());
         $this->tag->forceClosingTag(true);
 
