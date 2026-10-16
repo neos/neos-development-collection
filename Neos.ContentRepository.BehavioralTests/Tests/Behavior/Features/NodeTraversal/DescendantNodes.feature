@@ -57,9 +57,9 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -75,6 +75,7 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "floatProperty": 123.46, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2", "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13 00:00:01"}}                 | {}                                       |
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}                                                                                                 | {}                                       |
+      | a2a2a1          | a2a2a1   | Neos.ContentRepository.Testing:Page        | a2a2a                  | {"text": "a2a2a1"}                                                                                                | {}                                       |
       | a2a2b           | a2a2b    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2b", "integerProperty": 125, "booleanProperty": true}                                                | {}                                       |
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3", "booleanProperty": false}                                                                          | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b", "stringProperty": "späCial characters"}                                                             | {}                                       |
@@ -91,8 +92,9 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     And I restrict the visibility of nodes tagged "disabled" in subgraph queries
 
   Scenario:
-
-      # findDescendantNodes queries without results
+    # findDescendantNodes on root node with result
+    When I execute the findDescendantNodes query for entry node aggregate id "lady-eleonode-rootford" I expect the nodes "home,terms,contact,a,a1,a2,a2a,a2a1,a2a2,a2a2b,a3,b,b1" to be returned
+    # findDescendantNodes queries without results
     When I execute the findDescendantNodes query for entry node aggregate id "non-existing" I expect no nodes to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2a2a"}' I expect no nodes to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "string"}' I expect no nodes to be returned
@@ -109,13 +111,13 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty > \"1980-12-14\""}' I expect no nodes to be returned
 
       # findDescendantNodes queries with results
-    When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2,a2a2b" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2,a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,a1,a2,a2a,a2a1,a2a2,a2a2b,a3,b,b1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,a1,a2,a2a1,a2a2,a2a2b,a3,b,b1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a1"}' I expect the nodes "a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\""}' I expect the nodes "a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\" OR text $= \"a1\""}' I expect the nodes "a1,a2a1" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späCi\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späCi\" OR text $= \"a1\""}' I expect the nodes "a1,a2a1,b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = false"}' I expect the nodes "a3" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 20"}' I expect the nodes "a1,a2,a2a2b" to be returned
@@ -129,5 +131,5 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty > \"1980-12-13\""}' I expect the nodes "a2a1,a2a2" to be returned
     # TODO reactivate later, currently behavior between mysql and mariadb different for non string datatypes, mariadb fails here
     # When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}]}' I expect the nodes "a2,a1,a2a2b,terms,contact,a,b,b1,a3,a2a,a2a1,a2a2" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "terms,contact,b,a1,b1,a2,a2a,a2a1,a2a2,a3,a2a2b,a" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}], "pagination": {"limit": 3, "offset": 4}}' I expect the nodes "contact,a,b" to be returned and the total count to be 12
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "terms,contact,a1,a2,a2a,a2a1,a2a2,b,b1,a3,a2a2b,a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}], "pagination": {"limit": 3, "offset": 4}}' I expect the nodes "contact,a,a2a" to be returned and the total count to be 12

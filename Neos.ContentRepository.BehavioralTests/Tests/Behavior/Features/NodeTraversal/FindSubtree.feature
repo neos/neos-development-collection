@@ -46,9 +46,9 @@ Feature: Find nodes using the findSubtree query
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
@@ -64,6 +64,7 @@ Feature: Find nodes using the findSubtree query
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1"}      | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}     | {}                                       |
+      | a2a2a1          | a2a2a1   | Neos.ContentRepository.Testing:Page        | a2a2a                  | {"text": "a2a2a1"}    | {}                                       |
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
@@ -78,9 +79,11 @@ Feature: Find nodes using the findSubtree query
     When I execute the findSubtree query for entry node aggregate id "non-existing" I expect no results
     # node "a2a2a" is disabled so it should not yield results
     When I execute the findSubtree query for entry node aggregate id "a2a2a" I expect no results
+    # node "a2a2a1" is only disabled by inheritance from "a2a2a"
+    When I execute the findSubtree query for entry node aggregate id "a2a2a1" I expect no results
 
     # findSubtree queries with results
-    When I execute the findSubtree query for entry node aggregate id "a2a2" I expect no results
+    When I execute the findSubtree query for entry node aggregate id "a2a2" I expect the following tree:
     """
     a2a2
     """
@@ -104,6 +107,10 @@ Feature: Find nodes using the findSubtree query
       b1
     """
     When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
+    """
+    home
+    """
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"maximumLevels": 0}' I expect the following tree:
     """
     home
     """
@@ -142,4 +149,40 @@ Feature: Find nodes using the findSubtree query
       a3
      b
       b1
+    """
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the following tree:
+    """
+    home
+     a
+      a1
+      a2
+      a3
+     b
+      b1
+    """
+    When I execute the findSubtree query for entry node aggregate id "a2" and filter '{"maximumLevels": 1}' I expect the following tree:
+    """
+    a2
+     a2a
+    """
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" I expect the following tree:
+    """
+    lady-eleonode-rootford
+     home
+      terms
+      contact
+      a
+       a1
+       a2
+        a2a
+         a2a1
+         a2a2
+       a3
+      b
+       b1
+    """
+    When I execute the findSubtree query for entry node aggregate id "lady-eleonode-rootford" and filter '{"maximumLevels": 1}' I expect the following tree:
+    """
+    lady-eleonode-rootford
+     home
     """

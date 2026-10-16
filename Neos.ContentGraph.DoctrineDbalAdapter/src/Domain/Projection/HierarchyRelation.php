@@ -34,7 +34,7 @@ final readonly class HierarchyRelation
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
         public DimensionSpacePoint $dimensionSpacePoint,
-        public int $position,
+        public NodeSortPath $sortPath,
         public NodeTags $subtreeTags,
     ) {
     }
@@ -45,8 +45,7 @@ final readonly class HierarchyRelation
         ?NodeRelationAnchorPoint $childNodeAnchor = null,
         ?ContentStreamLayer $contentStreamLayer = null,
         ?DimensionSpacePoint $dimensionSpacePoint = null,
-        ?string $dimensionSpacePointHash = null,
-        ?int $position = null,
+        ?NodeSortPath $sortPath = null,
         ?NodeTags $subtreeTags = null,
     ): self {
         return new self(
@@ -55,7 +54,7 @@ final readonly class HierarchyRelation
             parentNodeAnchor: $parentNodeAnchor ?? $this->parentNodeAnchor,
             childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
             dimensionSpacePoint: $dimensionSpacePoint ?? $this->dimensionSpacePoint,
-            position: $position ?? $this->position,
+            sortPath: $sortPath ?? $this->sortPath,
             subtreeTags: $subtreeTags ?? $this->subtreeTags,
         );
     }
@@ -77,7 +76,8 @@ final readonly class HierarchyRelation
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'contentstreamlayer' => $this->contentStreamLayer->value,
                 'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
-                'position' => $this->position,
+                'sortpath' => $this->sortPath->value,
+                'depth' => $this->sortPath->getDepth(),
                 'subtreetags' => $subtreeTagsJson,
             ]);
         } catch (DBALException $e) {
@@ -114,15 +114,16 @@ final readonly class HierarchyRelation
 
     public function assignNewParentNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
-        ?int $position,
+        ?NodeSortPath $sortPath,
         Connection $databaseConnection,
         ContentGraphTableNames $tableNames
     ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint->value
         ];
-        if (!is_null($position)) {
-            $data['position'] = $position;
+        if ($sortPath !== null) {
+            $data['sortpath'] = $sortPath->value;
+            $data['depth'] = $sortPath->getDepth();
         }
         try {
             $databaseConnection->update(
@@ -135,13 +136,14 @@ final readonly class HierarchyRelation
         }
     }
 
-    public function assignNewPosition(int $position, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
+    public function assignNewSortPath(NodeSortPath $sortPath, Connection $databaseConnection, ContentGraphTableNames $tableNames): void
     {
         try {
             $databaseConnection->update(
                 $tableNames->hierarchyRelation(),
                 [
-                    'position' => $position
+                    'sortpath' => $sortPath->value,
+                    'depth' => $sortPath->getDepth()
                 ],
                 $this->getDatabaseId()
             );
