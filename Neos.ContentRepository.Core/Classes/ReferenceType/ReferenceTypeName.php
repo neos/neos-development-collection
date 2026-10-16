@@ -25,6 +25,7 @@ final class ReferenceTypeName implements \JsonSerializable
 
     private static function instance(string $value): self
     {
+        /** @phpstan-ignore return.type (will never be null ¯\_(ツ)_/¯) */
         return (self::$references[$value] ??= \WeakReference::create($_ = new self($value)))->get();
     }
 

@@ -29,6 +29,17 @@ final class ReferenceTypeNameList implements \JsonSerializable, \IteratorAggrega
     }
 
     /**
+     * @return array<int,string>
+     */
+    public function toStringArray(): array
+    {
+        return array_map(
+            fn (ReferenceTypeName $item): string => $item->value,
+            $this->items,
+        );
+    }
+
+    /**
      * @return list<ReferenceTypeName>
      */
     public function jsonSerialize(): array

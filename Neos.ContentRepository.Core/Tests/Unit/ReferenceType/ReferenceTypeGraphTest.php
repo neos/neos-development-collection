@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
+namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
 
+use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
@@ -16,6 +17,97 @@ class ReferenceTypeGraphTest extends TestCase
 {
     /**
      * @param list<ReferenceTypeDeclaration> $referenceTypeDeclarations
+     */
+    #[DataProvider('referenceTypeDeclarationProvider')]
+    public function testFromDeclarations(
+        array $referenceTypeDeclarations,
+        ?ReferenceTypeGraphProperties $expectedResult,
+        ?\Throwable $expectedException,
+    ): void {
+        try {
+            $actualResult = ReferenceTypeGraph::fromDeclarations($referenceTypeDeclarations);
+            $actualException = null;
+        } catch (\Throwable $actualException) {
+            $actualResult = null;
+        }
+
+        if ($expectedResult) {
+            Assert::assertTrue($expectedResult->equals($actualResult));
+        } else {
+            Assert::assertSame($expectedResult, $actualResult);
+        }
+        Assert::assertEquals($expectedException, $actualException);
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     referenceTypeDeclarations: list<ReferenceTypeDeclaration>,
+     *     expectedResult: ?ReferenceTypeGraphProperties,
+     *     expectedException: ?\Throwable,
+     * }>
+     */
+    public static function referenceTypeDeclarationProvider(): iterable
+    {
+        yield 'empty set' => [
+            'referenceTypeDeclarations' => [],
+            'expectedResult' => new ReferenceTypeGraphProperties(
+                superTypeNames: [],
+                subTypesNames: [],
+                referenceTypes: [],
+                referenceTypeDeclarations: [],
+            ),
+            'expectedException' => null,
+        ];
+
+        yield 'unknown supertype' => [
+            'referenceTypeDeclarations' => [
+                ReferenceTypeDeclaration::create(
+                    name: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    isAbstract: false,
+                    isFinal: false,
+                    superTypeNames: ReferenceTypeNameList::list(
+                        ReferenceTypeName::fromString('Acme.Site:Unknown'),
+                    )
+                ),
+            ],
+            'expectedResult' => null,
+            'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItHasUnknownSuperTypes(
+                ReferenceTypeName::fromString('Acme.Site:Reference'),
+                ReferenceTypeNameList::list(
+                    ReferenceTypeName::fromString('Acme.Site:Unknown'),
+                ),
+            ),
+        ];
+
+        yield 'final supertype' => [
+            'referenceTypeDeclarations' => [
+                ReferenceTypeDeclaration::create(
+                    name: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    isAbstract: false,
+                    isFinal: false,
+                    superTypeNames: ReferenceTypeNameList::list(
+                        ReferenceTypeName::fromString('Acme.Site:FinalReference'),
+                    )
+                ),
+                ReferenceTypeDeclaration::create(
+                    name: ReferenceTypeName::fromString('Acme.Site:FinalReference'),
+                    isAbstract: false,
+                    isFinal: true,
+                    superTypeNames: ReferenceTypeNameList::list()
+                ),
+            ],
+            'expectedResult' => null,
+            'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItHasFinalSuperTypes(
+                ReferenceTypeName::fromString('Acme.Site:Reference'),
+                ReferenceTypeNameList::list(
+                    ReferenceTypeName::fromString('Acme.Site:FinalReference'),
+                ),
+            ),
+        ];
+    }
+
+    /**
+     * @param list<ReferenceTypeDeclaration> $referenceTypeDeclarations
      * @param array<string,array{
      *     superTypes: ReferenceTypeNameList,
      *     subTypes: ReferenceTypeNameList
@@ -26,9 +118,7 @@ class ReferenceTypeGraphTest extends TestCase
         array $referenceTypeDeclarations,
         array $expectedSuperTypesAndSubTypesForReferenceTypeName,
     ): void {
-        $referenceTypeGraph = new ReferenceTypeGraph(
-            fn (): array => $referenceTypeDeclarations,
-        );
+        $referenceTypeGraph = ReferenceTypeGraph::fromDeclarations($referenceTypeDeclarations);
 
         foreach (
             $expectedSuperTypesAndSubTypesForReferenceTypeName as $referenceTypeName => $expectedSuperTypesAndSubTypes
@@ -69,6 +159,8 @@ class ReferenceTypeGraphTest extends TestCase
             'referenceTypeDeclarations' => [
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    isAbstract: false,
+                    isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(),
                 ),
             ],
@@ -84,14 +176,20 @@ class ReferenceTypeGraphTest extends TestCase
             'referenceTypeDeclarations' => [
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:RootReference'),
+                    isAbstract: false,
+                    isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(),
                 ),
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:AnotherRootReference'),
+                    isAbstract: false,
+                    isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(),
                 ),
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:ChildReference'),
+                    isAbstract: false,
+                    isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:RootReference'),
                         ReferenceTypeName::fromString('Acme.Site:AnotherRootReference'),

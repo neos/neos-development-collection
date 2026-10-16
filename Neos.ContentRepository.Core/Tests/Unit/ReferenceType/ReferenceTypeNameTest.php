@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
+namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
 
 use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeNameIsInvalid;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
