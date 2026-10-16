@@ -1,4 +1,4 @@
-# @flowEntities
+@flowEntities
 Feature: Create node aggregate with node with dimensions
 
   Background:
