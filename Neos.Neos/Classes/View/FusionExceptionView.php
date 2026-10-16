@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\View;
@@ -13,6 +14,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Mvc\ActionResponse;
@@ -30,6 +32,7 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Controller\Arguments;
+use Psr\Http\Message\ResponseInterface;
 
 class FusionExceptionView extends AbstractView
 {
@@ -85,7 +88,7 @@ class FusionExceptionView extends AbstractView
     protected $contentContextFactory;
 
     /**
-     * @return string
+     * @return string|ResponseInterface
      * @throws \Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
@@ -136,13 +139,32 @@ class FusionExceptionView extends AbstractView
 
         try {
             $output = $fusionRuntime->render('error');
-            $output = $this->extractBodyFromOutput($output);
+            $output = $this->parsePotentialRawHttpResponse($output);
         } catch (RuntimeException $exception) {
             throw $exception->getPrevious();
         }
         $fusionRuntime->popContext();
 
         return $output;
+    }
+
+    /**
+     * Parses the output of the Fusion runtime.
+     *
+     * If the output looks like a raw HTTP response, it will attempt to parse it into a ResponseInterface.
+     * Otherwise, it will extract the body from the output string.
+     *
+     * @param string $output
+     * @return string|ResponseInterface
+     */
+    protected function parsePotentialRawHttpResponse(string $output): string|ResponseInterface
+    {
+        // Checks if the input looks like a raw HTTTP response.
+        if (str_starts_with($output, 'HTTP/')) {
+            return Message::parseResponse($output);
+        }
+
+        return $this->extractBodyFromOutput($output);
     }
 
     /**
