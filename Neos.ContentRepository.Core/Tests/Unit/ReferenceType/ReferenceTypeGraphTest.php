@@ -293,6 +293,7 @@ class ReferenceTypeGraphTest extends TestCase
                                 'foo' => 'baz',
                                 'noodle' => 'soup',
                                 'wat' => 'atouille',
+                                'bool' => true,
                             ]),
                         ])
                     ),
@@ -315,9 +316,12 @@ class ReferenceTypeGraphTest extends TestCase
                 self::getReferenceDeclaration(
                     ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                        ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
                     )
                 ),
                 self::getBaseReferenceDeclaration(),
+                self::getAnotherBaseReferenceDeclaration(),
+                self::getIntermediateReferenceDeclaration(),
             ),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'expectedResult' => ReferenceType::create(
@@ -330,6 +334,7 @@ class ReferenceTypeGraphTest extends TestCase
                         'Acme.Site:Node' => true,
                         'Acme.Site:RestrictedNode' => true,
                         'Acme.Site:AnotherRestrictedNode' => false,
+                        'Acme.Site:YetAnotherRestrictedNode' => false,
                     ],
                 ),
                 targetNodeTypes: NodeTypeConstraintsDeclaration::create(
@@ -338,6 +343,7 @@ class ReferenceTypeGraphTest extends TestCase
                         'Acme.Site:Node' => true,
                         'Acme.Site:RestrictedNode' => true,
                         'Acme.Site:AnotherRestrictedNode' => false,
+                        'Acme.Site:YetAnotherRestrictedNode' => false,
                     ],
                 ),
                 properties: PropertyDeclarationDictionary::create(
@@ -349,6 +355,8 @@ class ReferenceTypeGraphTest extends TestCase
                                 'foo' => 'baz',
                                 'noodle' => 'soup',
                                 'wat' => 'atouille',
+                                'bool' => false,
+                                'number' => 42,
                             ]),
                         ])
                     ),
@@ -360,6 +368,16 @@ class ReferenceTypeGraphTest extends TestCase
                     PropertyDeclaration::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
+                        metadata: PropertyMetadataDictionary::create([]),
+                    ),
+                    PropertyDeclaration::create(
+                        name: PropertyName::fromString('description'),
+                        type: PropertyType::string(),
+                        metadata: PropertyMetadataDictionary::create([]),
+                    ),
+                    PropertyDeclaration::create(
+                        name: PropertyName::fromString('author'),
+                        type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                 ),
@@ -437,11 +455,92 @@ class ReferenceTypeGraphTest extends TestCase
                         'generic' => GenericArrayPropertyMetadata::create([
                             'foo' => 'bar',
                             'noodle' => 'soup',
+                            'bool' => true,
                         ]),
                     ])
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('abstract'),
+                    type: PropertyType::string(),
+                    metadata: PropertyMetadataDictionary::create([]),
+                ),
+            ),
+        );
+    }
+
+    private static function getAnotherBaseReferenceDeclaration(): ReferenceTypeDeclaration
+    {
+        return ReferenceTypeDeclaration::create(
+            name: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+            isAbstract: true,
+            isFinal: false,
+            superTypeNames: ReferenceTypeNameList::list(),
+            sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
+                isWildcardAllowed: true,
+                constrainedNodeTypes: [
+                    'Acme.Site:RestrictedNode' => false,
+                    'Acme.Site:AnotherRestrictedNode' => false,
+                    'Acme.Site:YetAnotherRestrictedNode' => false,
+                ],
+            ),
+            targetNodeTypes: NodeTypeConstraintsDeclaration::create(
+                isWildcardAllowed: true,
+                constrainedNodeTypes: [
+                    'Acme.Site:RestrictedNode' => false,
+                    'Acme.Site:AnotherRestrictedNode' => false,
+                    'Acme.Site:YetAnotherRestrictedNode' => false,
+                ],
+            ),
+            properties: PropertyDeclarationDictionary::create(
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('text'),
+                    type: PropertyType::string(),
+                    metadata: PropertyMetadataDictionary::create([
+                        'generic' => GenericArrayPropertyMetadata::create([
+                            'foo' => 'barrr',
+                            'number' => 42,
+                        ]),
+                    ])
+                ),
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('description'),
+                    type: PropertyType::string(),
+                    metadata: PropertyMetadataDictionary::create([]),
+                ),
+            ),
+        );
+    }
+
+    private static function getIntermediateReferenceDeclaration(): ReferenceTypeDeclaration
+    {
+        return ReferenceTypeDeclaration::create(
+            name: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+            isAbstract: true,
+            isFinal: false,
+            superTypeNames: ReferenceTypeNameList::list(
+                ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+            ),
+            sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
+                isWildcardAllowed: true,
+                constrainedNodeTypes: [],
+            ),
+            targetNodeTypes: NodeTypeConstraintsDeclaration::create(
+                isWildcardAllowed: true,
+                constrainedNodeTypes: [],
+            ),
+            properties: PropertyDeclarationDictionary::create(
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('text'),
+                    type: PropertyType::string(),
+                    metadata: PropertyMetadataDictionary::create([
+                        'generic' => GenericArrayPropertyMetadata::create([
+                            'foo' => 'intermediate',
+                            'bool' => false,
+                        ]),
+                    ])
+                ),
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('author'),
                     type: PropertyType::string(),
                     metadata: PropertyMetadataDictionary::create([]),
                 ),
