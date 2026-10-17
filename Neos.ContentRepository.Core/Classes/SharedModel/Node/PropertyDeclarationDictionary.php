@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
+use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 
 /**
  * @api
@@ -29,12 +31,20 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
         return new self($items);
     }
 
-    public function mergeToSubType(self $subTypePropertyMetadata): self
-    {
+    /**
+     * @param array<string,list<SuperTypeConflict>> $superTypeConflicts
+     * @param-out array<string,list<SuperTypeConflict>> $superTypeConflicts
+     */
+    public function mergeToSubType(
+        self $subTypePropertyMetadata,
+        array &$superTypeConflicts,
+        ReferenceTypeName $referenceTypeName,
+        ?ReferenceTypeName $previousReferenceTypeName = null,
+    ): self {
         $items = $this->items;
         foreach ($subTypePropertyMetadata->items as $key => $item) {
             if (array_key_exists($key, $items)) {
-                $items[$key] = $items[$key]->mergeToSubType($item);
+                $items[$key] = $items[$key]->mergeToSubType($item, $superTypeConflicts, $referenceTypeName, $previousReferenceTypeName);
             } else {
                 $items[$key] = $item;
             }

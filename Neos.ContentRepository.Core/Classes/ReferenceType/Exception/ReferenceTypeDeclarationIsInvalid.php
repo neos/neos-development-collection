@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\ReferenceType\Exception;
 
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
+use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
 
 /**
  * The exception to be thrown if an invalid reference type declaration was attempted to be initialized
@@ -17,7 +18,7 @@ final class ReferenceTypeDeclarationIsInvalid extends \Exception
     {
         return new self(
             'Reference type "' . $referenceTypeName->value
-                . '" is both abstract and final but can only be one.',
+            . '" is both abstract and final but can only be one.',
             1792178940,
         );
     }
@@ -52,6 +53,17 @@ final class ReferenceTypeDeclarationIsInvalid extends \Exception
             'Reference type "' . $referenceTypeName->value
             . '" has circular supertypes: "' . implode(" -> ", $circularSuperTypes->toStringArray()) . '".',
             1792227116,
+        );
+    }
+
+    public static function becauseItHasConflictingSuperTypes(
+        ReferenceTypeName $referenceTypeName,
+        SuperTypeConflicts $superTypeConflicts,
+    ): self {
+        return new self(
+            'Reference type "' . $referenceTypeName->value
+            . '" has conflicting supertypes: ' . $superTypeConflicts->toDebugString() . '.',
+            1792270310,
         );
     }
 }

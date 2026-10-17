@@ -54,8 +54,16 @@ final readonly class ReferenceTypeGraph
                     => ReferenceTypeNameList::list(...$superTypeNamesForSubType),
                 $superTypeNames,
             ),
-            declaredSubTypesNames: $declaredSubTypeNames,
-            subTypeNames: $subTypeNames,
+            declaredSubTypesNames: array_map(
+                fn (array $declaredSubTypeNamesForSuperType): ReferenceTypeNameList
+                    => ReferenceTypeNameList::list(...$declaredSubTypeNamesForSuperType),
+                $declaredSubTypeNames,
+            ),
+            subTypeNames: array_map(
+                fn (array $subTypeNamesForSuperType): ReferenceTypeNameList
+                  => ReferenceTypeNameList::list(...$subTypeNamesForSuperType),
+                $subTypeNames,
+            ),
             referenceTypes: ReferenceTypeDictionary::create($referenceTypes),
         );
     }

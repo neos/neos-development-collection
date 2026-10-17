@@ -11,6 +11,7 @@ interface PropertyMetadataInterface extends \JsonSerializable
 {
     /**
      * Metadata may be merged from supertype to subtype
+     * @param static $subTypeMetadata
      */
-    public function mergeToSubType(self $subTypeMetadata): self;
+    public function mergeToSubType($subTypeMetadata): static;
 }

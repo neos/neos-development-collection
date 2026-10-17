@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 /**
- * @api
  * @implements \IteratorAggregate<string,PropertyMetadataInterface>
+ * @api
  */
 final readonly class PropertyMetadataDictionary implements \IteratorAggregate, \JsonSerializable
 {

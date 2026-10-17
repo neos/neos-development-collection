@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\ReferenceType;
 
 use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
 
@@ -24,6 +25,9 @@ final readonly class ReferenceTypeDeclaration
     ) {
     }
 
+    /**
+     * @throws ReferenceTypeDeclarationIsInvalid
+     */
     public static function create(
         ReferenceTypeName $name,
         bool $isAbstract,
@@ -51,12 +55,13 @@ final readonly class ReferenceTypeDeclaration
     /**
      * @param array<string,ReferenceType> $referenceTypes
      * @param array<string,array<string,ReferenceTypeName>> $superTypeNames
-     * @param array<string,ReferenceTypeNameList> $declaredSubTypeNames
-     * @param array<string,ReferenceTypeNameList> $subTypeNames
+     * @param array<string,array<string,ReferenceTypeName>> $declaredSubTypeNames
+     * @param array<string,array<string,ReferenceTypeName>> $subTypeNames
      * @param-out array<string,ReferenceType> $referenceTypes
      * @param-out array<string,array<string,ReferenceTypeName>> $superTypeNames
-     * @param-out array<string,ReferenceTypeNameList> $declaredSubTypeNames
-     * @param-out array<string,ReferenceTypeNameList> $subTypeNames
+     * @param-out array<string,array<string,ReferenceTypeName>> $declaredSubTypeNames
+     * @param-out array<string,array<string,ReferenceTypeName>> $subTypeNames
+     * @throws ReferenceTypeDeclarationIsInvalid
      */
     public function resolveReferenceTypeHierarchy(
         ReferenceTypeDeclarationDictionary $dictionary,
@@ -126,6 +131,9 @@ final readonly class ReferenceTypeDeclaration
         $referenceTypes[$this->name->value] = $this->mergeToSubType(...$superTypes);
     }
 
+    /**
+     * @throws ReferenceTypeDeclarationIsInvalid
+     */
     private function mergeToSubType(ReferenceType ...$superTypes): ReferenceType
     {
         if ($superTypes === []) {
@@ -150,11 +158,20 @@ final readonly class ReferenceTypeDeclaration
 
         /** @var ?PropertyDeclarationDictionary $properties */
         $properties = null;
+        $superTypeConflicts = [];
+        $previousSuperType = null;
         foreach ($superTypes as $superType) {
-            $properties = $properties?->mergeToSubType($superType->properties)
+            $properties = $properties?->mergeToSubType($superType->properties, $superTypeConflicts, $superType->name, $previousSuperType?->name)
                 ?: $superType->properties;
+            $previousSuperType = $superType;
         }
-        $properties = $properties->mergeToSubType($this->properties);
+        $properties = $properties->mergeToSubType($this->properties, $superTypeConflicts, $this->name);
+        if ($superTypeConflicts !== []) {
+            throw ReferenceTypeDeclarationIsInvalid::becauseItHasConflictingSuperTypes(
+                referenceTypeName: $this->name,
+                superTypeConflicts: SuperTypeConflicts::create($superTypeConflicts),
+            );
+        }
 
         return ReferenceType::create(
             name: $this->name,
