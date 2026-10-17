@@ -302,6 +302,59 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
 
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
+            // Drop non-referenced nodes and reference relations (which will not have a hierarchy relation after the merge)
+            $deleteReducedNodesAndReferencesStatement = <<<SQL
+            DELETE n, r FROM {$this->tableNames->node()} n
+            LEFT JOIN {$this->tableNames->referenceRelation()} r
+              ON r.nodeanchorpoint = n.relationanchorpoint
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
+            INNER JOIN (
+              SELECT childnodeanchor FROM {$this->tableNames->hierarchyRelation()} AS h
+                INNER JOIN (
+                  SELECT
+                    id
+                  FROM {$this->tableNames->hierarchyRelation()}
+                    WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                  GROUP BY id
+                  HAVING MAX(contentstreamlayer) != :contentStreamLayerToMergeInto
+                    AND (
+                      MIN(childnodeanchor) != MAX(childnodeanchor)
+                      OR COUNT(childnodeanchor) = 1
+                    )
+                ) AS reducedHierarchies
+                ON reducedHierarchies.id = h.id
+                AND h.contentstreamlayer = :contentStreamLayerToMergeInto
+                WHERE NOT EXISTS(
+                  SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS allH
+                  WHERE NOT (
+                    allH.contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                    AND allH.id IN (
+                      SELECT
+                        id
+                      FROM {$this->tableNames->hierarchyRelation()}
+                        WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                        GROUP BY id
+                      HAVING MAX(contentstreamlayer) != :contentStreamLayerToMergeInto
+                        AND (
+                          MIN(childnodeanchor) != MAX(childnodeanchor)
+                          OR COUNT(childnodeanchor) = 1
+                        )
+                    )
+                  )
+                    AND allH.childnodeanchor = h.childnodeanchor
+                )
+            ) AS reducedExclusive
+            ON reducedExclusive.childnodeanchor = n.relationanchorpoint
+            SQL;
+            try {
+                $this->dbal->executeStatement($deleteReducedNodesAndReferencesStatement, [
+                    'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
+                    'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
+                ]);
+            } catch (DBALException $e) {
+                throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes and their references: %s', $e->getMessage()), 1792164936, $e);
+            }
+
             $mergeHierarchyRelationsStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()} (
                   id,
@@ -372,38 +425,29 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
         }
 
-        // Drop non-referenced nodes (which will not have a hierarchy relation anymore)
-        $deleteNodesStatement = <<<SQL
-            DELETE n FROM {$this->tableNames->node()} n
+        // Drop non-referenced nodes and reference relations (which will not have a hierarchy relation anymore)
+        $deleteNodesAndReferencesStatement = <<<SQL
+            DELETE n, r FROM {$this->tableNames->node()} n
+            LEFT JOIN {$this->tableNames->referenceRelation()} r
+              ON r.nodeanchorpoint = n.relationanchorpoint
             -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
-            LEFT JOIN {$this->tableNames->hierarchyRelation()} h
-              ON h.childnodeanchor = n.relationanchorpoint
-                AND h.contentstreamlayer != :targetContentStreamLayer
-            WHERE h.childnodeanchor IS NULL
+            WHERE EXISTS(
+              SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                WHERE h.contentstreamlayer = :targetContentStreamLayer
+                AND h.childnodeanchor = n.relationanchorpoint
+            )
+            AND NOT EXISTS(
+              SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
+                WHERE h.contentstreamlayer != :targetContentStreamLayer
+                AND h.childnodeanchor = n.relationanchorpoint
+            )
             SQL;
         try {
-            $this->dbal->executeStatement($deleteNodesStatement, [
+            $this->dbal->executeStatement($deleteNodesAndReferencesStatement, [
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
-        }
-
-        // Drop non-referenced reference relations (i.e. because the referenced nodes will be gone)
-        $deleteReferencesStatement = <<<SQL
-            DELETE r FROM {$this->tableNames->referenceRelation()} r
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
-              LEFT JOIN {$this->tableNames->hierarchyRelation()} h
-                ON h.childnodeanchor = r.nodeanchorpoint
-                AND h.contentstreamlayer != :targetContentStreamLayer
-            WHERE h.childnodeanchor IS NULL
-            SQL;
-        try {
-            $this->dbal->executeStatement($deleteReferencesStatement, [
-                'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
-            ]);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete non-referenced node-references: %s', $e->getMessage()), 1776787534, $e);
+            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes and their references: %s', $e->getMessage()), 1716489294, $e);
         }
 
         // Drop hierarchy relations
