@@ -6,7 +6,6 @@ namespace Neos\ContentRepository\Core\ReferenceType\Exception;
 
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
 
 /**
  * The exception to be thrown if an invalid reference type declaration was attempted to be initialized

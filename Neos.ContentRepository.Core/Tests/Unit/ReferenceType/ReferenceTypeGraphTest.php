@@ -6,14 +6,14 @@ namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
 
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclarationDictionary;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflict;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
 use Neos\ContentRepository\Core\SharedModel\Node\GenericArrayPropertyMetadata;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclaration;
