@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
 
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclaration;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyMetadataDictionary;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -20,20 +26,31 @@ class ReferenceTypeDeclarationTest extends TestCase
         bool $isAbstract,
         bool $isFinal,
         ReferenceTypeNameList $superTypeNames,
-        ?ReferenceTypeDeclarationProperties $expectedResult,
+        NodeTypeConstraintsDeclaration $sourceNodeTypes,
+        NodeTypeConstraintsDeclaration $targetNodeTypes,
+        PropertyDeclarationDictionary $properties,
+        bool $resultExpected,
         ?\Throwable $expectedException,
     ): void {
         try {
-            $actualResult = ReferenceTypeDeclaration::create($name, $isAbstract, $isFinal, $superTypeNames);
+            $actualResult = ReferenceTypeDeclaration::create(
+                name: $name,
+                isAbstract: $isAbstract,
+                isFinal: $isFinal,
+                superTypeNames: $superTypeNames,
+                sourceNodeTypes: $sourceNodeTypes,
+                targetNodeTypes: $targetNodeTypes,
+                properties: $properties,
+            );
             $actualException = null;
         } catch (\Throwable $actualException) {
             $actualResult = null;
         }
 
-        if ($expectedResult) {
-            Assert::assertTrue($expectedResult->equals($actualResult));
+        if ($resultExpected) {
+            Assert::assertInstanceOf(ReferenceTypeDeclaration::class, $actualResult);
         } else {
-            Assert::assertSame($expectedResult, $actualResult);
+            Assert::assertNull($actualResult);
         }
         Assert::assertEquals($expectedException, $actualException);
     }
@@ -44,6 +61,9 @@ class ReferenceTypeDeclarationTest extends TestCase
      *     isAbstract: bool,
      *     isFinal: bool,
      *     superTypeNames: ReferenceTypeNameList,
+     *     sourceNodeTypes: NodeTypeConstraintsDeclaration,
+     *     targetNodeTypes: NodeTypeConstraintsDeclaration,
+     *     properties: PropertyDeclarationDictionary,
      *     expectedResult: ?ReferenceTypeDeclarationProperties,
      *     expectedException: ?\Throwable,
      * }>
@@ -55,12 +75,10 @@ class ReferenceTypeDeclarationTest extends TestCase
             'isAbstract' => false,
             'isFinal' => false,
             'superTypeNames' => ReferenceTypeNameList::list(),
-            'expectedResult' => new ReferenceTypeDeclarationProperties(
-                name: ReferenceTypeName::fromString('Acme.Site:Reference'),
-                isAbstract: false,
-                isFinal: false,
-                superTypeNames: ReferenceTypeNameList::list(),
-            ),
+            'sourceNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
+            'targetNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
+            'properties' => PropertyDeclarationDictionary::create(),
+            'resultExpected' => true,
             'expectedException' => null,
         ];
 
@@ -71,14 +89,16 @@ class ReferenceTypeDeclarationTest extends TestCase
             'superTypeNames' => ReferenceTypeNameList::list(
                 ReferenceTypeName::fromString('Acme.Site:BaseReference')
             ),
-            'expectedResult' => new ReferenceTypeDeclarationProperties(
-                name: ReferenceTypeName::fromString('Acme.Site:Reference'),
-                isAbstract: false,
-                isFinal: true,
-                superTypeNames: ReferenceTypeNameList::list(
-                    ReferenceTypeName::fromString('Acme.Site:BaseReference')
-                ),
+            'sourceNodeTypes' => NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:SomeNodeType']),
+            'targetNodeTypes' => NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:SomeOtherNodeType']),
+            'properties' => PropertyDeclarationDictionary::create(
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('text'),
+                    type: PropertyType::string(),
+                    metadata: PropertyMetadataDictionary::create([]),
+                )
             ),
+            'resultExpected' => true,
             'expectedException' => null,
         ];
 
@@ -87,7 +107,10 @@ class ReferenceTypeDeclarationTest extends TestCase
             'isAbstract' => true,
             'isFinal' => true,
             'superTypeNames' => ReferenceTypeNameList::list(),
-            'expectedResult' => null,
+            'sourceNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
+            'targetNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
+            'properties' => PropertyDeclarationDictionary::create(),
+            'resultExpected' => false,
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItIsBothAbstractAndFinal(
                 ReferenceTypeName::fromString('Acme.Site:Reference')
             ),

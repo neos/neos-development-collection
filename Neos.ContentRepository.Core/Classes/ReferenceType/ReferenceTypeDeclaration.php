@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\ReferenceType;
 
 use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
 
 /**
  * @internal
@@ -16,6 +18,9 @@ final readonly class ReferenceTypeDeclaration
         public bool $isAbstract,
         public bool $isFinal,
         public ReferenceTypeNameList $superTypeNames,
+        public NodeTypeConstraintsDeclaration $sourceNodeTypes,
+        public NodeTypeConstraintsDeclaration $targetNodeTypes,
+        public PropertyDeclarationDictionary $properties,
     ) {
     }
 
@@ -24,6 +29,9 @@ final readonly class ReferenceTypeDeclaration
         bool $isAbstract,
         bool $isFinal,
         ReferenceTypeNameList $superTypeNames,
+        NodeTypeConstraintsDeclaration $sourceNodeTypes,
+        NodeTypeConstraintsDeclaration $targetNodeTypes,
+        PropertyDeclarationDictionary $properties,
     ): self {
         if ($isAbstract && $isFinal) {
             throw ReferenceTypeDeclarationIsInvalid::becauseItIsBothAbstractAndFinal($name);
@@ -34,6 +42,127 @@ final readonly class ReferenceTypeDeclaration
             isAbstract: $isAbstract,
             isFinal: $isFinal,
             superTypeNames: $superTypeNames,
+            sourceNodeTypes: $sourceNodeTypes,
+            targetNodeTypes: $targetNodeTypes,
+            properties: $properties,
+        );
+    }
+
+    /**
+     * @param array<string,ReferenceType> $referenceTypes
+     * @param array<string,array<string,ReferenceTypeName>> $superTypeNames
+     * @param array<string,ReferenceTypeNameList> $declaredSubTypeNames
+     * @param array<string,ReferenceTypeNameList> $subTypeNames
+     * @param-out array<string,ReferenceType> $referenceTypes
+     * @param-out array<string,array<string,ReferenceTypeName>> $superTypeNames
+     * @param-out array<string,ReferenceTypeNameList> $declaredSubTypeNames
+     * @param-out array<string,ReferenceTypeNameList> $subTypeNames
+     */
+    public function resolveReferenceTypeHierarchy(
+        ReferenceTypeDeclarationDictionary $dictionary,
+        ReferenceTypeNameList $hierarchySoFar,
+        array &$referenceTypes,
+        array &$superTypeNames,
+        array &$declaredSubTypeNames,
+        array &$subTypeNames,
+    ): void {
+        if (array_key_exists($this->name->value, $referenceTypes)) {
+            // we've been here before
+            return;
+        }
+        $hierarchySoFar = $hierarchySoFar->append($this->name);
+        $unknownSuperTypeNames = [];
+        $finalSuperTypeNames = [];
+        $superTypes = [];
+        foreach ($this->superTypeNames as $superTypeName) {
+            if (!array_key_exists($superTypeName->value, $referenceTypes)) {
+                $superTypeDeclaration = $dictionary->getReferenceTypeDeclaration($superTypeName);
+                if (!$superTypeDeclaration) {
+                    $unknownSuperTypeNames[] = $superTypeName;
+                    continue;
+                }
+                if ($superTypeDeclaration->isFinal) {
+                    $finalSuperTypeNames[] = $superTypeName;
+                    continue;
+                }
+                $declaredSubTypeNames[$superTypeName->value][$this->name->value] = $this->name;
+                foreach ($hierarchySoFar as $subTypeName) {
+                    if ($hierarchySoFar->contains($superTypeName)) {
+                        throw ReferenceTypeDeclarationIsInvalid::becauseItHasCircularSuperTypes(
+                            referenceTypeName: $subTypeName,
+                            circularSuperTypes: $hierarchySoFar->append($superTypeName),
+                        );
+                    }
+                    $superTypeNames[$subTypeName->value][$superTypeName->value] = $superTypeName;
+                    $subTypeNames[$superTypeName->value][$subTypeName->value] = $subTypeName;
+                }
+                $superTypeDeclaration->resolveReferenceTypeHierarchy(
+                    dictionary: $dictionary,
+                    hierarchySoFar: $hierarchySoFar,
+                    referenceTypes: $referenceTypes,
+                    superTypeNames: $superTypeNames,
+                    declaredSubTypeNames: $declaredSubTypeNames,
+                    subTypeNames: $subTypeNames,
+                );
+            } elseif ($referenceTypes[$superTypeName->value]->isFinal) {
+                $finalSuperTypeNames[] = $superTypeName;
+                continue;
+            }
+            $superTypes[] = $referenceTypes[$superTypeName->value];
+        }
+        if ($unknownSuperTypeNames !== []) {
+            throw ReferenceTypeDeclarationIsInvalid::becauseItHasUnknownSuperTypes(
+                $this->name,
+                ReferenceTypeNameList::list(...$unknownSuperTypeNames)
+            );
+        }
+        if ($finalSuperTypeNames !== []) {
+            throw ReferenceTypeDeclarationIsInvalid::becauseItHasFinalSuperTypes(
+                $this->name,
+                ReferenceTypeNameList::list(...$finalSuperTypeNames)
+            );
+        }
+
+        $referenceTypes[$this->name->value] = $this->mergeToSubType(...$superTypes);
+    }
+
+    private function mergeToSubType(ReferenceType ...$superTypes): ReferenceType
+    {
+        if ($superTypes === []) {
+            return ReferenceType::fromDeclaration($this);
+        }
+
+        /** @var ?NodeTypeConstraintsDeclaration $sourceNodeTypes */
+        $sourceNodeTypes = null;
+        foreach ($superTypes as $superType) {
+            $sourceNodeTypes = $sourceNodeTypes?->mergeToSubType($superType->sourceNodeTypes)
+                ?: $superType->sourceNodeTypes;
+        }
+        $sourceNodeTypes = $sourceNodeTypes->mergeToSubType($this->sourceNodeTypes);
+
+        /** @var ?NodeTypeConstraintsDeclaration $targetNodeTypes */
+        $targetNodeTypes = null;
+        foreach ($superTypes as $superType) {
+            $targetNodeTypes = $targetNodeTypes?->mergeToSubType($superType->targetNodeTypes)
+                ?: $superType->targetNodeTypes;
+        }
+        $targetNodeTypes = $targetNodeTypes->mergeToSubType($this->targetNodeTypes);
+
+        /** @var ?PropertyDeclarationDictionary $properties */
+        $properties = null;
+        foreach ($superTypes as $superType) {
+            $properties = $properties?->mergeToSubType($superType->properties)
+                ?: $superType->properties;
+        }
+        $properties = $properties->mergeToSubType($this->properties);
+
+        return ReferenceType::create(
+            name: $this->name,
+            isAbstract: $this->isAbstract,
+            isFinal: $this->isFinal,
+            sourceNodeTypes: $sourceNodeTypes,
+            targetNodeTypes: $targetNodeTypes,
+            properties: $properties,
         );
     }
 }

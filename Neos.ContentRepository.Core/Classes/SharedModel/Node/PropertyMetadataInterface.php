@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\SharedModel\Node;
+
+/**
+ * @api to be implemented in userland
+ */
+interface PropertyMetadataInterface extends \JsonSerializable
+{
+    /**
+     * Metadata may be merged from supertype to subtype
+     */
+    public function mergeToSubType(self $subTypeMetadata): self;
+}

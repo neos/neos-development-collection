@@ -43,4 +43,15 @@ final class ReferenceTypeDeclarationIsInvalid extends \Exception
             1792183539,
         );
     }
+
+    public static function becauseItHasCircularSuperTypes(
+        ReferenceTypeName $referenceTypeName,
+        ReferenceTypeNameList $circularSuperTypes,
+    ): self {
+        return new self(
+            'Reference type "' . $referenceTypeName->value
+            . '" has circular supertypes: "' . implode(" -> ", $circularSuperTypes->toStringArray()) . '".',
+            1792227116,
+        );
+    }
 }

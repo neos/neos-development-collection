@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\ReferenceType;
 
 /**
+ * A dense, 0-indexed list of reference type names, not necessarily unique
+ *
  * @api
  * @implements \IteratorAggregate<int,ReferenceTypeName>
  */
@@ -21,6 +23,19 @@ final class ReferenceTypeNameList implements \JsonSerializable, \IteratorAggrega
     public static function list(ReferenceTypeName ...$items): self
     {
         return new self(\array_values($items));
+    }
+
+    public function append(ReferenceTypeName ...$items): self
+    {
+        return new self(array_merge(
+            $this->items,
+            array_values($items),
+        ));
+    }
+
+    public function contains(ReferenceTypeName $item): bool
+    {
+        return in_array($item, $this->items);
     }
 
     public function getIterator(): \Traversable

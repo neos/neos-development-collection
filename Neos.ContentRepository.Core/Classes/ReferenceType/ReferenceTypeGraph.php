@@ -4,94 +4,81 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\ReferenceType;
 
-use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
-
 /**
  * @api
  */
-final class ReferenceTypeGraph
+final readonly class ReferenceTypeGraph
 {
     /**
-     * @param array<string,ReferenceTypeNameList> $superTypeNames indexed by child name
-     * @param array<string,ReferenceTypeNameList> $subTypesNames indexed by parent name
-     * @param array<string,?ReferenceType> $referenceTypes indexed by name, initialized as null and resolved lazily
-     * @param array<string,ReferenceTypeDeclaration> $referenceTypeDeclarations indexed by name
+     * @param array<string,ReferenceTypeNameList> $declaredSuperTypeNames - direct; indexed by child name
+     * @param array<string,ReferenceTypeNameList> $superTypeNames - recursive; indexed by descendant name
+     * @param array<string,ReferenceTypeNameList> $declaredSubTypesNames indexed by parent name
+     * @param array<string,ReferenceTypeNameList> $subTypeNames - recursive; indexed by ancestor name
      */
     private function __construct(
-        public readonly array $superTypeNames,
-        public readonly array $subTypesNames,
-        public array $referenceTypes,
-        public readonly array $referenceTypeDeclarations,
+        private array $declaredSuperTypeNames,
+        private array $superTypeNames,
+        private array $declaredSubTypesNames,
+        private array $subTypeNames,
+        private ReferenceTypeDictionary $referenceTypes,
     ) {
     }
 
-    /**
-     * @param array<ReferenceTypeDeclaration> $referenceTypeDeclarations
-     */
-    public static function fromDeclarations(
-        array $referenceTypeDeclarations,
+    public static function create(
+        ReferenceTypeDeclarationDictionary $dictionary,
     ): self {
-        $indexedReferenceTypeDeclarations = [];
-        foreach ($referenceTypeDeclarations as $referenceTypeDeclaration) {
-            $indexedReferenceTypeDeclarations[$referenceTypeDeclaration->name->value] = $referenceTypeDeclaration;
-        }
-        $subTypes = [];
-        $superTypes = [];
         $referenceTypes = [];
-        foreach ($referenceTypeDeclarations as $referenceTypeDeclaration) {
-            $unknownSuperTypeNames = [];
-            $finalSuperTypeNames = [];
-            foreach ($referenceTypeDeclaration->superTypeNames as $declaredSuperTypeName) {
-                $declaration = $indexedReferenceTypeDeclarations[$declaredSuperTypeName->value] ?? null;
-                if (!$declaration) {
-                    $unknownSuperTypeNames[] =  $declaredSuperTypeName;
-                } elseif ($declaration->isFinal) {
-                    $finalSuperTypeNames[] = $declaredSuperTypeName;
-                } else {
-                    $subTypes[$declaredSuperTypeName->value][$referenceTypeDeclaration->name->value]
-                        = $referenceTypeDeclaration->name;
-                }
-            }
-            if ($unknownSuperTypeNames !== []) {
-                throw ReferenceTypeDeclarationIsInvalid::becauseItHasUnknownSuperTypes(
-                    $referenceTypeDeclaration->name,
-                    ReferenceTypeNameList::list(...$unknownSuperTypeNames),
+        $superTypeNames = [];
+        $declaredSubTypeNames = [];
+        $subTypeNames = [];
+        foreach ($dictionary as $declaration) {
+            if (!array_key_exists($declaration->name->value, $referenceTypes)) {
+                $declaration->resolveReferenceTypeHierarchy(
+                    dictionary: $dictionary,
+                    hierarchySoFar: ReferenceTypeNameList::list(),
+                    referenceTypes: $referenceTypes,
+                    superTypeNames: $superTypeNames,
+                    declaredSubTypeNames: $declaredSubTypeNames,
+                    subTypeNames: $subTypeNames,
                 );
             }
-            if ($finalSuperTypeNames !== []) {
-                throw ReferenceTypeDeclarationIsInvalid::becauseItHasFinalSuperTypes(
-                    $referenceTypeDeclaration->name,
-                    ReferenceTypeNameList::list(...$finalSuperTypeNames),
-                );
-            }
-            $referenceTypes[$referenceTypeDeclaration->name->value] = null;
-            $superTypes[$referenceTypeDeclaration->name->value] = $referenceTypeDeclaration->superTypeNames;
         }
 
         return new self(
-            superTypeNames: $superTypes,
-            subTypesNames: array_map(
-                fn (array $items): ReferenceTypeNameList => ReferenceTypeNameList::list(...$items),
-                $subTypes,
+            declaredSuperTypeNames: array_map(
+                fn (ReferenceTypeDeclaration $declaration): ReferenceTypeNameList => $declaration->superTypeNames,
+                iterator_to_array($dictionary),
             ),
-            referenceTypes: $referenceTypes,
-            referenceTypeDeclarations: $indexedReferenceTypeDeclarations,
+            superTypeNames: array_map(
+                fn (array $superTypeNamesForSubType): ReferenceTypeNameList
+                    => ReferenceTypeNameList::list(...$superTypeNamesForSubType),
+                $superTypeNames,
+            ),
+            declaredSubTypesNames: $declaredSubTypeNames,
+            subTypeNames: $subTypeNames,
+            referenceTypes: ReferenceTypeDictionary::create($referenceTypes),
+        );
+    }
+
+    public static function createLazy(
+        ReferenceTypeDeclarationDictionary $dictionary,
+    ): self {
+        $reflector = new \ReflectionClass(self::class);
+
+        /** @phpstan-ignore method.notFound (¯\_(ツ)_/¯) */
+        return $reflector->newLazyProxy(
+            fn (): self => self::create($dictionary),
         );
     }
 
     public function getReferenceType(ReferenceTypeName $referenceTypeName): ?ReferenceType
     {
-        if (!array_key_exists($referenceTypeName->value, $this->referenceTypes)) {
-            return null;
-        }
-
-        return $this->referenceTypes[$referenceTypeName->value]
-            ??= $this->initializeReferenceType($referenceTypeName);
+        return $this->referenceTypes->getReferenceType($referenceTypeName);
     }
 
-    public function getReferenceTypeDeclaration(ReferenceTypeName $referenceTypeName): ?ReferenceTypeDeclaration
+    public function getDeclaredSuperTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
     {
-        return $this->referenceTypeDeclarations[$referenceTypeName->value] ?? null;
+        return $this->declaredSuperTypeNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
     }
 
     public function getSuperTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
@@ -99,18 +86,13 @@ final class ReferenceTypeGraph
         return $this->superTypeNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
     }
 
-    public function getSubTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
+    public function getDeclaredSubTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
     {
-        return $this->subTypesNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
+        return $this->declaredSubTypesNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
     }
 
-    private function initializeReferenceType(ReferenceTypeName $referenceTypeName): ReferenceType
+    public function getSubTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
     {
-        $referenceTypeDeclaration = $this->referenceTypeDeclarations[$referenceTypeName->value];
-
-        return ReferenceType::create(
-            name: $referenceTypeDeclaration->name,
-            properties: [],
-        );
+        return $this->subTypeNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
     }
 }

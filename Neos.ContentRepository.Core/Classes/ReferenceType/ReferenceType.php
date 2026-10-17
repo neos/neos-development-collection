@@ -5,43 +5,63 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\ReferenceType;
 
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertySpecification;
 
 /**
  * @api
  */
 final class ReferenceType
 {
-    /**
-     * @param array<string, PropertySpecification> $properties indexed by property name
-     */
     private function __construct(
         public ReferenceTypeName $name,
-        public array $properties,
+        public bool $isAbstract,
+        public bool $isFinal,
+        public NodeTypeConstraintsDeclaration $sourceNodeTypes,
+        public NodeTypeConstraintsDeclaration $targetNodeTypes,
+        public PropertyDeclarationDictionary $properties,
     ) {
     }
 
-    /**
-     * @param array<string, PropertySpecification> $properties indexed by property name
-     */
     public static function create(
         ReferenceTypeName $name,
-        array $properties,
+        bool $isAbstract,
+        bool $isFinal,
+        NodeTypeConstraintsDeclaration $sourceNodeTypes,
+        NodeTypeConstraintsDeclaration $targetNodeTypes,
+        PropertyDeclarationDictionary $properties,
     ): self {
         return new self(
             name: $name,
+            isAbstract: $isAbstract,
+            isFinal: $isFinal,
+            sourceNodeTypes: $sourceNodeTypes,
+            targetNodeTypes: $targetNodeTypes,
             properties: $properties,
+        );
+    }
+
+    public static function fromDeclaration(
+        ReferenceTypeDeclaration $declaration,
+    ): self {
+        return new self(
+            name: $declaration->name,
+            isAbstract: $declaration->isAbstract,
+            isFinal: $declaration->isFinal,
+            sourceNodeTypes: $declaration->sourceNodeTypes,
+            targetNodeTypes: $declaration->targetNodeTypes,
+            properties: $declaration->properties,
         );
     }
 
     public function hasProperty(PropertyName $propertyName): bool
     {
-        return array_key_exists($propertyName->value, $this->properties);
+        return $this->properties->hasProperty($propertyName);
     }
 
     public function getPropertyType(PropertyName $propertyName): ?PropertyType
     {
-        return ($this->properties[$propertyName->value] ?? null)?->type;
+        return $this->properties->getPropertyType($propertyName);
     }
 }
