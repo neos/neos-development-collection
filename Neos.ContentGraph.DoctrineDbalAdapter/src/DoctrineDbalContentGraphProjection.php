@@ -309,16 +309,38 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             INNER JOIN (
               SELECT childnodeanchor FROM {$this->tableNames->hierarchyRelation()} AS h
                 INNER JOIN (
-                  SELECT id, MIN(contentstreamlayer) AS mergeIntoLayer, MAX(contentstreamlayer) AS mergeFromLayer FROM {$this->tableNames->hierarchyRelation()}
-                  WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                  SELECT
+                    id, MIN(contentstreamlayer) AS mergeIntoLayer, MAX(contentstreamlayer) AS mergeFromLayer
+                  FROM {$this->tableNames->hierarchyRelation()}
+                    WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
                   GROUP BY id
                   HAVING mergeIntoLayer != mergeFromLayer
+                    AND (
+                      MIN(childnodeanchor) != MAX(childnodeanchor)
+                      OR COUNT(childnodeanchor) = 1
+                    )
                 ) AS reducedHierarchies
                 ON reducedHierarchies.id = h.id
                 AND reducedHierarchies.mergeIntoLayer = h.contentstreamlayer
                 WHERE NOT EXISTS(
                   SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS allH
-                  WHERE allH.contentstreamlayer != :contentStreamLayerToMergeInto
+                  WHERE NOT (
+                    allH.contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                    AND allH.id IN (
+                      SELECT t.id FROM (
+                        SELECT
+                          id, MIN(contentstreamlayer) AS mergeIntoLayer, MAX(contentstreamlayer) AS mergeFromLayer
+                        FROM {$this->tableNames->hierarchyRelation()}
+                          WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                          GROUP BY id
+                        HAVING mergeIntoLayer != mergeFromLayer
+                          AND (
+                            MIN(childnodeanchor) != MAX(childnodeanchor)
+                            OR COUNT(childnodeanchor) = 1
+                          )
+                      ) AS t
+                    )
+                  )
                     AND allH.childnodeanchor = h.childnodeanchor
                 )
             ) AS reducedExclusive
