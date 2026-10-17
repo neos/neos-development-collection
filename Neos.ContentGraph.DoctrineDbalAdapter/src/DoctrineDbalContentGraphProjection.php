@@ -303,7 +303,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
             // Drop non-referenced nodes and reference relations (which will not have a hierarchy relation after the merge)
-            $deleteNodesStatement = <<<SQL
+            $deleteReducedNodesAndReferencesStatement = <<<SQL
             DELETE n, r FROM {$this->tableNames->node()} n
             LEFT JOIN {$this->tableNames->referenceRelation()} r
               ON r.nodeanchorpoint = n.relationanchorpoint
@@ -347,12 +347,12 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             ON reducedExclusive.childnodeanchor = n.relationanchorpoint
             SQL;
             try {
-                $this->dbal->executeStatement($deleteNodesStatement, [
+                $this->dbal->executeStatement($deleteReducedNodesAndReferencesStatement, [
                     'contentStreamLayerToMergeInto' => $contentStreamLayerToMergeInto->value,
                     'contentStreamLayerToMergeFrom' => $contentStreamLayerToMergeFrom->value,
                 ]);
             } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to delete non-referenced merged nodes: %s', $e->getMessage()), 1792164936, $e);
+                throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes and their references: %s', $e->getMessage()), 1792164936, $e);
             }
 
             $mergeHierarchyRelationsStatement = <<<SQL
@@ -426,7 +426,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         }
 
         // Drop non-referenced nodes and reference relations (which will not have a hierarchy relation anymore)
-        $deleteNodesStatement = <<<SQL
+        $deleteNodesAndReferencesStatement = <<<SQL
             DELETE n, r FROM {$this->tableNames->node()} n
             LEFT JOIN {$this->tableNames->referenceRelation()} r
               ON r.nodeanchorpoint = n.relationanchorpoint
@@ -443,11 +443,11 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             )
             SQL;
         try {
-            $this->dbal->executeStatement($deleteNodesStatement, [
+            $this->dbal->executeStatement($deleteNodesAndReferencesStatement, [
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes: %s', $e->getMessage()), 1716489294, $e);
+            throw new \RuntimeException(sprintf('Failed to delete non-referenced nodes and their references: %s', $e->getMessage()), 1716489294, $e);
         }
 
         // Drop hierarchy relations
