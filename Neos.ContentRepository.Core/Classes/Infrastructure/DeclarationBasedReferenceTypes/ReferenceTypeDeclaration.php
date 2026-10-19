@@ -178,7 +178,7 @@ final readonly class ReferenceTypeDeclaration
         $sourceNodeTypes = null;
         foreach ($superTypes as $superType) {
             $sourceNodeTypes = $sourceNodeTypes?->mergeToSubType($superType->sourceNodeTypeConstraints)
-                ?: NodeTypeConstraintsDeclaration::fromNodeTypConstraints($superType->sourceNodeTypeConstraints);
+                ?: NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($superType->sourceNodeTypeConstraints);
         }
         $sourceNodeTypes = $sourceNodeTypes->mergeToSubType($this->sourceNodeTypes);
 
@@ -186,7 +186,7 @@ final readonly class ReferenceTypeDeclaration
         $targetNodeTypes = null;
         foreach ($superTypes as $superType) {
             $targetNodeTypes = $targetNodeTypes?->mergeToSubType($superType->targetNodeTypeConstraints)
-                ?: NodeTypeConstraintsDeclaration::fromNodeTypConstraints($superType->targetNodeTypeConstraints);
+                ?: NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($superType->targetNodeTypeConstraints);
         }
         $targetNodeTypes = $targetNodeTypes->mergeToSubType($this->targetNodeTypes);
 

@@ -95,7 +95,9 @@ class ReferenceTypeDeclarationTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 )
             ),
             'resultExpected' => true,

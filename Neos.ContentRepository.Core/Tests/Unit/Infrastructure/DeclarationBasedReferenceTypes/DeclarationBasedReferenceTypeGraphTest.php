@@ -170,7 +170,9 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                         PropertyDeclaration::create(
                             name: PropertyName::fromString('text'),
                             type: PropertyType::string(),
+                            defaultValue: null,
                             metadata: PropertyMetadataDictionary::create([]),
+                            declaringType: ReferenceTypeName::fromString('Acme.Site:ReferenceA'),
                         )
                     ),
                 ),
@@ -185,7 +187,9 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                         PropertyDeclaration::create(
                             name: PropertyName::fromString('text'),
                             type: PropertyType::float(),
+                            defaultValue: null,
                             metadata: PropertyMetadataDictionary::create([]),
+                            declaringType: ReferenceTypeName::fromString('Acme.Site:ReferenceB'),
                         )
                     ),
                 ),
@@ -286,8 +290,8 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     isWildcardAllowed: false,
                     includeAbstract: true,
                     explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:Node',
                         'Acme.Site:RestrictedNode',
+                        'Acme.Site:Node',
                     ]),
                     explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
                         'Acme.Site:AnotherRestrictedNode',
@@ -297,8 +301,8 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     isWildcardAllowed: false,
                     includeAbstract: true,
                     explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:Node',
                         'Acme.Site:RestrictedNode',
+                        'Acme.Site:Node',
                     ]),
                     explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
                         'Acme.Site:AnotherRestrictedNode',
@@ -308,6 +312,7 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     'text' => Property::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([
                             'generic' => GenericArrayPropertyMetadata::create([
                                 'foo' => 'baz',
@@ -320,11 +325,13 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     'abstract' => Property::create(
                         name: PropertyName::fromString('abstract'),
                         type: PropertyType::string(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                 ]),
@@ -352,8 +359,8 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     isWildcardAllowed: false,
                     includeAbstract: true,
                     explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:Node',
                         'Acme.Site:RestrictedNode',
+                        'Acme.Site:Node',
                     ]),
                     explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
                         'Acme.Site:AnotherRestrictedNode',
@@ -364,8 +371,8 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     isWildcardAllowed: false,
                     includeAbstract: true,
                     explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:Node',
                         'Acme.Site:RestrictedNode',
+                        'Acme.Site:Node',
                     ]),
                     explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
                         'Acme.Site:AnotherRestrictedNode',
@@ -373,9 +380,10 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                     ]),
                 ),
                 properties: PropertyDictionary::create([
-                    Property::create(
+                    'text' => Property::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([
                             'generic' => GenericArrayPropertyMetadata::create([
                                 'foo' => 'baz',
@@ -386,24 +394,28 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                             ]),
                         ])
                     ),
-                    Property::create(
+                    'abstract' => Property::create(
                         name: PropertyName::fromString('abstract'),
                         type: PropertyType::string(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    Property::create(
+                    'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    Property::create(
+                    'description' => Property::create(
                         name: PropertyName::fromString('description'),
                         type: PropertyType::string(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    Property::create(
+                    'author' => Property::create(
                         name: PropertyName::fromString('author'),
                         type: PropertyType::string(),
+                        defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                 ]),
@@ -648,17 +660,21 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
                         'generic' => GenericArrayPropertyMetadata::create([
                             'foo' => 'baz',
                             'wat' => 'atouille',
                         ]),
-                    ])
+                    ]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference')
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('value'),
                     type: PropertyType::float(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference')
                 ),
             ),
         );
@@ -689,18 +705,22 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
                         'generic' => GenericArrayPropertyMetadata::create([
                             'foo' => 'bar',
                             'noodle' => 'soup',
                             'bool' => true,
                         ]),
-                    ])
+                    ]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:BaseReference'),
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('abstract'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:BaseReference'),
                 ),
             ),
         );
@@ -733,17 +753,21 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
                         'generic' => GenericArrayPropertyMetadata::create([
                             'foo' => 'barrr',
                             'number' => 42,
                         ]),
-                    ])
+                    ]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('description'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
                 ),
             ),
         );
@@ -770,17 +794,21 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
                         'generic' => GenericArrayPropertyMetadata::create([
                             'foo' => 'intermediate',
                             'bool' => false,
                         ]),
-                    ])
+                    ]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('author'),
                     type: PropertyType::string(),
+                    defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
                 ),
             ),
         );

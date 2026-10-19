@@ -113,8 +113,8 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         return self::create(
             name: $this->name,
             type: $this->type,
-            defaultValue: $this->metadata->mergeToSubType($subTypePropertyDeclaration->metadata),
-            metadata: $this->defaultValue ?: $subTypePropertyDeclaration->defaultValue,
+            defaultValue: $this->defaultValue ?: $subTypePropertyDeclaration->defaultValue,
+            metadata: $this->metadata->mergeToSubType($subTypePropertyDeclaration->metadata),
             declaringType: $referenceTypeName,
         );
     }

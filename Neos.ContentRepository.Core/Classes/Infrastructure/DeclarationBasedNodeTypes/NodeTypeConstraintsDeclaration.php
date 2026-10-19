@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\Utility\Arrays;
 
 /**
  * @api
@@ -52,14 +53,14 @@ final readonly class NodeTypeConstraintsDeclaration implements \JsonSerializable
         );
     }
 
-    public static function fromNodeTypConstraints(NodeTypeConstraints $nodeTypeConstraints): self
+    public static function fromNodeTypeConstraints(NodeTypeConstraints $nodeTypeConstraints): self
     {
         $constrainedNodeTypes = [];
         foreach ($nodeTypeConstraints->explicitlyAllowedNodeTypeNames as $explicitlyAllowedNodeTypeName) {
             $constrainedNodeTypes[$explicitlyAllowedNodeTypeName->value] = true;
         }
         foreach ($nodeTypeConstraints->explicitlyDisallowedNodeTypeNames as $explicitlyDisallowedNodeTypeName) {
-            $constrainedNodeTypes[$explicitlyDisallowedNodeTypeName->value] = true;
+            $constrainedNodeTypes[$explicitlyDisallowedNodeTypeName->value] = false;
         }
 
         return new self(
@@ -71,11 +72,12 @@ final readonly class NodeTypeConstraintsDeclaration implements \JsonSerializable
     public function mergeToSubType(self|NodeTypeConstraints $subTypeNodeTypeConstraints): self
     {
         if ($subTypeNodeTypeConstraints instanceof NodeTypeConstraints) {
-            $subTypeNodeTypeConstraints = self::fromNodeTypConstraints($subTypeNodeTypeConstraints);
+            $subTypeNodeTypeConstraints = self::fromNodeTypeConstraints($subTypeNodeTypeConstraints);
         }
+
         return new self(
             isWildcardAllowed: $subTypeNodeTypeConstraints->isWildcardAllowed,
-            constrainedNodeTypes: array_merge(
+            constrainedNodeTypes: Arrays::arrayMergeRecursiveOverrule(
                 $this->constrainedNodeTypes,
                 $subTypeNodeTypeConstraints->constrainedNodeTypes,
             ),
