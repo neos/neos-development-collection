@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2026-10-16
+This reference was automatically generated from code on 2026-10-19
 
 
 .. _`Flow Signals Reference: AbstractAdvice (``Neos\Flow\Aop\Advice\AbstractAdvice``)`:
