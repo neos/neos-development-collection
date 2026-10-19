@@ -71,10 +71,6 @@ final readonly class ReferenceTypeDeclaration
         array &$declaredSubTypeNames,
         array &$subTypeNames,
     ): void {
-        if (array_key_exists($this->name->value, $referenceTypes)) {
-            // we've been here before
-            return;
-        }
         $hierarchySoFar = $hierarchySoFar->append($this->name);
         $unknownSuperTypeNames = [];
         $finalSuperTypeNames = [];
@@ -98,8 +94,6 @@ final readonly class ReferenceTypeDeclaration
                             circularSuperTypes: $hierarchySoFar->append($superTypeName),
                         );
                     }
-                    $superTypeNames[$subTypeName->value][$superTypeName->value] = $superTypeName;
-                    $subTypeNames[$superTypeName->value][$subTypeName->value] = $subTypeName;
                 }
                 $superTypeDeclaration->resolveReferenceTypeHierarchy(
                     dictionary: $dictionary,
@@ -109,9 +103,22 @@ final readonly class ReferenceTypeDeclaration
                     declaredSubTypeNames: $declaredSubTypeNames,
                     subTypeNames: $subTypeNames,
                 );
-            } elseif ($referenceTypes[$superTypeName->value]->isFinal) {
-                $finalSuperTypeNames[] = $superTypeName;
-                continue;
+            } else {
+                if ($referenceTypes[$superTypeName->value]->isFinal) {
+                    $finalSuperTypeNames[] = $superTypeName;
+                    continue;
+                }
+            }
+            foreach ($hierarchySoFar as $subTypeName) {
+                $superTypeNames[$subTypeName->value] = array_merge(
+                    $superTypeNames[$subTypeName->value] ?? [],
+                    [$superTypeName->value => $superTypeName],
+                    $superTypeNames[$superTypeName->value] ?? [],
+                );
+                $subTypeNames[$superTypeName->value][$subTypeName->value] = $subTypeName;
+                foreach ($superTypeNames[$subTypeName->value] ?? [] as $ancestorSuperType) {
+                    $subTypeNames[$ancestorSuperType->value][$subTypeName->value] = $subTypeName;
+                }
             }
             $superTypes[] = $referenceTypes[$superTypeName->value];
         }

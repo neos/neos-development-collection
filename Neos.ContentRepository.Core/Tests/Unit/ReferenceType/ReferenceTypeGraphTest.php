@@ -385,6 +385,218 @@ class ReferenceTypeGraphTest extends TestCase
         ];
     }
 
+    #[DataProvider('declaredSuperTypeNamesProvider')]
+    public function testGetDeclaredSuperTypeNames(
+        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeName $name,
+        ReferenceTypeNameList $expectedResult,
+    ): void {
+        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        Assert::assertEquals($expectedResult, $subject->getDeclaredSuperTypeNames($name));
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     name: ReferenceTypeName,
+     *     expectedResult: ReferenceTypeNameList,
+     * }>
+     */
+    public static function declaredSuperTypeNamesProvider(): iterable
+    {
+        yield 'empty dictionary' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'empty supertypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'supertypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+                self::getIntermediateReferenceDeclaration(),
+                self::getAnotherBaseReferenceDeclaration(),
+                self::getReferenceDeclaration(
+                    ReferenceTypeNameList::list(
+                        ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                        ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    )
+                )
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
+            'expectedResult' => ReferenceTypeNameList::list(
+                ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+            ),
+        ];
+    }
+
+    #[DataProvider('superTypeNamesProvider')]
+    public function testGetSuperTypeNames(
+        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeName $name,
+        ReferenceTypeNameList $expectedResult,
+    ): void {
+        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        Assert::assertEquals($expectedResult, $subject->getSuperTypeNames($name));
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     name: ReferenceTypeName,
+     *     expectedResult: ReferenceTypeNameList,
+     * }>
+     */
+    public static function superTypeNamesProvider(): iterable
+    {
+        yield 'empty dictionary' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'empty supertypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'supertypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+                self::getIntermediateReferenceDeclaration(),
+                self::getAnotherBaseReferenceDeclaration(),
+                self::getReferenceDeclaration(
+                    ReferenceTypeNameList::list(
+                        ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                        ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    )
+                )
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
+            'expectedResult' => ReferenceTypeNameList::list(
+                ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+            ),
+        ];
+    }
+
+    #[DataProvider('declaredSubTypeNamesProvider')]
+    public function testGetDeclaredSubTypeNames(
+        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeName $name,
+        ReferenceTypeNameList $expectedResult,
+    ): void {
+        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        Assert::assertEquals($expectedResult, $subject->getDeclaredSubTypeNames($name));
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     name: ReferenceTypeName,
+     *     expectedResult: ReferenceTypeNameList,
+     * }>
+     */
+    public static function declaredSubTypeNamesProvider(): iterable
+    {
+        yield 'empty dictionary' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'empty subtypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'subtypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+                self::getIntermediateReferenceDeclaration(),
+                self::getAnotherBaseReferenceDeclaration(),
+                self::getReferenceDeclaration(
+                    ReferenceTypeNameList::list(
+                        ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                        ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    )
+                )
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+            'expectedResult' => ReferenceTypeNameList::list(
+                ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+            ),
+        ];
+    }
+
+    #[DataProvider('subTypeNamesProvider')]
+    public function testGetSubTypeNames(
+        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeName $name,
+        ReferenceTypeNameList $expectedResult,
+    ): void {
+        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        Assert::assertEquals($expectedResult, $subject->getSubTypeNames($name));
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     name: ReferenceTypeName,
+     *     expectedResult: ReferenceTypeNameList,
+     * }>
+     */
+    public static function subTypeNamesProvider(): iterable
+    {
+        yield 'empty dictionary' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'empty subtypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+            'expectedResult' => ReferenceTypeNameList::list(),
+        ];
+
+        yield 'subtypes' => [
+            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+                self::getBaseReferenceDeclaration(),
+                self::getIntermediateReferenceDeclaration(),
+                self::getAnotherBaseReferenceDeclaration(),
+                self::getReferenceDeclaration(
+                    ReferenceTypeNameList::list(
+                        ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                        ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    )
+                )
+            ),
+            'name' => ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+            'expectedResult' => ReferenceTypeNameList::list(
+                ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                ReferenceTypeName::fromString('Acme.Site:Reference'),
+            ),
+        ];
+    }
+
     private static function getReferenceDeclaration(ReferenceTypeNameList $superTypeNames): ReferenceTypeDeclaration
     {
         return ReferenceTypeDeclaration::create(
