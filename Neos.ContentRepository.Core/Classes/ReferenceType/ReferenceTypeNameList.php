@@ -25,6 +25,17 @@ final class ReferenceTypeNameList implements \JsonSerializable, \IteratorAggrega
         return new self(\array_values($items));
     }
 
+    /**
+     * @param array<string> $values
+     */
+    public static function fromStringArray(array $values): self
+    {
+        return new self(array_map(
+            fn (string $value): ReferenceTypeName => ReferenceTypeName::fromString($value),
+            $values,
+        ));
+    }
+
     public function append(ReferenceTypeName ...$items): self
     {
         return new self(array_merge(

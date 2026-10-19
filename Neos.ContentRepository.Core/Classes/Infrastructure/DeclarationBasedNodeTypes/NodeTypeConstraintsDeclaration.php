@@ -34,6 +34,24 @@ final readonly class NodeTypeConstraintsDeclaration implements \JsonSerializable
         );
     }
 
+    /**
+     * @param array<string,bool> $values
+     */
+    public static function fromArray(array $values): self
+    {
+        if (array_key_exists('*', $values)) {
+            $isWildcardAllowed = $values['*'];
+            unset($values['*']);
+        } else {
+            $isWildcardAllowed = false;
+        }
+
+        return new self(
+            isWildcardAllowed: $isWildcardAllowed,
+            constrainedNodeTypes: $values,
+        );
+    }
+
     public static function fromNodeTypConstraints(NodeTypeConstraints $nodeTypeConstraints): self
     {
         $constrainedNodeTypes = [];

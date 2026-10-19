@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -88,6 +89,7 @@ class ForkingDuringForkingTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
+        FakeReferenceTypeGraphFactory::setConfiguration([]);
 
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 

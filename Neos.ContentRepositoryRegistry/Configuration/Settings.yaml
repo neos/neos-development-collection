@@ -43,6 +43,9 @@ Neos:
         nodeTypeManager:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
 
+        referenceTypeGraph:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph\DeclarationBasedReferenceTypeGraphFactory
+
         contentDimensionSource:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
 

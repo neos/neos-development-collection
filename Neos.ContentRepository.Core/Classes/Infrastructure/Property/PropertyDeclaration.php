@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\PropertyDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\GenericArrayPropertyMetadata;
 use Neos\ContentRepository\Core\SharedModel\Property\Property;
 use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 
@@ -18,19 +21,58 @@ final readonly class PropertyDeclaration implements \JsonSerializable
     private function __construct(
         public PropertyName $name,
         public PropertyType $type,
+        public mixed $defaultValue,
         public PropertyMetadataDictionary $metadata,
     ) {
     }
 
+    /**
+     * @throws PropertyDeclarationIsInvalid
+     */
     public static function create(
         PropertyName $name,
         PropertyType $type,
+        mixed $defaultValue,
         PropertyMetadataDictionary $metadata,
+        ReferenceTypeName|NodeTypeName|null $declaringType,
     ): self {
+        if (!$type->isMatchedBy($defaultValue)) {
+            throw PropertyDeclarationIsInvalid::becauseItsDefaultValueDoesNotMatchItsType(
+                $name,
+                $type,
+                $defaultValue,
+                $declaringType,
+            );
+        }
         return new self(
             name: $name,
             type: $type,
+            defaultValue: $defaultValue,
             metadata: $metadata,
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $values
+     */
+    public static function fromArray(array $values, string $name, ReferenceTypeName|NodeTypeName $declaringType): self
+    {
+        $name = PropertyName::fromString($name);
+        $type = $declaringType instanceof ReferenceTypeName
+            ? PropertyType::fromReferenceTypeDeclaration($values['type'] ?? '', $name, $declaringType)
+            : PropertyType::fromNodeTypeDeclaration($values['type'] ?? '', $name, $declaringType);
+        $defaultValue = $values['defaultValue'] ?? null;
+        unset($values['type']);
+        unset($values['defaultValue']);
+
+        return self::create(
+            name: $name,
+            type: $type,
+            defaultValue: $defaultValue,
+            metadata: PropertyMetadataDictionary::create([
+                'genericArray' => GenericArrayPropertyMetadata::create($values),
+            ]),
+            declaringType: $declaringType,
         );
     }
 
@@ -39,6 +81,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         return new self(
             name: $property->name,
             type: $property->type,
+            defaultValue: $property->defaultValue,
             metadata: $property->metadata,
         );
     }
@@ -48,12 +91,12 @@ final readonly class PropertyDeclaration implements \JsonSerializable
      * @param-out array<string,list<SuperTypeConflict>> $superTypeConflicts
      */
     public function mergeToSubType(
-        self $subTypePropertySpecification,
+        self $subTypePropertyDeclaration,
         array &$superTypeConflicts,
         ReferenceTypeName $referenceTypeName,
         ?ReferenceTypeName $previousReferenceTypeName = null,
     ): self {
-        if ($this->type->value !== $subTypePropertySpecification->type->value) {
+        if ($this->type->value !== $subTypePropertyDeclaration->type->value) {
             if (!array_key_exists($this->name->value, $superTypeConflicts)) {
                 $superTypeConflicts[$this->name->value][] = SuperTypeConflict::create(
                     // fallback should never happen, the first conflict can only occur
@@ -64,13 +107,15 @@ final readonly class PropertyDeclaration implements \JsonSerializable
             }
             $superTypeConflicts[$this->name->value][] = SuperTypeConflict::create(
                 referenceTypeName: $referenceTypeName,
-                propertyType: $subTypePropertySpecification->type,
+                propertyType: $subTypePropertyDeclaration->type,
             );
         }
-        return new self(
-            $this->name,
-            $this->type,
-            $this->metadata->mergeToSubType($subTypePropertySpecification->metadata),
+        return self::create(
+            name: $this->name,
+            type: $this->type,
+            defaultValue: $this->metadata->mergeToSubType($subTypePropertyDeclaration->metadata),
+            metadata: $this->defaultValue ?: $subTypePropertyDeclaration->defaultValue,
+            declaringType: $referenceTypeName,
         );
     }
 
@@ -79,6 +124,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         return Property::create(
             name: $this->name,
             type: $this->type,
+            defaultValue: $this->defaultValue,
             metadata: $this->metadata,
         );
     }

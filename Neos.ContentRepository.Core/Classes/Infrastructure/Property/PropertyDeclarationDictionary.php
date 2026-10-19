@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Property\Property;
 use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
@@ -28,6 +29,18 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
         $items = [];
         foreach ($declarations as $declaration) {
             $items[$declaration->name->value] = $declaration;
+        }
+        return new self($items);
+    }
+
+    /**
+     * @param array<string,array<string,mixed>> $values
+     */
+    public static function fromArray(array $values, NodeTypeName|ReferenceTypeName $declaringType): self
+    {
+        $items = [];
+        foreach ($values as $name => $item) {
+            $items[$name] = PropertyDeclaration::fromArray($item, $name, $declaringType);
         }
         return new self($items);
     }

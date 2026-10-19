@@ -30,6 +30,19 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
         return new self($items);
     }
 
+    /**
+     * @param array<string,array<string,mixed>> $values
+     */
+    public static function fromArray(array $values): self
+    {
+        $items = [];
+        foreach ($values as $name => $item) {
+            $items[$name] = ReferenceTypeDeclaration::fromArray($item, $name);
+        }
+
+        return new self($items);
+    }
+
     public function getReferenceTypeDeclaration(ReferenceTypeName $name): ?ReferenceTypeDeclaration
     {
         return $this->items[$name->value] ?? null;

@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
 use Neos\EventStore\Model\Event\EventTypes;
@@ -88,6 +89,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
                 ]
             ]
         ]);
+        FakeReferenceTypeGraphFactory::setConfiguration([]);
 
         /** Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed */
         \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository(ContentRepositoryId::fromString('test_parallel'));

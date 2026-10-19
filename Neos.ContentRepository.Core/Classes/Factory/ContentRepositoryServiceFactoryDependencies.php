@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\EventStore\EventStoreInterface;
@@ -39,6 +40,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         public EventStoreInterface $eventStore,
         public EventNormalizer $eventNormalizer,
         public NodeTypeManager $nodeTypeManager,
+        public ReferenceTypeGraphInterface $referenceTypeGraph,
         public ContentDimensionSourceInterface $contentDimensionSource,
         public ContentDimensionZookeeper $contentDimensionZookeeper,
         public InterDimensionalVariationGraph $interDimensionalVariationGraph,
@@ -58,6 +60,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
         EventStoreInterface $eventStore,
         EventNormalizer $eventNormalizer,
         NodeTypeManager $nodeTypeManager,
+        ReferenceTypeGraphInterface $referenceTypeGraph,
         ContentDimensionSourceInterface $contentDimensionSource,
         ContentDimensionZookeeper $contentDimensionZookeeper,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
@@ -72,6 +75,7 @@ final readonly class ContentRepositoryServiceFactoryDependencies
             $eventStore,
             $eventNormalizer,
             $nodeTypeManager,
+            $referenceTypeGraph,
             $contentDimensionSource,
             $contentDimensionZookeeper,
             $interDimensionalVariationGraph,

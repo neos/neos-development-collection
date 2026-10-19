@@ -56,6 +56,30 @@ final readonly class ReferenceTypeDeclaration
     }
 
     /**
+     * @param array<string,array<string,mixed>> $values
+     */
+    public static function fromArray(array $values, string $name): self
+    {
+        $name = ReferenceTypeName::fromString($name);
+        if (!is_bool(($isAbstract = $values['abstract'] ?? false))) {
+            throw new \InvalidArgumentException('Invalid value for bool "abstract", ' . get_debug_type($isAbstract) . ' given.');
+        }
+        if (!is_bool(($isFinal = $values['final'] ?? false))) {
+            throw new \InvalidArgumentException('Invalid value for bool "final", ' . get_debug_type($isFinal) . ' given.');
+        }
+
+        return new self(
+            name: $name,
+            isAbstract: $isAbstract,
+            isFinal: $isFinal,
+            superTypeNames: ReferenceTypeNameList::fromStringArray(array_keys($values['superTypes'])),
+            sourceNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['sourceNodeTypes']),
+            targetNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['targetNodeTypes']),
+            properties: PropertyDeclarationDictionary::fromArray($values['properties'] ?? [], $name),
+        );
+    }
+
+    /**
      * @param array<string,ReferenceType> $referenceTypes
      * @param array<string,array<string,ReferenceTypeName>> $superTypeNames
      * @param array<string,array<string,ReferenceTypeName>> $declaredSubTypeNames
