@@ -303,7 +303,20 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
             // Drop non-referenced nodes and reference relations (which will not have a hierarchy relation after the merge)
-            $sql = fn (string $v) => $v;
+            $reducedHierarchiesWithUnreferencedChildNodeAnchorsStatement = <<<SQL
+            SELECT id FROM {$this->tableNames->hierarchyRelation()} AS hMergeFrom
+              WHERE hMergeFrom.contentstreamlayer = :contentStreamLayerToMergeFrom
+              AND EXISTS(
+                SELECT 1 FROM {$this->tableNames->hierarchyRelation()} as hMergeInto
+                  WHERE hMergeInto.contentstreamlayer = :contentStreamLayerToMergeInto
+                  AND hMergeInto.id = hMergeFrom.id
+                  AND (
+                    hMergeFrom.childnodeanchor IS NULL
+                    OR hMergeInto.childnodeanchor != hMergeFrom.childnodeanchor
+                  )
+              )
+            SQL;
+
             $deleteReducedNodesAndReferencesStatement = <<<SQL
             DELETE n, r FROM {$this->tableNames->node()} n
             LEFT JOIN {$this->tableNames->referenceRelation()} r
@@ -311,31 +324,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
             INNER JOIN (
               SELECT childnodeanchor FROM {$this->tableNames->hierarchyRelation()} AS h
-                INNER JOIN (
-                  {$sql(
-                      $reducedHierarchiesWithUnreferencedChildNodeAnchorsStatement = <<<SQL
-                      SELECT
-                        id
-                      FROM {$this->tableNames->hierarchyRelation()}
-                        WHERE contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
-                      GROUP BY id
-                      HAVING MAX(contentstreamlayer) != :contentStreamLayerToMergeInto
-                        AND (
-                          MIN(childnodeanchor) != MAX(childnodeanchor)
-                          OR COUNT(childnodeanchor) = 1
-                        )
-                      SQL
-                  )}
-                ) AS reducedHierarchies
+                INNER JOIN ({$reducedHierarchiesWithUnreferencedChildNodeAnchorsStatement}) AS reducedHierarchies
                 ON reducedHierarchies.id = h.id
                 AND h.contentstreamlayer = :contentStreamLayerToMergeInto
                 WHERE NOT EXISTS(
                   SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS allH
                   WHERE NOT (
                     allH.contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
-                    AND allH.id IN (
-                      {$reducedHierarchiesWithUnreferencedChildNodeAnchorsStatement}
-                    )
+                    AND allH.id IN ({$reducedHierarchiesWithUnreferencedChildNodeAnchorsStatement})
                   )
                     AND allH.childnodeanchor = h.childnodeanchor
                 )
