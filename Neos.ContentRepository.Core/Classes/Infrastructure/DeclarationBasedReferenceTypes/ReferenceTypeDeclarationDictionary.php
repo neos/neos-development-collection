@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\ReferenceType;
+namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
+
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 
 /**
  * @internal

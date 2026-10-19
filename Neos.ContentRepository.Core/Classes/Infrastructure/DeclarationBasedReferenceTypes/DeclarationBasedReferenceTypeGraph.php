@@ -2,12 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\ReferenceType;
+namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
+
+use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraphInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
 
 /**
  * @api
  */
-final readonly class ReferenceTypeGraph
+final readonly class DeclarationBasedReferenceTypeGraph implements ReferenceTypeGraphInterface
 {
     /**
      * @param array<string,ReferenceTypeNameList> $declaredSuperTypeNames - direct; indexed by child name

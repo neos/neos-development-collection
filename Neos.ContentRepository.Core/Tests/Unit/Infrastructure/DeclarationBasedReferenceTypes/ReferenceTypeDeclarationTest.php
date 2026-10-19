@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
+namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
 
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclaration;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyMetadataDictionary;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -64,7 +64,7 @@ class ReferenceTypeDeclarationTest extends TestCase
      *     sourceNodeTypes: NodeTypeConstraintsDeclaration,
      *     targetNodeTypes: NodeTypeConstraintsDeclaration,
      *     properties: PropertyDeclarationDictionary,
-     *     expectedResult: ?ReferenceTypeDeclarationProperties,
+     *     resultExpected: bool,
      *     expectedException: ?\Throwable,
      * }>
      */

@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\ReferenceType;
+namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
 
-use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
 
 /**
  * @internal
@@ -144,22 +147,22 @@ final readonly class ReferenceTypeDeclaration
     private function mergeToSubType(ReferenceType ...$superTypes): ReferenceType
     {
         if ($superTypes === []) {
-            return ReferenceType::fromDeclaration($this);
+            return $this->toReferenceType();
         }
 
         /** @var ?NodeTypeConstraintsDeclaration $sourceNodeTypes */
         $sourceNodeTypes = null;
         foreach ($superTypes as $superType) {
-            $sourceNodeTypes = $sourceNodeTypes?->mergeToSubType($superType->sourceNodeTypes)
-                ?: $superType->sourceNodeTypes;
+            $sourceNodeTypes = $sourceNodeTypes?->mergeToSubType($superType->sourceNodeTypeConstraints)
+                ?: NodeTypeConstraintsDeclaration::fromNodeTypConstraints($superType->sourceNodeTypeConstraints);
         }
         $sourceNodeTypes = $sourceNodeTypes->mergeToSubType($this->sourceNodeTypes);
 
         /** @var ?NodeTypeConstraintsDeclaration $targetNodeTypes */
         $targetNodeTypes = null;
         foreach ($superTypes as $superType) {
-            $targetNodeTypes = $targetNodeTypes?->mergeToSubType($superType->targetNodeTypes)
-                ?: $superType->targetNodeTypes;
+            $targetNodeTypes = $targetNodeTypes?->mergeToSubType($superType->targetNodeTypeConstraints)
+                ?: NodeTypeConstraintsDeclaration::fromNodeTypConstraints($superType->targetNodeTypeConstraints);
         }
         $targetNodeTypes = $targetNodeTypes->mergeToSubType($this->targetNodeTypes);
 
@@ -169,7 +172,7 @@ final readonly class ReferenceTypeDeclaration
         $previousSuperType = null;
         foreach ($superTypes as $superType) {
             $properties = $properties?->mergeToSubType($superType->properties, $superTypeConflicts, $superType->name, $previousSuperType?->name)
-                ?: $superType->properties;
+                ?: PropertyDeclarationDictionary::fromPropertyDictionary($superType->properties);
             $previousSuperType = $superType;
         }
         $properties = $properties->mergeToSubType($this->properties, $superTypeConflicts, $this->name);
@@ -184,9 +187,21 @@ final readonly class ReferenceTypeDeclaration
             name: $this->name,
             isAbstract: $this->isAbstract,
             isFinal: $this->isFinal,
-            sourceNodeTypes: $sourceNodeTypes,
-            targetNodeTypes: $targetNodeTypes,
-            properties: $properties,
+            sourceNodeTypeConstraints: $sourceNodeTypes->toNodeTypeConstraints(),
+            targetNodeTypeConstraints: $targetNodeTypes->toNodeTypeConstraints(),
+            properties: $properties->toPropertyDictionary(),
+        );
+    }
+
+    private function toReferenceType(): ReferenceType
+    {
+        return ReferenceType::create(
+            name: $this->name,
+            isAbstract: $this->isAbstract,
+            isFinal: $this->isFinal,
+            sourceNodeTypeConstraints: $this->sourceNodeTypes->toNodeTypeConstraints(),
+            targetNodeTypeConstraints: $this->targetNodeTypes->toNodeTypeConstraints(),
+            properties: $this->properties->toPropertyDictionary(),
         );
     }
 }

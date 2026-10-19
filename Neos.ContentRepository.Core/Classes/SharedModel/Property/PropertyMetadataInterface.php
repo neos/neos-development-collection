@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Node;
+namespace Neos\ContentRepository\Core\SharedModel\Property;
 
 /**
  * @api to be implemented in userland

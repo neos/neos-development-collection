@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\ReferenceType;
 
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
 
 /**
- * @api
+ * @api to be evaluated in userland
  */
 final class ReferenceType
 {
@@ -18,9 +18,9 @@ final class ReferenceType
         public ReferenceTypeName $name,
         public bool $isAbstract,
         public bool $isFinal,
-        public NodeTypeConstraintsDeclaration $sourceNodeTypes,
-        public NodeTypeConstraintsDeclaration $targetNodeTypes,
-        public PropertyDeclarationDictionary $properties,
+        public NodeTypeConstraints $sourceNodeTypeConstraints,
+        public NodeTypeConstraints $targetNodeTypeConstraints,
+        public PropertyDictionary $properties,
     ) {
     }
 
@@ -28,30 +28,17 @@ final class ReferenceType
         ReferenceTypeName $name,
         bool $isAbstract,
         bool $isFinal,
-        NodeTypeConstraintsDeclaration $sourceNodeTypes,
-        NodeTypeConstraintsDeclaration $targetNodeTypes,
-        PropertyDeclarationDictionary $properties,
+        NodeTypeConstraints $sourceNodeTypeConstraints,
+        NodeTypeConstraints $targetNodeTypeConstraints,
+        PropertyDictionary $properties,
     ): self {
         return new self(
             name: $name,
             isAbstract: $isAbstract,
             isFinal: $isFinal,
-            sourceNodeTypes: $sourceNodeTypes,
-            targetNodeTypes: $targetNodeTypes,
+            sourceNodeTypeConstraints: $sourceNodeTypeConstraints,
+            targetNodeTypeConstraints: $targetNodeTypeConstraints,
             properties: $properties,
-        );
-    }
-
-    public static function fromDeclaration(
-        ReferenceTypeDeclaration $declaration,
-    ): self {
-        return new self(
-            name: $declaration->name,
-            isAbstract: $declaration->isAbstract,
-            isFinal: $declaration->isFinal,
-            sourceNodeTypes: $declaration->sourceNodeTypes,
-            targetNodeTypes: $declaration->targetNodeTypes,
-            properties: $declaration->properties,
         );
     }
 

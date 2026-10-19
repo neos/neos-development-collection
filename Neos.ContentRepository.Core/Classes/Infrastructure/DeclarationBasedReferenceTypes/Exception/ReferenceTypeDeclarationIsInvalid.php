@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\ReferenceType\Exception;
+namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception;
 
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
 
 /**
  * The exception to be thrown if an invalid reference type declaration was attempted to be initialized
- * @api
+ * @internal
  */
 final class ReferenceTypeDeclarationIsInvalid extends \Exception
 {

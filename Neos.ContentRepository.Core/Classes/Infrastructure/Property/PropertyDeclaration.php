@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Node;
+namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\Property;
+use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 
 /**
- * @api
+ * @internal
  */
 final readonly class PropertyDeclaration implements \JsonSerializable
 {
@@ -29,6 +31,15 @@ final readonly class PropertyDeclaration implements \JsonSerializable
             name: $name,
             type: $type,
             metadata: $metadata,
+        );
+    }
+
+    public static function fromProperty(Property $property): self
+    {
+        return new self(
+            name: $property->name,
+            type: $property->type,
+            metadata: $property->metadata,
         );
     }
 
@@ -60,6 +71,15 @@ final readonly class PropertyDeclaration implements \JsonSerializable
             $this->name,
             $this->type,
             $this->metadata->mergeToSubType($subTypePropertySpecification->metadata),
+        );
+    }
+
+    public function toProperty(): Property
+    {
+        return Property::create(
+            name: $this->name,
+            type: $this->type,
+            metadata: $this->metadata,
         );
     }
 

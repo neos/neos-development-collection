@@ -2,29 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
+namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
 
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\DeclarationBasedReferenceTypeGraph;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflict;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflicts;
+use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclaration;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDeclarationDictionary;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
-use Neos\ContentRepository\Core\SharedModel\Node\GenericArrayPropertyMetadata;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclaration;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyDeclarationDictionary;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyMetadataDictionary;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\GenericArrayPropertyMetadata;
+use Neos\ContentRepository\Core\SharedModel\Property\Property;
+use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
+use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class ReferenceTypeGraphTest extends TestCase
+class DeclarationBasedReferenceTypeGraphTest extends TestCase
 {
     #[DataProvider('referenceTypeDeclarationProvider')]
     public function testFromDeclarations(
@@ -32,7 +36,7 @@ class ReferenceTypeGraphTest extends TestCase
         ?\Throwable $expectedException,
     ): void {
         try {
-            ReferenceTypeGraph::create($referenceTypeDeclarations);
+            DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
             $actualException = null;
         } catch (\Throwable $actualException) {
         }
@@ -212,7 +216,7 @@ class ReferenceTypeGraphTest extends TestCase
     ): void {
         Assert::assertEquals(
             $expectedResult,
-            ReferenceTypeGraph::create($referenceTypeDeclarations)->getReferenceType($name),
+            DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations)->getReferenceType($name),
         );
     }
 
@@ -248,9 +252,19 @@ class ReferenceTypeGraphTest extends TestCase
                 name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 isAbstract: false,
                 isFinal: false,
-                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:Node' => true]),
-                targetNodeTypes: NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:Node' => true]),
-                properties: PropertyDeclarationDictionary::create(),
+                sourceNodeTypeConstraints: NodeTypeConstraints::create(
+                    isWildcardAllowed: false,
+                    includeAbstract: true,
+                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray(['Acme.Site:Node']),
+                    explicitlyDisallowedNodeTypes: NodeTypeNames::createEmpty(),
+                ),
+                targetNodeTypeConstraints: NodeTypeConstraints::create(
+                    isWildcardAllowed: false,
+                    includeAbstract: true,
+                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray(['Acme.Site:Node']),
+                    explicitlyDisallowedNodeTypes: NodeTypeNames::createEmpty(),
+                ),
+                properties: PropertyDictionary::create([]),
             ),
         ];
 
@@ -268,24 +282,30 @@ class ReferenceTypeGraphTest extends TestCase
                 name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 isAbstract: false,
                 isFinal: true,
-                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
+                sourceNodeTypeConstraints: NodeTypeConstraints::create(
                     isWildcardAllowed: false,
-                    constrainedNodeTypes: [
-                        'Acme.Site:Node' => true,
-                        'Acme.Site:RestrictedNode' => true,
-                        'Acme.Site:AnotherRestrictedNode' => false,
-                    ],
+                    includeAbstract: true,
+                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:Node',
+                        'Acme.Site:RestrictedNode',
+                    ]),
+                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:AnotherRestrictedNode',
+                    ]),
                 ),
-                targetNodeTypes: NodeTypeConstraintsDeclaration::create(
+                targetNodeTypeConstraints: NodeTypeConstraints::create(
                     isWildcardAllowed: false,
-                    constrainedNodeTypes: [
-                        'Acme.Site:Node' => true,
-                        'Acme.Site:RestrictedNode' => true,
-                        'Acme.Site:AnotherRestrictedNode' => false,
-                    ],
+                    includeAbstract: true,
+                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:Node',
+                        'Acme.Site:RestrictedNode',
+                    ]),
+                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:AnotherRestrictedNode',
+                    ]),
                 ),
-                properties: PropertyDeclarationDictionary::create(
-                    PropertyDeclaration::create(
+                properties: PropertyDictionary::create([
+                    'text' => Property::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([
@@ -297,17 +317,17 @@ class ReferenceTypeGraphTest extends TestCase
                             ]),
                         ])
                     ),
-                    PropertyDeclaration::create(
+                    'abstract' => Property::create(
                         name: PropertyName::fromString('abstract'),
                         type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    PropertyDeclaration::create(
+                    'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                ),
+                ]),
             ),
         ];
 
@@ -328,26 +348,32 @@ class ReferenceTypeGraphTest extends TestCase
                 name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 isAbstract: false,
                 isFinal: true,
-                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
+                sourceNodeTypeConstraints: NodeTypeConstraints::create(
                     isWildcardAllowed: false,
-                    constrainedNodeTypes: [
-                        'Acme.Site:Node' => true,
-                        'Acme.Site:RestrictedNode' => true,
-                        'Acme.Site:AnotherRestrictedNode' => false,
-                        'Acme.Site:YetAnotherRestrictedNode' => false,
-                    ],
+                    includeAbstract: true,
+                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:Node',
+                        'Acme.Site:RestrictedNode',
+                    ]),
+                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:AnotherRestrictedNode',
+                        'Acme.Site:YetAnotherRestrictedNode',
+                    ]),
                 ),
-                targetNodeTypes: NodeTypeConstraintsDeclaration::create(
+                targetNodeTypeConstraints: NodeTypeConstraints::create(
                     isWildcardAllowed: false,
-                    constrainedNodeTypes: [
-                        'Acme.Site:Node' => true,
-                        'Acme.Site:RestrictedNode' => true,
-                        'Acme.Site:AnotherRestrictedNode' => false,
-                        'Acme.Site:YetAnotherRestrictedNode' => false,
-                    ],
+                    includeAbstract: true,
+                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:Node',
+                        'Acme.Site:RestrictedNode',
+                    ]),
+                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
+                        'Acme.Site:AnotherRestrictedNode',
+                        'Acme.Site:YetAnotherRestrictedNode',
+                    ]),
                 ),
-                properties: PropertyDeclarationDictionary::create(
-                    PropertyDeclaration::create(
+                properties: PropertyDictionary::create([
+                    Property::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([
@@ -360,27 +386,27 @@ class ReferenceTypeGraphTest extends TestCase
                             ]),
                         ])
                     ),
-                    PropertyDeclaration::create(
+                    Property::create(
                         name: PropertyName::fromString('abstract'),
                         type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    PropertyDeclaration::create(
+                    Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    PropertyDeclaration::create(
+                    Property::create(
                         name: PropertyName::fromString('description'),
                         type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                    PropertyDeclaration::create(
+                    Property::create(
                         name: PropertyName::fromString('author'),
                         type: PropertyType::string(),
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
-                ),
+                ]),
             ),
         ];
     }
@@ -391,7 +417,7 @@ class ReferenceTypeGraphTest extends TestCase
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
         Assert::assertEquals($expectedResult, $subject->getDeclaredSuperTypeNames($name));
     }
 
@@ -444,7 +470,7 @@ class ReferenceTypeGraphTest extends TestCase
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
         Assert::assertEquals($expectedResult, $subject->getSuperTypeNames($name));
     }
 
@@ -498,7 +524,7 @@ class ReferenceTypeGraphTest extends TestCase
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
         Assert::assertEquals($expectedResult, $subject->getDeclaredSubTypeNames($name));
     }
 
@@ -550,7 +576,7 @@ class ReferenceTypeGraphTest extends TestCase
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = ReferenceTypeGraph::create($referenceTypeDeclarations);
+        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
         Assert::assertEquals($expectedResult, $subject->getSubTypeNames($name));
     }
 

@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\SharedModel\Node;
+namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\ReferenceType\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
+use Neos\ContentRepository\Core\SharedModel\Property\Property;
+use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
 
 /**
- * @api
+ * @internal
  * @implements \IteratorAggregate<string,PropertyDeclaration>
  */
 final readonly class PropertyDeclarationDictionary implements \IteratorAggregate, \JsonSerializable
@@ -36,13 +37,16 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
      * @param-out array<string,list<SuperTypeConflict>> $superTypeConflicts
      */
     public function mergeToSubType(
-        self $subTypePropertyMetadata,
+        self|PropertyDictionary $subTypeProperties,
         array &$superTypeConflicts,
         ReferenceTypeName $referenceTypeName,
         ?ReferenceTypeName $previousReferenceTypeName = null,
     ): self {
+        if ($subTypeProperties instanceof PropertyDictionary) {
+            $subTypeProperties = self::fromPropertyDictionary($subTypeProperties);
+        }
         $items = $this->items;
-        foreach ($subTypePropertyMetadata->items as $key => $item) {
+        foreach ($subTypeProperties->items as $key => $item) {
             if (array_key_exists($key, $items)) {
                 $items[$key] = $items[$key]->mergeToSubType($item, $superTypeConflicts, $referenceTypeName, $previousReferenceTypeName);
             } else {
@@ -53,14 +57,20 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
         return new self($items);
     }
 
-    public function hasProperty(PropertyName $propertyName): bool
+    public static function fromPropertyDictionary(PropertyDictionary $dictionary): self
     {
-        return array_key_exists($propertyName->value, $this->items);
+        return new self(array_map(
+            fn (Property $item): PropertyDeclaration => PropertyDeclaration::fromProperty($item),
+            $dictionary->items,
+        ));
     }
 
-    public function getPropertyType(PropertyName $propertyName): ?PropertyType
+    public function toPropertyDictionary(): PropertyDictionary
     {
-        return ($this->items[$propertyName->value] ?? null)?->type;
+        return PropertyDictionary::create(array_map(
+            fn (PropertyDeclaration $item): Property => $item->toProperty(),
+            $this->items,
+        ));
     }
 
     public function getIterator(): \Traversable
