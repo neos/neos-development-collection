@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraphInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
@@ -244,7 +244,7 @@ final class ContentRepositoryRegistry
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */
-    private function buildReferenceTypeGraph(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ReferenceTypeGraphInterface
+    private function buildReferenceTypeGraph(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ReferenceTypeGraph
     {
         isset($contentRepositorySettings['referenceTypeGraph']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have referenceTypeGraph.factoryObjectName configured.', $contentRepositoryId->value);
         $referenceTypeGraphFactory = $this->objectManager->get($contentRepositorySettings['referenceTypeGraph']['factoryObjectName']);

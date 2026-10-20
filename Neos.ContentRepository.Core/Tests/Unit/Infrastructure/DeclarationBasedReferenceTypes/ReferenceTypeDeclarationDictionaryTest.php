@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
 
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\DeclarationBasedReferenceTypeGraph;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
@@ -28,15 +27,15 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class DeclarationBasedReferenceTypeGraphTest extends TestCase
+class ReferenceTypeDeclarationDictionaryTest extends TestCase
 {
     #[DataProvider('referenceTypeDeclarationProvider')]
     public function testFromDeclarations(
-        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeDeclarationDictionary $subject,
         ?\Throwable $expectedException,
     ): void {
         try {
-            DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
+            $subject->expandToGraph();
             $actualException = null;
         } catch (\Throwable $actualException) {
         }
@@ -214,13 +213,13 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
 
     #[DataProvider('referenceTypeProvider')]
     public function testGetReferenceType(
-        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeDeclarationDictionary $subject,
         ReferenceTypeName $name,
         ?ReferenceType $expectedResult,
     ): void {
         Assert::assertEquals(
             $expectedResult,
-            DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations)->getReferenceType($name),
+            $subject->expandToGraph()->getReferenceType($name),
         );
     }
 
@@ -425,12 +424,12 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
 
     #[DataProvider('declaredSuperTypeNamesProvider')]
     public function testGetDeclaredSuperTypeNames(
-        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeDeclarationDictionary $subject,
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
-        Assert::assertEquals($expectedResult, $subject->getDeclaredSuperTypeNames($name));
+        $referenceTypeGraph = $subject->expandToGraph();
+        Assert::assertEquals($expectedResult, $referenceTypeGraph->getDeclaredSuperTypeNames($name));
     }
 
     /**
@@ -478,12 +477,12 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
 
     #[DataProvider('superTypeNamesProvider')]
     public function testGetSuperTypeNames(
-        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeDeclarationDictionary $subject,
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
-        Assert::assertEquals($expectedResult, $subject->getSuperTypeNames($name));
+        $referenceTypeGraph = $subject->expandToGraph();
+        Assert::assertEquals($expectedResult, $referenceTypeGraph->getSuperTypeNames($name));
     }
 
     /**
@@ -532,12 +531,12 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
 
     #[DataProvider('declaredSubTypeNamesProvider')]
     public function testGetDeclaredSubTypeNames(
-        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeDeclarationDictionary $subject,
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
-        Assert::assertEquals($expectedResult, $subject->getDeclaredSubTypeNames($name));
+        $referenceTypeGraph = $subject->expandToGraph();
+        Assert::assertEquals($expectedResult, $referenceTypeGraph->getDeclaredSubTypeNames($name));
     }
 
     /**
@@ -584,12 +583,12 @@ class DeclarationBasedReferenceTypeGraphTest extends TestCase
 
     #[DataProvider('subTypeNamesProvider')]
     public function testGetSubTypeNames(
-        ReferenceTypeDeclarationDictionary $referenceTypeDeclarations,
+        ReferenceTypeDeclarationDictionary $subject,
         ReferenceTypeName $name,
         ReferenceTypeNameList $expectedResult,
     ): void {
-        $subject = DeclarationBasedReferenceTypeGraph::create($referenceTypeDeclarations);
-        Assert::assertEquals($expectedResult, $subject->getSubTypeNames($name));
+        $referenceTypeGraph = $subject->expandToGraph();
+        Assert::assertEquals($expectedResult, $referenceTypeGraph->getSubTypeNames($name));
     }
 
     /**

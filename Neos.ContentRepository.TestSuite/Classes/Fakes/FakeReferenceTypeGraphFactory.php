@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\TestSuite\Fakes;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\DeclarationBasedReferenceTypeGraph;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclarationDictionary;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraphInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph\ReferenceTypeGraphFactoryInterface;
 
@@ -16,12 +15,12 @@ use Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph\ReferenceTypeGraph
  */
 final class FakeReferenceTypeGraphFactory implements ReferenceTypeGraphFactoryInterface
 {
-    private static ?ReferenceTypeGraphInterface $referenceTypeGraph = null;
+    private static ?ReferenceTypeGraph $referenceTypeGraph = null;
 
     /**
      * @param array<string,mixed> $options
      */
-    public function build(ContentRepositoryId $contentRepositoryId, array $options): ReferenceTypeGraphInterface
+    public function build(ContentRepositoryId $contentRepositoryId, array $options): ReferenceTypeGraph
     {
         if (self::$referenceTypeGraph) {
             return self::$referenceTypeGraph;
@@ -33,7 +32,8 @@ final class FakeReferenceTypeGraphFactory implements ReferenceTypeGraphFactoryIn
             $dictionary = ReferenceTypeDeclarationDictionary::create();
         }
 
-        return DeclarationBasedReferenceTypeGraph::create($dictionary);
+        /** @phpstan-ignore neos.cr.internal (we are the test suite) */
+        return $dictionary->expandToGraph();
     }
 
     /**
@@ -41,12 +41,12 @@ final class FakeReferenceTypeGraphFactory implements ReferenceTypeGraphFactoryIn
      */
     public static function setConfiguration(array $referenceTypesToUse): void
     {
-        self::$referenceTypeGraph = DeclarationBasedReferenceTypeGraph::create(
-            ReferenceTypeDeclarationDictionary::fromArray($referenceTypesToUse)
-        );
+        /** @phpstan-ignore neos.cr.internal (we are the test suite) */
+        self::$referenceTypeGraph = ReferenceTypeDeclarationDictionary::fromArray($referenceTypesToUse)
+            ->expandToGraph();
     }
 
-    public static function setReferenceTypeGraph(ReferenceTypeGraphInterface $referenceTypeGraph): void
+    public static function setReferenceTypeGraph(ReferenceTypeGraph $referenceTypeGraph): void
     {
         self::$referenceTypeGraph = $referenceTypeGraph;
     }

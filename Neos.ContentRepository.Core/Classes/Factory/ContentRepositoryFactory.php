@@ -35,7 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFa
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStates;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraphInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
@@ -75,7 +75,7 @@ final class ContentRepositoryFactory
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly EventStoreInterface $eventStore,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly ReferenceTypeGraphInterface $referenceTypeGraph,
+        private readonly ReferenceTypeGraph $referenceTypeGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         private readonly AuthProviderFactoryInterface $authProviderFactory,
