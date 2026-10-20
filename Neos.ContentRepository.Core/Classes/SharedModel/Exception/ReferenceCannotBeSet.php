@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -84,6 +85,18 @@ final class ReferenceCannotBeSet extends \DomainException
             . '" because its property "' . $propertyName->value . '" cannot be set to a value of type "' . $attemptedType
             . '", must be of type "' . $configuredType . '".',
             1658406762
+        );
+    }
+
+    public static function becauseTheReferenceTypeDoesNotExist(
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for node type "' . $nodeTypeName->value
+            . '" because its type "' . $referenceTypeName->value . '" is unknown to the reference type graph.',
+            1792139965,
         );
     }
 }

@@ -34,7 +34,18 @@ Feature: Constraint checks on SetNodeReferences
               type: string
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
+        typedReference:
+          constraints:
+            referenceTypes:
+              '*': false
+              'Neos.ContentRepository.Testing:ForbiddenReference': false
+
     """
+    And using the following reference types:
+    """yaml
+    'Neos.ContentRepository.Testing:ForbiddenReference': []
+    """
+
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
@@ -182,3 +193,12 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateId | "source-nodandaise"                                              |
       | references            | [{"referenceName": "referencesProperty", "references": [{"target":"anthony-destinode"}, {"target":"anthony-destinode"}]}] |
     Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1730365958
+
+  # reference type checks
+  Scenario: Try to create a reference of an unknown type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                             |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "typedReference", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:UndefinedReference"}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792139965
