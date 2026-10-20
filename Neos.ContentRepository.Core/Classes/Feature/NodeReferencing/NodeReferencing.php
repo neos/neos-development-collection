@@ -54,15 +54,49 @@ trait NodeReferencing
             $command->sourceNodeAggregateId
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
-        $nodeTypeName = $sourceNodeAggregate->nodeTypeName;
-
+        $sourceNodeTypeName = $sourceNodeAggregate->nodeTypeName;
+        $sourceNodeType = $this->requireNodeType($sourceNodeTypeName);
         foreach ($command->references as $referencesByProperty) {
             foreach ($referencesByProperty->references as $reference) {
+                $referenceType = null;
+                if ($reference->referenceTypeName) {
+                    $targetNodeAggregate = $this->requireProjectedNodeAggregate(
+                        $contentGraph,
+                        $reference->targetNodeAggregateId
+                    );
+                    $targetNodeType = $this->requireNodeType($targetNodeAggregate->nodeTypeName);
+                    $referenceType = $this->requireReferenceType(
+                        $reference->referenceTypeName,
+                        $referencesByProperty->referenceName,
+                        $sourceNodeAggregate->nodeTypeName,
+                    );
+                    $this->requireReferenceTypeToNotBeAbstract(
+                        $referenceType,
+                        $referencesByProperty->referenceName,
+                        $sourceNodeAggregate->nodeTypeName,
+                    );
+                    $this->requireNodeTypeToAllowReferencesOfType(
+                        $sourceNodeType,
+                        $reference->referenceTypeName,
+                        $referencesByProperty->referenceName,
+                    );
+                    $this->requireReferenceTypeToAllowSourceNodesOfType(
+                        $sourceNodeType,
+                        $referenceType,
+                        $referencesByProperty->referenceName,
+                    );
+                    $this->requireReferenceTypeToAllowTargetNodesOfType(
+                        $targetNodeType,
+                        $referenceType,
+                        $referencesByProperty->referenceName,
+                    );
+                }
                 if ($reference->properties->values !== []) {
                     $this->validateReferenceProperties(
+                        $referenceType,
                         $referencesByProperty->referenceName,
                         $reference->properties,
-                        $nodeTypeName
+                        $sourceNodeTypeName,
                     );
                 }
             }
@@ -72,7 +106,7 @@ trait NodeReferencing
             $command->workspaceName,
             $command->sourceNodeAggregateId,
             $command->sourceOriginDimensionSpacePoint,
-            $this->mapNodeReferencesToSerializedNodeReferences($command->references, $nodeTypeName),
+            $this->mapNodeReferencesToSerializedNodeReferences($command->references, $sourceNodeTypeName),
         );
 
         return $this->handleSetSerializedNodeReferences($lowLevelCommand);

@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\ReferenceType;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\Property;
 use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
 
 /**
@@ -45,6 +46,11 @@ final class ReferenceType
     public function hasProperty(PropertyName $propertyName): bool
     {
         return $this->properties->hasProperty($propertyName);
+    }
+
+    public function getProperty(PropertyName $propertyName): ?Property
+    {
+        return $this->properties->getProperty($propertyName);
     }
 
     public function getPropertyType(PropertyName $propertyName): ?PropertyType

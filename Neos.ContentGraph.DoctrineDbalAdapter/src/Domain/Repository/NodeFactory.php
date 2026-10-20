@@ -33,6 +33,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -130,9 +131,12 @@ final class NodeFactory
                 $visibilityConstraints
             );
             $result[] = new Reference(
-                $node,
-                ReferenceName::fromString($nodeRow['referencename']),
-                $nodeRow['referenceproperties']
+                node: $node,
+                name: ReferenceName::fromString($nodeRow['referencename']),
+                type: $nodeRow['referencetype']
+                    ? ReferenceTypeName::fromString($nodeRow['referencetype'])
+                    : null,
+                properties: $nodeRow['referenceproperties']
                     ? $this->createPropertyCollectionFromJsonString($nodeRow['referenceproperties'])
                     : null
             );

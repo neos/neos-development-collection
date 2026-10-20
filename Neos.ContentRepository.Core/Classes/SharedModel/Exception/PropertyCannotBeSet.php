@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  */
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
@@ -44,6 +45,17 @@ final class PropertyCannotBeSet extends \DomainException
             'Property "' . $propertyName->value . '" cannot be set because node type "'
                 . $nodeTypeName->value . '" does not declare it.',
             1615664798
+        );
+    }
+
+    public static function becauseTheReferenceTypeDoesNotDeclareIt(
+        PropertyName $propertyName,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Property "' . $propertyName->value . '" cannot be set because node type "'
+                . $referenceTypeName->value . '" does not declare it.',
+            1792141138
         );
     }
 }

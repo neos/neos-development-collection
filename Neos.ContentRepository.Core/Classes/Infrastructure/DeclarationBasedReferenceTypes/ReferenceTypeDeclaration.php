@@ -73,8 +73,8 @@ final readonly class ReferenceTypeDeclaration
             isAbstract: $isAbstract,
             isFinal: $isFinal,
             superTypeNames: ReferenceTypeNameList::fromStringArray(array_keys($values['superTypes'] ?? [])),
-            sourceNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['sourceNodeTypes'] ?? []),
-            targetNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['targetNodeTypes'] ?? []),
+            sourceNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['constraints']['sourceNodeTypes'] ?? []),
+            targetNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['constraints']['targetNodeTypes'] ?? []),
             properties: PropertyDeclarationDictionary::fromArray($values['properties'] ?? [], $name),
         );
     }

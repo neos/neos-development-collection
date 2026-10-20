@@ -34,6 +34,11 @@ final readonly class PropertyDictionary implements \IteratorAggregate, \JsonSeri
         return array_key_exists($propertyName->value, $this->items);
     }
 
+    public function getProperty(PropertyName $propertyName): ?Property
+    {
+        return $this->items[$propertyName->value] ?? null;
+    }
+
     public function getPropertyType(PropertyName $propertyName): ?PropertyType
     {
         return ($this->items[$propertyName->value] ?? null)?->type;

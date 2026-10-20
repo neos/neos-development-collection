@@ -99,4 +99,81 @@ final class ReferenceCannotBeSet extends \DomainException
             1792139965,
         );
     }
+
+    public static function becauseTheReferenceTypeIsAbstract(
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for node type "' . $nodeTypeName->value
+            . '" because its type "' . $referenceTypeName->value . '" is abstract.',
+            1792482976,
+        );
+    }
+
+    public static function becauseTheReferenceTypeIsDisallowedByTheSourceNodeType(
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for node type "' . $nodeTypeName->value
+            . '" because it does not allow references of type "' . $referenceTypeName->value . '".',
+            1792483709,
+        );
+    }
+
+    public static function becauseTheReferenceTypeDisallowsTheSourceNodeType(
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for node type "' . $nodeTypeName->value
+            . '" because its type "' . $referenceTypeName->value . '" does not allow the node type as source.',
+            1792505612,
+        );
+    }
+
+    public static function becauseTheReferenceTypeDisallowsTheTargetNodeType(
+        ReferenceName $referenceName,
+        NodeTypeName $targetNodeTypeName,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set with target node of type "' . $targetNodeTypeName->value
+            . '" because its type "' . $referenceTypeName->value . '" does not allow the node type as target.',
+            1792506353,
+        );
+    }
+
+
+    public static function becauseTheReferenceTypeDoesNotDeclareTheProperty(
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName,
+        ReferenceTypeName $referenceTypeName,
+        PropertyName $propertyName
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for node type "'
+            . $nodeTypeName->value . '" because its type "' . $referenceTypeName->value . '" does not declare given property "' . $propertyName->value . '"',
+            1792507086
+        );
+    }
+
+    public static function becauseAPropertyDoesNotMatchTheTypeDeclaredByTheReferenceType(
+        ReferenceName $referenceName,
+        ReferenceTypeName $referenceTypeName,
+        PropertyName $propertyName,
+        string $attemptedType,
+        string $configuredType
+    ): self {
+        return new self(
+            'Reference "' . $referenceName->value . '" cannot be set for reference type "' . $referenceTypeName->value
+                . '" because its property "' . $propertyName->value . '" cannot be set to a value of type "' . $attemptedType
+                . '", must be of type "' . $configuredType . '".',
+            1792147895,
+        );
+    }
 }

@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -123,13 +124,16 @@ final class NodeFactory
         $references = [];
         foreach ($referenceRows as $referenceRow) {
             $references[] = new Reference(
-                $this->mapNodeRowToNode(
+                node: $this->mapNodeRowToNode(
                     $referenceRow,
                     $visibilityConstraints,
                     null
                 ),
-                ReferenceName::fromString($referenceRow['referencename']),
-                $referenceRow['referenceproperties']
+                name: ReferenceName::fromString($referenceRow['referencename']),
+                type: $referenceRow['referencetype']
+                    ? ReferenceTypeName::fromString($referenceRow['referencetype'])
+                    : null,
+                properties: $referenceRow['referenceproperties']
                     ? new PropertyCollection(
                         SerializedPropertyValues::fromJsonString($referenceRow['referenceproperties']),
                         $this->propertyConverter

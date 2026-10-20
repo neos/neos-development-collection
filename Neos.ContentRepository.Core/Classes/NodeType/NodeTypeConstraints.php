@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
+
 /**
  * Constraints to reduce the amount of available node types.
  * Usable for all kind of relations, e.g. children or references.
@@ -31,6 +33,13 @@ final readonly class NodeTypeConstraints
             includeAbstract: $includeAbstract,
             explicitlyAllowedNodeTypeNames: $explicitlyAllowedNodeTypes,
             explicitlyDisallowedNodeTypeNames: $explicitlyDisallowedNodeTypes,
+        );
+    }
+
+    public function toConstraintCheck(): ConstraintCheck
+    {
+        return ConstraintCheck::create(
+            NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($this)->constrainedNodeTypes
         );
     }
 }
