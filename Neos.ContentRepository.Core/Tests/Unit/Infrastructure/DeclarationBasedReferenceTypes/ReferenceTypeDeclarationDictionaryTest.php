@@ -45,19 +45,19 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     subject: ReferenceTypeDeclarationDictionary,
      *     expectedException: ?\Throwable,
      * }>
      */
     public static function referenceTypeDeclarationProvider(): iterable
     {
         yield 'empty set' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'subject' => ReferenceTypeDeclarationDictionary::create(),
             'expectedException' => null,
         ];
 
         yield 'unknown supertype' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                     isAbstract: false,
@@ -79,7 +79,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'final supertype' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                     isAbstract: false,
@@ -110,7 +110,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'circular supertypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                     isAbstract: false,
@@ -145,7 +145,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'conflicting supertype' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                     isAbstract: false,
@@ -225,7 +225,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     subject: ReferenceTypeDeclarationDictionary,
      *     name: ReferenceTypeName,
      *     expectedResult: ?ReferenceType,
      * }>
@@ -233,13 +233,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
     public static function referenceTypeProvider(): iterable
     {
         yield 'empty dictionary' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'subject' => ReferenceTypeDeclarationDictionary::create(),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'expectedResult' => null,
         ];
 
         yield 'minimal example' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                     isAbstract: false,
@@ -272,7 +272,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'simple inheritance, inverse order' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getReferenceDeclaration(
                     ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:BaseReference'),
@@ -338,7 +338,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'multi-tier multiple inheritance' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getReferenceDeclaration(
                     ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:BaseReference'),
@@ -434,7 +434,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     subject: ReferenceTypeDeclarationDictionary,
      *     name: ReferenceTypeName,
      *     expectedResult: ReferenceTypeNameList,
      * }>
@@ -442,13 +442,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
     public static function declaredSuperTypeNamesProvider(): iterable
     {
         yield 'empty dictionary' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'subject' => ReferenceTypeDeclarationDictionary::create(),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'expectedResult' => ReferenceTypeNameList::list(),
         ];
 
         yield 'empty supertypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
             ),
             'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
@@ -456,7 +456,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'supertypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
                 self::getIntermediateReferenceDeclaration(),
                 self::getAnotherBaseReferenceDeclaration(),
@@ -487,7 +487,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     subject: ReferenceTypeDeclarationDictionary,
      *     name: ReferenceTypeName,
      *     expectedResult: ReferenceTypeNameList,
      * }>
@@ -495,13 +495,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
     public static function superTypeNamesProvider(): iterable
     {
         yield 'empty dictionary' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'subject' => ReferenceTypeDeclarationDictionary::create(),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'expectedResult' => ReferenceTypeNameList::list(),
         ];
 
         yield 'empty supertypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
             ),
             'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
@@ -509,7 +509,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'supertypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
                 self::getIntermediateReferenceDeclaration(),
                 self::getAnotherBaseReferenceDeclaration(),
@@ -541,7 +541,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     subject: ReferenceTypeDeclarationDictionary,
      *     name: ReferenceTypeName,
      *     expectedResult: ReferenceTypeNameList,
      * }>
@@ -549,13 +549,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
     public static function declaredSubTypeNamesProvider(): iterable
     {
         yield 'empty dictionary' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'subject' => ReferenceTypeDeclarationDictionary::create(),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'expectedResult' => ReferenceTypeNameList::list(),
         ];
 
         yield 'empty subtypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
             ),
             'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
@@ -563,7 +563,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'subtypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
                 self::getIntermediateReferenceDeclaration(),
                 self::getAnotherBaseReferenceDeclaration(),
@@ -593,7 +593,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     referenceTypeDeclarations: ReferenceTypeDeclarationDictionary,
+     *     subject: ReferenceTypeDeclarationDictionary,
      *     name: ReferenceTypeName,
      *     expectedResult: ReferenceTypeNameList,
      * }>
@@ -601,13 +601,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
     public static function subTypeNamesProvider(): iterable
     {
         yield 'empty dictionary' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(),
+            'subject' => ReferenceTypeDeclarationDictionary::create(),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'expectedResult' => ReferenceTypeNameList::list(),
         ];
 
         yield 'empty subtypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
             ),
             'name' => ReferenceTypeName::fromString('Acme.Site:BaseReference'),
@@ -615,7 +615,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ];
 
         yield 'subtypes' => [
-            'referenceTypeDeclarations' => ReferenceTypeDeclarationDictionary::create(
+            'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getBaseReferenceDeclaration(),
                 self::getIntermediateReferenceDeclaration(),
                 self::getAnotherBaseReferenceDeclaration(),

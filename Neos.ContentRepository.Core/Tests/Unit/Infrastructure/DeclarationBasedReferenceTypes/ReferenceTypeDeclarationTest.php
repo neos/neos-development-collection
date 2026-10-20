@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Property\GenericArrayPropertyMetadata;
 use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -116,6 +117,93 @@ class ReferenceTypeDeclarationTest extends TestCase
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItIsBothAbstractAndFinal(
                 ReferenceTypeName::fromString('Acme.Site:Reference')
             ),
+        ];
+    }
+
+    /**
+     * @param array<string,mixed> $values
+     */
+    #[DataProvider('arrayProvider')]
+    public function testFromArray(
+        array $values,
+        string $name,
+        ReferenceTypeDeclaration $expectedResult,
+    ): void {
+        Assert::assertEquals($expectedResult, ReferenceTypeDeclaration::fromArray($values, $name));
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     values: array<string,mixed>,
+     *     name: string,
+     *     expectedResult: ReferenceTypeDeclaration,
+     * }>
+     */
+    public static function arrayProvider(): iterable
+    {
+        yield 'minimal values' => [
+            'values' => [],
+            'name' => 'Acme.Site:Reference',
+            'expectedResult' => ReferenceTypeDeclaration::create(
+                name: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                isAbstract: false,
+                isFinal: false,
+                superTypeNames: ReferenceTypeNameList::list(),
+                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(false, []),
+                targetNodeTypes: NodeTypeConstraintsDeclaration::create(false, []),
+                properties: PropertyDeclarationDictionary::create(),
+            )
+        ];
+
+        yield 'maximal values' => [
+            'values' => [
+                'abstract' => true,
+                'superTypes' => [
+                    'Acme.Site:BaseReference' => true,
+                ],
+                'sourceNodeTypes' => [
+                    '*' => true,
+                    'Acme.Site:Node' => false,
+                ],
+                'targetNodeTypes' => [
+                    'Acme.Site:Node' => true,
+                ],
+                'properties' => [
+                    'text' => [
+                        'type' => 'string',
+                        'defaultValue' => 'my text',
+                        'custom' => [
+                            'someKey' => 'someValue'
+                        ],
+                    ],
+                ],
+            ],
+            'name' => 'Acme.Site:Reference',
+            'expectedResult' => ReferenceTypeDeclaration::create(
+                name: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                isAbstract: true,
+                isFinal: false,
+                superTypeNames: ReferenceTypeNameList::list(
+                    ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                ),
+                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(true, ['Acme.Site:Node' => false]),
+                targetNodeTypes: NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:Node' => true]),
+                properties: PropertyDeclarationDictionary::create(
+                    PropertyDeclaration::create(
+                        name: PropertyName::fromString('text'),
+                        type: PropertyType::string(),
+                        defaultValue: 'my text',
+                        metadata: PropertyMetadataDictionary::create([
+                            'genericArray' => GenericArrayPropertyMetadata::create([
+                                'custom' => [
+                                    'someKey' => 'someValue'
+                                ],
+                            ]),
+                        ]),
+                        declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    )
+                ),
+            )
         ];
     }
 }

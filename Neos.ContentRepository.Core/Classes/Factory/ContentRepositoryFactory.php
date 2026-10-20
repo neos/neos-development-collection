@@ -162,6 +162,7 @@ final class ContentRepositoryFactory
             new NodeAggregateCommandHandler(
                 $commandHandlingDependencies,
                 $this->nodeTypeManager,
+                $this->referenceTypeGraph,
                 $this->contentDimensionZookeeper,
                 $this->interDimensionalVariationGraph,
                 $this->propertyConverter,
@@ -171,6 +172,7 @@ final class ContentRepositoryFactory
                 $commandHandlingDependencies,
                 $this->interDimensionalVariationGraph,
                 $this->nodeTypeManager,
+                $this->referenceTypeGraph,
             )
         );
 

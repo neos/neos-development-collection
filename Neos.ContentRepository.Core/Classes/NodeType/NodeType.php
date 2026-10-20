@@ -14,9 +14,13 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\ReferenceTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
@@ -515,6 +519,22 @@ final class NodeType
     {
         $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
         return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
+    }
+
+    public function getReferenceTypeConstraints(ReferenceName $referenceName): ReferenceTypeConstraints
+    {
+        $declarationArray = $this->getConfiguration(
+            'references.' . $referenceName->value . '.constraints.referenceTypes'
+        );
+
+        return is_array($declarationArray)
+            ? ReferenceTypeConstraintsDeclaration::fromArray($declarationArray)->toReferenceTypeConstraints()
+            : ReferenceTypeConstraints::create(
+                isWildcardAllowed: true,
+                includeAbstract: true,
+                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+            );
     }
 
     /**
