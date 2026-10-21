@@ -99,6 +99,8 @@ class NodeType
      */
     protected $initialized = false;
 
+    private static $isOfTypeCache = [];
+
     /**
      * Constructs this node type
      *
@@ -303,14 +305,22 @@ class NodeType
         if ($nodeType === $this->name) {
             return true;
         }
-        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
-            return false;
+        if (!isset(self::$isOfTypeCache[$this->name])) {
+            self::$isOfTypeCache[$this->name] = [];
+            foreach ($this->declaredSuperTypes as $superTypeName => $superType) {
+                self::$isOfTypeCache[$this->name][$superTypeName] = $superType !== null;
+            }
+        }
+        if (isset(self::$isOfTypeCache[$this->name][$nodeType])) {
+            return self::$isOfTypeCache[$this->name][$nodeType];
         }
         foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType !== null && $superType->isOfType($nodeType) === true) {
+            if ($superType?->isOfType($nodeType)) {
+                self::$isOfTypeCache[$this->name][$nodeType] = true;
                 return true;
             }
         }
+        self::$isOfTypeCache[$this->name][$nodeType] = false;
         return false;
     }
 

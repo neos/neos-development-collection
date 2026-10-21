@@ -100,7 +100,7 @@ class NodeTypeManager
             $filteredNodeTypes = [];
             /** @var NodeType $nodeType */
             foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
-                if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
+                if ($nodeTypeName !== $superTypeName && $nodeType->isOfType($superTypeName)) {
                     $filteredNodeTypes[$nodeTypeName] = $nodeType;
                 }
             }
@@ -108,7 +108,7 @@ class NodeTypeManager
         }
 
         if ($includeAbstractNodeTypes === false) {
-            return array_filter($this->cachedSubNodeTypes[$superTypeName], function (NodeType $nodeType) {
+            return array_filter($this->cachedSubNodeTypes[$superTypeName], static function (NodeType $nodeType) {
                 return !$nodeType->isAbstract();
             });
         }
