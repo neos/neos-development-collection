@@ -487,3 +487,25 @@ Feature: Move node
       | live      |
     Then I should have one node
 
+  @fixtures
+  Scenario: Move a node and it's parent separately
+    Given I have the following nodes:
+      | Identifier                           | Path                                               | Node Type                           | Properties            | Workspace   |
+      | 0990ad05-cce6-4241-af8f-f0c77cbd9583 | /sites/content-repository/company/history          | Neos.ContentRepository.Testing:Page | {"title": "history"}  | live |
+    And I get a node by path "/sites/content-repository/company/history" with the following context:
+      | Workspace   |
+      | user-admin |
+    And I move the node into the node with path "/sites/content-repository/about"
+    When I get a node by path "/sites/content-repository/company" with the following context:
+      | Workspace  |
+      | user-admin |
+    And I move the node into the node with path "/sites/content-repository/about"
+    And I publish the workspace "user-admin"
+    When I get a node by path "/sites/content-repository/about/history" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
+    And I get a node by path "/sites/content-repository/about/company" with the following context:
+      | Workspace |
+      | live      |
+    Then I should have one node
