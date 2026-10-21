@@ -48,12 +48,12 @@ class Package extends BasePackage
                         }
 
                         $fusionPaths = [
-                            $package->getResourcesPath() . 'Private/Fusion',
+                            $package->getResourcesPath() . 'Private',
                             $package->getPackagePath() . 'NodeTypes'
                         ];
                         foreach ($fusionPaths as $fusionPath) {
                             if (is_dir($fusionPath)) {
-                                $fusionFileMonitor->monitorDirectory($fusionPath);
+                                $fusionFileMonitor->monitorDirectory($fusionPath, '\\.fusion$');
                             }
                         }
                     }
