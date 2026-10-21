@@ -121,7 +121,7 @@ class NodeController extends ActionController
      * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
-     */
+          */
     public function previewAction(string $node): void
     {
         // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
@@ -184,9 +184,9 @@ class NodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
-     * with unsafe requests from widgets or plugins that are rendered on the node
-     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * We need to skip CSRF protection here because this action could be called with unsafe requests from widgets or plugins that are rendered on the node - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     * @Flow\SkipCsrfProtection
+     * @Flow\IgnoreValidation("node")
      */
     public function showAction(string $node): void
     {
