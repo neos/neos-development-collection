@@ -12,7 +12,7 @@ final class Version20260930150314 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Creates table for asset usage';
+        return 'Changes unique key into primary key for asset usage';
     }
 
     public function up(Schema $schema): void
@@ -23,10 +23,10 @@ final class Version20260930150314 extends AbstractMigration
         );
 
         $table = $schema->getTable('neos_asset_usage');
-        $table->dropIndex('IDX_14C94F11044B499EB28F27DAEAC5D4BB');
         $table->setPrimaryKey([
             'contentrepositoryid', 'assetid', 'workspacename', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'
         ]);
+        $table->dropIndex('IDX_14C94F11044B499EB28F27DAEAC5D4BB');
     }
 
     public function down(Schema $schema): void
@@ -37,10 +37,10 @@ final class Version20260930150314 extends AbstractMigration
         );
 
         $table = $schema->getTable('neos_asset_usage');
-        $table->dropPrimaryKey();
         $table->addUniqueIndex(
             ['contentrepositoryid', 'assetid', 'originalassetid', 'workspacename', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'],
             'IDX_14C94F11044B499EB28F27DAEAC5D4BB'
         );
+        $table->dropPrimaryKey();
     }
 }
