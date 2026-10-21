@@ -16,6 +16,7 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -75,6 +76,47 @@ trait NodeDuplicationTrait
                 NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
                 $targetSucceedingSiblingNodeAggregateId,
                 NodeAggregateIdMapping::fromArray($commandArguments['nodeAggregateIdMapping'] ?? [])
+            )
+        );
+    }
+
+    /**
+     * @When dimension variants are created recursively in :contentRepositoryId content repository with payload:
+     */
+    public function dimensionVariantsAreCreatedRecursivelyInContentRepositoryWithPayload(string $contentRepositoryId, TableNode $payloadTable): void
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
+
+        $nodeAggregateId = isset($commandArguments['nodeAggregateId'])
+            ? NodeAggregateId::fromString($commandArguments['nodeAggregateId'])
+            : null;
+    
+        $contentRepository = $this->getContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
+
+        $sourceDimensionSpacePoint = isset($commandArguments['sourceDimensionSpacePoint'])
+            ? DimensionSpacePoint::fromArray($commandArguments['sourceDimensionSpacePoint'])
+            : $this->currentDimensionSpacePoint;
+
+        $sourceSubgraph = $contentRepository->getContentSubgraph($workspaceName, $sourceDimensionSpacePoint);
+
+        $targetDimensionSpacePoint = DimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint']);
+
+        $targetSubgraph = $contentRepository->getContentSubgraph($workspaceName, $targetDimensionSpacePoint);
+
+
+        $this->tryCatchingExceptions(
+            fn () => $this->getObject(NodeDuplicationService::class)->adoptNodeAndParents(
+                $workspaceName,
+                $nodeAggregateId,
+                $sourceSubgraph,
+                $targetSubgraph,
+                $targetDimensionSpacePoint,
+                $contentRepository,
+                (bool)$commandArguments['withContent']
             )
         );
     }
