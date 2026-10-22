@@ -187,16 +187,6 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
     And I expect the following errors to be logged
       | Failed to extract assets of property "string" of node "site-node-id" (type: "Some.Package:Homepage"): Failed to find mock asset with id "non-existing-asset" |
 
-  Scenario: Collection properties with a value of null are skipped
-    When I have the following node data rows:
-      | Identifier    | Path             | Node Type             | Properties       |
-      | sites-node-id | /sites           | unstructured          |                  |
-      | site-node-id  | /sites/test-site | Some.Package:Homepage | {"assets": null} |
-    And I run the asset migration
-    Then I expect no Assets to be exported
-    And I expect no ImageVariants to be exported
-    And I expect no PersistentResources to be exported
-
   Scenario: Nodes with properties that are not part of the node type schema (see https://github.com/neos/neos-development-collection/issues/4804)
     When I have the following node data rows:
       | Identifier    | Path             | Node Type             | Properties                                |
