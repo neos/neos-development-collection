@@ -1,3 +1,4 @@
+@graphState
 Feature: Untag nodes after moving their children in or out
 
   As a user of the CR I want to

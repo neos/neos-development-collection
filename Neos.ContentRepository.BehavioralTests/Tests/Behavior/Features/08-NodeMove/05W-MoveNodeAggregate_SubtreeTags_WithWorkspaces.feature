@@ -1,3 +1,4 @@
+@graphState
 Feature: Move a node aggregate into and out of a tagged parent - with workspaces
 
   Background:
