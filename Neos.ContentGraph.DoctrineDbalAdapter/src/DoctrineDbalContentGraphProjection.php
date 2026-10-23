@@ -330,7 +330,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 WHERE NOT EXISTS(
                   SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS allH
                   WHERE NOT (
-                    allH.contentstreamlayer IN (:contentStreamLayerToMergeInto, :contentStreamLayerToMergeFrom)
+                    allH.contentstreamlayer = :contentStreamLayerToMergeInto
                     AND allH.id IN ({$reducedHierarchiesWithUnreferencedChildNodeAnchorsStatement})
                   )
                     AND allH.childnodeanchor = h.childnodeanchor
