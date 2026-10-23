@@ -1,6 +1,6 @@
 {
     "sir-david-nodenborough": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
@@ -53,7 +53,7 @@
                 }
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
@@ -197,7 +197,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
@@ -250,7 +250,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
@@ -454,7 +454,7 @@
         }
     },
     "nody-mc-nodeface-the-eldest": {
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface-the-eldest",
                 "contentRepositoryId": "default",
@@ -640,7 +640,7 @@
         }
     },
     "nody-mc-nodeface-the-elder": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface-the-elder",
                 "contentRepositoryId": "default",
@@ -766,7 +766,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface-the-elder",
                 "contentRepositoryId": "default",
@@ -956,7 +956,7 @@
         }
     },
     "nody-mc-nodeface": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
@@ -1086,7 +1086,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
@@ -1276,7 +1276,7 @@
         }
     },
     "nody-mc-nodeface-the-younger": {
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface-the-younger",
                 "contentRepositoryId": "default",
@@ -1466,7 +1466,7 @@
         }
     },
     "nody-mc-nodeface-the-youngest": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface-the-youngest",
                 "contentRepositoryId": "default",
@@ -1592,7 +1592,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface-the-youngest",
                 "contentRepositoryId": "default",
@@ -1778,7 +1778,7 @@
         }
     },
     "lady-eleonode-rootford": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "children": {
                 "nodes": [
                     {
@@ -1817,7 +1817,7 @@
                 ]
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "children": {
                 "nodes": [
                     {
@@ -1856,7 +1856,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     {
@@ -1895,7 +1895,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     {

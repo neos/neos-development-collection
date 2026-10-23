@@ -1,6 +1,6 @@
 {
     "lady-eleonode-rootford": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "children": {
                 "nodes": [
                     "preceding-nodenborough",
@@ -16,7 +16,7 @@
         }
     },
     "preceding-nodenborough": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -43,7 +43,7 @@
         }
     },
     "sir-david-nodenborough": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": {
@@ -63,7 +63,7 @@
         }
     },
     "nody-mc-nodeface": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "tags": {
@@ -79,7 +79,7 @@
         }
     },
     "succeeding-nodenborough": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "precedingSiblings": {
                 "nodes": [
                     {

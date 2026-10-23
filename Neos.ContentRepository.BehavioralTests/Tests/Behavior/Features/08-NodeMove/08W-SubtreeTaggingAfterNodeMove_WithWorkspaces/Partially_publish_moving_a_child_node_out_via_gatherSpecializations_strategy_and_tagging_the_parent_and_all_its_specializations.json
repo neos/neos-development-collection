@@ -1,6 +1,6 @@
 {
     "lady-eleonode-rootford": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "children": {
                 "nodes": [
                     {
@@ -13,7 +13,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     {
@@ -28,7 +28,7 @@
         }
     },
     "sir-david-nodenborough": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": {
@@ -49,7 +49,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": {
@@ -72,7 +72,7 @@
         }
     },
     "nody-mc-nodeface": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -110,7 +110,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -150,7 +150,7 @@
         }
     },
     "nody-o-nodeface": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
                 "tags": {
@@ -170,7 +170,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
                 "tags": {
@@ -192,7 +192,7 @@
         }
     },
     "sir-nodeward-nodington-iii": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "children": {
                 "nodes": [
                     "nodimus-prime",
@@ -230,7 +230,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "nodimus-prime",
@@ -270,7 +270,7 @@
         }
     },
     "nodimus-prime": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -297,7 +297,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {

@@ -1,6 +1,6 @@
 {
     "sir-david-nodenborough": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "contentRepositoryId": "default",
@@ -74,7 +74,7 @@
         }
     },
     "nodewyn-tetherton": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "node": {
                 "_discriminator": "nodewyn-tetherton",
                 "contentRepositoryId": "default",
@@ -157,7 +157,7 @@
         }
     },
     "nodimus-prime": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",
@@ -211,7 +211,7 @@
         }
     },
     "lady-eleonode-rootford": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "children": {
                 "nodes": [
                     {

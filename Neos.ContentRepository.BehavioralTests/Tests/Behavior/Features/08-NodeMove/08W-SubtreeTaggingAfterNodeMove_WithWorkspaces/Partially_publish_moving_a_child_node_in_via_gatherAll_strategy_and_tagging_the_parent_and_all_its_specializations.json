@@ -1,6 +1,6 @@
 {
     "lady-eleonode-rootford": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -13,7 +13,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -28,7 +28,7 @@
         }
     },
     "sir-david-nodenborough": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "children": {
                 "nodes": [
                     "nody-o-nodeface"
@@ -38,7 +38,7 @@
                 }
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "children": {
                 "nodes": [
                     "nody-o-nodeface"
@@ -58,7 +58,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "nody-o-nodeface"
@@ -68,7 +68,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "nody-o-nodeface"
@@ -90,7 +90,7 @@
         }
     },
     "nody-mc-nodeface": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -128,7 +128,7 @@
                 }
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "tags": {
@@ -188,7 +188,7 @@
                 }
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -226,7 +226,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "tags": {
@@ -288,7 +288,7 @@
         }
     },
     "nodimus-mediocre": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nodimus-mediocre",
                 "tags": {
@@ -302,7 +302,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-mediocre",
                 "tags": {
@@ -318,7 +318,7 @@
         }
     },
     "nody-o-nodeface": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -326,7 +326,7 @@
                 }
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -334,7 +334,7 @@
                 }
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -342,7 +342,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -352,7 +352,7 @@
         }
     },
     "sir-nodeward-nodington-iii": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "children": {
                 "nodes": [
                     "nodimus-prime",
@@ -380,7 +380,7 @@
                 ]
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "tags": {
@@ -422,7 +422,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "nodimus-prime",
@@ -450,7 +450,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "tags": {
@@ -494,7 +494,7 @@
         }
     },
     "nodimus-prime": {
-        "033e5de7b423f45bb4f5a09f73af839e": {
+        "{\"example\":\"general\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -521,7 +521,7 @@
                 ]
             }
         },
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "tags": {
@@ -563,7 +563,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -590,7 +590,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "tags": {

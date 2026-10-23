@@ -1,6 +1,6 @@
 {
     "lady-eleonode-rootford": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
@@ -53,7 +53,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
@@ -106,7 +106,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
@@ -159,7 +159,7 @@
                 ]
             }
         },
-        "2ca4fae2f65267c94c85602df0cbb728": {
+        "{\"example\":\"peerSpec\"}": {
             "node": {
                 "_discriminator": "lady-eleonode-rootford",
                 "contentRepositoryId": "default",
@@ -214,7 +214,7 @@
         }
     },
     "nody-mc-nodeface": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
@@ -296,7 +296,7 @@
                 ]
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
@@ -378,7 +378,7 @@
                 ]
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
@@ -460,7 +460,7 @@
                 ]
             }
         },
-        "2ca4fae2f65267c94c85602df0cbb728": {
+        "{\"example\":\"peerSpec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "contentRepositoryId": "default",
@@ -544,7 +544,7 @@
         }
     },
     "nodimus-prime": {
-        "65901ded4f068dac14ad0dce4f459b29": {
+        "{\"example\":\"source\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",
@@ -604,7 +604,7 @@
                 }
             }
         },
-        "9a723c057afa02982dae9d0b541739be": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",
@@ -664,7 +664,7 @@
                 }
             }
         },
-        "fbe53ddc3305685fbb4dbf529f283a0e": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",
@@ -724,7 +724,7 @@
                 }
             }
         },
-        "2ca4fae2f65267c94c85602df0cbb728": {
+        "{\"example\":\"peerSpec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "contentRepositoryId": "default",

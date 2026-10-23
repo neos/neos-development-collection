@@ -1,6 +1,6 @@
 {
     "sir-nodeward-nodington-iii": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "contentRepositoryId": "default",
@@ -58,7 +58,7 @@
         }
     },
     "lady-eleonode-rootford": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "children": {
                 "nodes": [
                     {
@@ -84,7 +84,7 @@
         }
     },
     "sir-david-nodenborough": {
-        "d751713988987e9331980363e24189ce": {
+        "[]": {
             "precedingSiblings": {
                 "nodes": [
                     {

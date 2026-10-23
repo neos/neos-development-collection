@@ -20,7 +20,7 @@ use Neos\Flow\Annotations as Flow;
 final readonly class LocalGraphState implements \IteratorAggregate, \JsonSerializable
 {
     /**
-     * @param array<string,?LocalSubgraphState> $items indexed by dimension space point hash
+     * @param array<string,?LocalSubgraphState> $items indexed by dimension space point json
      */
     private function __construct(
         public array $items
@@ -34,7 +34,7 @@ final readonly class LocalGraphState implements \IteratorAggregate, \JsonSeriali
     ): self {
         $items = [];
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
-            $items[$dimensionSpacePoint->hash] = LocalSubgraphState::tryForNodeAggregateIdAndSubgraph(
+            $items[$dimensionSpacePoint->toJson()] = LocalSubgraphState::tryForNodeAggregateIdAndSubgraph(
                 nodeAggregateId: $nodeAggregateId,
                 subgraph: $contentGraph->getSubgraph(
                     dimensionSpacePoint: $dimensionSpacePoint,
