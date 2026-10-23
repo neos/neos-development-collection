@@ -129,9 +129,8 @@ trait GraphStateTrait
         if ($this->currentScenarioTitle === null) {
             throw new \RuntimeException('Current scenario title is not set');
         }
-        $snapshotFilePath = \str_replace('.feature', '', $this->currentFeatureFile);
-        $snapshotFilePath .= '_' . \str_replace(' ', '_', $this->currentScenarioTitle);
-        $snapshotFilePath .= '.json';
+        $snapshotDirectory = \str_replace('.feature', '', $this->currentFeatureFile);
+        $snapshotFilePath = $snapshotDirectory . DIRECTORY_SEPARATOR . \str_replace(' ', '_', $this->currentScenarioTitle) . '.json';
 
         $actualDiff = \json_encode(
             $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
@@ -141,6 +140,9 @@ trait GraphStateTrait
         );
         if (!file_exists($snapshotFilePath)) {
             if (getenv('BEHAT_CREATE_SNAPSHOT_PATCH')) {
+                if (!is_dir($snapshotDirectory)) {
+                    mkdir($snapshotDirectory);
+                }
                 file_put_contents($snapshotFilePath, $actualDiff);
             } else {
                 Assert::fail(sprintf('Snapshot path %s does not exist. Use BEHAT_CREATE_SNAPSHOT_PATCH=1 to write.', $snapshotFilePath));
