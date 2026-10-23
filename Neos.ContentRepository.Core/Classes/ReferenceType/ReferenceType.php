@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\ReferenceType;
 
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Property\Property;
 use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
@@ -13,14 +12,12 @@ use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
 /**
  * @api to be evaluated in userland
  */
-final class ReferenceType
+final readonly class ReferenceType
 {
     private function __construct(
         public ReferenceTypeName $name,
         public bool $isAbstract,
-        public bool $isFinal,
-        public NodeTypeConstraints $sourceNodeTypeConstraints,
-        public NodeTypeConstraints $targetNodeTypeConstraints,
+        public ReferenceTypeConstraints $constraints,
         public PropertyDictionary $properties,
     ) {
     }
@@ -28,17 +25,13 @@ final class ReferenceType
     public static function create(
         ReferenceTypeName $name,
         bool $isAbstract,
-        bool $isFinal,
-        NodeTypeConstraints $sourceNodeTypeConstraints,
-        NodeTypeConstraints $targetNodeTypeConstraints,
+        ReferenceTypeConstraints $constraints,
         PropertyDictionary $properties,
     ): self {
         return new self(
             name: $name,
             isAbstract: $isAbstract,
-            isFinal: $isFinal,
-            sourceNodeTypeConstraints: $sourceNodeTypeConstraints,
-            targetNodeTypeConstraints: $targetNodeTypeConstraints,
+            constraints: $constraints,
             properties: $properties,
         );
     }

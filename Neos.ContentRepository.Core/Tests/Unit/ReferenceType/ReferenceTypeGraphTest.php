@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Tests\Unit\ReferenceType;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
@@ -21,7 +22,7 @@ class ReferenceTypeGraphTest extends TestCase
 {
     #[DataProvider('constraintProvider')]
     public function testGetReferenceTypesMatchingConstraints(
-        ReferenceTypeConstraints $constraints,
+        ReferenceTypeFilters $constraints,
         ReferenceTypeNameSet $expectedResult,
     ): void {
         Assert::assertEquals(
@@ -32,18 +33,18 @@ class ReferenceTypeGraphTest extends TestCase
 
     /**
      * @return iterable<string,array{
-     *     constraints: ReferenceTypeConstraints,
+     *     constraints: ReferenceTypeFilters,
      *     expectedResult: ReferenceTypeNameSet,
      * }>
      */
     public static function constraintProvider(): iterable
     {
         yield 'unconstrained' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::create(),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:Reference',
@@ -53,21 +54,21 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'forbidden' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: false,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::create(),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::create(),
         ];
 
         yield 'excludingAbstract' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: false,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::create(),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:Reference',
@@ -76,13 +77,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'everythingAndThenSome' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Reference',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:Reference',
@@ -92,25 +93,25 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'onlyUndefined' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: false,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Undefined',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([]),
         ];
 
         yield 'onlyLeaf' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: false,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Reference',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:Reference',
@@ -118,13 +119,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'onlyIntermediary' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: false,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:Reference',
@@ -133,13 +134,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'onlyIntermediaryButNoAbstract' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: false,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
                 includeAbstract: false,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:Reference',
@@ -147,11 +148,11 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'everythingButTheLeaf' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Reference',
                 ]),
             ),
@@ -162,11 +163,11 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'everythingButTheLeafButNoAbstract' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: false,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Reference',
                 ]),
             ),
@@ -176,11 +177,11 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'everythingButTheIntermediary' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
             ),
@@ -190,13 +191,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'bothExplicitWithWildcard' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Reference',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
             ),
@@ -207,13 +208,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'bothExplicitWithoutWildcard' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: false,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Reference',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
             ),
@@ -223,13 +224,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'conflictingSuperTypesWithWildcard' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Root',
                 ]),
             ),
@@ -239,13 +240,13 @@ class ReferenceTypeGraphTest extends TestCase
         ];
 
         yield 'conflictingSuperTypesWithoutWildcard' => [
-            'constraints' => ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
                 ]),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::fromStringArray([
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:Root',
                 ]),
             ),
@@ -319,18 +320,19 @@ class ReferenceTypeGraphTest extends TestCase
         return ReferenceType::create(
             name: ReferenceTypeName::fromString($name),
             isAbstract: $isAbstract,
-            isFinal: false,
-            sourceNodeTypeConstraints: NodeTypeConstraints::create(
-                isWildcardAllowed: true,
-                includeAbstract: true,
-                explicitlyAllowedNodeTypes: NodeTypeNames::createEmpty(),
-                explicitlyDisallowedNodeTypes: NodeTypeNames::createEmpty()
-            ),
-            targetNodeTypeConstraints: NodeTypeConstraints::create(
-                isWildcardAllowed: true,
-                includeAbstract: true,
-                explicitlyAllowedNodeTypes: NodeTypeNames::createEmpty(),
-                explicitlyDisallowedNodeTypes: NodeTypeNames::createEmpty()
+            constraints: ReferenceTypeConstraints::create(
+                sourceNodeTypes: NodeTypeFilters::create(
+                    isWildcardAllowed: true,
+                    includeAbstract: true,
+                    explicitlyIncludedNodeTypeNames: NodeTypeNames::createEmpty(),
+                    explicitlyExcludedNodeTypeNames: NodeTypeNames::createEmpty()
+                ),
+                targetNodeTypes: NodeTypeFilters::create(
+                    isWildcardAllowed: true,
+                    includeAbstract: true,
+                    explicitlyIncludedNodeTypeNames: NodeTypeNames::createEmpty(),
+                    explicitlyExcludedNodeTypeNames: NodeTypeNames::createEmpty()
+                ),
             ),
             properties: PropertyDictionary::create([]),
         );

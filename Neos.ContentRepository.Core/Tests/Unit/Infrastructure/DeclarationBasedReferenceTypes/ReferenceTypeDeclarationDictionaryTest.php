@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeConstraintsDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -65,8 +67,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     superTypeNames: ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:Unknown'),
                     ),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 ),
             ),
@@ -87,8 +91,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     superTypeNames: ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:FinalReference'),
                     ),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 ),
                 ReferenceTypeDeclaration::create(
@@ -96,8 +102,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     isAbstract: false,
                     isFinal: true,
                     superTypeNames: ReferenceTypeNameList::list(),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 ),
             ),
@@ -118,8 +126,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     superTypeNames: ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:AnotherReference'),
                     ),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 ),
                 ReferenceTypeDeclaration::create(
@@ -129,8 +139,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     superTypeNames: ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:Reference'),
                     ),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 ),
             ),
@@ -154,8 +166,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         ReferenceTypeName::fromString('Acme.Site:ReferenceA'),
                         ReferenceTypeName::fromString('Acme.Site:ReferenceB'),
                     ),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 ),
                 ReferenceTypeDeclaration::create(
@@ -163,8 +177,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     isAbstract: false,
                     isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(
                         PropertyDeclaration::create(
                             name: PropertyName::fromString('text'),
@@ -180,8 +196,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     isAbstract: false,
                     isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(isWildcardAllowed: true, constrainedNodeTypes: []),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
+                    ),
                     properties: PropertyDeclarationDictionary::create(
                         PropertyDeclaration::create(
                             name: PropertyName::fromString('text'),
@@ -245,8 +263,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     isAbstract: false,
                     isFinal: false,
                     superTypeNames: ReferenceTypeNameList::list(),
-                    sourceNodeTypes: NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:Node' => true]),
-                    targetNodeTypes: NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:Node' => true]),
+                    constraints: ReferenceTypeConstraintsDeclaration::create(
+                        sourceNodeTypes: NodeTypeFiltersDeclaration::create(false, ['Acme.Site:Node' => true]),
+                        targetNodeTypes: NodeTypeFiltersDeclaration::create(false, ['Acme.Site:Node' => true]),
+                    ),
                     properties: PropertyDeclarationDictionary::create(),
                 )
             ),
@@ -254,18 +274,19 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             'expectedResult' => ReferenceType::create(
                 name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 isAbstract: false,
-                isFinal: false,
-                sourceNodeTypeConstraints: NodeTypeConstraints::create(
-                    isWildcardAllowed: false,
-                    includeAbstract: true,
-                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray(['Acme.Site:Node']),
-                    explicitlyDisallowedNodeTypes: NodeTypeNames::createEmpty(),
-                ),
-                targetNodeTypeConstraints: NodeTypeConstraints::create(
-                    isWildcardAllowed: false,
-                    includeAbstract: true,
-                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray(['Acme.Site:Node']),
-                    explicitlyDisallowedNodeTypes: NodeTypeNames::createEmpty(),
+                constraints: ReferenceTypeConstraints::create(
+                    sourceNodeTypes: NodeTypeFilters::create(
+                        isWildcardAllowed: false,
+                        includeAbstract: true,
+                        explicitlyIncludedNodeTypeNames: NodeTypeNames::fromStringArray(['Acme.Site:Node']),
+                        explicitlyExcludedNodeTypeNames: NodeTypeNames::createEmpty(),
+                    ),
+                    targetNodeTypes: NodeTypeFilters::create(
+                        isWildcardAllowed: false,
+                        includeAbstract: true,
+                        explicitlyIncludedNodeTypeNames: NodeTypeNames::fromStringArray(['Acme.Site:Node']),
+                        explicitlyExcludedNodeTypeNames: NodeTypeNames::createEmpty(),
+                    ),
                 ),
                 properties: PropertyDictionary::create([]),
             ),
@@ -284,28 +305,29 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             'expectedResult' => ReferenceType::create(
                 name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 isAbstract: false,
-                isFinal: true,
-                sourceNodeTypeConstraints: NodeTypeConstraints::create(
-                    isWildcardAllowed: false,
-                    includeAbstract: true,
-                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:RestrictedNode',
-                        'Acme.Site:Node',
-                    ]),
-                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:AnotherRestrictedNode',
-                    ]),
-                ),
-                targetNodeTypeConstraints: NodeTypeConstraints::create(
-                    isWildcardAllowed: false,
-                    includeAbstract: true,
-                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:RestrictedNode',
-                        'Acme.Site:Node',
-                    ]),
-                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:AnotherRestrictedNode',
-                    ]),
+                constraints: ReferenceTypeConstraints::create(
+                    sourceNodeTypes: NodeTypeFilters::create(
+                        isWildcardAllowed: false,
+                        includeAbstract: true,
+                        explicitlyIncludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:RestrictedNode',
+                            'Acme.Site:Node',
+                        ]),
+                        explicitlyExcludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:AnotherRestrictedNode',
+                        ]),
+                    ),
+                    targetNodeTypes: NodeTypeFilters::create(
+                        isWildcardAllowed: false,
+                        includeAbstract: true,
+                        explicitlyIncludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:RestrictedNode',
+                            'Acme.Site:Node',
+                        ]),
+                        explicitlyExcludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:AnotherRestrictedNode',
+                        ]),
+                    ),
                 ),
                 properties: PropertyDictionary::create([
                     'text' => Property::create(
@@ -313,7 +335,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         type: PropertyType::string(),
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([
-                            'generic' => GenericArrayPropertyMetadata::create([
+                            '_catchAll' => GenericArrayPropertyMetadata::create([
                                 'foo' => 'baz',
                                 'noodle' => 'soup',
                                 'wat' => 'atouille',
@@ -353,30 +375,31 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             'expectedResult' => ReferenceType::create(
                 name: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 isAbstract: false,
-                isFinal: true,
-                sourceNodeTypeConstraints: NodeTypeConstraints::create(
-                    isWildcardAllowed: false,
-                    includeAbstract: true,
-                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:RestrictedNode',
-                        'Acme.Site:Node',
-                    ]),
-                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:AnotherRestrictedNode',
-                        'Acme.Site:YetAnotherRestrictedNode',
-                    ]),
-                ),
-                targetNodeTypeConstraints: NodeTypeConstraints::create(
-                    isWildcardAllowed: false,
-                    includeAbstract: true,
-                    explicitlyAllowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:RestrictedNode',
-                        'Acme.Site:Node',
-                    ]),
-                    explicitlyDisallowedNodeTypes: NodeTypeNames::fromStringArray([
-                        'Acme.Site:AnotherRestrictedNode',
-                        'Acme.Site:YetAnotherRestrictedNode',
-                    ]),
+                constraints: ReferenceTypeConstraints::create(
+                    sourceNodeTypes: NodeTypeFilters::create(
+                        isWildcardAllowed: false,
+                        includeAbstract: true,
+                        explicitlyIncludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:RestrictedNode',
+                            'Acme.Site:Node',
+                        ]),
+                        explicitlyExcludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:AnotherRestrictedNode',
+                            'Acme.Site:YetAnotherRestrictedNode',
+                        ]),
+                    ),
+                    targetNodeTypes: NodeTypeFilters::create(
+                        isWildcardAllowed: false,
+                        includeAbstract: true,
+                        explicitlyIncludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:RestrictedNode',
+                            'Acme.Site:Node',
+                        ]),
+                        explicitlyExcludedNodeTypeNames: NodeTypeNames::fromStringArray([
+                            'Acme.Site:AnotherRestrictedNode',
+                            'Acme.Site:YetAnotherRestrictedNode',
+                        ]),
+                    ),
                 ),
                 properties: PropertyDictionary::create([
                     'text' => Property::create(
@@ -384,7 +407,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         type: PropertyType::string(),
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([
-                            'generic' => GenericArrayPropertyMetadata::create([
+                            '_catchAll' => GenericArrayPropertyMetadata::create([
                                 'foo' => 'baz',
                                 'noodle' => 'soup',
                                 'wat' => 'atouille',
@@ -641,19 +664,21 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             isAbstract: false,
             isFinal: true,
             superTypeNames: $superTypeNames,
-            sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: false,
-                constrainedNodeTypes: [
-                    'Acme.Site:Node' => true,
-                    'Acme.Site:RestrictedNode' => true,
-                ],
-            ),
-            targetNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: false,
-                constrainedNodeTypes: [
-                    'Acme.Site:Node' => true,
-                    'Acme.Site:RestrictedNode' => true,
-                ],
+            constraints: ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: false,
+                    filteredNodeTypes: [
+                        'Acme.Site:Node' => true,
+                        'Acme.Site:RestrictedNode' => true,
+                    ],
+                ),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: false,
+                    filteredNodeTypes: [
+                        'Acme.Site:Node' => true,
+                        'Acme.Site:RestrictedNode' => true,
+                    ],
+                ),
             ),
             properties: PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
@@ -661,7 +686,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     type: PropertyType::string(),
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
-                        'generic' => GenericArrayPropertyMetadata::create([
+                        '_catchAll' => GenericArrayPropertyMetadata::create([
                             'foo' => 'baz',
                             'wat' => 'atouille',
                         ]),
@@ -686,19 +711,21 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             isAbstract: true,
             isFinal: false,
             superTypeNames: ReferenceTypeNameList::list(),
-            sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: true,
-                constrainedNodeTypes: [
-                    'Acme.Site:RestrictedNode' => false,
-                    'Acme.Site:AnotherRestrictedNode' => false,
-                ],
-            ),
-            targetNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: true,
-                constrainedNodeTypes: [
-                    'Acme.Site:RestrictedNode' => false,
-                    'Acme.Site:AnotherRestrictedNode' => false,
-                ],
+            constraints: ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [
+                        'Acme.Site:RestrictedNode' => false,
+                        'Acme.Site:AnotherRestrictedNode' => false,
+                    ],
+                ),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [
+                        'Acme.Site:RestrictedNode' => false,
+                        'Acme.Site:AnotherRestrictedNode' => false,
+                    ],
+                ),
             ),
             properties: PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
@@ -706,7 +733,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     type: PropertyType::string(),
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
-                        'generic' => GenericArrayPropertyMetadata::create([
+                        '_catchAll' => GenericArrayPropertyMetadata::create([
                             'foo' => 'bar',
                             'noodle' => 'soup',
                             'bool' => true,
@@ -732,21 +759,23 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             isAbstract: true,
             isFinal: false,
             superTypeNames: ReferenceTypeNameList::list(),
-            sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: true,
-                constrainedNodeTypes: [
-                    'Acme.Site:RestrictedNode' => false,
-                    'Acme.Site:AnotherRestrictedNode' => false,
-                    'Acme.Site:YetAnotherRestrictedNode' => false,
-                ],
-            ),
-            targetNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: true,
-                constrainedNodeTypes: [
-                    'Acme.Site:RestrictedNode' => false,
-                    'Acme.Site:AnotherRestrictedNode' => false,
-                    'Acme.Site:YetAnotherRestrictedNode' => false,
-                ],
+            constraints: ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [
+                        'Acme.Site:RestrictedNode' => false,
+                        'Acme.Site:AnotherRestrictedNode' => false,
+                        'Acme.Site:YetAnotherRestrictedNode' => false,
+                    ],
+                ),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [
+                        'Acme.Site:RestrictedNode' => false,
+                        'Acme.Site:AnotherRestrictedNode' => false,
+                        'Acme.Site:YetAnotherRestrictedNode' => false,
+                    ],
+                ),
             ),
             properties: PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
@@ -754,7 +783,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     type: PropertyType::string(),
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
-                        'generic' => GenericArrayPropertyMetadata::create([
+                        '_catchAll' => GenericArrayPropertyMetadata::create([
                             'foo' => 'barrr',
                             'number' => 42,
                         ]),
@@ -781,13 +810,15 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             superTypeNames: ReferenceTypeNameList::list(
                 ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
             ),
-            sourceNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: true,
-                constrainedNodeTypes: [],
-            ),
-            targetNodeTypes: NodeTypeConstraintsDeclaration::create(
-                isWildcardAllowed: true,
-                constrainedNodeTypes: [],
+            constraints: ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [],
+                ),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [],
+                ),
             ),
             properties: PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
@@ -795,7 +826,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     type: PropertyType::string(),
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
-                        'generic' => GenericArrayPropertyMetadata::create([
+                        '_catchAll' => GenericArrayPropertyMetadata::create([
                             'foo' => 'intermediate',
                             'bool' => false,
                         ]),

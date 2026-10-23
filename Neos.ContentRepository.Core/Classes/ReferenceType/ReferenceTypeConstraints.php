@@ -4,32 +4,26 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\ReferenceType;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
+
 /**
- * Constraints to reduce the amount of available reference types.
- *
- * @api
+ * @api to be evaluated in userland
  */
 final readonly class ReferenceTypeConstraints
 {
     private function __construct(
-        public bool $isWildcardAllowed,
-        public bool $includeAbstract,
-        public ReferenceTypeNameSet $explicitlyAllowedReferenceTypeNames,
-        public ReferenceTypeNameSet $explicitlyDisallowedReferenceTypeNames,
+        public NodeTypeFilters $sourceNodeTypes,
+        public NodeTypeFilters $targetNodeTypes,
     ) {
     }
 
     public static function create(
-        bool $isWildcardAllowed,
-        bool $includeAbstract,
-        ReferenceTypeNameSet $explicitlyAllowedNodeTypes,
-        ReferenceTypeNameSet $explicitlyDisallowedNodeTypes,
+        NodeTypeFilters $sourceNodeTypes,
+        NodeTypeFilters $targetNodeTypes,
     ): self {
         return new self(
-            isWildcardAllowed: $isWildcardAllowed,
-            includeAbstract: $includeAbstract,
-            explicitlyAllowedReferenceTypeNames: $explicitlyAllowedNodeTypes,
-            explicitlyDisallowedReferenceTypeNames: $explicitlyDisallowedNodeTypes,
+            sourceNodeTypes: $sourceNodeTypes,
+            targetNodeTypes: $targetNodeTypes,
         );
     }
 }

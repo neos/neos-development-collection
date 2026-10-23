@@ -74,15 +74,15 @@ final readonly class ReferenceTypeGraph
     }
 
     public function getReferenceTypesMatchingConstraints(
-        ReferenceTypeConstraints $constraints,
+        ReferenceTypeFilters $constraints,
     ): ReferenceTypeSet {
-        if ($constraints->isWildcardAllowed) {
+        if ($constraints->includeWildcard) {
             $candidateReferenceTypes = $constraints->includeAbstract
                 ? $this->referenceTypes
                 : array_filter($this->referenceTypes, fn (ReferenceType $referenceType): bool => !$referenceType->isAbstract);
         } else {
             $candidateReferenceTypes = [];
-            foreach ($constraints->explicitlyAllowedReferenceTypeNames as $allowedReferenceTypeName) {
+            foreach ($constraints->explicitlyIncludedReferenceTypeNames as $allowedReferenceTypeName) {
                 $allowedReferenceType = $this->referenceTypes[$allowedReferenceTypeName->value] ?? null;
                 if ($allowedReferenceType && ($constraints->includeAbstract || !$allowedReferenceType->isAbstract)) {
                     $candidateReferenceTypes[$allowedReferenceTypeName->value] = $allowedReferenceType;
@@ -100,8 +100,8 @@ final readonly class ReferenceTypeGraph
             $candidateReferenceTypes,
             fn (ReferenceType $referenceType): bool => $this->isCloserToExplicitlyAllowed(
                 $referenceType->name,
-                $constraints->explicitlyAllowedReferenceTypeNames,
-                $constraints->explicitlyDisallowedReferenceTypeNames,
+                $constraints->explicitlyIncludedReferenceTypeNames,
+                $constraints->explicitlyExcludedReferenceTypeNames,
             ),
         ));
     }

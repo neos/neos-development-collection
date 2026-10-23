@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
-use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -74,7 +72,7 @@ trait ReferenceTypeConstraintChecks
         ReferenceName $referenceName,
     ): void {
         if (!ConstraintCheck::create(
-            NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($referenceType->sourceNodeTypeConstraints)->constrainedNodeTypes
+            NodeTypeFiltersDeclaration::fromNodeTypeFilters($referenceType->constraints->sourceNodeTypes)->filteredNodeTypes
         )->isNodeTypeAllowed($sourceNodeType)) {
             throw ReferenceCannotBeSet::becauseTheReferenceTypeDisallowsTheSourceNodeType(
                 $referenceName,
@@ -90,7 +88,7 @@ trait ReferenceTypeConstraintChecks
         ReferenceName $referenceName,
     ): void {
         if (!ConstraintCheck::create(
-            NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($referenceType->targetNodeTypeConstraints)->constrainedNodeTypes
+            NodeTypeFiltersDeclaration::fromNodeTypeFilters($referenceType->constraints->targetNodeTypes)->filteredNodeTypes
         )->isNodeTypeAllowed($targetNodeType)) {
             throw ReferenceCannotBeSet::becauseTheReferenceTypeDisallowsTheTargetNodeType(
                 $referenceName,

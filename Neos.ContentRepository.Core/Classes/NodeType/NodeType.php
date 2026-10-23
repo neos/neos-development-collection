@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\ReferenceTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
@@ -521,19 +521,19 @@ final class NodeType
         return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
     }
 
-    public function getReferenceTypeConstraints(ReferenceName $referenceName): ReferenceTypeConstraints
+    public function getReferenceTypeConstraints(ReferenceName $referenceName): ReferenceTypeFilters
     {
         $declarationArray = $this->getConfiguration(
             'references.' . $referenceName->value . '.constraints.referenceTypes'
         );
 
         return is_array($declarationArray)
-            ? ReferenceTypeConstraintsDeclaration::fromArray($declarationArray)->toReferenceTypeConstraints()
-            : ReferenceTypeConstraints::create(
-                isWildcardAllowed: true,
+            ? ReferenceTypeFiltersDeclaration::fromArray($declarationArray)->toReferenceTypeFilters()
+            : ReferenceTypeFilters::create(
+                includeWildcard: true,
                 includeAbstract: true,
-                explicitlyAllowedNodeTypes: ReferenceTypeNameSet::create(),
-                explicitlyDisallowedNodeTypes: ReferenceTypeNameSet::create(),
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
             );
     }
 

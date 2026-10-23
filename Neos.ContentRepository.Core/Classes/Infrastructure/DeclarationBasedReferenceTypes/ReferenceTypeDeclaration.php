@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
 
@@ -22,8 +22,7 @@ final readonly class ReferenceTypeDeclaration
         public bool $isAbstract,
         public bool $isFinal,
         public ReferenceTypeNameList $superTypeNames,
-        public NodeTypeConstraintsDeclaration $sourceNodeTypes,
-        public NodeTypeConstraintsDeclaration $targetNodeTypes,
+        public ReferenceTypeConstraintsDeclaration $constraints,
         public PropertyDeclarationDictionary $properties,
     ) {
     }
@@ -36,8 +35,7 @@ final readonly class ReferenceTypeDeclaration
         bool $isAbstract,
         bool $isFinal,
         ReferenceTypeNameList $superTypeNames,
-        NodeTypeConstraintsDeclaration $sourceNodeTypes,
-        NodeTypeConstraintsDeclaration $targetNodeTypes,
+        ReferenceTypeConstraintsDeclaration $constraints,
         PropertyDeclarationDictionary $properties,
     ): self {
         if ($isAbstract && $isFinal) {
@@ -49,8 +47,7 @@ final readonly class ReferenceTypeDeclaration
             isAbstract: $isAbstract,
             isFinal: $isFinal,
             superTypeNames: $superTypeNames,
-            sourceNodeTypes: $sourceNodeTypes,
-            targetNodeTypes: $targetNodeTypes,
+            constraints: $constraints,
             properties: $properties,
         );
     }
@@ -73,8 +70,7 @@ final readonly class ReferenceTypeDeclaration
             isAbstract: $isAbstract,
             isFinal: $isFinal,
             superTypeNames: ReferenceTypeNameList::fromStringArray(array_keys($values['superTypes'] ?? [])),
-            sourceNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['constraints']['sourceNodeTypes'] ?? []),
-            targetNodeTypes: NodeTypeConstraintsDeclaration::fromArray($values['constraints']['targetNodeTypes'] ?? []),
+            constraints: ReferenceTypeConstraintsDeclaration::fromArray($values['constraints'] ?? []),
             properties: PropertyDeclarationDictionary::fromArray($values['properties'] ?? [], $name),
         );
     }
@@ -131,7 +127,7 @@ final readonly class ReferenceTypeDeclaration
                     subTypeNames: $subTypeNames,
                 );
             } else {
-                if ($referenceTypes[$superTypeName->value]->isFinal) {
+                if ($dictionary->getReferenceTypeDeclaration($superTypeName)?->isFinal) {
                     $finalSuperTypeNames[] = $superTypeName;
                     continue;
                 }
@@ -174,21 +170,13 @@ final readonly class ReferenceTypeDeclaration
             return $this->toReferenceType();
         }
 
-        /** @var ?NodeTypeConstraintsDeclaration $sourceNodeTypes */
-        $sourceNodeTypes = null;
+        /** @var ?ReferenceTypeConstraintsDeclaration $constraints */
+        $constraints = null;
         foreach ($superTypes as $superType) {
-            $sourceNodeTypes = $sourceNodeTypes?->mergeToSubType($superType->sourceNodeTypeConstraints)
-                ?: NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($superType->sourceNodeTypeConstraints);
+            $constraints = $constraints?->mergeToSubTypes($superType->constraints)
+                ?: ReferenceTypeConstraintsDeclaration::fromReferenceTypeConstraints($superType->constraints);
         }
-        $sourceNodeTypes = $sourceNodeTypes->mergeToSubType($this->sourceNodeTypes);
-
-        /** @var ?NodeTypeConstraintsDeclaration $targetNodeTypes */
-        $targetNodeTypes = null;
-        foreach ($superTypes as $superType) {
-            $targetNodeTypes = $targetNodeTypes?->mergeToSubType($superType->targetNodeTypeConstraints)
-                ?: NodeTypeConstraintsDeclaration::fromNodeTypeConstraints($superType->targetNodeTypeConstraints);
-        }
-        $targetNodeTypes = $targetNodeTypes->mergeToSubType($this->targetNodeTypes);
+        $constraints = $constraints->mergeToSubTypes($this->constraints);
 
         /** @var ?PropertyDeclarationDictionary $properties */
         $properties = null;
@@ -210,9 +198,10 @@ final readonly class ReferenceTypeDeclaration
         return ReferenceType::create(
             name: $this->name,
             isAbstract: $this->isAbstract,
-            isFinal: $this->isFinal,
-            sourceNodeTypeConstraints: $sourceNodeTypes->toNodeTypeConstraints(),
-            targetNodeTypeConstraints: $targetNodeTypes->toNodeTypeConstraints(),
+            constraints: ReferenceTypeConstraints::create(
+                sourceNodeTypes: $constraints->sourceNodeTypes->toNodeTypeFilters(),
+                targetNodeTypes: $constraints->targetNodeTypes->toNodeTypeFilters(),
+            ),
             properties: $properties->toPropertyDictionary(),
         );
     }
@@ -222,9 +211,10 @@ final readonly class ReferenceTypeDeclaration
         return ReferenceType::create(
             name: $this->name,
             isAbstract: $this->isAbstract,
-            isFinal: $this->isFinal,
-            sourceNodeTypeConstraints: $this->sourceNodeTypes->toNodeTypeConstraints(),
-            targetNodeTypeConstraints: $this->targetNodeTypes->toNodeTypeConstraints(),
+            constraints: ReferenceTypeConstraints::create(
+                sourceNodeTypes: $this->constraints->sourceNodeTypes->toNodeTypeFilters(),
+                targetNodeTypes: $this->constraints->targetNodeTypes->toNodeTypeFilters(),
+            ),
             properties: $this->properties->toPropertyDictionary(),
         );
     }

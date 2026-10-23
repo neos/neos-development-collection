@@ -70,7 +70,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
             type: $type,
             defaultValue: $defaultValue,
             metadata: PropertyMetadataDictionary::create([
-                'genericArray' => GenericArrayPropertyMetadata::create($values),
+                '_catchAll' => GenericArrayPropertyMetadata::create($values),
             ]),
             declaringType: $declaringType,
         );

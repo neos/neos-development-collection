@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeConstraintsDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
@@ -27,8 +28,7 @@ class ReferenceTypeDeclarationTest extends TestCase
         bool $isAbstract,
         bool $isFinal,
         ReferenceTypeNameList $superTypeNames,
-        NodeTypeConstraintsDeclaration $sourceNodeTypes,
-        NodeTypeConstraintsDeclaration $targetNodeTypes,
+        ReferenceTypeConstraintsDeclaration $constraints,
         PropertyDeclarationDictionary $properties,
         bool $resultExpected,
         ?\Throwable $expectedException,
@@ -39,8 +39,7 @@ class ReferenceTypeDeclarationTest extends TestCase
                 isAbstract: $isAbstract,
                 isFinal: $isFinal,
                 superTypeNames: $superTypeNames,
-                sourceNodeTypes: $sourceNodeTypes,
-                targetNodeTypes: $targetNodeTypes,
+                constraints: $constraints,
                 properties: $properties,
             );
             $actualException = null;
@@ -62,8 +61,7 @@ class ReferenceTypeDeclarationTest extends TestCase
      *     isAbstract: bool,
      *     isFinal: bool,
      *     superTypeNames: ReferenceTypeNameList,
-     *     sourceNodeTypes: NodeTypeConstraintsDeclaration,
-     *     targetNodeTypes: NodeTypeConstraintsDeclaration,
+     *     constraints: ReferenceTypeConstraintsDeclaration,
      *     properties: PropertyDeclarationDictionary,
      *     resultExpected: bool,
      *     expectedException: ?\Throwable,
@@ -76,8 +74,10 @@ class ReferenceTypeDeclarationTest extends TestCase
             'isAbstract' => false,
             'isFinal' => false,
             'superTypeNames' => ReferenceTypeNameList::list(),
-            'sourceNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
-            'targetNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
+            'constraints' => ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(true, []),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(true, []),
+            ),
             'properties' => PropertyDeclarationDictionary::create(),
             'resultExpected' => true,
             'expectedException' => null,
@@ -90,8 +90,10 @@ class ReferenceTypeDeclarationTest extends TestCase
             'superTypeNames' => ReferenceTypeNameList::list(
                 ReferenceTypeName::fromString('Acme.Site:BaseReference')
             ),
-            'sourceNodeTypes' => NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:SomeNodeType']),
-            'targetNodeTypes' => NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:SomeOtherNodeType']),
+            'constraints' => ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(false, ['Acme.Site:SomeNodeType']),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(false, ['Acme.Site:SomeOtherNodeType']),
+            ),
             'properties' => PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
@@ -110,8 +112,10 @@ class ReferenceTypeDeclarationTest extends TestCase
             'isAbstract' => true,
             'isFinal' => true,
             'superTypeNames' => ReferenceTypeNameList::list(),
-            'sourceNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
-            'targetNodeTypes' => NodeTypeConstraintsDeclaration::create(true, []),
+            'constraints' => ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(true, []),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(true, []),
+            ),
             'properties' => PropertyDeclarationDictionary::create(),
             'resultExpected' => false,
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItIsBothAbstractAndFinal(
@@ -149,8 +153,10 @@ class ReferenceTypeDeclarationTest extends TestCase
                 isAbstract: false,
                 isFinal: false,
                 superTypeNames: ReferenceTypeNameList::list(),
-                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(false, []),
-                targetNodeTypes: NodeTypeConstraintsDeclaration::create(false, []),
+                constraints: ReferenceTypeConstraintsDeclaration::create(
+                    sourceNodeTypes: NodeTypeFiltersDeclaration::create(false, []),
+                    targetNodeTypes: NodeTypeFiltersDeclaration::create(false, []),
+                ),
                 properties: PropertyDeclarationDictionary::create(),
             )
         ];
@@ -161,12 +167,14 @@ class ReferenceTypeDeclarationTest extends TestCase
                 'superTypes' => [
                     'Acme.Site:BaseReference' => true,
                 ],
-                'sourceNodeTypes' => [
-                    '*' => true,
-                    'Acme.Site:Node' => false,
-                ],
-                'targetNodeTypes' => [
-                    'Acme.Site:Node' => true,
+                'constraints' => [
+                    'sourceNodeTypes' => [
+                        '*' => true,
+                        'Acme.Site:Node' => false,
+                    ],
+                    'targetNodeTypes' => [
+                        'Acme.Site:Node' => true,
+                    ],
                 ],
                 'properties' => [
                     'text' => [
@@ -186,15 +194,17 @@ class ReferenceTypeDeclarationTest extends TestCase
                 superTypeNames: ReferenceTypeNameList::list(
                     ReferenceTypeName::fromString('Acme.Site:BaseReference'),
                 ),
-                sourceNodeTypes: NodeTypeConstraintsDeclaration::create(true, ['Acme.Site:Node' => false]),
-                targetNodeTypes: NodeTypeConstraintsDeclaration::create(false, ['Acme.Site:Node' => true]),
+                constraints: ReferenceTypeConstraintsDeclaration::create(
+                    sourceNodeTypes: NodeTypeFiltersDeclaration::create(true, ['Acme.Site:Node' => false]),
+                    targetNodeTypes: NodeTypeFiltersDeclaration::create(false, ['Acme.Site:Node' => true]),
+                ),
                 properties: PropertyDeclarationDictionary::create(
                     PropertyDeclaration::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
                         defaultValue: 'my text',
                         metadata: PropertyMetadataDictionary::create([
-                            'genericArray' => GenericArrayPropertyMetadata::create([
+                            '_catchAll' => GenericArrayPropertyMetadata::create([
                                 'custom' => [
                                     'someKey' => 'someValue'
                                 ],
