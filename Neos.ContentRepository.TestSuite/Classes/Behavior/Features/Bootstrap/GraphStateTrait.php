@@ -140,7 +140,11 @@ trait GraphStateTrait
             JSON_PRETTY_PRINT,
         );
         if (!file_exists($snapshotFilePath)) {
-            file_put_contents($snapshotFilePath, $actualDiff);
+            if (getenv('BEHAT_CREATE_SNAPSHOT_PATCH')) {
+                file_put_contents($snapshotFilePath, $actualDiff);
+            } else {
+                Assert::fail(sprintf('Snapshot path %s does not exist. Use BEHAT_CREATE_SNAPSHOT_PATCH=1 to write.', $snapshotFilePath));
+            }
         }
 
         Assert::assertSame(
