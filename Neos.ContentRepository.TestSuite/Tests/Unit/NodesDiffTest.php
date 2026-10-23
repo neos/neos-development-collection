@@ -33,13 +33,13 @@ class NodesDiffTest extends TestCase
 
         yield 'emptyNodes' => [
             'referenceNodes' => Nodes::createEmpty(),
-            'nodesToCompares' => Nodes::createEmpty(),
+            'nodesToCompare' => Nodes::createEmpty(),
             'expectedNodesDiff' => null,
         ];
 
         yield 'identicalNodes' => [
             'referenceNodes' => Nodes::fromArray([$referenceNode]),
-            'nodesToCompares' => Nodes::fromArray([$referenceNode]),
+            'nodesToCompare' => Nodes::fromArray([$referenceNode]),
             'expectedNodesDiff' => null,
         ];
 
@@ -50,7 +50,7 @@ class NodesDiffTest extends TestCase
 
         yield 'onlyMovedNodes' => [
             'referenceNodes' => Nodes::fromArray([$referenceNode, $anotherNode]),
-            'nodesToCompares' => Nodes::fromArray([$anotherNode, $referenceNode]),
+            'nodesToCompare' => Nodes::fromArray([$anotherNode, $referenceNode]),
             'expectedNodesDiff' => NodesDiff::tryCreate(
                 nodes: [
                     $anotherNode->aggregateId,
