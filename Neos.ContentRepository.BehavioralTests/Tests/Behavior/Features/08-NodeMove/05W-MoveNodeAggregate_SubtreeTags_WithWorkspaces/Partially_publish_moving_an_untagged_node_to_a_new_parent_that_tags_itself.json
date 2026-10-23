@@ -1,4 +1,6 @@
 {
+    "@feature": "05W-MoveNodeAggregate_SubtreeTags_WithWorkspaces.feature",
+    "@scenario": "Partially publish moving an untagged node to a new parent that tags itself",
     "lady-eleonode-rootford": {
         "{\"example\":\"source\"}": {
             "children": {

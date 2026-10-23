@@ -132,10 +132,18 @@ trait GraphStateTrait
         $snapshotDirectory = \str_replace('.feature', '', $this->currentFeatureFile);
         $snapshotFilePath = $snapshotDirectory . DIRECTORY_SEPARATOR . \str_replace(' ', '_', $this->currentScenarioTitle) . '.json';
 
+        $graphDiff = $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
+            $this->fetchGraphState(workspaceName: WorkspaceName::fromString($serializedWorkspaceName)),
+        );
+
+        $graphDiffWithMetaData = [
+            '@feature' => basename($this->currentFeatureFile),
+            '@scenario' => $this->currentScenarioTitle,
+            ...$graphDiff->toArray()
+        ];
+
         $actualDiff = \json_encode(
-            $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
-                $this->fetchGraphState(workspaceName: WorkspaceName::fromString($serializedWorkspaceName)),
-            ),
+            $graphDiffWithMetaData,
             JSON_PRETTY_PRINT,
         );
         if (!file_exists($snapshotFilePath)) {

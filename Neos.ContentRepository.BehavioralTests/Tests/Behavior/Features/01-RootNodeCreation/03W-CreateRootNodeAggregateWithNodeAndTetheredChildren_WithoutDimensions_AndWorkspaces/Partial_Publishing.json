@@ -1,4 +1,6 @@
 {
+    "@feature": "03W-CreateRootNodeAggregateWithNodeAndTetheredChildren_WithoutDimensions_AndWorkspaces.feature",
+    "@scenario": "Partial Publishing",
     "lady-eleonode-rootford": {
         "[]": {
             "node": {

@@ -1,4 +1,6 @@
 {
+    "@feature": "03W-CreateNodeAggregateWithNode_WithoutDimensions_AndWorkspaces.feature",
+    "@scenario": "Partially publish node aggregate creation with succeeding sibling",
     "sir-nodeward-nodington-iii": {
         "[]": {
             "node": {

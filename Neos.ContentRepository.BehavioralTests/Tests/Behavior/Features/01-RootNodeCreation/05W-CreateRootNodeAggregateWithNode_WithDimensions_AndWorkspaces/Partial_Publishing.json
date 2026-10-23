@@ -1,4 +1,6 @@
 {
+    "@feature": "05W-CreateRootNodeAggregateWithNode_WithDimensions_AndWorkspaces.feature",
+    "@scenario": "Partial Publishing",
     "lady-eleonode-rootford": {
         "{\"example\":\"source\"}": {
             "node": {

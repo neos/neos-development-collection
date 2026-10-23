@@ -42,4 +42,12 @@ final readonly class GraphStateDiff implements \IteratorAggregate, \JsonSerializ
     {
         return $this->items;
     }
+
+    /**
+     * @return array<string,LocalGraphStateDiff>
+     */
+    public function toArray(): array
+    {
+        return $this->items;
+    }
 }

@@ -1,4 +1,6 @@
 {
+    "@feature": "04W-CreateNodeAggregateWithNode_WithDimensions_AndWorkspaces.feature",
+    "@scenario": "Partial publishing of node aggregate creation",
     "sir-david-nodenborough": {
         "{\"example\":\"general\"}": {
             "node": {

@@ -1,4 +1,6 @@
 {
+    "@feature": "09W-SubtreeUntaggingAfterNodeMove_WithWorkspaces.feature",
+    "@scenario": "Partially publish moving a child node out via gatherAll strategy and untagging the parent and all its variants",
     "lady-eleonode-rootford": {
         "{\"example\":\"general\"}": {
             "children": {

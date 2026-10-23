@@ -1,4 +1,6 @@
 {
+    "@feature": "08W-SubtreeTaggingAfterNodeMove_WithWorkspaces.feature",
+    "@scenario": "Partially publish moving a child node in via gatherAll strategy and tagging the parent and all its variants",
     "lady-eleonode-rootford": {
         "{\"example\":\"general\"}": {
             "children": {

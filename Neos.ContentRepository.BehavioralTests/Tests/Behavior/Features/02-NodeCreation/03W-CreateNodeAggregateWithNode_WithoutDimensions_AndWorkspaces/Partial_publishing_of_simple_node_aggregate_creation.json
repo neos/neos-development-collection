@@ -1,4 +1,6 @@
 {
+    "@feature": "03W-CreateNodeAggregateWithNode_WithoutDimensions_AndWorkspaces.feature",
+    "@scenario": "Partial publishing of simple node aggregate creation",
     "sir-david-nodenborough": {
         "[]": {
             "node": {

@@ -1,4 +1,6 @@
 {
+    "@feature": "02W-TagSubtree_WithoutDimensions_AndWorkspaces.feature",
+    "@scenario": "Partially publish subtree tagging",
     "lady-eleonode-rootford": {
         "[]": {
             "children": {
