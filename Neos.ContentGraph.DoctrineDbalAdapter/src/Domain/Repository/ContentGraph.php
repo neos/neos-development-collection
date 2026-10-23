@@ -157,7 +157,6 @@ final class ContentGraph implements ContentGraphInterface
     ): ?NodeAggregate {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
             ->andWhere('n.nodeaggregateid = :nodeAggregateId')
-            ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'nodeAggregateId' => $nodeAggregateId->value,
                 'contentStreamId' => $this->contentStreamId->value
@@ -175,7 +174,6 @@ final class ContentGraph implements ContentGraphInterface
     ): NodeAggregates {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeAggregateQuery()
             ->andWhere('n.nodeaggregateid in (:nodeAggregateIds)')
-            ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'nodeAggregateIds' => $nodeAggregateIds->toStringArray(),
                 'contentStreamId' => $this->contentStreamId->value
@@ -341,7 +339,6 @@ final class ContentGraph implements ContentGraphInterface
             ->where('th.contentstreamid = :contentStreamId')
             ->andWhere('JSON_EXTRACT(th.subtreetags, :tagPath) LIKE "true"')
             ->andWhere('h.contentstreamid = :contentStreamId')
-            ->orderBy('n.relationanchorpoint', 'DESC')
             ->setParameters([
                 'tagPath' => '$."' . $subtreeTag->value . '"',
                 'contentStreamId' => $this->contentStreamId->value

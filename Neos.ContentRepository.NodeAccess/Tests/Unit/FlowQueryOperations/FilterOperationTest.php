@@ -10,14 +10,14 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\FilterOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
  * Testcase for the FlowQuery FilterOperation
  */
-class FilterOperationTest extends AbstractQueryOperationsTest
+class FilterOperationTest extends AbstractQueryOperationsTestCase
 {
 
     public function setUp(): void
@@ -25,9 +25,7 @@ class FilterOperationTest extends AbstractQueryOperationsTest
         $this->markTestSkipped('fix and re-enable for Neos 9.0');
     }
 
-        /**
-     * @test
-     */
+    #[Test]
     public function filterWithIdentifierUsesNodeAggregateIds()
     {
         $node1 = $this->mockNode('node1-identifier-uuid');
@@ -42,9 +40,7 @@ class FilterOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([$node2], $q->getContext());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function filterWithNodeInstanceIsSupported()
     {
         $node1 = $this->mockNode('node1');

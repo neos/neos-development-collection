@@ -34,6 +34,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 class ForkingDuringForkingTest extends AbstractParallelTestCase
 {
@@ -148,9 +149,7 @@ class ForkingDuringForkingTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileWorkspacesAreForked(): void
     {
         $this->log('1. forking started');
@@ -176,9 +175,7 @@ class ForkingDuringForkingTest extends AbstractParallelTestCase
         Assert::assertNotNull($workspace);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentForksAreNotDeadlocked(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {

@@ -255,15 +255,23 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Αποδοχή αλλαγών</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Αποδοχή αλλαγών</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Επισκόπηση</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Επισκόπηση</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Κόμβος</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Κόμβος</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Δημοσίευση</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Απόρριψη</target>
       </trans-unit>
     </body>
   </file>

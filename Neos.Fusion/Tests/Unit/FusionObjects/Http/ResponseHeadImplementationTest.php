@@ -10,7 +10,8 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Http;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use GuzzleHttp\Psr7\Response;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
@@ -34,7 +35,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
         $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
     }
 
-    public function responseHeadExamples()
+    public static function responseHeadExamples()
     {
         return [
             'default properties' => [null, null, [], "HTTP/1.1 200 OK\r\n\r\n"],
@@ -43,15 +44,13 @@ class ResponseHeadImplementationTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider responseHeadExamples
-     */
+    #[DataProvider('responseHeadExamples')]
+    #[Test]
     public function evaluateTests($httpVersion, $statusCode, $headers, $expectedOutput)
     {
         $path = 'responseHead/test';
 
-        $this->mockRuntime->expects(self::any())->method('evaluate')->will(self::returnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
+        $this->mockRuntime->expects(self::any())->method('evaluate')->willReturnCallback(function ($evaluatePath) use ($path, $httpVersion, $statusCode, $headers) {
             $relativePath = str_replace($path . '/', '', $evaluatePath);
             switch ($relativePath) {
                 case 'httpVersion':
@@ -62,7 +61,7 @@ class ResponseHeadImplementationTest extends UnitTestCase
                     return $headers;
             }
             return isset($properties[$relativePath]) ? $properties[$relativePath] : null;
-        }));
+        });
 
         $fusionObjectName = 'Neos.Fusion:Http.ResponseHead';
         $renderer = new ResponseHeadImplementation($this->mockRuntime, $path, $fusionObjectName);

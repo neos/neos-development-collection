@@ -1,17 +1,29 @@
-import React, {PureComponent} from 'react';
-import ReactCrop from 'react-image-crop';
-import './react_crop.vanilla-css';
+import React, { PureComponent } from "react";
+import ReactCrop from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 export default class ImageCropper extends PureComponent {
-    render() {
-        const {src, cropConfiguration, onComplete} = this.props;
+	handleChange = (_pixelCrop, percentCrop) => {
+		this.props.onComplete(percentCrop);
+	};
 
-        return (<ReactCrop
-            src={src}
-            crop={cropConfiguration}
-            onComplete={onComplete}
-            onAspectRatioChange={onComplete}
-            onImageLoaded={onComplete}
-        />);
-    }
+	handleComplete = (_pixelCrop, percentCrop) => {
+		this.props.onComplete(percentCrop);
+	};
+
+	render() {
+		const { src, cropConfiguration, keepSelection, aspect } = this.props;
+
+		return (
+			<ReactCrop
+				crop={cropConfiguration}
+				onChange={this.handleChange}
+				onComplete={this.handleComplete}
+				keepSelection={keepSelection}
+				aspect={aspect}
+			>
+				<img src={src} alt="" />
+			</ReactCrop>
+		);
+	}
 }

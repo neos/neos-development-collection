@@ -1,8 +1,8 @@
-// Override font awesome font path as it's include from the Neos.Neos package
+// Override (font awesome) font path as it's include from the Neos.Neos package
 $fa-font-path: "../../Neos.Neos/Library/fontawesome/webfonts";
+$notoSansfontsPath: "../../Neos.Neos/Fonts";
 
 // Core variables and mixins
-@import "compass";
 @import "../../../../Neos.Neos/Resources/Private/Styles/Foundation/variables";
 @import "../../../../Neos.Neos/Resources/Private/Styles/Foundation/mixins";
 @import "../../../../Neos.Neos/Resources/Private/Styles/Constants";

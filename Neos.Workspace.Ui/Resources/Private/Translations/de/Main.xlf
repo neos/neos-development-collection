@@ -287,27 +287,27 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Änderungen übernehmen</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Änderungen übernehmen</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Überprüfen</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Überprüfen</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Zuletzt geändert</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Zuletzt geändert</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Status</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Status</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.actions" xml:space="preserve">
         <source>Actions</source>
-        <target state="needs-translation">Aktionen</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Aktionen</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Knoten</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Knoten</target>
       </trans-unit>
     </body>
   </file>

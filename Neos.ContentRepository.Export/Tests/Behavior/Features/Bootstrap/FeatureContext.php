@@ -12,10 +12,13 @@ declare(strict_types=1);
  */
 
 require_once(__DIR__ . '/CrImportExportTrait.php');
+require_once(__DIR__ . '/AssetImportExportTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\FlowBootstrapTrait;
+use Neos\Behat\FlowEntitiesTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\AssetImportExportTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\CrImportExportTrait;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
@@ -33,7 +36,9 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 class FeatureContext implements BehatContext
 {
     use FlowBootstrapTrait;
+    use FlowEntitiesTrait;
     use CrImportExportTrait;
+    use AssetImportExportTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 

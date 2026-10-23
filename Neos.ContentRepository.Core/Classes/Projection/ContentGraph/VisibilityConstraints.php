@@ -82,6 +82,15 @@ final readonly class VisibilityConstraints implements \JsonSerializable
         return get_object_vars($this);
     }
 
+    public function toJson(): string
+    {
+        try {
+            return json_encode($this, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to JSON-encode VisibilityConstraints: %s', $e->getMessage()), 1783934974, $e);
+        }
+    }
+
     /** -------------- deprecations: ------------------- */
 
     /**

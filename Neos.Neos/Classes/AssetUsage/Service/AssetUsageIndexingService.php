@@ -104,9 +104,12 @@ final class AssetUsageIndexingService
             if (!$assetUsageFound) {
                 $removedAssetIds[] = $assetUsage->assetId;
             }
-            $removedPropertiesAndAssetIds[$assetUsage->propertyName] = array_map(
-                fn ($removedAssetIds) => new AssetIdAndOriginalAssetId($removedAssetIds, $this->findOriginalAssetId($removedAssetIds)),
-                $removedAssetIds
+            $removedPropertiesAndAssetIds[$assetUsage->propertyName] = array_merge(
+                $removedPropertiesAndAssetIds[$assetUsage->propertyName] ?? [],
+                array_map(
+                    fn ($removedAssetIds) => new AssetIdAndOriginalAssetId($removedAssetIds, $this->findOriginalAssetId($removedAssetIds)),
+                    $removedAssetIds
+                )
             );
         }
         $removedAssetIdsByProperty = new AssetIdsByProperty($removedPropertiesAndAssetIds);

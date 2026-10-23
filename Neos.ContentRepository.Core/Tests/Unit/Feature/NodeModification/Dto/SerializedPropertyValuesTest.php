@@ -15,12 +15,11 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SerializedPropertyValuesTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function nonExistingPropertyName(): void
     {
         $propertyValues = SerializedPropertyValues::fromArray([]);
@@ -28,18 +27,14 @@ class SerializedPropertyValuesTest extends TestCase
         self::assertNull($propertyValues->getProperty('someProperty'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nullIsRejectedByFromArray(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         SerializedPropertyValues::fromArray(['someProperty' => null]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nullIsRejectedByNestedFromArray(): void
     {
         $this->expectException(\TypeError::class);
@@ -47,18 +42,14 @@ class SerializedPropertyValuesTest extends TestCase
         SerializedPropertyValues::fromArray(['someProperty' => ['value' => null, 'type' => 'string']]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function nullIsRejectedByConstructor(): void
     {
         $this->expectException(\TypeError::class);
         SerializedPropertyValue::create(null, 'string');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function jsonSerialize(): void
     {
         // the format which is implicitly used in the event log, due to json_serialize
@@ -69,9 +60,7 @@ class SerializedPropertyValuesTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getPlainValues(): void
     {
         $propertyValues = SerializedPropertyValues::fromArray(['otherProperty' => SerializedPropertyValue::create('me-he-he', 'string')]);
@@ -81,9 +70,7 @@ class SerializedPropertyValuesTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function unsetProperties(): void
     {
         $unsetProperties = PropertyNames::fromArray(['someProperty', 'nonExistent']);

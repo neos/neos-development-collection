@@ -10,7 +10,7 @@ namespace Neos\Media\Tests\Functional\Domain\Repository;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Doctrine\Common\Collections\ArrayCollection;
 use Neos\Flow\Persistence\Doctrine\PersistenceManager;
 use Neos\Media\Domain\Model\AssetCollection;
@@ -22,13 +22,13 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
-use Neos\Media\Tests\Functional\AbstractTest;
+use Neos\Media\Tests\Functional\AbstractTestCase;
 
 /**
  * Testcase for an asset repository
  *
  */
-class AssetRepositoryTest extends AbstractTest
+class AssetRepositoryTest extends AbstractTestCase
 {
     /**
      * @var boolean
@@ -77,9 +77,7 @@ class AssetRepositoryTest extends AbstractTest
         Files::removeDirectoryRecursively($this->temporaryDirectory);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function assetsCanBePersisted()
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
@@ -98,9 +96,7 @@ class AssetRepositoryTest extends AbstractTest
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findBySearchTermReturnsFilteredResult()
     {
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/license.txt');
@@ -128,9 +124,7 @@ class AssetRepositoryTest extends AbstractTest
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findBySearchTermAndTagsReturnsFilteredResult()
     {
         $tag = new Tag('home');
@@ -160,9 +154,7 @@ class AssetRepositoryTest extends AbstractTest
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testAddAssetVariantFilterClauseWithoutAssetCollection()
     {
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
@@ -199,9 +191,7 @@ class AssetRepositoryTest extends AbstractTest
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testAddAssetVariantFilterClauseWithAssetCollection()
     {
         $resource1 = $this->resourceManager->importResource(__DIR__ . '/../../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');

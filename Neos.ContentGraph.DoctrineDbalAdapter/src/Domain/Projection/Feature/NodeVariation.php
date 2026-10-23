@@ -52,7 +52,7 @@ trait NodeVariation
                 $this->dbal,
                 $this->tableNames
             );
-            unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
+            unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePoint->hash]);
         }
         if (!empty($uncoveredDimensionSpacePoints)) {
             $sourceParent = $this->projectionContentGraph->findParentNode(
@@ -89,7 +89,6 @@ trait NodeVariation
                     $specializedNode->relationAnchorPoint,
                     $contentStreamId,
                     $uncoveredDimensionSpacePoint,
-                    $uncoveredDimensionSpacePoint->hash,
                     $this->projectionContentGraph->determineHierarchyRelationPosition(
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,

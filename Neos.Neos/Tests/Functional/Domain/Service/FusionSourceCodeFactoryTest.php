@@ -11,7 +11,7 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Service\FusionSourceCodeFactory;
 
@@ -25,9 +25,7 @@ class FusionSourceCodeFactoryTest extends FunctionalTestCase
         $this->factory = $this->objectManager->get(FusionSourceCodeFactory::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function sourceCodeCreatedFromAutoIncludes()
     {
         $sourceCodeCollection = $this->factory->createFromAutoIncludes();

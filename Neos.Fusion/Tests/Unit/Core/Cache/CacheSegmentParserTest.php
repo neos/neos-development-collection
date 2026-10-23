@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core\Cache;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Cache\CacheSegmentParser;
 use Neos\Fusion\Exception;
@@ -174,9 +174,7 @@ class CacheSegmentParserTest extends UnitTestCase
         ]
     ];
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getOutputAfterExtractReturnsOriginalTextWithoutAnnotations()
     {
         $parser = new CacheSegmentParser($this->content);
@@ -186,9 +184,7 @@ class CacheSegmentParserTest extends UnitTestCase
         self::assertEquals($this->expectedOutput, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extractReturnsOuterContentWithPlaceholders()
     {
         $parser = new CacheSegmentParser($this->content);
@@ -197,9 +193,7 @@ class CacheSegmentParserTest extends UnitTestCase
         self::assertEquals($this->expectedOuterContent, $outerContent);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCacheEntriesAfterExtractReturnsInnerContentWithPlaceholders()
     {
         $parser = new CacheSegmentParser($this->content);
@@ -208,9 +202,7 @@ class CacheSegmentParserTest extends UnitTestCase
         self::assertEquals($this->expectedEntries, $entries);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidContentWithMissingEndThrowsException()
     {
         $this->expectException(Exception::class);
@@ -218,9 +210,7 @@ class CacheSegmentParserTest extends UnitTestCase
         new CacheSegmentParser($this->invalidContentWithMissingEnd);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidContentWithExceedingEndThrowsException()
     {
         $this->expectException(Exception::class);
@@ -228,9 +218,7 @@ class CacheSegmentParserTest extends UnitTestCase
         new CacheSegmentParser($this->invalidContentWithExceedingEnd);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invalidContentWithMissingSeparatorThrowsException()
     {
         $this->expectException(Exception::class);
@@ -238,9 +226,7 @@ class CacheSegmentParserTest extends UnitTestCase
         new CacheSegmentParser($this->invalidContentWithMissingSeparator);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extractWithUncachedSegmentsReturnsOuterContentWithPlaceholders()
     {
         $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
@@ -249,9 +235,7 @@ class CacheSegmentParserTest extends UnitTestCase
         self::assertEquals($this->expectedOuterContentWithUncachedSegments, $outerContent);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getOutputAfterExtractWithUncachedSegmentsReturnsOriginalTextWithoutAnnotations()
     {
         $parser = new CacheSegmentParser($this->contentWithUncachedSegments);
@@ -260,9 +244,7 @@ class CacheSegmentParserTest extends UnitTestCase
         self::assertEquals($this->expectedOutputWithUncachedSegments, $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getCacheSegmentsAfterExtractWithUncachedSegmentsReturnsContentWithPlaceholder()
     {
         $parser = new CacheSegmentParser($this->contentWithUncachedSegments);

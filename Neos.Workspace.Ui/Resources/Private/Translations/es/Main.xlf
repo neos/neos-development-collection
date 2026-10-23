@@ -271,23 +271,31 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Aplicar cambios</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Aplicar cambios</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Revisar</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Revisar</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Última modificación</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Última modificación</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">Situación</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Situación</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Nodo</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Nodo</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Publicar</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Descartar</target>
       </trans-unit>
     </body>
   </file>

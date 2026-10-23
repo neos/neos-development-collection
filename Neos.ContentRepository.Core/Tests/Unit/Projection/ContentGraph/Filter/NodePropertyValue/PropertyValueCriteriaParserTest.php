@@ -18,6 +18,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\CriteriaParser\ParserException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class PropertyValueCriteriaParserTest extends TestCase
 {
@@ -48,10 +50,8 @@ class PropertyValueCriteriaParserTest extends TestCase
         yield ['query' => 'prop1 *=~ "foo"', 'expectedResult' => ['type' => 'PropertyValueContains', 'propertyName' => 'prop1', 'value' => 'foo', 'caseSensitive' => false]];
     }
 
-    /**
-     * @test
-     * @dataProvider validQueries
-     */
+    #[DataProvider('validQueries')]
+    #[Test]
     public function parseValidQueriesTest(string $query, array $expectedResult): void
     {
         self::assertSame($expectedResult, self::propertyValueCriteriaToArray(PropertyValueCriteriaParser::parse($query)));
@@ -72,10 +72,8 @@ class PropertyValueCriteriaParserTest extends TestCase
         yield ['query' => 'p = "this is valid" AND p *= 12.34', 'expectedExceptionMessage' => "The CONTAINS operator does not support values of type float\np = \"this is valid\" AND p *= 12.34\n-----------------------------^"];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidQueries
-     */
+    #[DataProvider('invalidQueries')]
+    #[Test]
     public function parseInvalidQueriesTest(string $query, string $expectedExceptionMessage): void
     {
         try {

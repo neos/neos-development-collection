@@ -3,11 +3,13 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="lv">
     <body>
       <trans-unit id="ui.label" xml:space="preserve" approved="yes">
-				<source>Content</source>
-			<target state="final">Saturs</target></trans-unit>
-      <trans-unit id="groups.type" xml:space="preserve" approved="yes">
-				<source>Change type</source>
-			<target state="final">Mainīt veidu</target></trans-unit>
+        <source>Content</source>
+        <target state="final">Saturs</target>
+      </trans-unit>
+      <trans-unit id="groups.type" xml:space="preserve" approved="no">
+        <source>Change type</source>
+        <target state="translated">Mainīt tipu</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

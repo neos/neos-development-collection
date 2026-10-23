@@ -236,6 +236,11 @@ Neos:
               features:
                 upload: true
                 mediaBrowser: true
+          DateTimeImmutable:
+            typeConverter: Neos\Neos\Service\Mapping\DateStringConverter
+            editor: Neos.Neos/Inspector/Editors/DateTimeEditor
+            editorOptions:
+              format: d-m-Y
           DateTime:
             typeConverter: Neos\Neos\Service\Mapping\DateStringConverter
             editor: Neos.Neos/Inspector/Editors/DateTimeEditor

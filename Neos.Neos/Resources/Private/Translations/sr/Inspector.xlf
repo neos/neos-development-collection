@@ -3,11 +3,13 @@
   <file original="" product-name="Neos.Neos" source-language="en" datatype="plaintext" target-language="sr">
     <body>
       <trans-unit id="groups.visibility" xml:space="preserve">
-				<source>Visibility</source>
-			<target state="needs-translation">Visibility</target></trans-unit>
+        <source>Visibility</source>
+        <target state="translated">Видљивост</target>
+      </trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
-				<source>Document</source>
-			<target state="translated">Документ</target></trans-unit>
+        <source>Document</source>
+        <target state="translated">Документ</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
@@ -21,7 +21,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 /**
  * Testcase for the FlowQuery SiblingsOperation
  */
-class SiblingsOperationTest extends AbstractQueryOperationsTest
+class SiblingsOperationTest extends AbstractQueryOperationsTestCase
 {
     /**
      * @var Context
@@ -61,22 +61,20 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         $this->secondNodeInLevel = $this->mockNode('second-node');
         $this->thirdNodeInLevel = $this->mockNode('third-node');
 
-        $this->siteNode->expects(self::any())->method('findChildNodes')->will(self::returnValue(TraversableNodes::fromArray([
+        $this->siteNode->expects(self::any())->method('findChildNodes')->willReturn(TraversableNodes::fromArray([
             $this->firstNodeInLevel,
             $this->secondNodeInLevel,
             $this->thirdNodeInLevel
-        ])));
+        ]));
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
 
-        $this->siteNode->expects(self::any())->method('findParentNode')->will(self::throwException(new NodeException('No parent')));
-        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
-        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->will(self::returnValue($this->siteNode));
+        $this->siteNode->expects(self::any())->method('findParentNode')->willThrowException(new NodeException('No parent'));
+        $this->firstNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->secondNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
+        $this->thirdNodeInLevel->expects(self::any())->method('findParentNode')->willReturn($this->siteNode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnEmptyResultForAllNodesInLevel()
     {
         $context = [$this->firstNodeInLevel, $this->secondNodeInLevel, $this->thirdNodeInLevel];
@@ -89,9 +87,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnFirstAndThirdNodeInLevelForSecondNodeInLevel()
     {
         $context = [$this->secondNodeInLevel];
@@ -104,9 +100,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([$this->firstNodeInLevel, $this->thirdNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnFirstNodeForSecondAndThirdNodeInLevel()
     {
         $context = [$this->secondNodeInLevel, $this->thirdNodeInLevel];
@@ -119,9 +113,7 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
         self::assertEquals([$this->firstNodeInLevel], $output);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function siblingsWillReturnEmptyArrayForSiteNode()
     {
         $context = [$this->siteNode];

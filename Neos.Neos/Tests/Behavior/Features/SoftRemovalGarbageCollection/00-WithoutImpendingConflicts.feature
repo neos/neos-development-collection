@@ -117,16 +117,16 @@ Feature: Tests for soft removal garbage collection without impending conflicts
 
   Scenario: Garbage collection will transform nested soft removals of a node that only exists in a root workspace
     When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId             | parentNodeAggregateId | nodeTypeName       |
-      | nodingers-kitten            | nodingers-cat         | Neos.Neos:Document |
-      | nodingers-kittens-plaything | nodingers-kitten      | Neos.Neos:Document |
+      | nodeAggregateId               | parentNodeAggregateId | nodeTypeName       |
+      | nodingers-kitten              | nodingers-cat         | Neos.Neos:Document |
+      | a-nodingers-kittens-plaything | nodingers-kitten      | Neos.Neos:Document |
     And the command TagSubtree is executed with payload:
-      | Key                          | Value                         |
-      | workspaceName                | "live"                        |
-      | nodeAggregateId              | "nodingers-kittens-plaything" |
-      | coveredDimensionSpacePoint   | {"example": "source"}         |
-      | nodeVariantSelectionStrategy | "allSpecializations"          |
-      | tag                          | "removed"                     |
+      | Key                          | Value                           |
+      | workspaceName                | "live"                          |
+      | nodeAggregateId              | "a-nodingers-kittens-plaything" |
+      | coveredDimensionSpacePoint   | {"example": "source"}           |
+      | nodeVariantSelectionStrategy | "allSpecializations"            |
+      | tag                          | "removed"                       |
     And the command TagSubtree is executed with payload:
       | Key                          | Value                 |
       | workspaceName                | "live"                |
@@ -137,13 +137,16 @@ Feature: Tests for soft removal garbage collection without impending conflicts
     Then I expect the following hard removal conflicts to be impending:
       | nodeAggregateId | dimensionSpacePoints |
 
+    # we could issue the removal in a random order, but to make the tests deterministic we sort by node aggregate id,
+    # meaning the node a- is found first and thus we first issue the removal of the child node
+
     When soft removal garbage collection is run for content repository default
     Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasRemoved" with payload:
       | Key                                  | Expected                                        |
       | workspaceName                        | "live"                                          |
       | contentStreamId                      | "cs-identifier"                                 |
-      | nodeAggregateId                      | "nodingers-kittens-plaything"                   |
+      | nodeAggregateId                      | "a-nodingers-kittens-plaything"                   |
       | affectedCoveredDimensionSpacePoints  | [{"example": "source"}, {"example": "special"}] |
     And event at index 9 is of type "NodeAggregateWasRemoved" with payload:
       | Key                                  | Expected                                        |
@@ -159,24 +162,15 @@ Feature: Tests for soft removal garbage collection without impending conflicts
 
   Scenario: Garbage collection will transform nested soft removals of a node that only exists in a root workspace
   by also considering that the parent node might be removed first and skipping the removal of the child
-
-    # we need to have movements in the tree which will lead to the node returned by creation order does
-    # not match the inversed hierarchy and we run into the case of deleting the parent first
     When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId             | parentNodeAggregateId  | nodeTypeName       |
-      | nodingers-kittens-plaything | sir-david-nodenborough | Neos.Neos:Document |
-      | nodingers-kitten            | nodingers-cat          | Neos.Neos:Document |
-    When the command MoveNodeAggregate is executed with payload:
-      | Key                          | Value                         |
-      | nodeAggregateId              | "nodingers-kittens-plaything" |
-      | dimensionSpacePoint          | {"example": "source"}         |
-      | newParentNodeAggregateId     | "nodingers-kitten"            |
-      | relationDistributionStrategy | "gatherAll"                   |
+      | nodeAggregateId             | parentNodeAggregateId | nodeTypeName       |
+      | nodingers-kitten            | nodingers-cat         | Neos.Neos:Document |
+      | x-nodingers-kittens-plaything | nodingers-kitten      | Neos.Neos:Document |
 
     And the command TagSubtree is executed with payload:
       | Key                          | Value                         |
       | workspaceName                | "live"                        |
-      | nodeAggregateId              | "nodingers-kittens-plaything" |
+      | nodeAggregateId              | "x-nodingers-kittens-plaything" |
       | coveredDimensionSpacePoint   | {"example": "source"}         |
       | nodeVariantSelectionStrategy | "allSpecializations"          |
       | tag                          | "removed"                     |
@@ -190,9 +184,12 @@ Feature: Tests for soft removal garbage collection without impending conflicts
     Then I expect the following hard removal conflicts to be impending:
       | nodeAggregateId | dimensionSpacePoints |
 
+    # we could issue the removal in a random order, but to make the tests deterministic we sort by node aggregate id,
+    # meaning the node x- is found last and we first issue the removal of in this case its parent
+
     When soft removal garbage collection is run for content repository default
-    Then I expect exactly 10 events to be published on stream "ContentStream:cs-identifier"
-    And event at index 9 is of type "NodeAggregateWasRemoved" with payload:
+    Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 8 is of type "NodeAggregateWasRemoved" with payload:
       | Key                                  | Expected                                        |
       | workspaceName                        | "live"                                          |
       | contentStreamId                      | "cs-identifier"                                 |

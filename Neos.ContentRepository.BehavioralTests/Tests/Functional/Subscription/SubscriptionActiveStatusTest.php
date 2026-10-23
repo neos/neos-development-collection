@@ -11,10 +11,11 @@ use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionActiveStatusTest extends AbstractSubscriptionEngineTestCase
 {
-    /** @test */
+    #[Test]
     public function setupProjectionsAndCatchup()
     {
         $this->eventStore->setup();
@@ -49,7 +50,7 @@ final class SubscriptionActiveStatusTest extends AbstractSubscriptionEngineTestC
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::fromInteger(1));
     }
 
-    /** @test */
+    #[Test]
     public function filteringCatchUpActive()
     {
         $this->fakeProjection->expects(self::once())->method('setUp');
@@ -82,7 +83,7 @@ final class SubscriptionActiveStatusTest extends AbstractSubscriptionEngineTestC
         $this->expectOkayStatus('Vendor.Package:SecondFakeProjection', SubscriptionStatus::ACTIVE, SequenceNumber::none());
     }
 
-    /** @test */
+    #[Test]
     public function catchupWithNoEventsKeepsThePreviousPositionOfTheSubscribers()
     {
         $this->eventStore->setup();

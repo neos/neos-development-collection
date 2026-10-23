@@ -10,7 +10,8 @@ namespace Neos\Neos\Tests\Unit\Validation\Validator;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Validation\Validator\HostnameValidator;
 
@@ -20,7 +21,7 @@ use Neos\Neos\Validation\Validator\HostnameValidator;
  */
 class HostNameValidatorTest extends UnitTestCase
 {
-    public function hostNameDataProvider()
+    public static function hostNameDataProvider()
     {
         return [
             // correct names
@@ -44,10 +45,8 @@ class HostNameValidatorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider hostNameDataProvider
-     */
+    #[DataProvider('hostNameDataProvider')]
+    #[Test]
     public function validate($hostName, $valid)
     {
         $validator = new HostnameValidator();

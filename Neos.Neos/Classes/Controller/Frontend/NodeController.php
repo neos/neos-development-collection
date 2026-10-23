@@ -144,7 +144,9 @@ class NodeController extends ActionController
 
         $site = $subgraph->findClosestNode($nodeAddress->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for identity " . $nodeAddress->toJson());
+            throw new NodeNotFoundException(
+                sprintf('No site node ("Neos.Neos:Site") found for node %s using visibility constraints %s', $nodeAddress->toJson(), $subgraph->getVisibilityConstraints()->toJson())
+            );
         }
 
         $this->contentSubgraphCacheWarmup?->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);
@@ -205,12 +207,18 @@ class NodeController extends ActionController
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->aggregateId);
         if ($nodeInstance === null) {
-            throw new NodeNotFoundException(sprintf('The cached node address for this uri could not be resolved. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache. %s', $nodeAddress->toJson()), 1707300738);
+            throw new NodeNotFoundException(
+                sprintf('The cached node %s for this uri could not be resolved using visibility constraints %s. Possibly you have to flush the "Flow_Mvc_Routing_Route" cache.', $nodeAddress->toJson(), $subgraph->getVisibilityConstraints()->toJson()),
+                1707300738
+            );
         }
 
         $site = $subgraph->findClosestNode($nodeAddress->aggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
-            throw new NodeNotFoundException(sprintf('The site node of %s could not be resolved.', $nodeAddress->toJson()), 1707300861);
+            throw new NodeNotFoundException(
+                sprintf('No site node ("Neos.Neos:Site") found for node %s using visibility constraints %s', $nodeAddress->toJson(), $subgraph->getVisibilityConstraints()->toJson()),
+                1783934822
+            );
         }
 
         $this->contentSubgraphCacheWarmup?->fillCacheWithContentNodes($nodeAddress->aggregateId, $subgraph);

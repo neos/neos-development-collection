@@ -35,6 +35,9 @@ final readonly class SoftRemovedNodes implements \IteratorAggregate, \Countable
         foreach ($items as $item) {
             $indexedItems[$item->nodeAggregateId->value] = $item;
         }
+        // Sort the random ordered nodes, to have a for testing deterministic order
+        // Sorted based on node aggregate ids which are explicitly given during testing.
+        ksort($indexedItems);
         return new self($indexedItems);
     }
 

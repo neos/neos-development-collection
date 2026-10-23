@@ -1,6 +1,8 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /*
  * This file is part of the Neos.Fusion package.
  *
@@ -10,16 +12,13 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 /**
  * Testcase for the Component Fusion object
  *
  */
-class ComponentTest extends AbstractFusionObjectTest
+class ComponentTest extends AbstractFusionObjectTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function componentBasicRenderer()
     {
         $view = $this->buildView();
@@ -27,9 +26,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Hello World', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentNestedRenderer()
     {
         $view = $this->buildView();
@@ -37,9 +34,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Hello World', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentStaticRenderer()
     {
         $view = $this->buildView();
@@ -47,9 +42,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Hello World', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentSandboxRenderer()
     {
         $view = $this->buildView();
@@ -57,9 +50,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Hello ', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentLazyRenderer()
     {
         $view = $this->buildView();
@@ -67,9 +58,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Hello', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentWrapperRenderer()
     {
         $view = $this->buildView();
@@ -77,9 +66,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Default content', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivate()
     {
         $view = $this->buildView();
@@ -87,9 +74,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('MoinMoin!<div>Moin</div>', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateLazy()
     {
         $view = $this->buildView();
@@ -97,9 +82,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('MoinMoin!', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateSelfReferencing()
     {
         $view = $this->buildView();
@@ -107,9 +90,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Moin!Moin!', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateNotDefined()
     {
         $this->expectException(\RuntimeException::class);
@@ -120,9 +101,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateSelfReferencingInfiniteLoop()
     {
         $this->expectException(\RuntimeException::class);
@@ -132,9 +111,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateSelfReferencingInfiniteLoopComplex()
     {
         $this->expectException(\RuntimeException::class);
@@ -144,9 +121,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateCannotBeApplied()
     {
         $view = $this->buildView();
@@ -154,9 +129,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateCannotBeLooped()
     {
         $this->expectException(\TypeError::class);
@@ -165,9 +138,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateScopeIsIsolatedFromOtherPrivate()
     {
         $this->expectException(\RuntimeException::class);
@@ -178,9 +149,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateScopeIsIsolatedInRenderer()
     {
         $this->expectException(\RuntimeException::class);
@@ -191,9 +160,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->render();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateScopeIsReachableInProps()
     {
         $view = $this->buildView();
@@ -201,9 +168,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals("Moin", $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateLegacyPatternWorks()
     {
         $view = $this->buildView();
@@ -211,9 +176,7 @@ class ComponentTest extends AbstractFusionObjectTest
         self::assertEquals('Moin', $view->render());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function componentPrivateOuterContextIsOverridden()
     {
         $view = $this->buildView();

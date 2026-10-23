@@ -10,15 +10,15 @@ namespace Neos\Fusion\Tests\Unit\FusionObjects\Helpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Fusion\FusionObjects\ValueImplementation;
+use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 
 class LazyPropsTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function jsonEncodeSerializesAllProps()
     {
         /** @var Runtime $mockRuntime */
@@ -27,8 +27,8 @@ class LazyPropsTest extends UnitTestCase
             return $path;
         });
 
-        $fusionObject = new \Neos\Fusion\FusionObjects\ValueImplementation($mockRuntime, 'test/path', 'Value');
-        $lazyProps = new \Neos\Fusion\FusionObjects\Helpers\LazyProps($fusionObject, 'test/path', $mockRuntime, ['foo', 'bar'], ['value' => 42]);
+        $fusionObject = new ValueImplementation($mockRuntime, 'test/path', 'Value');
+        $lazyProps = new LazyProps($fusionObject, 'test/path', $mockRuntime, ['foo', 'bar'], ['value' => 42]);
 
         $serializedProps = json_encode($lazyProps);
         $this->assertEquals('{"foo":"test\/path\/foo","bar":"test\/path\/bar"}', $serializedProps);

@@ -147,13 +147,7 @@ final readonly class DimensionSpacePointSet implements
 
     public function equals(DimensionSpacePointSet $other): bool
     {
-        $thisPointHashes = $this->getPointHashes();
-        $otherPointHashes = $other->getPointHashes();
-
-        sort($thisPointHashes);
-        sort($otherPointHashes);
-
-        return $thisPointHashes === $otherPointHashes;
+        return count($this->points) === count($other->points) && array_diff_key($this->points, $other->points) === [];
     }
 
     public function getIterator(): \Traversable

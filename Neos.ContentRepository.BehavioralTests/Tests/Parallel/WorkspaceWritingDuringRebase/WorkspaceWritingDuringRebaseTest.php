@@ -41,6 +41,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
 
@@ -141,9 +142,7 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileAWorkspaceIsBeingRebased(): void
     {
         $workspaceName = WorkspaceName::fromString('user-test');
@@ -164,9 +163,7 @@ class WorkspaceWritingDuringRebaseTest extends AbstractParallelTestCase
         Assert::assertTrue(true, 'No exception was thrown ;)');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentCommandsLeadToAnException(): void
     {
         if (!is_file(self::REBASE_IS_RUNNING_FLAG_PATH)) {

@@ -139,8 +139,8 @@ class Version20251005080230 extends AbstractMigration
         $this->replaceEelExpression('/q\(([^)]+)\)\.property\([\'"]_depth[\'"]\)/', 'Neos.Node.depth($1)');
         $this->fusionFlowQueryNodePropertyToWarningComment('_depth', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_depth")" to "Neos.Node.depth(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
         // getWorkspace
-        $this->replaceEelExpression('/(?<!\.)(node|documentNode|site)\.workspace\.name/', '$1.workspaceName');
-        $this->replaceEelExpression('/q\(([^)]+)\)\.property\\([\'"]_workspace\.name[\'"]\\)/', '$1.workspaceName');
+        $this->replaceEelExpression('/(?<!\.)(node|documentNode|site)\.workspace\.name/', '$1.workspaceName.value');
+        $this->replaceEelExpression('/q\(([^)]+)\)\.property\\([\'"]_workspace\.name[\'"]\\)/', '$1.workspaceName.value');
         $this->addCommentsIfRegexMatches('/(?<!context)\.workspace\b(?!\()/', 'Line %LINE: You very likely need to rewrite "VARIABLE.workspace" as the "workspace" of nodes is not accessible this way and the object contains less information which is split up to the WorkspaceMetadata. If you really need the workspace in fusion you need to create a dedicated helper yourself which should ideally do ALL the complex logic in php directly and return the computed result.');
         $this->fusionFlowQueryNodePropertyToWarningComment('_workspace', 'Line %LINE: You very likely need to rewrite "VARIABLE.workspace" as the "workspace" of nodes is not accessible this way and the object contains less information which is split up to the WorkspaceMetadata. If you really need the workspace in fusion you need to create a dedicated helper yourself which should ideally do ALL the complex logic in php directly and return the computed result.');
         // getIdentifier
@@ -208,8 +208,8 @@ class Version20251005080230 extends AbstractMigration
          */
         // Context::getWorkspaceName()
         // Rewrite "node.context.workspaceName" to "node.workspaceName"
-        $this->replaceEelExpression('/(?<!\.)(node|documentNode|site)\.context\.(workspaceName|workspace\.name)\b/', '$1.workspaceName');
-        $this->addCommentsIfRegexMatches('/\.context\.workspaceName/', 'Line %LINE: You very likely need to rewrite "VARIABLE.context.workspaceName" to "VARIABLE.workspaceName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+        $this->replaceEelExpression('/(?<!\.)(node|documentNode|site)\.context\.(workspaceName|workspace\.name)\b/', '$1.workspaceName.value');
+        $this->addCommentsIfRegexMatches('/\.context\.workspaceName/', 'Line %LINE: You very likely need to rewrite "VARIABLE.context.workspaceName" to "VARIABLE.workspaceName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
         // Context::getRootNode()
         $this->fusionNodePropertyPathToWarningComment('context.rootNode', 'Line %LINE: !! node.context.rootNode is removed in Neos 9.0.');
         // getCurrentDateTime(): DateTime|DateTimeInterface

@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use Neos\Fusion\Exception;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Fusion;
 
@@ -22,7 +22,7 @@ class UtilityHelper implements ProtectedContextAwareInterface
      */
     public function throwException()
     {
-        throw new Fusion\Exception('Just testing an exception', 1397118532);
+        throw new Exception('Just testing an exception', 1397118532);
     }
 
     /**

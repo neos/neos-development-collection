@@ -11,19 +11,21 @@ namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Neos\Exception;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
 use Symfony\Component\Yaml\Yaml;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Testcase for the DefaultPropertyEditorPostprocessor
  */
 class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
 {
-    public function referenceExamples(): iterable
+    public static function referenceExamples(): iterable
     {
         yield 'multiple references' => [
             'nodeTypeDefinition' => <<<'YAML'
@@ -33,7 +35,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                   inspector:
                     group: 'foo'
             YAML,
-            'expected' => <<<'YAML'
+            'expectedResult' => <<<'YAML'
             references:
               someReferences:
                 ui:
@@ -53,7 +55,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                   inspector:
                     group: 'foo'
             YAML,
-            'expected' => <<<'YAML'
+            'expectedResult' => <<<'YAML'
             references:
               someReference:
                 constraints:
@@ -66,10 +68,8 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider referenceExamples
-     */
+    #[DataProvider('referenceExamples')]
+    #[Test]
     public function processExamples(string $nodeTypeDefinition, string $expectedResult)
     {
         $configuration = array_merge(['references' => [], 'properties' => []], Yaml::parse($nodeTypeDefinition));
@@ -89,9 +89,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         self::assertEquals(array_merge(['references' => [], 'properties' => []], Yaml::parse($expectedResult)), $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processConvertsPropertyConfiguration(): void
     {
         $configuration = [
@@ -313,12 +311,10 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         self::assertSame($expectedResult, $actualResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function processThrowsExceptionIfNoPropertyEditorCanBeResolved(): void
     {
-        $this->expectException(\Neos\Neos\Exception::class);
+        $this->expectException(Exception::class);
 
         $configuration = [
             'references' => [],
@@ -335,6 +331,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $this->processConfiguration($configuration, $dataTypesDefaultConfiguration, []);
     }
 
+    #[Test]
     private function processConfiguration(array $configuration, array $dataTypesDefaultConfiguration, array $editorDefaultConfiguration): array
     {
         $postprocessor = new DefaultPropertyEditorPostprocessor();

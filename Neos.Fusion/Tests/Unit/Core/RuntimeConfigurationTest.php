@@ -11,14 +11,13 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
+use Neos\Fusion\Core\RuntimeConfiguration;
 use Neos\Flow\Tests\UnitTestCase;
 
 class RuntimeConfigurationTest extends UnitTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function forPath_caches_paths()
     {
         $fusionConfiguration = [
@@ -50,7 +49,7 @@ class RuntimeConfigurationTest extends UnitTestCase
                 ]
             ]
         ];
-        $runtimeConfiguration = new \Neos\Fusion\Core\RuntimeConfiguration($fusionConfiguration);
+        $runtimeConfiguration = new RuntimeConfiguration($fusionConfiguration);
         $configuration = $runtimeConfiguration->forPath('root/item1/renderer');
 
         $this->assertEquals([

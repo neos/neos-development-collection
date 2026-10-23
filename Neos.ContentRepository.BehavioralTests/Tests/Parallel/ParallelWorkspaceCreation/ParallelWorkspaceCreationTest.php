@@ -37,6 +37,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
 {
@@ -131,9 +132,7 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileANodesArWrittenOnLive(): void
     {
         $this->log('1. workspace creation');
@@ -173,9 +172,7 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
         Assert::assertNotNull($workspace);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentPublishLeadsToException(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {

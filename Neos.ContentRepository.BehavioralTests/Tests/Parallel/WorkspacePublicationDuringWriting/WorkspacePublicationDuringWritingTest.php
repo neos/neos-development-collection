@@ -41,6 +41,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 
 class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
 {
@@ -155,9 +156,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         $this->log('setup finished');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function whileANodesArWrittenOnLive(): void
     {
         $this->log('writing started');
@@ -190,9 +189,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
         Assert::assertSame($node->getProperty('title'), 'changed-title-50');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function thenConcurrentPublishLeadsToException(): void
     {
         if (!is_file(self::WRITING_IS_RUNNING_FLAG_PATH)) {

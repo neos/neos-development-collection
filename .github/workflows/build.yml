@@ -33,7 +33,7 @@ jobs:
       # Local composite actions are resolved from the workspace root, so the
       # workflow's own repository must be checked out before `prepare-neos` runs.
       - name: Checkout workflow repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: ./.github/actions/prepare-neos
         with:
@@ -72,7 +72,7 @@ jobs:
         working-directory: ${{ env.NEOS_DIST_FOLDER }}
     steps:
       - name: Checkout workflow repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: ./.github/actions/prepare-neos
         with:
@@ -82,7 +82,7 @@ jobs:
           distribution-path: ${{ env.NEOS_DIST_FOLDER }}
 
       - name: Run unit tests
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml
 
   functional-tests:
     permissions:
@@ -132,7 +132,7 @@ jobs:
         working-directory: ${{ env.NEOS_DIST_FOLDER }}
     steps:
       - name: Checkout workflow repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: ./.github/actions/prepare-neos
         with:
@@ -153,7 +153,7 @@ jobs:
 
       - name: Run functional tests
         # Postgres skips the CR-specific functional tests (CR is mysql-only in 9.0).
-        run: ${{ matrix.db.engine == 'pgsql' && 'SKIP_CR_POSTGRESQL_TESTS=1' || '' }} bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+        run: ${{ matrix.db.engine == 'pgsql' && 'SKIP_CR_POSTGRESQL_TESTS=1' || '' }} bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests"
 
   parallel-tests:
     permissions:
@@ -308,7 +308,7 @@ jobs:
         working-directory: ${{ env.NEOS_DIST_FOLDER }}
     steps:
       - name: Checkout workflow repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: ./.github/actions/prepare-neos
         with:
@@ -376,7 +376,7 @@ jobs:
           exit $retVal
 
       - name: Upload Postgres/Mysql DB dump
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: database-dumps-${{ matrix.php }}-${{ matrix.db.engine }}

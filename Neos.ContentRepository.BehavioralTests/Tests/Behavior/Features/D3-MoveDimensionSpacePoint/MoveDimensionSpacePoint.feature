@@ -22,8 +22,14 @@ Feature: Move dimension space point
         nodeTypes:
           'Neos.ContentRepository.Testing:Document': true
           'Neos.ContentRepository.Testing:OtherDocument': true
-    'Neos.ContentRepository.Testing:Document': []
-    'Neos.ContentRepository.Testing:OtherDocument': []
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        text:
+          type: string
+    'Neos.ContentRepository.Testing:OtherDocument':
+      properties:
+        text:
+          type: string
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -37,12 +43,12 @@ Feature: Move dimension space point
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId                  | nodeTypeName                            | parentNodeAggregateId  | nodeName                     | originDimensionSpacePoint |
-      | sir-david-nodenborough           | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document                     | {"language": "de"}        |
-      | varied-nodenborough              | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | varied-document              | {"language": "de"}        |
-      | only-specialization-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | only-specialization-document | {"language": "ch"}        |
-      | only-source-nodenborough         | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | only-source-document         | {"language": "de"}        |
-      | nody-mc-nodeface                 | Neos.ContentRepository.Testing:Document | varied-nodenborough    | child-document               | {"language": "de"}        |
+      | nodeAggregateId                  | nodeTypeName                            | parentNodeAggregateId  | nodeName                     | originDimensionSpacePoint | initialPropertyValues      |
+      | sir-david-nodenborough           | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document                     | {"language": "de"}        | {"text": "original value"} |
+      | varied-nodenborough              | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | varied-document              | {"language": "de"}        | {}                          |
+      | only-specialization-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | only-specialization-document | {"language": "ch"}        | {}                          |
+      | only-source-nodenborough         | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | only-source-document         | {"language": "de"}        | {}                          |
+      | nody-mc-nodeface                 | Neos.ContentRepository.Testing:Document | varied-nodenborough    | child-document               | {"language": "de"}        | {}                          |
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
       | nodeAggregateId | "varied-nodenborough" |
@@ -198,17 +204,6 @@ Feature: Move dimension space point
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
 
   Scenario: Success Case - other migrations do not block this with changes on this workspace
-
-    Given I change the node types in content repository "default" to:
-    """yaml
-    'Neos.ContentRepository:Root':
-      constraints:
-        nodeTypes:
-          'Neos.ContentRepository.Testing:OtherDocument': true
-
-    'Neos.ContentRepository.Testing:OtherDocument': []
-    """
-
     And I change the content dimensions in content repository "default" to:
       | Identifier | Values           | Generalizations       |
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
@@ -224,9 +219,10 @@ Feature: Move dimension space point
               nodeType: 'Neos.ContentRepository.Testing:Document'
         transformations:
           -
-            type: 'ChangeNodeType'
+            type: 'ChangePropertyValue'
             settings:
-              newType: 'Neos.ContentRepository.Testing:OtherDocument'
+              property: 'text'
+              newSerializedValue: 'migrated value'
       -
         transformations:
           -
@@ -239,13 +235,17 @@ Feature: Move dimension space point
     When I am in workspace "live" and dimension space point {"language": "ch"}
     Then I expect a node identified by cs-identifier;sir-david-nodenborough;{"language": "de"} to exist in the content graph
     And I expect this node to be of type "Neos.ContentRepository.Testing:Document"
-
+    And I expect this node to have the following properties:
+      | Key  | Value            |
+      | text | "original value" |
     # we find the node underneath the new DimensionSpacePoint, but not underneath the old.
     When I am in workspace "migration-workspace" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to no node
     When I am in workspace "migration-workspace" and dimension space point {"language": "gsw"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
-    And I expect this node to be of type "Neos.ContentRepository.Testing:OtherDocument"
+    And I expect this node to have the following properties:
+      | Key  | Value            |
+      | text | "migrated value" |
 
   Scenario: Success Case - after eliminating all fallbacks via variation, a generalization can be moved while changing the specialization structure
     # Eliminate all fallbacks by varying the nodes

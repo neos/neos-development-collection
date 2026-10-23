@@ -10,7 +10,7 @@ namespace Neos\Fusion\Tests\Unit\Core;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
+use PHPUnit\Framework\Attributes\Test;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Cache\ParserCache;
@@ -32,16 +32,15 @@ class LegacyParserApiTest extends UnitTestCase
     private function injectParserCacheMockIntoParser(Parser $parser): void
     {
         $parserCache = $this->getMockBuilder(ParserCache::class)->getMock();
-        $parserCache->method('cacheForFusionFile')->will(self::returnCallback(fn ($_, $getValue) => $getValue()));
-        $parserCache->method('cacheForDsl')->will(self::returnCallback(fn ($_, $_2, $getValue) => $getValue()));
+        $parserCache->method('cacheForFusionFile')->willReturnCallback(fn ($_, $getValue) => $getValue());
+        $parserCache->method('cacheForDsl')->willReturnCallback(fn ($_, $_2, $getValue) => $getValue());
         $this->inject($parser, 'parserCache', $parserCache);
     }
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 01
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture01()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture01');
@@ -70,9 +69,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if a leading slash in the namespace declaration throws an exception
-     *
-     * @test
      */
+    #[Test]
     public function parserThrowsFusionExceptionIfNamespaceDeclarationIsInvalid()
     {
         $this->expectException(Exception::class);
@@ -82,9 +80,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 02
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture02()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture02');
@@ -117,9 +114,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 03
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture03()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture03');
@@ -164,9 +160,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 04
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture04()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture04');
@@ -233,9 +228,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 05
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture05()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture05');
@@ -302,9 +296,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 07
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture07()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture07');
@@ -331,8 +324,8 @@ class LegacyParserApiTest extends UnitTestCase
      * checks if the object tree returned by the Fusion parser reflects source code fixture 08
      *
      * @todo Implement lazy rendering support for variable substitutions
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture08()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture08');
@@ -393,9 +386,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 10
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture10()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture10');
@@ -472,9 +464,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 13
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture13()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture13');
@@ -524,9 +515,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * checks if the object tree returned by the Fusion parser reflects source code fixture 14
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture14()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture14');
@@ -562,9 +552,7 @@ class LegacyParserApiTest extends UnitTestCase
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 14.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserCorrectlyParsesFixture15()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture15');
@@ -664,9 +652,7 @@ class LegacyParserApiTest extends UnitTestCase
         return $expectedParseTree;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserCorrectlyParsesFixture16()
     {
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16.fusion';
@@ -678,9 +664,7 @@ class LegacyParserApiTest extends UnitTestCase
         self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserThrowsExceptionOnFixture16b()
     {
         $this->expectException(Exception::class);
@@ -690,9 +674,7 @@ class LegacyParserApiTest extends UnitTestCase
         $this->parser->parse($sourceCode, $fixture);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserCorrectlyParsesFixture17()
     {
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture17.fusion';
@@ -727,9 +709,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if simple values (string, boolean, integer) are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture19()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture19');
@@ -750,9 +731,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if path with an underscore is parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture20()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture20');
@@ -774,9 +754,7 @@ class LegacyParserApiTest extends UnitTestCase
         self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 20.');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserDetectsDirectRecursions()
     {
         $this->expectException(Exception::class);
@@ -784,9 +762,7 @@ class LegacyParserApiTest extends UnitTestCase
         $this->parser->parse($sourceCode);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function parserDetectsIndirectRecursions()
     {
         $this->expectException(Exception::class);
@@ -796,9 +772,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if identifiers starting with digits are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture21()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture23');
@@ -820,9 +795,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if identifiers starting with digits are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesFixture25()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture25');
@@ -840,9 +814,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if really long strings are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyLongStrings()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixtureLongString');
@@ -852,9 +825,8 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if comments in comments are parsed correctly
-     *
-     * @test
      */
+    #[Test]
     public function parserCorrectlyParsesComments01()
     {
         $sourceCode = $this->readFusionFixture('ParserTestFusionComments01');
@@ -865,32 +837,36 @@ class LegacyParserApiTest extends UnitTestCase
 
     /**
      * Checks if dsl value is handed over to the handleDslTranspile method
-     *
-     * @test
      */
+    #[Test]
     public function parserInvokesFusionDslParsingIfADslPatternIsDetected()
     {
         $parser = $this->getMockBuilder(Parser::class)->disableOriginalConstructor()->onlyMethods(['handleDslTranspile'])->getMock();
         $this->injectParserCacheMockIntoParser($parser);
 
         $sourceCode = $this->readFusionFixture('ParserTestFusionFixture24');
+        $matcher = $this->exactly(2);
 
         $parser
-            ->expects($this->exactly(2))
-            ->method('handleDslTranspile')
-            ->withConsecutive(
-                ['dsl1', 'example value'],
-                ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value']
-            );
+            ->expects($matcher)
+            ->method('handleDslTranspile')->willReturnCallback(function (...$parameters) use ($matcher) {
+            if ($matcher->numberOfInvocations() === 1) {
+                $this->assertSame('dsl1', $parameters[0]);
+                $this->assertSame('example value', $parameters[1]);
+            }
+            if ($matcher->numberOfInvocations() === 2) {
+                $this->assertSame('dsl2', $parameters[0]);
+                $this->assertSame('another' . chr(10) . 'multiline' . chr(10) . 'value', $parameters[1]);
+            }
+        });
 
         $parser->parse($sourceCode);
     }
 
     /**
      * Checks unclosed dsl-expressions are
-     *
-     * @test
      */
+    #[Test]
     public function parserThrowsFusionExceptionIfUnfinishedDslIsDetected()
     {
         $this->expectException(Exception::class);

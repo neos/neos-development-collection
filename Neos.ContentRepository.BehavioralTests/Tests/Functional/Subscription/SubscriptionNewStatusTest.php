@@ -16,6 +16,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Configuration\ConfigurationManager;
+use PHPUnit\Framework\Attributes\Test;
 
 final class SubscriptionNewStatusTest extends AbstractSubscriptionEngineTestCase
 {
@@ -26,7 +27,7 @@ final class SubscriptionNewStatusTest extends AbstractSubscriptionEngineTestCase
         $this->getObject(ContentRepositoryRegistry::class)->injectSettings($originalSettings);
     }
 
-    /** @test */
+    #[Test]
     public function newProjectionIsFoundWhenConfigurationIsAdded()
     {
         $this->fakeProjection->expects(self::exactly(2))->method('setUp');

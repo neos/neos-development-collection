@@ -530,20 +530,10 @@ trait GenericCommandExecutionAndEventPublication
         };
         $this->getContentRepositoryService($eventStoreAndSubscriptionEngine);
         $eventStoreAndSubscriptionEngine->eventStore->commit($streamName, Events::with($artificiallyConstructedEvent), ExpectedVersion::ANY());
-        $this->lastCatchUpResult = $eventStoreAndSubscriptionEngine->subscriptionEngine->catchUpActive();
-    }
-
-    private ?\Neos\ContentRepository\Core\Subscription\Engine\ProcessedResult $lastCatchUpResult = null;
-
-    /**
-     * @Then catching up projections leads to no errors
-     */
-    public function catchingUpProjectionsLeadsToNoErrors(): void
-    {
-        Assert::assertNotNull($this->lastCatchUpResult, 'No catch-up result available. Did you publish an event before?');
+        $result = $eventStoreAndSubscriptionEngine->subscriptionEngine->catchUpActive();
         Assert::assertFalse(
-            $this->lastCatchUpResult->hadErrors(),
-            'Catch-up had errors: ' . $this->lastCatchUpResult->errors?->getClampedMessage()
+            $result->hadErrors(),
+            'Catch-up had errors: ' . $result->errors?->getClampedMessage()
         );
     }
 

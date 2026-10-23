@@ -251,23 +251,31 @@
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">上次修改</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">上次修改</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.status" xml:space="preserve">
         <source>Status</source>
-        <target state="needs-translation">状态</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">状态</target>
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">应用更改</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">应用更改</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">审查</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">审查</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">节点</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">节点</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">发布</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">舍弃</target>
       </trans-unit>
     </body>
   </file>

@@ -452,25 +452,25 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 // Probably not a document node
                 continue;
             }
-            $tagColumn = $event->tag->value;
 
-            if ($event->tag->equals(NeosSubtreeTag::disabled()) || $event->tag->equals(NeosSubtreeTag::removed())) {
-                $nodeTagLevel = $event->tag->equals(NeosSubtreeTag::disabled()) ? $node->getDisableLevel() : $node->getRemovedLevel();
-                $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getParentNode($node));
-                $parentTagLevel = 0;
-                if ($parentNode !== null) {
-                    $parentTagLevel = $event->tag === NeosSubtreeTag::disabled() ? $parentNode->getDisableLevel() : $parentNode->getRemovedLevel();
+            $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $node->getParentNodeAggregateId(),
+                $node->getDimensionSpacePointHash()
+            ));
+
+            // If a node was not tagged, decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
+            // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
+            if (
+                /** @phpstan-ignore match.unhandled (phpstan does not understand flyweights) */
+                match ($event->tag) {
+                    NeosSubtreeTag::disabled() => !$this->isNodeExplicitlyDisabled($node, $parentNode),
+                    NeosSubtreeTag::removed() => !$this->isNodeExplicitlyRemoved($node, $parentNode),
                 }
-                if ($nodeTagLevel <= $parentTagLevel) {
-                    // Node was not explicitly tagged (its counter matches [or is below - should never happen] the parent's level).
-                    // Decrementing might cause an unsigned integer underflow. This can happen when
-                    // a duplicate SubtreeWasUntagged event reaches the live stream (e.g. due to
-                    // concurrent workspace publishes with stale projection state). See https://github.com/neos/neos-development-collection/issues/5778
-                    // for more details.
-                    continue;
-                }
+            ) {
+                continue;
             }
 
+            $tagColumn = $event->tag->value;
             $this->updateNodeQuery('SET ' . $tagColumn . ' = ' . $tagColumn . ' - 1
                 WHERE dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (
@@ -754,7 +754,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         try {
             $this->dbal->insert($this->tableNamePrefix . '_uri', $data, self::COLUMN_TYPES_DOCUMENT_URIS);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to insert node: %s', $e->getMessage()), 1599646694, $e);
+            throw new \RuntimeException(sprintf('Failed to insert node %s: %s', json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR), $e->getMessage()), 1599646694, $e);
         }
     }
 
@@ -790,8 +790,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to update node "%s": %s',
+                'Failed to update node "%s" in dimension %s: %s',
                 $nodeAggregateId->value,
+                $dimensionSpacePointHash,
                 $e->getMessage()
             ), 1599646777, $e);
         }
@@ -810,8 +811,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to update node via custom query: %s',
-                $e->getMessage()
+                'Failed to update node via custom query: %s and parameters %s',
+                $e->getMessage(),
+                json_encode($parameters, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1599659170, $e);
         }
     }
@@ -831,8 +833,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to delete node "%s": %s',
+                'Failed to delete node "%s" in dimension %s: %s',
                 $nodeAggregateId->value,
+                $dimensionSpacePointHash,
                 $e->getMessage()
             ), 1599655284, $e);
         }
@@ -851,8 +854,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
-                'Failed to delete node via custom query: %s',
-                $e->getMessage()
+                'Failed to delete node via custom query: %s and parameters %s',
+                $e->getMessage(),
+                json_encode($parameters, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1599659226, $e);
         }
     }

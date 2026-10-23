@@ -255,19 +255,27 @@
       </trans-unit>
       <trans-unit id="applyChanges" xml:space="preserve">
         <source>Apply changes</source>
-        <target state="needs-translation">Bruk endringer</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Bruk endringer</target>
       </trans-unit>
       <trans-unit id="workspaces.reviewWorkspace.label" xml:space="preserve">
         <source>Review</source>
-        <target state="needs-translation">Korrektur</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Korrektur</target>
       </trans-unit>
       <trans-unit id="workspaces.workspace.lastModified" xml:space="preserve">
         <source>Last modified</source>
-        <target state="needs-translation">Sist endret</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Sist endret</target>
       </trans-unit>
       <trans-unit id="workspaces.dialog.rebase.node" xml:space="preserve">
         <source>Node</source>
-        <target state="needs-translation">Node</target>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Node</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishChanges" xml:space="preserve">
+        <source>Publish</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Publiser</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardChanges" xml:space="preserve">
+        <source>Discard</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Forkast</target>
       </trans-unit>
     </body>
   </file>

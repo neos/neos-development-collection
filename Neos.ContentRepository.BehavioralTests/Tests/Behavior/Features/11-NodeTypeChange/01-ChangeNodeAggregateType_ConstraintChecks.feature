@@ -226,3 +226,23 @@ Feature: Change node aggregate type - basic error cases
       | strategy                           | "happypath"                                                                                |
       | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "nodimer-tetherton", "child-of-type-b/tethered": "nodewyn-tetherton"} |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
+
+  Scenario: Try to change a node to a type while the dimension configuration was also changed
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language": "de"}       |
+      | targetOrigin    | {"language": "gsw"}      |
+
+    And I change the content dimensions in content repository "default" to:
+      | Identifier | Values | Generalizations |
+      | language   | de, ch | ch->de          |
+
+    # If we are not migrated to the new configuration we cannot ensure that the variation events are issued correctly.
+    And the command ChangeNodeAggregateType is executed with payload and exceptions are caught:
+      | Key                                | Value                                      |
+      | nodeAggregateId                    | "sir-david-nodenborough"                   |
+      | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeA" |
+      | strategy                           | "delete"                                   |
+      | tetheredDescendantNodeAggregateIds | { "childoftypea": "new-tethered"}          |
+    Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"

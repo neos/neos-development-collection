@@ -13,11 +13,12 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\UniqueOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Testcase for the FlowQuery UniqueOperation
  */
-class UniqueOperationTest extends AbstractQueryOperationsTest
+class UniqueOperationTest extends AbstractQueryOperationsTestCase
 {
 
     public function setUp(): void
@@ -25,9 +26,7 @@ class UniqueOperationTest extends AbstractQueryOperationsTest
         $this->markTestSkipped('fix and re-enable for Neos 9.0');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canBeAppliedOnceNodesAreInContextOrContextIsEmpty()
     {
         $node = $this->mockNode('nudelsuppe');
@@ -39,9 +38,7 @@ class UniqueOperationTest extends AbstractQueryOperationsTest
         self::assertFalse($operation->canEvaluate([new \stdClass()]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function willRemoveDuplicateEntriesWithTheSameNodeAggregateId()
     {
         $node1 = $this->mockNode('nudelsuppe');
