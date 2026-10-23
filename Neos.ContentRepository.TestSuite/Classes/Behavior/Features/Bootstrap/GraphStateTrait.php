@@ -35,12 +35,21 @@ trait GraphStateTrait
     /**
      * @var array<string,GraphState> indexed by workspace
      */
-    protected array $memorisedGraphStates = [];
+    protected array $graphState_memorisedGraphStates = [];
+
+    protected int $graphState_snapshotCountPerScenario = 0;
+
+    protected ?string $graphState_currentFeatureFile = null;
+
+    protected ?string $graphState_currentScenarioTitle = null;
 
     #[BeforeScenario]
-    public function resetMemorisedGraphStates(BeforeScenarioScope $scope): void
+    public function setupGraphStates(BeforeScenarioScope $scope): void
     {
-        $this->memorisedGraphStates = [];
+        $this->graphState_snapshotCountPerScenario = 0;
+        $this->graphState_memorisedGraphStates = [];
+        $this->graphState_currentFeatureFile = $scope->getFeature()->getFile();
+        $this->graphState_currentScenarioTitle = $scope->getScenario()->getTitle();
     }
 
     /**
@@ -50,8 +59,8 @@ trait GraphStateTrait
         string $serializedNodeAggregateId,
         string $serializedWorkspaceName,
     ): void {
-        Assert::assertArrayHasKey($serializedWorkspaceName, $this->memorisedGraphStates);
-        $this->memorisedGraphStates[$serializedWorkspaceName]->registerItem(
+        Assert::assertArrayHasKey($serializedWorkspaceName, $this->graphState_memorisedGraphStates);
+        $this->graphState_memorisedGraphStates[$serializedWorkspaceName]->registerItem(
             NodeAggregateId::fromString($serializedNodeAggregateId),
             LocalGraphState::fromNodeAggregateIdContentGraphAndDimensionSpacePointSet(
                 nodeAggregateId: NodeAggregateId::fromString($serializedNodeAggregateId),
@@ -88,7 +97,7 @@ trait GraphStateTrait
                 dimensionSpacePointSet: $this->currentContentRepository->getVariationGraph()->getDimensionSpacePoints(),
             );
         }
-        $this->memorisedGraphStates = $graphStates;
+        $this->graphState_memorisedGraphStates = $graphStates;
     }
 
     /**
@@ -96,9 +105,9 @@ trait GraphStateTrait
      */
     public function iExpectTheGraphStateForWorkspaceToBeUnchanged(string $serializedWorkspaceName): void
     {
-        Assert::assertNotNull($this->memorisedGraphStates[$serializedWorkspaceName]);
+        Assert::assertNotNull($this->graphState_memorisedGraphStates[$serializedWorkspaceName]);
 
-        $actualDiff = $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
+        $actualDiff = $this->graphState_memorisedGraphStates[$serializedWorkspaceName]->diff(
             $this->fetchGraphState(WorkspaceName::fromString($serializedWorkspaceName))
         );
         Assert::assertNull($actualDiff);
@@ -123,22 +132,26 @@ trait GraphStateTrait
      */
     public function iExpectTheGraphStateForWorkspaceToHaveChangedAsDeclaredInTheSnapshot(string $serializedWorkspaceName): void
     {
-        if ($this->currentFeatureFile === null) {
+        if ($this->graphState_snapshotCountPerScenario > 0) {
+            throw new \RuntimeException('Currently only one snapshot per scenario is supported.', 1792776491);
+        }
+        if ($this->graphState_currentFeatureFile === null) {
             throw new \RuntimeException('Current feature file is not set');
         }
-        if ($this->currentScenarioTitle === null) {
+        if ($this->graphState_currentScenarioTitle === null) {
             throw new \RuntimeException('Current scenario title is not set');
         }
-        $snapshotDirectory = \str_replace('.feature', '', $this->currentFeatureFile);
-        $snapshotFilePath = $snapshotDirectory . DIRECTORY_SEPARATOR . \str_replace(' ', '_', $this->currentScenarioTitle) . '.json';
+        ++$this->graphState_snapshotCountPerScenario;
+        $snapshotDirectory = \str_replace('.feature', '', $this->graphState_currentFeatureFile);
+        $snapshotFilePath = $snapshotDirectory . DIRECTORY_SEPARATOR . \str_replace(' ', '_', $this->graphState_currentScenarioTitle) . '.json';
 
-        $graphDiff = $this->memorisedGraphStates[$serializedWorkspaceName]->diff(
+        $graphDiff = $this->graphState_memorisedGraphStates[$serializedWorkspaceName]->diff(
             $this->fetchGraphState(workspaceName: WorkspaceName::fromString($serializedWorkspaceName)),
         );
 
         $graphDiffWithMetaData = [
-            '@feature' => basename($this->currentFeatureFile),
-            '@scenario' => $this->currentScenarioTitle,
+            '@feature' => basename($this->graphState_currentFeatureFile),
+            '@scenario' => $this->graphState_currentScenarioTitle,
             ...$graphDiff->toArray()
         ];
 
