@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryIds;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
@@ -35,6 +36,7 @@ use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensi
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\PerformanceTracer\PerformanceTracerFactoryInterface;
+use Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph\ReferenceTypeGraphFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\SubgraphCachingInMemory\SubgraphCachePool;
 use Neos\EventStore\EventStoreInterface;
@@ -201,6 +203,7 @@ final class ContentRepositoryRegistry
                 $contentRepositoryId,
                 $this->buildEventStore($contentRepositoryId, $contentRepositorySettings, $clock),
                 $this->buildNodeTypeManager($contentRepositoryId, $contentRepositorySettings),
+                $this->buildReferenceTypeGraph($contentRepositoryId, $contentRepositorySettings),
                 $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildAuthProviderFactory($contentRepositoryId, $contentRepositorySettings),
@@ -238,6 +241,17 @@ final class ContentRepositoryRegistry
             throw InvalidConfigurationException::fromMessage('nodeTypeManager.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, NodeTypeManagerFactoryInterface::class, get_debug_type($nodeTypeManagerFactory));
         }
         return $nodeTypeManagerFactory->build($contentRepositoryId, $contentRepositorySettings['nodeTypeManager']['options'] ?? []);
+    }
+
+    /** @param array<string, mixed> $contentRepositorySettings */
+    private function buildReferenceTypeGraph(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ReferenceTypeGraph
+    {
+        isset($contentRepositorySettings['referenceTypeGraph']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have referenceTypeGraph.factoryObjectName configured.', $contentRepositoryId->value);
+        $referenceTypeGraphFactory = $this->objectManager->get($contentRepositorySettings['referenceTypeGraph']['factoryObjectName']);
+        if (!$referenceTypeGraphFactory instanceof ReferenceTypeGraphFactoryInterface) {
+            throw InvalidConfigurationException::fromMessage('referenceTypeGraph.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, ReferenceTypeGraphFactoryInterface::class, get_debug_type($referenceTypeGraphFactory));
+        }
+        return $referenceTypeGraphFactory->build($contentRepositoryId, $contentRepositorySettings['referenceTypeGraph']['options'] ?? []);
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */

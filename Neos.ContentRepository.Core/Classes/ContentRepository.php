@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInt
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStates;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
@@ -62,6 +63,7 @@ final class ContentRepository
         private readonly EventAugmenter $eventAugmenter,
         private readonly SubscriptionEngine $subscriptionEngine,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ReferenceTypeGraph $referenceTypeGraph,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly AuthProviderInterface $authProvider,
@@ -171,6 +173,11 @@ final class ContentRepository
     public function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
+    }
+
+    public function getReferenceTypeGraph(): ReferenceTypeGraph
+    {
+        return $this->referenceTypeGraph;
     }
 
     public function getVariationGraph(): InterDimensionalVariationGraph

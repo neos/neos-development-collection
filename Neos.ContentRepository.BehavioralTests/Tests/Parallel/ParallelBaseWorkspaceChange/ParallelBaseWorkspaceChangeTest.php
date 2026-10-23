@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event\EventType;
 use Neos\EventStore\Model\Event\EventTypes;
@@ -105,6 +106,7 @@ class ParallelBaseWorkspaceChangeTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
+        FakeReferenceTypeGraphFactory::setConfiguration([]);
 
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 

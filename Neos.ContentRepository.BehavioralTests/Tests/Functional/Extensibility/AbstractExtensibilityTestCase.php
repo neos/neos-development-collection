@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\TestSuite\Fakes\FakeCommandHookFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Core\Bootstrap;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -55,6 +56,7 @@ abstract class AbstractExtensibilityTestCase extends TestCase // we don't use Fl
                 ]
             ]
         ]);
+        FakeReferenceTypeGraphFactory::setConfiguration([]);
         FakeContentDimensionSourceFactory::setWithoutDimensions();
 
         $this->getObject(ContentRepositoryRegistry::class)->resetFactoryInstance(static::$contentRepositoryId);

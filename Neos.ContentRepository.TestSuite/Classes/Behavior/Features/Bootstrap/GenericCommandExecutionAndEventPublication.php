@@ -54,6 +54,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWork
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\PartialWorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Exception\WorkspaceRebaseFailed;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
@@ -447,7 +448,12 @@ trait GenericCommandExecutionAndEventPublication
             $references = [];
             foreach ($nodeReferencesForProperty['references'] as $referenceData) {
                 $properties = isset($referenceData['properties']) ? $this->deserializeProperties($referenceData['properties']) : PropertyValuesToWrite::createEmpty();
-                $references[] = NodeReferenceToWrite::fromTargetAndProperties(NodeAggregateId::fromString($referenceData['target']), $properties);
+                $referenceTypeName = $referenceData['type'] ?? null;
+                $references[] = NodeReferenceToWrite::fromTargetAndProperties(
+                    target: NodeAggregateId::fromString($referenceData['target']),
+                    referenceTypeName: $referenceTypeName ? ReferenceTypeName::fromString($referenceTypeName) : null,
+                    properties: $properties
+                );
             }
             $referencesForProperty[] = NodeReferencesForName::fromReferences(ReferenceName::fromString($nodeReferencesForProperty['referenceName']), $references);
         }

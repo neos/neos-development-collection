@@ -27,6 +27,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
@@ -74,6 +75,7 @@ class FeatureContext implements BehatContext
     {
         FakeContentDimensionSourceFactory::reset();
         FakeNodeTypeManagerFactory::reset();
+        FakeReferenceTypeGraphFactory::reset();
     }
 
     protected function getContentRepositoryService(
@@ -92,6 +94,7 @@ class FeatureContext implements BehatContext
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         FakeContentDimensionSourceFactory::reset();
         FakeNodeTypeManagerFactory::reset();
+        FakeReferenceTypeGraphFactory::reset();
 
         return $contentRepository;
     }

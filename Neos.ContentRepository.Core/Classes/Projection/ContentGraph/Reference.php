@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
@@ -28,7 +29,8 @@ final readonly class Reference
     public function __construct(
         public Node $node,
         public ReferenceName $name,
-        public ?PropertyCollection $properties
+        public ?ReferenceTypeName $type,
+        public ?PropertyCollection $properties,
     ) {
     }
 }

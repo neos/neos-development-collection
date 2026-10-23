@@ -30,6 +30,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeCatchUpHookFactory2;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event;
@@ -118,6 +119,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
         );
 
         FakeNodeTypeManagerFactory::setConfiguration([]);
+        FakeReferenceTypeGraphFactory::setConfiguration([]);
         FakeContentDimensionSourceFactory::setWithoutDimensions();
 
         $this->getObject(ContentRepositoryRegistry::class)->resetFactoryInstance(self::$contentRepositoryId);

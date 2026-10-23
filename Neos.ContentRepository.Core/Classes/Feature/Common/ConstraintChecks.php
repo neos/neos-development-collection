@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
@@ -62,6 +63,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 trait ConstraintChecks
 {
     use NodeTypeConstraintChecks;
+    use ReferenceTypeConstraintChecks;
 
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
@@ -490,36 +492,57 @@ trait ConstraintChecks
     }
 
     protected function validateReferenceProperties(
+        ?ReferenceType $referenceType,
         ReferenceName $referenceName,
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        $nodeType = $this->requireNodeType($nodeTypeName);
-
-        foreach ($referenceProperties->values as $propertyName => $propertyValue) {
-            $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]
-                ?? null;
-
-            if (is_null($referencePropertyConfig)) {
-                throw ReferenceCannotBeSet::becauseTheReferenceDoesNotDeclareTheProperty(
-                    $referenceName,
-                    $nodeTypeName,
-                    PropertyName::fromString($propertyName)
+        if ($referenceType) {
+            foreach ($referenceProperties->values as $propertyName => $propertyValue) {
+                $property = $this->requireReferenceTypeProperty(
+                    referenceType: $referenceType,
+                    propertyName: PropertyName::fromString($propertyName),
+                    referenceName: $referenceName,
+                    nodeTypeName: $nodeTypeName,
                 );
+                if (!$property->type->isMatchedBy($propertyValue)) {
+                    throw ReferenceCannotBeSet::becauseAPropertyDoesNotMatchTheTypeDeclaredByTheReferenceType(
+                        referenceName: $referenceName,
+                        referenceTypeName: $referenceType->name,
+                        propertyName: PropertyName::fromString($propertyName),
+                        attemptedType: is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                        configuredType: $property->type->value,
+                    );
+                }
             }
-            $propertyType = PropertyType::fromNodeTypeDeclaration(
-                $referencePropertyConfig['type'],
-                PropertyName::fromString($propertyName),
-                $nodeTypeName
-            );
-            if (!$propertyType->isMatchedBy($propertyValue)) {
-                throw ReferenceCannotBeSet::becauseAPropertyDoesNotMatchTheDeclaredType(
-                    $referenceName,
-                    $nodeTypeName,
+        } else {
+            $nodeType = $this->requireNodeType($nodeTypeName);
+
+            foreach ($referenceProperties->values as $propertyName => $propertyValue) {
+                $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]
+                    ?? null;
+
+                if (is_null($referencePropertyConfig)) {
+                    throw ReferenceCannotBeSet::becauseTheReferenceDoesNotDeclareTheProperty(
+                        $referenceName,
+                        $nodeTypeName,
+                        PropertyName::fromString($propertyName)
+                    );
+                }
+                $propertyType = PropertyType::fromNodeTypeDeclaration(
+                    $referencePropertyConfig['type'],
                     PropertyName::fromString($propertyName),
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
-                    $propertyType->value
+                    $nodeTypeName
                 );
+                if (!$propertyType->isMatchedBy($propertyValue)) {
+                    throw ReferenceCannotBeSet::becauseAPropertyDoesNotMatchTheDeclaredType(
+                        $referenceName,
+                        $nodeTypeName,
+                        PropertyName::fromString($propertyName),
+                        is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                        $propertyType->value
+                    );
+                }
             }
         }
     }

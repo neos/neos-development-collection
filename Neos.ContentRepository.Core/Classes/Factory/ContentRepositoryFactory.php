@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionFa
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStates;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Store\SubscriptionStoreInterface;
@@ -74,6 +75,7 @@ final class ContentRepositoryFactory
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly EventStoreInterface $eventStore,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ReferenceTypeGraph $referenceTypeGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         private readonly AuthProviderFactoryInterface $authProviderFactory,
@@ -160,6 +162,7 @@ final class ContentRepositoryFactory
             new NodeAggregateCommandHandler(
                 $commandHandlingDependencies,
                 $this->nodeTypeManager,
+                $this->referenceTypeGraph,
                 $this->contentDimensionZookeeper,
                 $this->interDimensionalVariationGraph,
                 $this->propertyConverter,
@@ -169,6 +172,7 @@ final class ContentRepositoryFactory
                 $commandHandlingDependencies,
                 $this->interDimensionalVariationGraph,
                 $this->nodeTypeManager,
+                $this->referenceTypeGraph,
             )
         );
 
@@ -201,6 +205,7 @@ final class ContentRepositoryFactory
             $eventAugmenter,
             $this->subscriptionEngine,
             $this->nodeTypeManager,
+            $this->referenceTypeGraph,
             $this->interDimensionalVariationGraph,
             $this->contentDimensionSource,
             $authProvider,
@@ -232,6 +237,7 @@ final class ContentRepositoryFactory
             $this->eventStore,
             $this->eventNormalizer,
             $this->nodeTypeManager,
+            $this->referenceTypeGraph,
             $this->contentDimensionSource,
             $this->contentDimensionZookeeper,
             $this->interDimensionalVariationGraph,

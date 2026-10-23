@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Infrastructure\Property;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyTypeIsInvalid;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Psr\Http\Message\UriInterface;
@@ -69,6 +70,21 @@ final readonly class PropertyType
         $type = self::tryFromString($declaration);
         if (!$type) {
             throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
+        }
+        return $type;
+    }
+
+    /**
+     * @throws PropertyTypeIsInvalid
+     */
+    public static function fromReferenceTypeDeclaration(
+        string $declaration,
+        PropertyName $propertyName,
+        ReferenceTypeName $referenceTypeName
+    ): self {
+        $type = self::tryFromString($declaration);
+        if (!$type) {
+            throw PropertyTypeIsInvalid::becauseItIsUndefinedInReferenceType($propertyName, $declaration, $referenceTypeName);
         }
         return $type;
     }

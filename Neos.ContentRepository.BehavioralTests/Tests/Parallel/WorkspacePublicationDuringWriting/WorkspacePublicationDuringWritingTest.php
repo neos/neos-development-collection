@@ -37,6 +37,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
@@ -76,6 +77,7 @@ class WorkspacePublicationDuringWritingTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
+        FakeReferenceTypeGraphFactory::setConfiguration([]);
 
         $dbal = $this->objectManager->get(Connection::class);
         if ($dbal->getDatabasePlatform() instanceof MariaDBPlatform) {

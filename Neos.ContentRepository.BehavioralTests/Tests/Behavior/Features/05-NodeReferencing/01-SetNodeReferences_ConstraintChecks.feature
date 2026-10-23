@@ -8,7 +8,9 @@ Feature: Constraint checks on SetNodeReferences
       | language   | de, gsw, en | gsw->de, en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository.Testing:ReferencedNode': []
+    'Neos.ContentRepository.Testing:ReferencedNode':
+      references:
+        unconstrained: []
 
     'Neos.ContentRepository.Testing:NodeWithReferences':
       # legacy notation
@@ -34,7 +36,33 @@ Feature: Constraint checks on SetNodeReferences
               type: string
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
+        typedReference:
+          constraints:
+            referenceTypes:
+              '*': false
+              'Neos.ContentRepository.Testing:AbstractReference': true
+              'Neos.ContentRepository.Testing:ForbiddenReference': false
+              'Neos.ContentRepository.Testing:ConstrainedReference': true
+
     """
+    And using the following reference types:
+    """yaml
+    'Neos.ContentRepository.Testing:ForbiddenReference': []
+    'Neos.ContentRepository.Testing:AbstractReference':
+      abstract: true
+    'Neos.ContentRepository.Testing:ConstrainedReference':
+      constraints:
+        sourceNodeTypes:
+          '*': false
+          'Neos.ContentRepository.Testing:NodeWithReferences': true
+        targetNodeTypes:
+          '*': false
+          'Neos.ContentRepository.Testing:ReferencedNode': true
+      properties:
+        text:
+          type: string
+    """
+
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
@@ -182,3 +210,53 @@ Feature: Constraint checks on SetNodeReferences
       | sourceNodeAggregateId | "source-nodandaise"                                              |
       | references            | [{"referenceName": "referencesProperty", "references": [{"target":"anthony-destinode"}, {"target":"anthony-destinode"}]}] |
     Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1730365958
+
+  # reference type checks
+  Scenario: Try to create a reference of an unknown type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "typedReference", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:UndefinedReference"}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792139965
+
+  Scenario: Try to create a reference of an abstract type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "typedReference", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:AbstractReference"}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792482976
+
+  Scenario: Try to create a reference of a type that is disallowed by the source node type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "typedReference", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:ForbiddenReference"}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792483709
+
+  Scenario: Try to create a reference of a type that disallows the source node type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "anthony-destinode"                                                                            |
+      | references            | [{"referenceName": "unconstrained", "references": [{"target":"berta-destinode", "type":"Neos.ContentRepository.Testing:ConstrainedReference"}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792505612
+
+  Scenario: Try to create a reference of a type that disallows the target node type
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "unconstrained", "references": [{"target":"source-nodandaise", "type":"Neos.ContentRepository.Testing:ConstrainedReference"}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792506353
+
+  Scenario: Try to create a reference with a property its type does not declare
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "unconstrained", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:ConstrainedReference", "properties": {"undeclared": "undefined"}}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792507086
+
+  Scenario: Try to create a reference with a property its type does not declare
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                   | Value                                                                                          |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                            |
+      | references            | [{"referenceName": "unconstrained", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:ConstrainedReference", "properties": {"text": 42}}]}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792147895
