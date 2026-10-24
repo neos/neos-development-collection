@@ -8,6 +8,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The difference between two local subgraph states, described via the respective read models
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final readonly class LocalSubgraphStateDiff implements \JsonSerializable

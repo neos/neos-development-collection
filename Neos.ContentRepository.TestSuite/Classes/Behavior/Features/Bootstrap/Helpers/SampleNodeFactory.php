@@ -26,6 +26,9 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Symfony\Component\Serializer\Serializer;
 
+/**
+ * @internal
+ */
 class SampleNodeFactory
 {
     public static function createSampleNode(): Node

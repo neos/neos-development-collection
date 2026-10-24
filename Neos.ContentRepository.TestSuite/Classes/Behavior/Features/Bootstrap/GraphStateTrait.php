@@ -26,8 +26,9 @@ use PHPUnit\Framework\Assert;
 
 /**
  * The feature trait to test node aggregates
+ * @internal
  */
-/** @phpstan-ignore trait.unused (as if) */
+/** @phpstan-ignore trait.unused (only in Testing classes) */
 trait GraphStateTrait
 {
     use CRTestSuiteRuntimeVariables;

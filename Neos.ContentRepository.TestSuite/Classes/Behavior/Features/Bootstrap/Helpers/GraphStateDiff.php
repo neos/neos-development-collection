@@ -9,6 +9,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The difference between two graph states, indexed by node aggregate id
  *
+ * @internal
  * @implements \IteratorAggregate<string,LocalGraphStateDiff>
  */
 #[Flow\Proxy(false)]

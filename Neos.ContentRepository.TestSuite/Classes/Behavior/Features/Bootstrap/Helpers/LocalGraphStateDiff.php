@@ -9,6 +9,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The difference between two local graph states, indexed by dimension space point hash
  *
+ * @internal
  * @implements \IteratorAggregate<string,LocalSubgraphStateDiff>
  */
 #[Flow\Proxy(false)]

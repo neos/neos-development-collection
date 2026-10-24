@@ -14,6 +14,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The local graph state describing a single node aggregate and its direct connections
  * Comparison is done on complete node state as node identity may not be guaranteed by graph adapters
+ *
+ * @internal
  * @implements \IteratorAggregate<string,?LocalSubgraphState>
  */
 #[Flow\Proxy(false)]

@@ -20,6 +20,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The local subgraph state describing a node and its direct connections
  * Comparison is done on complete node state as node identity may not be guaranteed by graph adapters
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final readonly class LocalSubgraphState

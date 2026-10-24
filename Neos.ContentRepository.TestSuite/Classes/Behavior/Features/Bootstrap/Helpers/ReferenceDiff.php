@@ -12,6 +12,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The difference between two reference read models
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final readonly class ReferenceDiff implements \JsonSerializable

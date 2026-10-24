@@ -14,6 +14,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * References with a given name can never target the same node aggregate twice, as enforced by the constraint checks
  * @see NodeReferencesForName
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final readonly class ReferenceDiscriminator implements \JsonSerializable

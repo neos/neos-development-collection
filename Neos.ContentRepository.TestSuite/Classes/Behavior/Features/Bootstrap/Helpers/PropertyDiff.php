@@ -10,6 +10,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * The difference between two node read models
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final readonly class PropertyDiff implements \JsonSerializable

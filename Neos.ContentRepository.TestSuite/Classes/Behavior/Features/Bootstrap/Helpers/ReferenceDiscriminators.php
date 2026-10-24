@@ -11,6 +11,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A list of reference discriminators
  *
+ * @internal
  * @implements \IteratorAggregate<int,ReferenceDiscriminator>
  */
 #[Flow\Proxy(false)]

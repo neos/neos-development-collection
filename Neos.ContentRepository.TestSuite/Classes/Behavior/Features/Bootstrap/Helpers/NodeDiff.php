@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * The difference between two node read models
+ *
+ * @internal
  */
 #[Flow\Proxy(false)]
 final readonly class NodeDiff implements \JsonSerializable
