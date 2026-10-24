@@ -97,6 +97,20 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     }
 
     /**
+     * @When /^I remove the following hierarchy relation:$/
+     * @throws DBALException
+     */
+    public function iRemoveTheFollowingHierarchyRelation(TableNode $payloadTable): void
+    {
+        $dataset = $this->transformPayloadTableToDataset($payloadTable);
+        $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        $this->dbal->delete(
+            $this->tableNames()->hierarchyRelation(),
+            $record
+        );
+    }
+
+    /**
      * @When /^I change the following hierarchy relation's parent:$/
      * @throws DBALException
      */
