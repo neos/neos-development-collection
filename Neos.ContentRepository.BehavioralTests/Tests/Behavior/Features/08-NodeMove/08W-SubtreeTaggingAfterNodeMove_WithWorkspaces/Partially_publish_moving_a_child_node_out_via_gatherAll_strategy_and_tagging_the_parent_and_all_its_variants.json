@@ -28,7 +28,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     {
@@ -41,7 +41,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     {
@@ -98,7 +98,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": {
@@ -119,7 +119,7 @@
                 }
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": {
@@ -218,7 +218,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -231,7 +231,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nodimus-prime",
                         "originDimensionSpacePoint": {
@@ -256,7 +256,7 @@
                 }
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -269,7 +269,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nodimus-prime",
                         "originDimensionSpacePoint": {
@@ -336,7 +336,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
                 "tags": {
@@ -356,7 +356,7 @@
                 }
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
                 "tags": {
@@ -454,7 +454,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "nodimus-prime",
@@ -463,7 +463,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -492,7 +492,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "nodimus-prime",
@@ -501,7 +501,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -586,7 +586,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -594,7 +594,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -613,7 +613,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -621,7 +621,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {

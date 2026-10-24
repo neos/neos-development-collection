@@ -53,16 +53,6 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
-            "children": {
-                "nodes": [
-                    "nody-o-nodeface"
-                ],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
@@ -74,6 +64,16 @@
                         "_discriminator": "nody-o-nodeface",
                         "tags": []
                     }
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "children": {
+                "nodes": [
+                    "nody-o-nodeface"
                 ],
                 "removedNodes": {
                     "nody-mc-nodeface": "nody-mc-nodeface"
@@ -164,7 +164,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -177,7 +177,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nodimus-prime",
                         "originDimensionSpacePoint": {
@@ -205,7 +205,7 @@
                 }
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "aggregateId": "sir-nodeward-nodington-iii",
@@ -218,7 +218,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nodimus-prime",
                         "originDimensionSpacePoint": {
@@ -272,14 +272,6 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
-            "precedingSiblings": {
-                "nodes": [],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
@@ -289,6 +281,14 @@
                 "_discriminator": "sir-david-nodenborough",
                 "tags": []
             },
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -368,37 +368,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "children": {
-                "nodes": [
-                    "nodimus-prime",
-                    {
-                        "_discriminator": "nody-mc-nodeface",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "peer"
-                        },
-                        "aggregateId": "nody-mc-nodeface",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "document",
-                        "tags": {
-                            "my-tag": null
-                        },
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
-                        }
-                    }
-                ]
-            }
-        },
         "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
@@ -434,6 +403,37 @@
                     {
                         "_discriminator": "sir-david-nodenborough",
                         "tags": []
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "children": {
+                "nodes": [
+                    "nodimus-prime",
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "tags": {
+                            "my-tag": null
+                        },
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
                     }
                 ]
             }
@@ -500,7 +500,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -508,7 +508,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -530,7 +530,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -538,7 +538,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {

@@ -54,16 +54,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "children": {
-                "nodes": [
-                    "nody-o-nodeface"
-                ],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
-            }
-        },
         "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
@@ -80,6 +70,16 @@
                         "tags": []
                     }
                 ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "children": {
+                "nodes": [
+                    "nody-o-nodeface"
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
             }
         }
     },
@@ -176,47 +176,6 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
-            "parent": {
-                "_discriminator": "sir-nodeward-nodington-iii",
-                "aggregateId": "sir-nodeward-nodington-iii",
-                "name": "esquire"
-            },
-            "precedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "nodimus-prime",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "peer"
-                        },
-                        "aggregateId": "nodimus-prime",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "esquire-child",
-                        "tags": {
-                            "my-tag": null
-                        },
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
-                        }
-                    }
-                ]
-            },
-            "succeedingSiblings": {
-                "nodes": [],
-                "removedNodes": {
-                    "nody-o-nodeface": "nody-o-nodeface"
-                }
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
@@ -252,6 +211,47 @@
                         "classification": "regular",
                         "nodeTypeName": "Neos.ContentRepository.Testing:Document",
                         "name": "esquire-child",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-o-nodeface": "nody-o-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "parent": {
+                "_discriminator": "sir-nodeward-nodington-iii",
+                "aggregateId": "sir-nodeward-nodington-iii",
+                "name": "esquire"
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire-child",
+                        "tags": {
+                            "my-tag": null
+                        },
                         "timestamps": {
                             "created": "2026-05-11T13:19:00+00:00",
                             "originalCreated": "2026-05-11T13:19:00+00:00",
@@ -308,7 +308,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -316,7 +316,7 @@
                 }
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -392,37 +392,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "children": {
-                "nodes": [
-                    "nodimus-prime",
-                    {
-                        "_discriminator": "nody-mc-nodeface",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "peer"
-                        },
-                        "aggregateId": "nody-mc-nodeface",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "document",
-                        "tags": {
-                            "my-tag": null
-                        },
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
-                        }
-                    }
-                ]
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
@@ -448,6 +417,37 @@
                         "classification": "regular",
                         "nodeTypeName": "Neos.ContentRepository.Testing:Document",
                         "name": "document",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "children": {
+                "nodes": [
+                    "nodimus-prime",
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "tags": {
+                            "my-tag": null
+                        },
                         "timestamps": {
                             "created": "2026-05-11T13:19:00+00:00",
                             "originalCreated": "2026-05-11T13:19:00+00:00",
@@ -525,36 +525,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "succeedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-mc-nodeface",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "peer"
-                        },
-                        "aggregateId": "nody-mc-nodeface",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "document",
-                        "tags": {
-                            "my-tag": null
-                        },
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
-                        }
-                    }
-                ]
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
@@ -580,6 +550,36 @@
                         "classification": "regular",
                         "nodeTypeName": "Neos.ContentRepository.Testing:Document",
                         "name": "document",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "tags": {
+                            "my-tag": null
+                        },
                         "timestamps": {
                             "created": "2026-05-11T13:19:00+00:00",
                             "originalCreated": "2026-05-11T13:19:00+00:00",

@@ -24,7 +24,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -35,7 +35,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -76,7 +76,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -86,7 +86,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -222,7 +222,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "tags": []
@@ -236,7 +236,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "tags": []
@@ -297,7 +297,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "tags": []
@@ -307,7 +307,7 @@
                 "tags": []
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "tags": []

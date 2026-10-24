@@ -28,7 +28,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -41,7 +41,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -88,7 +88,15 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
+            "children": {
+                "nodes": [
+                    "nody-o-nodeface"
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            },
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -100,15 +108,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
-            "children": {
-                "nodes": [
-                    "nody-o-nodeface"
-                ],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
-            },
+        "{\"example\":\"peer\"}": {
             "succeedingSiblings": {
                 "nodes": [
                     {
@@ -352,24 +352,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "node": {
-                "_discriminator": "sir-nodeward-nodington-iii",
-                "tags": {
-                    "my-tag": true
-                }
-            },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nodimus-prime",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ]
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
@@ -407,6 +389,24 @@
                             "originalCreated": "2026-05-11T13:19:00+00:00",
                             "lastModified": null,
                             "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "sir-nodeward-nodington-iii",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "tags": {
+                            "my-tag": null
                         }
                     }
                 ]
@@ -470,20 +470,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "node": {
-                "_discriminator": "nodimus-prime",
-                "tags": {
-                    "my-tag": null
-                }
-            },
-            "parent": {
-                "_discriminator": "sir-nodeward-nodington-iii",
-                "tags": {
-                    "my-tag": true
-                }
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
@@ -524,6 +510,20 @@
                         }
                     }
                 ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nodimus-prime",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-nodeward-nodington-iii",
+                "tags": {
+                    "my-tag": true
+                }
             }
         }
     }

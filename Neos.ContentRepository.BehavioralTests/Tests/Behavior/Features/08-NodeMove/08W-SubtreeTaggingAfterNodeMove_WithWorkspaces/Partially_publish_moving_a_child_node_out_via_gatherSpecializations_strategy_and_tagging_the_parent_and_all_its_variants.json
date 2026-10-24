@@ -28,7 +28,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     {
@@ -41,7 +41,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     {
@@ -101,6 +101,27 @@
                 }
             }
         },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
         "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
@@ -123,27 +144,6 @@
                         }
                     }
                 ]
-            }
-        },
-        "{\"example\":\"spec\"}": {
-            "node": {
-                "_discriminator": "sir-david-nodenborough",
-                "tags": {
-                    "my-tag": true
-                }
-            },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-o-nodeface",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
             }
         }
     },
@@ -220,40 +220,6 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
-            "node": {
-                "_discriminator": "nody-mc-nodeface",
-                "tags": {
-                    "my-tag": null
-                }
-            },
-            "parent": {
-                "_discriminator": "sir-david-nodenborough",
-                "tags": {
-                    "my-tag": true
-                }
-            },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nodimus-mediocre",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ]
-            },
-            "succeedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-o-nodeface",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ]
-            }
-        },
         "{\"example\":\"spec\"}": {
             "parent": {
                 "_discriminator": "sir-nodeward-nodington-iii",
@@ -290,6 +256,40 @@
                 "removedNodes": {
                     "nody-o-nodeface": "nody-o-nodeface"
                 }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-mediocre",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
             }
         }
     },
@@ -368,6 +368,26 @@
                 }
             }
         },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
         "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
@@ -390,26 +410,6 @@
                         }
                     }
                 ]
-            }
-        },
-        "{\"example\":\"spec\"}": {
-            "node": {
-                "_discriminator": "nody-o-nodeface",
-                "tags": {
-                    "my-tag": null
-                }
-            },
-            "parent": {
-                "_discriminator": "sir-david-nodenborough",
-                "tags": {
-                    "my-tag": true
-                }
-            },
-            "precedingSiblings": {
-                "nodes": [],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
             }
         }
     },
@@ -464,18 +464,6 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
-            "precedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "sir-david-nodenborough",
-                        "tags": {
-                            "my-tag": true
-                        }
-                    }
-                ]
-            }
-        },
         "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
@@ -503,6 +491,18 @@
                     }
                 ]
             },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
             "precedingSiblings": {
                 "nodes": [
                     {

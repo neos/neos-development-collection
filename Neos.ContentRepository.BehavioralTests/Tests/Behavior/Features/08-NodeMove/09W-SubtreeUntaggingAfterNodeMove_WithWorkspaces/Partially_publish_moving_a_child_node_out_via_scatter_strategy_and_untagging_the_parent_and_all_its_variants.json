@@ -24,7 +24,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     {
@@ -35,7 +35,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     {
@@ -83,7 +83,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": []
@@ -101,7 +101,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "sir-david-nodenborough",
                 "tags": []
@@ -188,7 +188,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "tags": []
@@ -214,7 +214,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
                 "tags": []
@@ -252,7 +252,7 @@
                 "tags": []
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-mediocre",
                 "tags": []
@@ -262,7 +262,7 @@
                 "tags": []
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nodimus-mediocre",
                 "tags": []
@@ -308,7 +308,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
                 "tags": []
@@ -326,7 +326,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nody-o-nodeface",
                 "tags": []
@@ -395,7 +395,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "precedingSiblings": {
                 "nodes": [
                     {
@@ -405,7 +405,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "precedingSiblings": {
                 "nodes": [
                     {

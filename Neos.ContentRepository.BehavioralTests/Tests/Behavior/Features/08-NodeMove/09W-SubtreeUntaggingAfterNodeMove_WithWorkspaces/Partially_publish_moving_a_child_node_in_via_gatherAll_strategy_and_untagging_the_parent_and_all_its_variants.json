@@ -24,7 +24,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -35,7 +35,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "sir-david-nodenborough",
@@ -84,7 +84,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "children": {
                 "nodes": [
                     "nody-o-nodeface"
@@ -102,7 +102,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "children": {
                 "nodes": [
                     "nody-o-nodeface"
@@ -224,57 +224,6 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
-            "node": {
-                "_discriminator": "nody-mc-nodeface",
-                "tags": []
-            },
-            "parent": {
-                "_discriminator": "sir-nodeward-nodington-iii",
-                "aggregateId": "sir-nodeward-nodington-iii",
-                "name": "esquire",
-                "tags": []
-            },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nodimus-mediocre",
-                        "tags": []
-                    }
-                ]
-            },
-            "precedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "nodimus-prime",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "peer"
-                        },
-                        "aggregateId": "nodimus-prime",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "esquire-child",
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
-                        }
-                    }
-                ]
-            },
-            "succeedingSiblings": {
-                "nodes": [],
-                "removedNodes": {
-                    "nody-o-nodeface": "nody-o-nodeface"
-                }
-            }
-        },
         "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nody-mc-nodeface",
@@ -325,6 +274,57 @@
                     "nody-o-nodeface": "nody-o-nodeface"
                 }
             }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": []
+            },
+            "parent": {
+                "_discriminator": "sir-nodeward-nodington-iii",
+                "aggregateId": "sir-nodeward-nodington-iii",
+                "name": "esquire",
+                "tags": []
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-mediocre",
+                        "tags": []
+                    }
+                ]
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire-child",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-o-nodeface": "nody-o-nodeface"
+                }
+            }
         }
     },
     "nodimus-mediocre": {
@@ -348,7 +348,7 @@
                 "tags": []
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-mediocre",
                 "tags": []
@@ -358,7 +358,7 @@
                 "tags": []
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nodimus-mediocre",
                 "tags": []
@@ -386,7 +386,7 @@
                 }
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -394,7 +394,7 @@
                 }
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "precedingSiblings": {
                 "nodes": [],
                 "removedNodes": {
@@ -474,7 +474,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "tags": []
@@ -490,7 +490,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -509,7 +509,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "sir-nodeward-nodington-iii",
                 "tags": []
@@ -525,7 +525,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -616,7 +616,7 @@
                 ]
             }
         },
-        "{\"example\":\"peer\"}": {
+        "{\"example\":\"spec\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "tags": []
@@ -632,7 +632,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "peer"
+                            "example": "spec"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {
@@ -651,7 +651,7 @@
                 ]
             }
         },
-        "{\"example\":\"spec\"}": {
+        "{\"example\":\"peer\"}": {
             "node": {
                 "_discriminator": "nodimus-prime",
                 "tags": []
@@ -667,7 +667,7 @@
                         "contentRepositoryId": "default",
                         "workspaceName": "intermediate",
                         "dimensionSpacePoint": {
-                            "example": "spec"
+                            "example": "peer"
                         },
                         "aggregateId": "nody-mc-nodeface",
                         "originDimensionSpacePoint": {

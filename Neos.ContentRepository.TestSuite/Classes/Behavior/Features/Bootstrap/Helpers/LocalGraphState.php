@@ -33,7 +33,9 @@ final readonly class LocalGraphState implements \IteratorAggregate, \JsonSeriali
         DimensionSpacePointSet $dimensionSpacePointSet,
     ): self {
         $items = [];
-        foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
+        $sortedPointsByHash = $dimensionSpacePointSet->points;
+        ksort($sortedPointsByHash);
+        foreach ($sortedPointsByHash as $dimensionSpacePoint) {
             $items[$dimensionSpacePoint->toJson()] = LocalSubgraphState::tryForNodeAggregateIdAndSubgraph(
                 nodeAggregateId: $nodeAggregateId,
                 subgraph: $contentGraph->getSubgraph(
