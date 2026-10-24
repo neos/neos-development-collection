@@ -230,7 +230,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     AND ph.dimensionspacepointhash = h.dimensionspacepointhash
             WHERE
                 EXISTS (
-                    SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), '\$[*]' COLUMNS(tag VARCHAR(30) PATH '\$')) t WHERE JSON_CONTAINS_PATH(h.subtreetags, 'all', CONCAT('\$.', t.tag)) = 0
+                    SELECT t.tag FROM JSON_TABLE(JSON_KEYS(ph.subtreetags), '\$[*]' COLUMNS(tag VARCHAR(30) PATH '\$')) t WHERE JSON_CONTAINS_PATH(h.subtreetags, 'all', CONCAT('\$."', t.tag, '"')) = 0
                 )
         SQL;
         try {
