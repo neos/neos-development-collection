@@ -46,6 +46,7 @@ Feature: Create a root node aggregate with tethered children
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
+    Given the current date and time is "2026-02-07T06:00:00+00:00"
 
   Scenario: Publish root node creation
     Given I set up the edge case workspace tree
@@ -79,7 +80,6 @@ Feature: Create a root node aggregate with tethered children
     And I expect the graph state for workspace "intermediate" to equal that of workspace "local"
 
   Scenario: Partial Publishing
-    Given the current date and time is "2026-05-11T14:19:00+01:00"
     Given I set up the edge case workspace tree
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                                | Value                                                                             |

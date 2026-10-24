@@ -39,7 +39,7 @@ Feature: Tag and untag nodes after moving their children in or out
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
-    And the current date and time is "2026-05-11T14:19:00+01:00"
+    Given the current date and time is "2026-02-07T06:00:00+00:00"
     And I am user identified by "initiating-user-identifier"
     And I set up the edge case workspace tree and the following additional commands:
       | shortName                       | payload                                                                                                                                                                                                                                                                  |
