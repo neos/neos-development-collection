@@ -55,92 +55,86 @@
             }
         }
     },
-    "sir-david-nodenborough": {
+    "nodimus-mediocre": {
         "{\"example\":\"general\"}": {
             "node": {
-                "_discriminator": "sir-david-nodenborough",
+                "_discriminator": "nodimus-mediocre",
                 "tags": {
-                    "my-tag": true
+                    "my-tag": null
                 }
             },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-mc-nodeface",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    },
-                    {
-                        "_discriminator": "nody-o-nodeface",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ]
-            }
-        },
-        "{\"example\":\"source\"}": {
-            "node": {
-                "_discriminator": "sir-david-nodenborough",
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
                 "tags": {
-                    "my-tag": true
-                }
-            },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-o-nodeface",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
-                }
-            }
-        },
-        "{\"example\":\"spec\"}": {
-            "node": {
-                "_discriminator": "sir-david-nodenborough",
-                "tags": {
-                    "my-tag": true
-                }
-            },
-            "children": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-o-nodeface",
-                        "tags": {
-                            "my-tag": null
-                        }
-                    }
-                ],
-                "removedNodes": {
-                    "nody-mc-nodeface": "nody-mc-nodeface"
+                    "my-tag": null
                 }
             }
         },
         "{\"example\":\"peer\"}": {
             "node": {
-                "_discriminator": "sir-david-nodenborough",
+                "_discriminator": "nodimus-mediocre",
                 "tags": {
-                    "my-tag": true
+                    "my-tag": null
                 }
             },
-            "children": {
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            }
+        }
+    },
+    "nodimus-prime": {
+        "{\"example\":\"source\"}": {
+            "succeedingSiblings": {
                 "nodes": [
                     {
                         "_discriminator": "nody-mc-nodeface",
-                        "tags": {
-                            "my-tag": null
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
-                    },
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "succeedingSiblings": {
+                "nodes": [
                     {
-                        "_discriminator": "nody-o-nodeface",
-                        "tags": {
-                            "my-tag": null
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "timestamps": {
+                            "created": "2026-05-11T13:19:00+00:00",
+                            "originalCreated": "2026-05-11T13:19:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
                         }
                     }
                 ]
@@ -293,36 +287,6 @@
             }
         }
     },
-    "nodimus-mediocre": {
-        "{\"example\":\"general\"}": {
-            "node": {
-                "_discriminator": "nodimus-mediocre",
-                "tags": {
-                    "my-tag": null
-                }
-            },
-            "parent": {
-                "_discriminator": "nody-mc-nodeface",
-                "tags": {
-                    "my-tag": null
-                }
-            }
-        },
-        "{\"example\":\"peer\"}": {
-            "node": {
-                "_discriminator": "nodimus-mediocre",
-                "tags": {
-                    "my-tag": null
-                }
-            },
-            "parent": {
-                "_discriminator": "nody-mc-nodeface",
-                "tags": {
-                    "my-tag": null
-                }
-            }
-        }
-    },
     "nody-o-nodeface": {
         "{\"example\":\"general\"}": {
             "node": {
@@ -405,6 +369,98 @@
                 "nodes": [
                     {
                         "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "sir-david-nodenborough": {
+        "{\"example\":\"general\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nody-o-nodeface",
                         "tags": {
                             "my-tag": null
                         }
@@ -509,62 +565,6 @@
                         "_discriminator": "sir-david-nodenborough",
                         "tags": {
                             "my-tag": true
-                        }
-                    }
-                ]
-            }
-        }
-    },
-    "nodimus-prime": {
-        "{\"example\":\"source\"}": {
-            "succeedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-mc-nodeface",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "source"
-                        },
-                        "aggregateId": "nody-mc-nodeface",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "document",
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
-                        }
-                    }
-                ]
-            }
-        },
-        "{\"example\":\"spec\"}": {
-            "succeedingSiblings": {
-                "nodes": [
-                    {
-                        "_discriminator": "nody-mc-nodeface",
-                        "contentRepositoryId": "default",
-                        "workspaceName": "intermediate",
-                        "dimensionSpacePoint": {
-                            "example": "spec"
-                        },
-                        "aggregateId": "nody-mc-nodeface",
-                        "originDimensionSpacePoint": {
-                            "example": "general"
-                        },
-                        "classification": "regular",
-                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
-                        "name": "document",
-                        "timestamps": {
-                            "created": "2026-05-11T13:19:00+00:00",
-                            "originalCreated": "2026-05-11T13:19:00+00:00",
-                            "lastModified": null,
-                            "originalLastModified": null
                         }
                     }
                 ]

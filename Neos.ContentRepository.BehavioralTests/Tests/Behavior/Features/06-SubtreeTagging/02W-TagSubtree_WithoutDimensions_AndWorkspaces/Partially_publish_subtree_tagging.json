@@ -17,6 +17,22 @@
             }
         }
     },
+    "nody-mc-nodeface": {
+        "[]": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            }
+        }
+    },
     "preceding-nodenborough": {
         "[]": {
             "succeedingSiblings": {
@@ -61,22 +77,6 @@
                         }
                     }
                 ]
-            }
-        }
-    },
-    "nody-mc-nodeface": {
-        "[]": {
-            "node": {
-                "_discriminator": "nody-mc-nodeface",
-                "tags": {
-                    "my-tag": null
-                }
-            },
-            "parent": {
-                "_discriminator": "sir-david-nodenborough",
-                "tags": {
-                    "my-tag": true
-                }
             }
         }
     },

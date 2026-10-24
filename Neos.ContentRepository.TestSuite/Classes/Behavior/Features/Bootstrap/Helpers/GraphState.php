@@ -34,6 +34,7 @@ final class GraphState implements \IteratorAggregate, \JsonSerializable
         ContentGraphInterface $contentGraph,
         DimensionSpacePointSet $dimensionSpacePointSet,
     ): self {
+        ksort($nodeAggregateIds);
         return new self(array_map(
             fn (NodeAggregateId $nodeAggregateId): LocalGraphState => LocalGraphState::fromNodeAggregateIdContentGraphAndDimensionSpacePointSet(
                 $nodeAggregateId,

@@ -50,6 +50,60 @@
             }
         }
     },
+    "nodimus-prime": {
+        "[]": {
+            "node": {
+                "_discriminator": "nodimus-prime",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "nodimus-prime",
+                "originDimensionSpacePoint": [],
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "grandchild-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": [],
+                "aggregateId": "nody-mc-nodeface",
+                "originDimensionSpacePoint": [],
+                "classification": "tethered",
+                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
+                "properties": {
+                    "addedProperties": {
+                        "text": {
+                            "value": "my sub default",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": "child-node",
+                "timestamps": {
+                    "created": "2026-05-11T13:19:00+00:00",
+                    "originalCreated": "2026-05-11T13:19:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        }
+    },
     "nody-mc-nodeface": {
         "[]": {
             "node": {
@@ -121,60 +175,6 @@
                         }
                     }
                 ]
-            }
-        }
-    },
-    "nodimus-prime": {
-        "[]": {
-            "node": {
-                "_discriminator": "nodimus-prime",
-                "contentRepositoryId": "default",
-                "workspaceName": "intermediate",
-                "dimensionSpacePoint": [],
-                "aggregateId": "nodimus-prime",
-                "originDimensionSpacePoint": [],
-                "classification": "tethered",
-                "nodeTypeName": "Neos.ContentRepository.Testing:SubSubNode",
-                "properties": {
-                    "addedProperties": {
-                        "text": {
-                            "value": "my sub sub default",
-                            "type": "string"
-                        }
-                    }
-                },
-                "name": "grandchild-node",
-                "timestamps": {
-                    "created": "2026-05-11T13:19:00+00:00",
-                    "originalCreated": "2026-05-11T13:19:00+00:00",
-                    "lastModified": null,
-                    "originalLastModified": null
-                }
-            },
-            "parent": {
-                "_discriminator": "nody-mc-nodeface",
-                "contentRepositoryId": "default",
-                "workspaceName": "intermediate",
-                "dimensionSpacePoint": [],
-                "aggregateId": "nody-mc-nodeface",
-                "originDimensionSpacePoint": [],
-                "classification": "tethered",
-                "nodeTypeName": "Neos.ContentRepository.Testing:SubNode",
-                "properties": {
-                    "addedProperties": {
-                        "text": {
-                            "value": "my sub default",
-                            "type": "string"
-                        }
-                    }
-                },
-                "name": "child-node",
-                "timestamps": {
-                    "created": "2026-05-11T13:19:00+00:00",
-                    "originalCreated": "2026-05-11T13:19:00+00:00",
-                    "lastModified": null,
-                    "originalLastModified": null
-                }
             }
         }
     }
