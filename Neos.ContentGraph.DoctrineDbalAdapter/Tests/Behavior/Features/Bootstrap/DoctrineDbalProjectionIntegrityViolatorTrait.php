@@ -104,6 +104,9 @@ trait DoctrineDbalProjectionIntegrityViolatorTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
+        unset($record['subtreetags']);
+        unset($record['position']);
+
         $this->dbal->delete(
             $this->tableNames()->hierarchyRelation(),
             $record
