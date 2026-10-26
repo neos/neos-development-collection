@@ -70,12 +70,12 @@ class DoctrineDbalContentGraphSchemaBuilder
         ]);
 
         return $table
+            ->setPrimaryKey(['parentnodeanchor', 'childnodeanchor', 'contentstreamid', 'dimensionspacepointhash'])
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['parentnodeanchor'])
-            ->addIndex(['childnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['parentnodeanchor', 'contentstreamid', 'dimensionspacepointhash', 'position'])
-            ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
+            ->addIndex(['contentstreamid', 'dimensionspacepointhash'])
+            ->addIndex(['position']);
     }
 
     private function createDimensionSpacePointsTable(AbstractPlatform $platform): Table
