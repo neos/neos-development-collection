@@ -14,6 +14,9 @@ namespace Neos\ContentRepository\Core\DimensionSpace;
  * source code.
  */
 
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ProvidesSchema;
+
 /**
  * A set of points in the dimension space, occupied by nodes in a node aggregate
  *
@@ -24,7 +27,7 @@ namespace Neos\ContentRepository\Core\DimensionSpace;
  *
  * @api
  */
-final class OriginDimensionSpacePointSet implements \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
+final class OriginDimensionSpacePointSet implements ProvidesSchema, \JsonSerializable, \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
      * @var array<string,OriginDimensionSpacePoint>
@@ -46,7 +49,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
                 throw new \InvalidArgumentException(sprintf(
                     'Point %s was not of type OriginDimensionSpacePoint',
                     $index
-                ));
+                ), 1791889848);
             }
             $this->points[$point->hash] = $point;
         }
@@ -131,6 +134,15 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         return array_values($this->points);
     }
 
+    public static function schema(): ArraySchema
+    {
+        static $schema = null;
+        return $schema ??= ArraySchema::create(
+            description: 'A set of points in the dimension space that are occupied by nodes of a node aggregate',
+            items: OriginDimensionSpacePoint::schema(),
+        );
+    }
+
     public function count(): int
     {
         return count($this->points);
@@ -164,7 +176,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
 
     public function offsetUnset(mixed $offset): never
     {
-        throw new \BadMethodCallException('Cannot modify immutable OriginDimensionSpacePointSet', 1643467297);
+        throw new \BadMethodCallException('Cannot modify immutable OriginDimensionSpacePointSet', 1791889849);
     }
 
     public function getUnion(OriginDimensionSpacePointSet $other): OriginDimensionSpacePointSet
