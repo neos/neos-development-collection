@@ -110,4 +110,12 @@ final readonly class Timestamps
             $originalLastModified ?? $this->originalLastModified,
         );
     }
+
+    public function equals(self $other): bool
+    {
+        return $this->created == $other->created
+            && $this->originalCreated == $other->originalCreated
+            && $this->lastModified == $other->lastModified
+            && $this->originalLastModified == $other->originalLastModified;
+    }
 }
