@@ -125,20 +125,20 @@ class NodeDiffTest extends TestCase
             ),
             'expectedNodeDiff' => NodeDiff::tryCreate(
                 discriminator: $referenceNode->aggregateId,
-                 properties: PropertyDiff::tryCreate(
-                     addedProperties: SerializedPropertyValues::fromArray([
+                properties: PropertyDiff::tryCreate(
+                    addedProperties: SerializedPropertyValues::fromArray([
                         'additionalText' => SerializedPropertyValue::create(
                             value: 'additionalTextValue',
                             type: 'string',
                         ),
                      ]),
-                     modifiedProperties: SerializedPropertyValues::fromArray([
+                    modifiedProperties: SerializedPropertyValues::fromArray([
                         'text' => SerializedPropertyValue::create(
                             value: 'modifiedTextValue',
                             type: 'string',
                         ),
                      ]),
-                     removedProperties: PropertyNames::fromArray(['textToRemove']),
+                    removedProperties: PropertyNames::fromArray(['textToRemove']),
                 ),
                 name: NodeName::fromString('other'),
                 tags: NodeTags::create(
