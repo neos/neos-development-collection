@@ -875,15 +875,15 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       </trans-unit>
       <trans-unit id="users.sortBy.fullName" xml:space="preserve">
         <source>Sort by first and last name</source>
-        <target state="translated">Sortieren nach Vor- und Nachname</target>
+        <target state="needs-translation">Sortieren nach Vor- und Nachname</target>
       </trans-unit>
       <trans-unit id="users.sortBy.accountsAndRoles" xml:space="preserve">
         <source>Sort by user accounts and roles</source>
-        <target state="translated">Sortieren nach Benutzerkonten und Rollen</target>
+        <target state="needs-translation">Sortieren nach Benutzerkonten und Rollen</target>
       </trans-unit>
       <trans-unit id="users.sortBy.lastLogin" xml:space="preserve">
         <source>Sort by last login</source>
-        <target state="translated">Sortieren nach letztem Login</target>
+        <target state="needs-translation">Sortieren nach letztem Login</target>
       </trans-unit>
       <trans-unit id="branding.link.title" xml:space="preserve">
         <source>Go back to your starting module</source>
