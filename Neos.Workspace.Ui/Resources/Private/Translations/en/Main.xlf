@@ -461,9 +461,6 @@
       <trans-unit id="restore.syncButtonTitle" xml:space="preserve">
 				<source>Synchronize workspace with base workspace</source>
 			</trans-unit>
-      <trans-unit id="restore.table.label" xml:space="preserve">
-				<source>Title</source>
-			</trans-unit>
       <trans-unit id="restore.backToWorkspaceList" xml:space="preserve">
 				<source>Back to workspace overview</source>
 			</trans-unit>
