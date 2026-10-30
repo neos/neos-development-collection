@@ -281,6 +281,18 @@
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Απόρριψη</target>
       </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Κλείσιμο</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Άκυρο</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Τύπος</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

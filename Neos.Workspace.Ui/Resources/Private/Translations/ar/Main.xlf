@@ -297,6 +297,26 @@
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">تجاهل</target>
       </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">إغلاق</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">إلغاء</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">إزالة</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">النوع</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+        <source>Name</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">الاسم</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
