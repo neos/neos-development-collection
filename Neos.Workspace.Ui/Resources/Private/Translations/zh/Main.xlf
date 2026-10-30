@@ -293,6 +293,30 @@
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">舍弃</target>
       </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">关闭</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">取消</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">移除</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">类型</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.USER" xml:space="preserve">
+        <source>User</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">用户</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+        <source>Name</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">姓名</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

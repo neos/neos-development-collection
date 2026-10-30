@@ -589,6 +589,34 @@
         <source>Discard</source>
         <target state="translated">Verwerpen</target>
       </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Sluiten</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Annuleren</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Verwijderen</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Type</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.USER" xml:space="preserve">
+        <source>User</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Gebruiker</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+        <source>Name</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Naam</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.actions" xml:space="preserve">
+        <source>Actions</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Acties</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
