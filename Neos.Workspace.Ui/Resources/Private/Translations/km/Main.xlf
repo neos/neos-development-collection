@@ -289,6 +289,30 @@
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">បោះបង់</target>
       </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">បិទ</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">បោះបង់</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">លុបចេញ</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ប្រភេទ</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.USER" xml:space="preserve">
+        <source>User</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">គណនី</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+        <source>Name</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">ឈ្មោះ</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
