@@ -85,7 +85,7 @@ final readonly class LocalSubgraphStateDiff implements \JsonSerializable
                 'references' => $this->references,
                 'backReferences' => $this->backReferences,
             ],
-            fn(mixed $value): bool => $value !== null
+            fn (mixed $value): bool => $value !== null
         );
     }
 }
