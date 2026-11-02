@@ -53,6 +53,26 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597909228
 
+  Scenario: Remove hierarchy relations for node
+    And I remove the following hierarchy relation:
+      | Key                   | Value                    |
+      | contentStreamId       | "cs-identifier"          |
+      | dimensionSpacePoint   | {"language":"de"}        |
+      | parentNodeAggregateId | "lady-eleonode-rootford" |
+      | childNodeAggregateId  | "nody-mc-nodeface"       |
+    And I remove the following hierarchy relation:
+      | Key                   | Value                    |
+      | contentStreamId       | "cs-identifier"          |
+      | dimensionSpacePoint   | {"language":"gsw"}       |
+      | parentNodeAggregateId | "lady-eleonode-rootford" |
+      | childNodeAggregateId  | "nody-mc-nodeface"       |
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 1 error
+    And I expect integrity violation detection result error number 1 to have code 1597909228 and message:
+    """
+    Node nody-mc-nodeface (relationanchorpoint 2) found but no hierarchy references that node.
+    """
+
   # Scenario: Change a node's origin dimension space point hash
   # This is rendundant since a node with invalid origin DSP hash will not cover its origin (see AllNodesCoverTheirOrigin)
   # or the covering relation's hash is also corrupted which is already detected by above test
