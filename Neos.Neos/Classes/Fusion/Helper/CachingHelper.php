@@ -43,11 +43,14 @@ class CachingHelper implements ProtectedContextAwareInterface
      * A cache entry with this tag will be flushed whenever one of the
      * given nodes (for any variant) is updated.
      *
-     * @param iterable<Node>|Node $nodes (A single Node or array or \Traversable of Nodes)
+     * @param iterable<Node>|Node|null $nodes (A single Node or array or \Traversable of Nodes or null)
      * @return array<int,string>,
      */
-    public function nodeTag(iterable|Node $nodes): array
+    public function nodeTag(iterable|Node|null $nodes): array
     {
+        if (!$nodes) {
+            return [];
+        }
         if (!is_iterable($nodes)) {
             $nodes = [$nodes];
         } else {
@@ -70,20 +73,21 @@ class CachingHelper implements ProtectedContextAwareInterface
      *     }
      *
      */
-    public function entryIdentifierForNode(Node $node): NodeCacheEntryIdentifier
+    public function entryIdentifierForNode(Node|null $node): ?NodeCacheEntryIdentifier
     {
-        return NodeCacheEntryIdentifier::fromNode($node);
+        return $node ? NodeCacheEntryIdentifier::fromNode($node) : null;
     }
 
     /**
      * Generate a `@cache` entry tag for a single node identifier.
      *
-     * @param string $identifier
-     * @param Node $contextNode
      * @return string[]
      */
-    public function nodeTagForIdentifier(string $identifier, Node $contextNode): array
+    public function nodeTagForIdentifier(string|null $identifier, Node|null $contextNode): array
     {
+        if (!$identifier || !$contextNode) {
+            return [];
+        }
         return [
             CacheTag::forNodeAggregate(
                 $contextNode->contentRepositoryId,
@@ -108,11 +112,14 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (for any variant) that is of the given node type name(s)
      * (including inheritance) is updated.
      *
-     * @param iterable<string>|string $nodeTypes
+     * @param iterable<string>|string|null $nodeTypes
      * @return array<int,string>
      */
-    public function nodeTypeTag(string|iterable $nodeTypes, Node $contextNode): array
+    public function nodeTypeTag(string|iterable|null $nodeTypes, Node $contextNode): array
     {
+        if (!$nodeTypes) {
+            return [];
+        }
         if (!is_iterable($nodeTypes)) {
             $nodeTypes = [$nodeTypes];
         } else {
@@ -143,11 +150,14 @@ class CachingHelper implements ProtectedContextAwareInterface
      * (for any variant) that is a descendant (child on any level) of one of
      * the given nodes is updated.
      *
-     * @param iterable<Node>|Node $nodes (A single Node or array or \Traversable of Nodes)
+     * @param iterable<Node>|Node|null $nodes (A single Node or array or \Traversable of Nodes or null)
      * @return array<int,string>
      */
-    public function descendantOfTag(iterable|Node $nodes): array
+    public function descendantOfTag(iterable|Node|null $nodes): array
     {
+        if (!$nodes) {
+            return [];
+        }
         if (!is_iterable($nodes)) {
             $nodes = [$nodes];
         } else {
