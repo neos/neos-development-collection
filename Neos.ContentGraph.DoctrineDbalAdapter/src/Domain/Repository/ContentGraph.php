@@ -18,9 +18,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeSortPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeSortPathsInCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -189,30 +191,50 @@ final class ContentGraph implements ContentGraphInterface
     public function findAncestorNodeAggregateIds(NodeAggregateId $entryNodeAggregateId): NodeAggregateIds
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
-        $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('ch.parentnodeanchor')
-            ->fromTableSubquery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'ch')
-            ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->andWhereCondition($nodeAggregateIdCondition, 'c');
+        $queryBuilderHierarchy = $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
 
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('ph.parentnodeanchor')
-            ->from('ancestry', 'ch')
-            ->innerJoinTableSubquery('ch', $this->hierarchyRelationQuery, 'ph', 'ph.childnodeanchor = ch.parentnodeanchor');
+        $queryBuilderEntryNodeSortPaths = $this->createQueryBuilder()
+            ->select('h.sortpath, dsp.dimensionspacepoint')
+            ->from($this->tableNames->node(), 'c')
+            ->innerJoinTableSubquery(
+                'c',
+                $queryBuilderHierarchy,
+                'h',
+                'h.childnodeanchor = c.relationanchorpoint'
+            )
+            ->innerJoin('h', $this->tableNames->dimensionSpacePoints(), 'dsp', 'dsp.hash = h.dimensionspacepointhash')
+            ->where('c.nodeaggregateid = :nodeAggregateId')
+            ->setParameter('nodeAggregateId', $entryNodeAggregateId->value)
+            ->mergeParameters($queryBuilderHierarchy->getParameters())
+        ;
 
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('n.nodeAggregateId')
-            ->from('ancestry', 'a')
-            ->innerJoin('a', $this->tableNames->node(), 'n', 'n.relationanchorpoint = a.parentnodeanchor');
+        $dimensionSpacePointsBySortPath = [];
+        foreach ($this->fetchRows($queryBuilderEntryNodeSortPaths) as $row) {
+            $dimensionSpacePointsBySortPath[$row['sortpath']][] = DimensionSpacePoint::fromJsonString($row['dimensionspacepoint']);
+        }
 
-        $nodeAggregateIdRows = $this->fetchCteResults(
-            $queryBuilderInitial,
-            $queryBuilderRecursive,
-            $queryBuilderCte,
-            'ancestry'
-        );
+        $ancestorNodeAggregateIds = [];
+        foreach ($dimensionSpacePointsBySortPath as $sortPathValue => $dimensionSpacePoints) {
+            $sortPath = NodeSortPath::fromString((string)$sortPathValue);
+            if ($sortPath->isRoot()) {
+                continue;
+            }
+            $queryBuilderNodeAggregateIds = $this->createQueryBuilder()
+                ->select('n.nodeaggregateid')
+                ->fromTableSubquery(
+                    $this->hierarchyRelationQuery
+                        ->withDimensionSpacePoints(DimensionSpacePointSet::fromArray($dimensionSpacePoints))
+                        ->withWhereCondition(NodeSortPathsInCondition::forNodeSortPaths($sortPath->getAncestors())),
+                    'h'
+                )
+                ->innerJoin('h', $this->tableNames->node(), 'n', 'n.relationanchorpoint = h.childnodeanchor');
 
-        return NodeAggregateIds::fromArray(array_map(fn (array $row) => NodeAggregateId::fromString($row['nodeAggregateId']), $nodeAggregateIdRows));
+            foreach ($this->fetchRows($queryBuilderNodeAggregateIds) as $row) {
+                $ancestorNodeAggregateIds[$row['nodeaggregateid']] = NodeAggregateId::fromString((string)$row['nodeaggregateid']);
+            }
+        }
+
+        return NodeAggregateIds::fromArray(array_values($ancestorNodeAggregateIds));
     }
 
     public function findChildNodeAggregates(
@@ -350,28 +372,6 @@ final class ContentGraph implements ContentGraphInterface
             return $queryBuilder->executeQuery()->fetchAllAssociative();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
-        }
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    private function fetchCteResults(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): array
-    {
-        $query = <<<SQL
-            WITH RECURSIVE {$cteTableName} AS (
-                {$queryBuilderInitial->getSQL()}
-                UNION
-                {$queryBuilderRecursive->getSQL()}
-            )
-            {$queryBuilderCte->getSQL()}
-        SQL;
-        $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
-        $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
-        try {
-            return $this->dbal->fetchAllAssociative($query, $parameters, $parameterTypes);
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch CTE result: %s', $e->getMessage()), 1678358108, $e);
         }
     }
 

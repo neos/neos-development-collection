@@ -16,13 +16,16 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ContentStreamLayers;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeSortPath;
 use Neos\ContentGraph\DoctrineDbalAdapter\HierarchyRelationSubquery;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\NodeQueryBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeSortPathRangeCondition;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeSortPathsInCondition;
+use Neos\ContentGraph\DoctrineDbalAdapter\NodeTypeCriteriaCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\ReferenceDestinationNodeAggregateIdCondition;
 use Neos\ContentGraph\DoctrineDbalAdapter\SqlTableSubqueryFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -116,7 +119,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
         $this->hierarchyRelationQuery = SqlTableSubqueryFactory::for($tableNames)
             ->forHierarchyRelation($this->contentStreamLayers)
-            ->withDimensionSpacePoint($this->dimensionSpacePoint);
+            ->withDimensionSpacePoint($this->dimensionSpacePoint)
+        ;
     }
 
     public function getContentRepositoryId(): ContentRepositoryId
@@ -148,7 +152,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->ordering !== null) {
             $this->applyOrdering($queryBuilder, $filter->ordering);
         }
-        $queryBuilder->addOrderBy('h.position');
+        $queryBuilder->addOrderBy('h.sortpath');
         return $this->fetchNodes($queryBuilder);
     }
 
@@ -184,7 +188,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition))
-            ->whereCondition('n', $nodeAggregateIdCondition);
+            ->whereCondition('n', $nodeAggregateIdCondition)
+        ;
 
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
@@ -194,7 +199,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateIds($nodeAggregateIds);
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition))
-            ->whereCondition('n', $nodeAggregateIdCondition);
+            ->whereCondition('n', $nodeAggregateIdCondition)
+        ;
 
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNodes($queryBuilder);
@@ -205,7 +211,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyRelationQuery->withParentNodeRelationAnchor(
             NodeRelationAnchorPoint::forRootEdge()
         ))
-            ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value);
+            ->andWhere('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
+        ;
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
@@ -245,7 +252,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicChildNodesQuery($this->hierarchyRelationQuery, $parentNodeAggregateId)
-            ->andWhere('n.name = :edgeName')->setParameter('edgeName', $nodeName->value);
+            ->andWhere('n.name = :edgeName')->setParameter('edgeName', $nodeName->value)
+        ;
         $this->addSubtreeTagConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
@@ -272,7 +280,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             );
         }
         $ancestors = $this->findAncestorNodes($leafNode->aggregateId, FindAncestorNodesFilter::create())
-            ->reverse();
+            ->reverse()
+        ;
 
         try {
             return AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
@@ -287,171 +296,116 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
     {
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
-
-        $queryBuilderInitial = $this->createQueryBuilder()
-            // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
-            ->from($this->tableNames->node(), 'n')
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->whereCondition('n', $nodeAggregateIdCondition);
-        $this->addSubtreeTagConstraints($queryBuilderInitial);
-
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.subtreetags, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
-            ->from('tree', 'p')
-            ->innerJoinTableSubquery('p', $this->hierarchyRelationQuery, 'h', 'h.parentnodeanchor = p.relationanchorpoint')
-            ->innerJoin('p', $this->tableNames->node(), 'c', 'c.relationanchorpoint = h.childnodeanchor');
-        if ($filter->maximumLevels !== null) {
-            $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
+        $sortPath = $this->findNodeSortPathForNodeAggregateId($entryNodeAggregateId);
+        if ($sortPath === null) {
+            return null;
         }
+        $entryDepth = $sortPath->getDepth();
+
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery(
+            $this->hierarchyRelationQuery->withWhereCondition(NodeSortPathRangeCondition::forNodeSortPath(
+                $sortPath,
+                includeStartingPoint: true,
+                maxDepth: $filter->maximumLevels !== null ? $entryDepth + $filter->maximumLevels : null,
+            )),
+            'n',
+            'n.*, h.subtreetags, h.sortpath, h.depth'
+        );
+        $this->addSubtreeTagConstraints($queryBuilder);
+
         if ($filter->nodeTypes !== null) {
-            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderRecursive, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'c');
+            $nodeTypeCriteriaCondition = NodeTypeCriteriaCondition::create(ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
+            // NodeType filter doesn't apply to the entry node, which is always part of the subtree. So it's excluded by sortPath from the filter.
+            $queryBuilder->andWhere('(h.sortpath = :entrySortPath OR ' . $nodeTypeCriteriaCondition->toWhereSql('n') . ')')
+                ->setParameter('entrySortPath', $sortPath->value)
+                ->mergeParameters($nodeTypeCriteriaCondition->getParameters())
+            ;
         }
-        $this->addSubtreeTagConstraints($queryBuilderRecursive);
+        $queryBuilder->orderBy('h.sortpath');
+        $nodeRows = $this->fetchNodeRows($queryBuilder);
 
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('tree')
-            ->orderBy('level')
-            ->addOrderBy('position');
-
-        $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
-        /** @var array<string, Subtree[]> $subtreesByParentNodeId */
-        $subtreesByParentNodeId = [];
-        foreach (array_reverse($result) as $nodeData) {
-            $nodeAggregateId = $nodeData['nodeaggregateid'];
-            $parentNodeAggregateId = $nodeData['parentNodeAggregateId'];
-            $node = $this->nodeFactory->mapNodeRowToNode(
-                $nodeData,
-                $this->workspaceName,
-                $this->dimensionSpacePoint,
-                $this->visibilityConstraints
-            );
+        // The node type filter drops non-matching nodes regardless of their position in the subtree.
+        // While building the subtree below, nodes whose parent is not part of the result are dropped as well,
+        // even if they matched the node type filter.
+        /** @var array<string, Subtree[]> $subtreesByParentSortPath */
+        $subtreesByParentSortPath = [];
+        foreach (array_reverse($nodeRows) as $nodeRow) {
+            $level = (int)$nodeRow['depth'] - $entryDepth;
             $subtree = Subtree::create(
-                (int)$nodeData['level'],
-                $node,
-                array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? Subtrees::fromArray(array_reverse($subtreesByParentNodeId[$nodeAggregateId])) : Subtrees::createEmpty()
+                $level,
+                $this->nodeFactory->mapNodeRowToNode($nodeRow, $this->workspaceName, $this->dimensionSpacePoint, $this->visibilityConstraints),
+                Subtrees::fromArray(array_reverse($subtreesByParentSortPath[(string)$nodeRow['sortpath']] ?? []))
             );
-            if ($subtree->level === 0) {
+            if ($level === 0) {
                 return $subtree;
             }
-            if (!array_key_exists($parentNodeAggregateId, $subtreesByParentNodeId)) {
-                $subtreesByParentNodeId[$parentNodeAggregateId] = [];
-            }
-            $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
+            $subtreesByParentSortPath[NodeSortPath::fromString((string)$nodeRow['sortpath'])->getParent()->value][] = $subtree;
         }
         return null;
     }
 
     public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter $filter): Nodes
     {
-        [
-            'queryBuilderInitial' => $queryBuilderInitial,
-            'queryBuilderRecursive' => $queryBuilderRecursive,
-            'queryBuilderCte' => $queryBuilderCte
-        ] = $this->buildAncestorNodesQueries($entryNodeAggregateId, $filter);
-        $queryBuilderCte->addOrderBy('level');
+        $queryBuilder = $this->buildAncestorNodesQuery($entryNodeAggregateId, $filter);
+        if ($queryBuilder === null) {
+            return Nodes::createEmpty();
+        }
+        $queryBuilder->orderBy('sortpath', 'DESC');
 
-        $nodeRows = $this->fetchCteResults(
-            $queryBuilderInitial,
-            $queryBuilderRecursive,
-            $queryBuilderCte,
-            'ancestry'
-        );
-
-        return $this->nodeFactory->mapNodeRowsToNodes(
-            $nodeRows,
-            $this->workspaceName,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        return $this->fetchNodes($queryBuilder);
     }
 
     public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, CountAncestorNodesFilter $filter): int
     {
-        [
-            'queryBuilderInitial' => $queryBuilderInitial,
-            'queryBuilderRecursive' => $queryBuilderRecursive,
-            'queryBuilderCte' => $queryBuilderCte
-        ] = $this->buildAncestorNodesQueries($entryNodeAggregateId, $filter);
-
-        return $this->fetchCteCountResult(
-            $queryBuilderInitial,
-            $queryBuilderRecursive,
-            $queryBuilderCte,
-            'ancestry'
-        );
+        $queryBuilder = $this->buildAncestorNodesQuery($entryNodeAggregateId, $filter);
+        return $queryBuilder !== null ? $this->fetchCount($queryBuilder) : 0;
     }
 
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, FindClosestNodeFilter $filter): ?Node
     {
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
+        $queryBuilder = $this->buildAncestorNodesQuery($entryNodeAggregateId, $filter, includeStartingPoint: true);
+        if ($queryBuilder === null) {
+            return null;
+        }
+        $queryBuilder->orderBy('sortpath', 'DESC');
+        $queryBuilder->setMaxResults(1);
 
-        $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.subtreetags, ph.parentnodeanchor')
-            ->from($this->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->whereCondition('n', $nodeAggregateIdCondition);
-        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
-
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('pn.*, h.subtreetags, h.parentnodeanchor')
-            ->from('ancestry', 'cn')
-            ->innerJoin('cn', $this->tableNames->node(), 'pn', 'pn.relationanchorpoint = cn.parentnodeanchor')
-            ->innerJoinTableSubquery('pn', $this->hierarchyRelationQuery, 'h', 'h.childnodeanchor = pn.relationanchorpoint');
-        $this->addSubtreeTagConstraints($queryBuilderRecursive);
-
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('ancestry', 'pn');
-
-        $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
-        $nodeRows = $this->fetchCteResults(
-            $queryBuilderInitial,
-            $queryBuilderRecursive,
-            $queryBuilderCte,
-            'ancestry'
-        );
-        return $this->nodeFactory->mapNodeRowsToNodes(
-            $nodeRows,
-            $this->workspaceName,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        )->first();
+        return $this->fetchNode($queryBuilder);
     }
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
-        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
+        $queryBuilder = $this->buildDescendantNodeQuery($entryNodeAggregateId, $filter);
+        if ($queryBuilder === null) {
+            return Nodes::createEmpty();
+        }
+
         if ($filter->ordering !== null) {
-            $this->applyOrdering($queryBuilderCte, $filter->ordering);
+            $this->applyOrdering($queryBuilder, $filter->ordering);
         }
         if ($filter->pagination !== null) {
-            $this->applyPagination($queryBuilderCte, $filter->pagination);
+            $this->applyPagination($queryBuilder, $filter->pagination);
         }
-        $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
-        $nodeRows = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
-        return $this->nodeFactory->mapNodeRowsToNodes(
-            $nodeRows,
-            $this->workspaceName,
-            $this->dimensionSpacePoint,
-            $this->visibilityConstraints
-        );
+        $queryBuilder->addOrderBy('h.sortpath');
+
+        return $this->fetchNodes($queryBuilder);
     }
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, CountDescendantNodesFilter $filter): int
     {
-        ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
-        return $this->fetchCteCountResult($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
+        $queryBuilder = $this->buildDescendantNodeQuery($entryNodeAggregateId, $filter);
+        if ($queryBuilder === null) {
+            return 0;
+        }
+
+        return $this->fetchCount($queryBuilder);
     }
 
     public function countNodes(): int
     {
         $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery($this->hierarchyRelationQuery, 'n', 'COUNT(*)');
         try {
-            $result = $this->executeQuery($queryBuilder)->fetchOne();
+            $result = $queryBuilder->executeQuery()->fetchOne();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to count all nodes: %s', $e->getMessage()), 1678364741, $e);
         }
@@ -536,7 +490,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             )')
             ->mergeParameters($this->hierarchyRelationQuery->getParameters())
             ->mergeParameters($subselectParameters)
-            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
+            ->setParameter('nodeAggregateId', $nodeAggregateId->value)
+        ;
         $this->addSubtreeTagConstraints($queryBuilder, 'dh');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "dn");
@@ -592,7 +547,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('sh', $this->tableNames->node(), 'sn', 'sn.relationanchorpoint = sh.childnodeanchor')
             ->innerJoin('sn', $this->tableNames->referenceRelation(), 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
             // FIXME evaluate to use NodeAggregateIdClause prefiltering here as well? Possibly makes the subquery redundant because results will be prefiltered.
-            ->where(<<<SQL
+            ->where(
+                <<<SQL
             r.destinationnodeaggregateid = (
               SELECT nodeaggregateid FROM {$this->tableNames->node()} dn
                 JOIN {$this->hierarchyRelationQuery->toSql()} dh
@@ -601,10 +557,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 {$subtreeTagConstraints}
               LIMIT 1
             )
-            SQL)
+            SQL
+            )
             ->mergeParameters($this->hierarchyRelationQuery->getParameters())
             ->mergeParameters($subselectParameters)
-            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
+            ->setParameter('nodeAggregateId', $nodeAggregateId->value)
+        ;
         $this->addSubtreeTagConstraints($queryBuilder, 'sh');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "sn");
@@ -659,80 +617,65 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $queryBuilder;
     }
 
-    /**
-     * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
-     */
-    private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter): array
+    private function buildAncestorNodesQuery(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestNodeFilter $filter, bool $includeStartingPoint = false): ?QueryBuilder
     {
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
+        $sortPath = $this->findNodeSortPathForNodeAggregateId($entryNodeAggregateId);
+        if ($sortPath === null) {
+            return null;
+        }
 
-        $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('n.*, ph.subtreetags, ph.parentnodeanchor, 0 AS level')
-            ->from($this->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
-            ->innerJoin('ch', $this->tableNames->node(), 'c', 'c.relationanchorpoint = ch.childnodeanchor')
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery, 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
-            ->andWhereCondition($nodeAggregateIdCondition, 'c');
-        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ph');
-        $this->addSubtreeTagConstraints($queryBuilderInitial, 'ch');
+        $ancestorSortPaths = !$sortPath->isRoot() ? $sortPath->getAncestors() : [];
+        if ($includeStartingPoint === true) {
+            array_unshift($ancestorSortPaths, $sortPath);
+        }
 
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('pn.*, h.subtreetags, h.parentnodeanchor,  ch.level + 1 AS level')
-            ->from('ancestry', 'ch')
-            ->innerJoin('ch', $this->tableNames->node(), 'pn', 'pn.relationanchorpoint = ch.parentnodeanchor')
-            ->innerJoinTableSubquery('pn', $this->hierarchyRelationQuery, 'h', 'h.childnodeanchor = pn.relationanchorpoint');
-        $this->addSubtreeTagConstraints($queryBuilderRecursive);
+        if ($ancestorSortPaths === []) {
+            return null;
+        }
 
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('ancestry', 'pn');
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery(
+            $this->hierarchyRelationQuery->withWhereCondition(
+                NodeSortPathsInCondition::forNodeSortPaths($ancestorSortPaths)
+            ),
+            'n',
+            'n.*, h.subtreetags, h.sortpath'
+        );
+        $this->addSubtreeTagConstraints($queryBuilder);
 
         if ($filter->nodeTypes !== null) {
-            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), 'pn');
+            $this->nodeQueryBuilder->addNodeTypeCriteria(
+                $queryBuilder,
+                ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)
+            );
         }
-        return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
+
+        return $queryBuilder;
     }
 
-    /**
-     * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
-     */
-    private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): array
+    private function buildDescendantNodeQuery(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): ?QueryBuilder
     {
-        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($entryNodeAggregateId);
+        $sortPath = $this->findNodeSortPathForNodeAggregateId($entryNodeAggregateId);
+        if ($sortPath === null) {
+            return null;
+        }
 
-        $queryBuilderInitial = $this->createQueryBuilder()
-            // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.subtreetags, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
-            ->from($this->tableNames->node(), 'n')
-            // we need to join with the hierarchy relation, because we need the node name.
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery->withPossibleParentNodeAggregateId($nodeAggregateIdCondition), 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->innerJoin('n', $this->tableNames->node(), 'p', 'p.relationanchorpoint = h.parentnodeanchor')
-            ->innerJoinTableSubquery('n', $this->hierarchyRelationQuery, 'ph', 'ph.childnodeanchor = p.relationanchorpoint')
-            ->whereCondition('p', $nodeAggregateIdCondition);
-        $this->addSubtreeTagConstraints($queryBuilderInitial);
-
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('cn.*, h.subtreetags, pn.nodeaggregateid AS parentNodeAggregateId, pn.level + 1 AS level, h.position')
-            ->from('tree', 'pn')
-            ->innerJoinTableSubquery('pn', $this->hierarchyRelationQuery, 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
-            ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = h.childnodeanchor');
-        $this->addSubtreeTagConstraints($queryBuilderRecursive);
-
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('tree', 'n');
+        $queryBuilder = $this->nodeQueryBuilder->buildBasicNodeQuery(
+            $this->hierarchyRelationQuery->withWhereCondition(NodeSortPathRangeCondition::forNodeSortPath($sortPath)),
+            'n',
+            'n.*, h.subtreetags, h.sortpath'
+        );
+        $this->addSubtreeTagConstraints($queryBuilder);
 
         if ($filter->nodeTypes !== null) {
-            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilderCte, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
+            $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager));
         }
         if ($filter->searchTerm !== null) {
-            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm);
+            $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
         }
         if ($filter->propertyValue !== null) {
-            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue);
+            $this->nodeQueryBuilder->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
         }
-        return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
+        return $queryBuilder;
     }
 
     private function applyOrdering(QueryBuilder $queryBuilder, Ordering $ordering, string $nodeTableAlias = 'n'): void
@@ -761,20 +704,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $queryBuilder->setMaxResults($pagination->limit)->setFirstResult($pagination->offset);
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @return Result
-     * @throws DBALException
-     */
-    private function executeQuery(QueryBuilder $queryBuilder): Result
-    {
-        return $queryBuilder->executeQuery();
-    }
-
     private function fetchNode(QueryBuilder $queryBuilder): ?Node
     {
         try {
-            $nodeRow = $this->executeQuery($queryBuilder)->fetchAssociative();
+            $nodeRow = $queryBuilder->executeQuery()->fetchAssociative();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch node: %s', $e->getMessage()), 1678286030, $e);
         }
@@ -789,15 +722,23 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
-    private function fetchNodes(QueryBuilder $queryBuilder): Nodes
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return list<array<string,mixed>>
+     */
+    private function fetchNodeRows(QueryBuilder $queryBuilder): array
     {
         try {
-            $nodeRows = $this->executeQuery($queryBuilder)->fetchAllAssociative();
+            return $queryBuilder->executeQuery()->fetchAllAssociative();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch nodes: %s', $e->getMessage()), 1678292896, $e);
         }
+    }
+
+    private function fetchNodes(QueryBuilder $queryBuilder): Nodes
+    {
         return $this->nodeFactory->mapNodeRowsToNodes(
-            $nodeRows,
+            $this->fetchNodeRows($queryBuilder),
             $this->workspaceName,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
@@ -807,7 +748,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function fetchCount(QueryBuilder $queryBuilder): int
     {
         try {
-            return (int)$this->executeQuery($queryBuilder->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1))->fetchOne();
+            return (int)$queryBuilder->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1)->executeQuery()->fetchOne();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch count: %s', $e->getMessage()), 1679048349, $e);
         }
@@ -816,7 +757,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function fetchReferences(QueryBuilder $queryBuilder): References
     {
         try {
-            $referenceRows = $this->executeQuery($queryBuilder)->fetchAllAssociative();
+            $referenceRows = $queryBuilder->executeQuery()->fetchAllAssociative();
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to fetch references: %s', $e->getMessage()), 1678364944, $e);
         }
@@ -828,44 +769,36 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    private function fetchCteResults(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): array
+    private function findNodeSortPathForNodeAggregateId(NodeAggregateId $nodeAggregateId): ?NodeSortPath
     {
-        $query = <<<SQL
-            WITH RECURSIVE {$cteTableName} AS (
-                {$queryBuilderInitial->getSQL()}
-                UNION
-                {$queryBuilderRecursive->getSQL()}
-            )
-            {$queryBuilderCte->getSQL()}
-        SQL;
+        $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
+        $queryBuilderHierarchy = $this->hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
 
-        $fullQueryBuilder = (clone $queryBuilderCte)->mergeParametersFromBuilder($queryBuilderInitial)->mergeParametersFromBuilder($queryBuilderRecursive);
-        try {
-            return $this->dbal->fetchAllAssociative($query, $fullQueryBuilder->getParameters(), $fullQueryBuilder->getParameterTypes());
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch CTE result: %s', $e->getMessage()), 1678358108, $e);
-        }
-    }
-
-    private function fetchCteCountResult(QueryBuilder $queryBuilderInitial, QueryBuilder $queryBuilderRecursive, QueryBuilder $queryBuilderCte, string $cteTableName = 'cte'): int
-    {
-        $query = <<<SQL
-            WITH RECURSIVE {$cteTableName} AS (
-                {$queryBuilderInitial->getSQL()}
-                UNION
-                {$queryBuilderRecursive->getSQL()}
+        // Find hierarchy relation of $nodeAggregateId
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('h.sortpath')
+            ->from($this->tableNames->node(), 'c')
+            ->innerJoinTableSubquery(
+                'c',
+                $queryBuilderHierarchy,
+                'h',
+                'h.childnodeanchor = c.relationanchorpoint'
             )
-            {$queryBuilderCte->select('COUNT(*)')->resetOrderBy()->setFirstResult(0)->setMaxResults(1)}
-        SQL;
-        $parameters = array_merge($queryBuilderInitial->getParameters(), $queryBuilderRecursive->getParameters(), $queryBuilderCte->getParameters());
-        $parameterTypes = array_merge($queryBuilderInitial->getParameterTypes(), $queryBuilderRecursive->getParameterTypes(), $queryBuilderCte->getParameterTypes());
+            ->where('c.nodeaggregateid = :nodeAggregateId')
+            ->setParameter('nodeAggregateId', $nodeAggregateId->value)
+            ->mergeParameters($queryBuilderHierarchy->getParameters())
+        ;
+        $this->addSubtreeTagConstraints($queryBuilder);
+
         try {
-            return (int)$this->dbal->fetchOne($query, $parameters, $parameterTypes);
+            $sortPath = $queryBuilder->executeQuery()->fetchOne();
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to fetch CTE count result: %s', $e->getMessage()), 1679047841, $e);
+            throw new \RuntimeException(sprintf('Failed to fetch hierarchy relations: %s', $e->getMessage()), 1790927811, $e);
         }
+
+        if (!is_string($sortPath)) {
+            return null;
+        }
+        return NodeSortPath::fromString($sortPath);
     }
 }

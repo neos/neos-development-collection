@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 trait NodeMove
 {
     use SubtreeTagging;
+    use SortPath;
 
     private function moveNodeAggregate(ContentStreamLayers $contentStreamLayers, NodeAggregateId $nodeAggregateId, ?NodeAggregateId $newParentNodeAggregateId, InterdimensionalSiblings $succeedingSiblingsForCoverage): void
     {
@@ -91,31 +92,47 @@ trait NodeMove
         }
 
         // fetch...
-        $newPosition = $this->getRelationPosition(
+        $sortPathResult = $this->determineRelationNodeSortPath(
             $ingoingHierarchyRelation->parentNodeAnchor,
-            null,
             $newSucceedingSibling?->relationAnchorPoint,
             $contentStreamLayers,
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
+        $newSortPath = $sortPathResult->nodeSortPath;
 
-        // ...and assign the new position
+        if ($sortPathResult->rebalanced) {
+            // After rebalancing we need to re-read the hierarchy relation
+            $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
+                $nodeToBeMoved,
+                $contentStreamLayers,
+                $succeedingSiblingForCoverage->dimensionSpacePoint
+            );
+        }
+
+        // ...and assign the new sortPath
         if ($contentStreamLayers->getWriteLayer()->equals($ingoingHierarchyRelation->contentStreamLayer)) {
-            $ingoingHierarchyRelation->assignNewPosition(
-                $newPosition,
+            $ingoingHierarchyRelation->assignNewSortPath(
+                $newSortPath,
                 $this->dbal,
                 $this->tableNames
             );
         } else {
             $copiedHierarchyRelation = $ingoingHierarchyRelation->with(
                 contentStreamLayer: $contentStreamLayers->getWriteLayer(),
-                position: $newPosition,
+                sortPath: $newSortPath,
             );
             $copiedHierarchyRelation->addToDatabase(
                 $this->dbal,
                 $this->tableNames
             );
         }
+
+        $this->repathDescendants(
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint,
+            $ingoingHierarchyRelation->sortPath,
+            $newSortPath
+        );
     }
 
     /**
@@ -132,13 +149,6 @@ trait NodeMove
         NodeAggregateId $parentNodeAggregateId,
         InterdimensionalSibling $succeedingSiblingForCoverage,
     ): void {
-        // find the single ingoing hierarchy relation which we want to move
-        $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
-            $nodeToBeMoved,
-            $contentStreamLayers,
-            $succeedingSiblingForCoverage->dimensionSpacePoint
-        );
-
         // find the new parent NodeRecord; We need this record because we'll use its RelationAnchorPoints later.
         $newParent = $this->projectionContentGraph->findNodeInAggregate(
             $contentStreamLayers,
@@ -162,11 +172,17 @@ trait NodeMove
             }
         }
 
-        // assign new position
-        $newPosition = $this->getRelationPosition(
+        // assign new sortPath
+        $newSortPath = $this->determineRelationNodeSortPath(
             $newParent->relationAnchorPoint,
-            null,
             $newSucceedingSibling?->relationAnchorPoint,
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint
+        )->nodeSortPath;
+
+        // find the single ingoing hierarchy relation which we want to move after possible rebalancing of sort paths.
+        $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
+            $nodeToBeMoved,
             $contentStreamLayers,
             $succeedingSiblingForCoverage->dimensionSpacePoint
         );
@@ -175,7 +191,7 @@ trait NodeMove
         if ($contentStreamLayers->getWriteLayer()->equals($ingoingHierarchyRelation->contentStreamLayer)) {
             $ingoingHierarchyRelation->assignNewParentNode(
                 $newParent->relationAnchorPoint,
-                $newPosition,
+                $newSortPath,
                 $this->dbal,
                 $this->tableNames
             );
@@ -183,13 +199,20 @@ trait NodeMove
             $copiedHierarchyRelation = $ingoingHierarchyRelation->with(
                 parentNodeAnchor: $newParent->relationAnchorPoint,
                 contentStreamLayer: $contentStreamLayers->getWriteLayer(),
-                position: $newPosition,
+                sortPath: $newSortPath,
             );
             $copiedHierarchyRelation->addToDatabase(
                 $this->dbal,
                 $this->tableNames
             );
         }
+
+        $this->repathDescendants(
+            $contentStreamLayers,
+            $succeedingSiblingForCoverage->dimensionSpacePoint,
+            $ingoingHierarchyRelation->sortPath,
+            $newSortPath
+        );
     }
 
     /**
@@ -198,7 +221,7 @@ trait NodeMove
     private function findIngoingHierarchyRelationToBeMoved(
         NodeRecord $nodeToBeMoved,
         ContentStreamLayers $contentStreamLayers,
-        DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen
+        DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen,
     ): HierarchyRelation {
         $restrictToSet = DimensionSpacePointSet::fromArray([$coveredDimensionSpacePointWhereMoveShouldHappen]);
         $ingoingHierarchyRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
