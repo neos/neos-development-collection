@@ -18,7 +18,10 @@ use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Thumbnail;
+use Neos\Media\Domain\Model\ThumbnailConfiguration;
+use Neos\Media\Domain\Model\ThumbnailGenerator\EagerThumbnailGeneratorInterface;
 use Neos\Media\Domain\Model\ThumbnailGenerator\ThumbnailGeneratorInterface;
 use Neos\Media\Exception\NoThumbnailAvailableException;
 use Neos\Utility\PositionalArraySorter;
@@ -74,6 +77,29 @@ class ThumbnailGeneratorStrategy
         }
 
         $this->logger->error(sprintf('All thumbnail generators failed to generate a thumbnail for asset %s (%s)', $thumbnail->getOriginalAsset()->getResource()->getSha1(), $thumbnail->getOriginalAsset()->getResource()->getFilename()), LogEnvironment::fromMethodName(__METHOD__));
+    }
+
+    /**
+     * Whether any registered generator claims thumbnail generation for the given asset
+     * and configuration (see EagerThumbnailGeneratorInterface).
+     *
+     * @param AssetInterface $asset
+     * @param ThumbnailConfiguration $configuration
+     * @return boolean
+     */
+    public function isThumbnailGenerationClaimed(AssetInterface $asset, ThumbnailConfiguration $configuration): bool
+    {
+        $generatorClassNames = static::getThumbnailGeneratorClassNames($this->objectManager);
+        foreach ($generatorClassNames as $generator) {
+            $className = $generator['className'];
+            if (!is_subclass_of($className, EagerThumbnailGeneratorInterface::class)) {
+                continue;
+            }
+            if ($this->objectManager->get($className)->claimsThumbnailGeneration($asset, $configuration)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
