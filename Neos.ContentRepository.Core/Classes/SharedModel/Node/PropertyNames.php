@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ProvidesSchema;
+
 /**
  * @implements \IteratorAggregate<int, PropertyName>
  * @api
  */
-final readonly class PropertyNames implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class PropertyNames implements ProvidesSchema, \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @var array<int, PropertyName>
@@ -64,6 +67,15 @@ final readonly class PropertyNames implements \IteratorAggregate, \Countable, \J
     public function jsonSerialize(): mixed
     {
         return $this->values;
+    }
+
+    public static function schema(): ArraySchema
+    {
+        static $schema = null;
+        return $schema ??= ArraySchema::create(
+            description: 'A list of node property names',
+            items: PropertyName::schema(),
+        );
     }
 
     public function getIterator(): \Traversable

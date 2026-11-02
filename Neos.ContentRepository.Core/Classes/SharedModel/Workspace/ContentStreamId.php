@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * The ContentStreamId is the identifier for a Content Stream, which is
@@ -22,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
  *
  * @api
  */
-final class ContentStreamId implements \JsonSerializable
+final class ContentStreamId implements ProvidesSchema, \JsonSerializable
 {
     /**
      * A preg pattern to match against content stream identifiers
@@ -37,12 +39,9 @@ final class ContentStreamId implements \JsonSerializable
     private function __construct(
         public readonly string $value
     ) {
-        if (!preg_match(self::PATTERN, $value)) {
-            throw new \InvalidArgumentException(
-                'Invalid content stream identifier "' . $value
-                . '" (a content stream identifier must only contain lowercase characters, numbers and the "-" sign).',
-                1505840197862
-            );
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid content stream identifier "%s": %s', $value, $validationResult->issues), 1791889844);
         }
     }
 
@@ -64,6 +63,18 @@ final class ContentStreamId implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Identifier of a content stream',
+            examples: ['a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'],
+            minLength: 1,
+            maxLength: 40,
+            pattern: '^[a-z0-9\-]+$',
+        );
     }
 
     public function equals(self $other): bool

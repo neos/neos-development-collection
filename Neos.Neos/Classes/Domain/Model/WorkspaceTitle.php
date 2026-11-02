@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * Human-Readable title of a workspace
@@ -12,13 +14,14 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Proxy(false)]
-final readonly class WorkspaceTitle implements \JsonSerializable
+final readonly class WorkspaceTitle implements ProvidesSchema, \JsonSerializable
 {
     public function __construct(
         public string $value
     ) {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $this->value) !== 1) {
-            throw new \InvalidArgumentException('Invalid workspace title given.', 1505827170288);
+        $validationResult = self::schema()->validate($this->value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid workspace title "%s": %s', $this->value, $validationResult->issues), 1791889845);
         }
     }
 
@@ -30,6 +33,18 @@ final readonly class WorkspaceTitle implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Human-readable title of a workspace',
+            examples: ['Live', 'John Doe\'s workspace'],
+            minLength: 1,
+            maxLength: 200,
+            pattern: '^[\p{L}\p{P}\d .]*$',
+        );
     }
 
     public function equals(self $other): bool

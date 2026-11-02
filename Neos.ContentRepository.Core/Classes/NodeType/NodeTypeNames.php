@@ -14,12 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ProvidesSchema;
+
 /**
  * A collection of NodeType names
  * @api
  * @implements \IteratorAggregate<NodeTypeName>
  */
-final class NodeTypeNames implements \IteratorAggregate
+final class NodeTypeNames implements ProvidesSchema, \IteratorAggregate
 {
     /**
      * @var array<NodeTypeName>
@@ -97,5 +100,14 @@ final class NodeTypeNames implements \IteratorAggregate
     public function isEmpty(): bool
     {
         return empty($this->nodeTypeNames);
+    }
+
+    public static function schema(): ArraySchema
+    {
+        static $schema = null;
+        return $schema ??= ArraySchema::create(
+            description: 'A list of node type names',
+            items: NodeTypeName::schema(),
+        );
     }
 }

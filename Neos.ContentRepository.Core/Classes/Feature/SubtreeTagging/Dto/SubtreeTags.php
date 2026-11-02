@@ -14,13 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
 
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ProvidesSchema;
+
 /**
  * A type-safe collection of {@see SubtreeTag} instances
  *
  * @api
  * @implements \IteratorAggregate<SubtreeTag>
  */
-final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class SubtreeTags implements ProvidesSchema, \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @var array<string, SubtreeTag>
@@ -139,5 +142,14 @@ final readonly class SubtreeTags implements \IteratorAggregate, \Countable, \Jso
     public function jsonSerialize(): array
     {
         return array_values($this->tags);
+    }
+
+    public static function schema(): ArraySchema
+    {
+        static $schema = null;
+        return $schema ??= ArraySchema::create(
+            description: 'A set of subtree tags',
+            items: SubtreeTag::schema(),
+        );
     }
 }

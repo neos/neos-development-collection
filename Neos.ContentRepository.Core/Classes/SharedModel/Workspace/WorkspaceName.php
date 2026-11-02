@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
 use Behat\Transliterator\Transliterator;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * Name of a workspace.
@@ -22,11 +24,12 @@ use Behat\Transliterator\Transliterator;
  *
  * @api
  */
-final class WorkspaceName implements \JsonSerializable
+final class WorkspaceName implements ProvidesSchema, \JsonSerializable
 {
+    /**
+     * @deprecated use `WorkspaceName::schema()->maxLength` instead
+     */
     public const MAX_LENGTH = 36;
-
-    private const PATTERN = '/^[a-z0-9][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
 
     public const WORKSPACE_NAME_LIVE = 'live';
 
@@ -39,8 +42,9 @@ final class WorkspaceName implements \JsonSerializable
     private function __construct(
         public readonly string $value
     ) {
-        if (!self::hasValidFormat($value)) {
-            throw new \InvalidArgumentException(sprintf('Invalid workspace name "%s" given. A workspace name has to consist of at most %d lower case characters', $value, self::MAX_LENGTH), 1505826610);
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid workspace name "%s": %s', $value, $validationResult->issues), 1505826610);
         }
     }
 
@@ -114,7 +118,19 @@ final class WorkspaceName implements \JsonSerializable
 
     private static function hasValidFormat(string $value): bool
     {
-        return preg_match(self::PATTERN, $value) === 1;
+        return self::schema()->validate($value)->valid;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Name of a workspace, unique within its content repository',
+            examples: ['live', 'user-john-doe'],
+            minLength: 1,
+            maxLength: self::MAX_LENGTH,
+            pattern: '^[a-z0-9][a-z0-9\-]*$',
+        );
     }
 
     public function __toString(): string

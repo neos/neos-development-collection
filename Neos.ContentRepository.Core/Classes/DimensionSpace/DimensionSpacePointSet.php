@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\DimensionSpace;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ProvidesSchema;
 
 /**
  * A set of points in the dimension space.
@@ -28,6 +30,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  * @api
  */
 final readonly class DimensionSpacePointSet implements
+    ProvidesSchema,
     \JsonSerializable,
     \IteratorAggregate,
     \ArrayAccess,
@@ -51,7 +54,7 @@ final readonly class DimensionSpacePointSet implements
             }
 
             if (!$pointCandidate instanceof DimensionSpacePoint) {
-                throw new \InvalidArgumentException(sprintf('Point %s was not of type DimensionSpacePoint', $index));
+                throw new \InvalidArgumentException(sprintf('Point %s was not of type DimensionSpacePoint', $index), 1791889847);
             }
             $points[$pointCandidate->hash] = $pointCandidate;
         }
@@ -133,6 +136,15 @@ final readonly class DimensionSpacePointSet implements
     public function jsonSerialize(): array
     {
         return array_values($this->points);
+    }
+
+    public static function schema(): ArraySchema
+    {
+        static $schema = null;
+        return $schema ??= ArraySchema::create(
+            description: 'A set of points in the dimension space',
+            items: DimensionSpacePoint::schema(),
+        );
     }
 
     public function count(): int
