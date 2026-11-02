@@ -134,6 +134,22 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
+     * Compares nodes for equality
+     *
+     * @param Node|null $nodeA
+     * @param Node|null $nodeB
+     * @return bool
+     */
+    public function equals(?Node $nodeA, ?Node $nodeB): bool
+    {
+        if ($nodeB === null || $nodeA === null) {
+            return $nodeA === null && $nodeB === null;
+        }
+
+        return $nodeA->equals($nodeB);
+    }
+
+    /**
      * @param string $methodName
      * @return boolean
      */
