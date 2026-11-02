@@ -13,25 +13,14 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Exception\RuntimeException;
+use Neos\Utility\Arrays;
 
 /**
  * A Fusion ActionUri object
- *
- * The following Fusion properties are evaluated:
- *  * package
- *  * subpackage
- *  * controller
- *  * action
- *  * arguments
- *  * format
- *  * section
- *  * additionalParams
- *  * addQueryString
- *  * argumentsToBeExcludedFromQueryString
- *  * absolute
- *  * request
  *
  * See respective getters for descriptions
  */
@@ -86,14 +75,40 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Option to set custom routing arguments
+     *
+     * Please do not use this functionality to append query parameters and use 'queryParameters' instead:
+     *
+     *   Neos.Fusion:ActionUri {
+     *     queryParameters = ${{'q':'search term'}}
+     *   }
+     *
+     * Appending query parameters via the use of exceeding routing arguments relies
+     * on `appendExceedingArguments` internally which is discouraged to leverage.
+     *
+     * But in case you meant to use routing arguments for advanced uri building,
+     * you can leverage this low level option.
+     *
+     * Be aware in order for the routing framework to match and resolve the arguments,
+     * your have to define a custom route in Routes.yaml
+     *
+     * @return array<string, mixed>
+     */
+    public function getRoutingArguments(): array
+    {
+        return $this->fusionValue('routingArguments') ?: [];
+    }
+
+    /**
      * Controller arguments
      *
      * @return array|null
+     * @deprecated with Neos 8.4 please use routingArguments or queryParameters instead
      */
     public function getArguments(): ?array
     {
         $arguments = $this->fusionValue('arguments');
-        return is_array($arguments) ? $arguments: [];
+        return is_array($arguments) ? $arguments : [];
     }
 
     /**
@@ -120,6 +135,7 @@ class ActionUriImplementation extends AbstractFusionObject
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
      *
      * @return array|null
+     * @deprecated with Neos 8.4 please use routingArguments or queryParameters instead
      */
     public function getAdditionalParams(): ?array
     {
@@ -127,9 +143,20 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * Query parameters that are appended to the url
+     *
+     * @return array
+     */
+    public function getQueryParameters(): array
+    {
+        return $this->fusionValue('queryParameters') ?: [];
+    }
+
+    /**
      * Arguments to be removed from the URI. Only active if addQueryString = true
      *
      * @return array|null
+     * @deprecated to be removed with Neos 9
      */
     public function getArgumentsToBeExcludedFromQueryString(): ?array
     {
@@ -140,6 +167,7 @@ class ActionUriImplementation extends AbstractFusionObject
      * If true, the current query parameters will be kept in the URI
      *
      * @return boolean
+     * @deprecated to be removed with Neos 9
      */
     public function isAddQueryString(): bool
     {
@@ -157,12 +185,21 @@ class ActionUriImplementation extends AbstractFusionObject
     }
 
     /**
+     * @return UriBuilder
+     */
+    public function createUriBuilder(): UriBuilder
+    {
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->getRequest());
+        return $uriBuilder;
+    }
+
+    /**
      * @return string
      */
     public function evaluate()
     {
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($this->getRequest());
+        $uriBuilder = $this->createUriBuilder();
 
         $format = $this->getFormat();
         if ($format !== null) {
@@ -195,13 +232,26 @@ class ActionUriImplementation extends AbstractFusionObject
         }
 
         try {
-            return $uriBuilder->uriFor(
+            $arguments = $this->getArguments();
+            $routingArguments = $this->getRoutingArguments();
+            if ($arguments && $routingArguments) {
+                throw new RuntimeException('Neos.Fusion:ActionUri does not allow to combine "arguments" and "routingArguments"', 1665431866);
+            }
+            $uriString = $uriBuilder->uriFor(
                 $this->getAction(),
-                $this->getArguments(),
+                $routingArguments ?: $arguments,
                 $this->getController(),
                 $this->getPackage(),
                 $this->getSubpackage()
             );
+            $queryParameters = $this->getQueryParameters();
+            if (empty($queryParameters)) {
+                return $uriString;
+            }
+            $uri = new Uri($uriString);
+            parse_str($uri->getQuery(), $queryParametersFromRouting);
+            $mergedQueryParameters = Arrays::arrayMergeRecursiveOverrule($queryParametersFromRouting, $queryParameters);
+            return (string)$uri->withQuery(http_build_query($mergedQueryParameters, '', '&'));
         } catch (\Exception $exception) {
             return $this->runtime->handleRenderingException($this->path, $exception);
         }
