@@ -46,7 +46,11 @@ trait NodeRemoval
             $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation, $contentStreamLayers);
         }
 
-        if ($contentStreamLayers->getWriteLayer()->equals($ingoingRelation->contentStreamLayer)) {
+        if (
+            $contentStreamLayers->getWriteLayer()->equals($ingoingRelation->contentStreamLayer)
+            && $this->projectionContentGraph->getContentStreamLayersHierarchyIdIsContainedIn($ingoingRelation->hierarchyRelationId, $contentStreamLayers)
+                ->equalsSingle($ingoingRelation->contentStreamLayer)
+        ) {
             $ingoingRelation->removeFromDatabase($this->dbal, $this->tableNames);
             // remove node itself if it does not have any incoming hierarchy relations anymore
             // also remove outbound reference relations
@@ -95,6 +99,7 @@ trait NodeRemoval
                 WHERE 
                     id = :id
                     AND contentstreamlayer = :contentStreamLayer
+                ON DUPLICATE KEY UPDATE parentnodeanchor = NULL, childnodeanchor = NULL, position = NULL, subtreetags = NULL, dimensionspacepointhash = NULL
             SQL;
 
             try {
@@ -104,7 +109,7 @@ trait NodeRemoval
                     'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ]);
             } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to copy hierarchy relation: %s', $e->getMessage()), 1775978611, $e);
+                throw new \RuntimeException(sprintf('Failed to mark hierarchy relation as removed: %s', $e->getMessage()), 1775978611, $e);
             }
         }
     }
