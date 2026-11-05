@@ -34,29 +34,26 @@ Feature:
       | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
 
     And the command CreateWorkspace is executed with payload:
-      | Key                | Value         |
-      | workspaceName      | "user-one"    |
-      | baseWorkspaceName  | "live"        |
-      | newContentStreamId | "user-one-cs" |
-
- #  And the command CreateWorkspace is executed with payload:
- #    | Key                | Value         |
- #    | workspaceName      | "user-two"    |
- #    | baseWorkspaceName  | "live"        |
- #    | newContentStreamId | "user-one-cs" |
+      | Key                | Value           |
+      | workspaceName      | "user"          |
+      | baseWorkspaceName  | "live"          |
+      | newContentStreamId | "cs-user-first" |
 
   Scenario: Remove a node aggregate with strategy allSpecializations
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | workspaceName                | "user-one"           |
+      | workspaceName                | "user"               |
       | nodeAggregateId              | "nodingers-cat"      |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
 
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
     And the command PublishWorkspace is executed with payload:
-      | Key                | Value                |
-      | workspaceName      | "user-one"           |
-      | newContentStreamId | "user-one-cs-second" |
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
 
     Then I expect exactly 7 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasRemoved" with payload:
@@ -194,22 +191,25 @@ Feature:
   Scenario: Remove a node aggregate with strategy allVariants
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value             |
-      | workspaceName   | "user-one"        |
+      | workspaceName   | "user"            |
       | nodeAggregateId | "nodingers-cat"   |
       | sourceOrigin    | {"language":"en"} |
       | targetOrigin    | {"language":"de"} |
 
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value             |
-      | workspaceName                | "user-one"        |
+      | workspaceName                | "user"            |
       | nodeAggregateId              | "nodingers-cat"   |
       | coveredDimensionSpacePoint   | {"language":"de"} |
       | nodeVariantSelectionStrategy | "allVariants"     |
 
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
     And the command PublishWorkspace is executed with payload:
-      | Key                | Value                |
-      | workspaceName      | "user-one"           |
-      | newContentStreamId | "user-one-cs-second" |
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
 
     Then I expect exactly 8 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 7 is of type "NodeAggregateWasRemoved" with payload:
