@@ -181,7 +181,7 @@ class LoginController extends AbstractAuthenticationController
             }
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite,
@@ -237,7 +237,7 @@ class LoginController extends AbstractAuthenticationController
     protected function onAuthenticationFailure(?AuthenticationRequiredException $exception = null): void
     {
         if ($this->view instanceof JsonView) {
-            $this->view->assign('value', ['success' => false]);
+            $this->view?->assign('value', ['success' => false]);
         } else {
             $this->addFlashMessage(
                 $this->getLabel('login.wrongCredentials.body'),
@@ -261,7 +261,7 @@ class LoginController extends AbstractAuthenticationController
     protected function onAuthenticationSuccess(?ActionRequest $originalRequest = null): null
     {
         if ($this->view instanceof JsonView) {
-            $this->view->assign(
+            $this->view?->assign(
                 'value',
                 [
                     'success' => $this->authenticationManager->isAuthenticated(),
@@ -293,7 +293,7 @@ class LoginController extends AbstractAuthenticationController
         parent::logoutAction();
         switch ($this->request->getFormat()) {
             case 'json':
-                $this->view->assign('value', ['success' => true]);
+                $this->view?->assign('value', ['success' => true]);
                 break;
             default:
                 $this->addFlashMessage(

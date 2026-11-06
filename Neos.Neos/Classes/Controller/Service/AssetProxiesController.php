@@ -132,7 +132,7 @@ class AssetProxiesController extends ActionController
                 }
             }
         }
-        $this->view->assign('assetProxiesByAssetSource', $assetProxiesByAssetSource);
+        $this->view?->assign('assetProxiesByAssetSource', $assetProxiesByAssetSource);
     }
 
     /**
@@ -157,7 +157,7 @@ class AssetProxiesController extends ActionController
             $this->throwStatus(404, 'Asset not found');
         }
 
-        $this->view->assign('assetProxy', $assetProxy);
+        $this->view?->assign('assetProxy', $assetProxy);
     }
 
     /**
@@ -180,6 +180,6 @@ class AssetProxiesController extends ActionController
         $assetProxy->identifier = $assetProxyIdentifier;
         $assetProxy->assetSource = $assetSources[$assetSourceIdentifier];
         $assetProxy->localAssetIdentifier = $importedAsset->getLocalAssetIdentifier();
-        $this->view->assign('assetProxy', $assetProxy);
+        $this->view?->assign('assetProxy', $assetProxy);
     }
 }

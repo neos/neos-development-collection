@@ -50,7 +50,7 @@ class PackagesController extends AbstractModuleController
         foreach (array_keys($packageGroups) as $packageGroup) {
             ksort($packageGroups[$packageGroup]);
         }
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'packageGroups' => $packageGroups,
             'isDevelopmentContext' => $this->objectManager->getContext()->isDevelopment()
         ]);

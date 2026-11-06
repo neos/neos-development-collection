@@ -169,7 +169,7 @@ class FusionExceptionView extends AbstractView
                 $fusionGlobals
             );
 
-            if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
+            if (isset($this->options['enableContentCache'])) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
             }
         }

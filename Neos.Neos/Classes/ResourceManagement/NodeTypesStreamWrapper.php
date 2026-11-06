@@ -95,7 +95,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
         if (!is_string($resourceUriOrStream)) {
             return false;
         }
-        $handle = ($resourceUriOrStream !== false) ? opendir($resourceUriOrStream) : false;
+        $handle = opendir($resourceUriOrStream);
         if ($handle !== false) {
             $this->handle = $handle;
             return true;

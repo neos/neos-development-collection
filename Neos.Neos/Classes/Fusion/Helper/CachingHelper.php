@@ -43,7 +43,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * given nodes (for any variant) is updated.
      *
      * @param iterable<Node>|Node $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array<int,string>,
+     * @return array<int,string>
      */
     public function nodeTag(iterable|Node $nodes): array
     {
