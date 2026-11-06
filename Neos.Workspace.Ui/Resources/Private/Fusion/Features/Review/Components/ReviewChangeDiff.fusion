@@ -72,14 +72,14 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
           </td>
           <td @if.isAsset={contentChanges.properties.type == 'asset'}>
             <del @if.hasOriginal={contentChanges.changes.original.resource}>
-              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changes.original.resource}>
+              <Neos.Fusion:Link.Resource class="resource-link" href.resource={contentChanges.changes.original.resource}>
                 {contentChanges.original.resource.filename}
               </Neos.Fusion:Link.Resource>
             </del>
           </td>
           <td @if.isAsset={contentChanges.properties.type == 'asset'}>
             <ins>
-              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changes.changed.resource}>
+              <Neos.Fusion:Link.Resource class="resource-link" href.resource={contentChanges.changes.changed.resource}>
                 {contentChanges.changes.changed.resource.filename}
               </Neos.Fusion:Link.Resource>
             </ins>

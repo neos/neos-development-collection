@@ -1074,7 +1074,7 @@ class WorkspaceController extends AbstractModuleController
             ) {
                 $contentChanges[$propertyName] = new ContentChangeItem(
                     properties: new ContentChangeProperties(
-                        type: 'text',
+                        type: 'image',
                         propertyLabel: $this->getPropertyLabel($propertyName, $changedNode)
                     ),
                     changes: new ImageContentChange(
@@ -1088,7 +1088,7 @@ class WorkspaceController extends AbstractModuleController
             ) {
                 $contentChanges[$propertyName] = new ContentChangeItem(
                     properties: new ContentChangeProperties(
-                        type: 'text',
+                        type: 'asset',
                         propertyLabel: $this->getPropertyLabel($propertyName, $changedNode)
                     ),
                     changes: new AssetContentChange(
@@ -1096,9 +1096,9 @@ class WorkspaceController extends AbstractModuleController
                         changed: $changedPropertyValue
                     )
                 );
-            } elseif ($originalPropertyValue instanceof \DateTime || $changedPropertyValue instanceof \DateTime) {
+            } elseif ($originalPropertyValue instanceof \DateTimeInterface || $changedPropertyValue instanceof \DateTimeInterface) {
                 $changed = false;
-                if (!$changedPropertyValue instanceof \DateTime || !$originalPropertyValue instanceof \DateTime) {
+                if (!$changedPropertyValue instanceof \DateTimeInterface || !$originalPropertyValue instanceof \DateTimeInterface) {
                     $changed = true;
                 } elseif ($changedPropertyValue->getTimestamp() !== $originalPropertyValue->getTimestamp()) {
                     $changed = true;
@@ -1106,7 +1106,7 @@ class WorkspaceController extends AbstractModuleController
                 if ($changed) {
                     $contentChanges[$propertyName] = new ContentChangeItem(
                         properties: new ContentChangeProperties(
-                            type: 'text',
+                            type: 'datetime',
                             propertyLabel: $this->getPropertyLabel($propertyName, $changedNode)
                         ),
                         changes: new DateTimeContentChange(
