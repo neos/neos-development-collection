@@ -30,7 +30,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateUserWorkspaceRoleAssignment) <
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <h3 class="neos-header">
-          {private.i18n.id('workspaces.createWorkspaceUserRoleAssignment').arguments({workspace: props.workspaceTitle})}
+          {private.i18n.id('workspaces.createWorkspaceUserRoleAssignment').arguments({workspace: String.htmlSpecialChars(props.workspaceTitle)})}
         </h3>
       </header>
       <Neos.Fusion.Form:Form
@@ -66,7 +66,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateUserWorkspaceRoleAssignment) <
                   <Neos.Fusion.Form:Select.Option
                     option.value={userId}
                   >
-                    {userName}
+                    {String.htmlSpecialChars(userName)}
                   </Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>
