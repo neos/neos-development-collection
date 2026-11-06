@@ -40,7 +40,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <h3 class="neos-header">
-          {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments({workspace: props.workspaceTitle})}
+          {private.i18n.id('workspaces.editWorkspaceRoleAssignments').arguments({workspace: String.htmlSpecialChars(props.workspaceTitle)})}
         </h3>
       </header>
       <section>
@@ -59,7 +59,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           {private.i18n.id('workspaces.permission.noGroupAssignmentsSet')}
         </p>
         <Neos.Workspace.Ui:Component.Button
-          title={private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: props.workspaceTitle})}
+          title={private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: String.htmlSpecialChars(props.workspaceTitle)})}
           icon="plus"
           attributes.hx-get={private.createGroupWorkspaceRoleAssignmentUri}
           attributes.hx-target={'#' + private.createGroupWorkspaceRoleAssignmentPopoverId}
@@ -84,7 +84,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.EditWorkspaceRoleAssignments) < prot
           {private.i18n.id('workspaces.permission.noUserAssignmentsSet')}
         </p>
         <Neos.Workspace.Ui:Component.Button
-          title={private.i18n.id('workspaces.createWorkspaceUserRoleAssignment').arguments({workspace: props.workspaceTitle})}
+          title={private.i18n.id('workspaces.createWorkspaceUserRoleAssignment').arguments({workspace: String.htmlSpecialChars(props.workspaceTitle)})}
           icon="plus"
           attributes.hx-get={private.createUserWorkspaceRoleAssignmentUri}
           attributes.hx-target={'#' + private.createUserWorkspaceRoleAssignmentPopoverId}

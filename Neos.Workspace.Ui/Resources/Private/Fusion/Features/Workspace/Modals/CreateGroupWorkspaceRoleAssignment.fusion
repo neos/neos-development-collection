@@ -27,7 +27,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateGroupWorkspaceRoleAssignment) 
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <h3 class="neos-header">
-          {private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: props.workspaceTitle})}
+          {private.i18n.id('workspaces.createWorkspaceGroupRoleAssignment').arguments({workspace: String.htmlSpecialChars(props.workspaceTitle)})}
         </h3>
       </header>
       <Neos.Fusion.Form:Form
@@ -61,7 +61,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.CreateGroupWorkspaceRoleAssignment) 
                 <option value="">{private.i18n.id('workspaces.workspace.workspaceGroupRoleAssignment.default')}</option>
                 <Neos.Fusion:Loop items={props.options} itemName="name" itemKey="id">
                   <Neos.Fusion.Form:Select.Option option.value={id}>
-                    {name}
+                    {String.htmlSpecialChars(name)}
                   </Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>
