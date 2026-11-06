@@ -27,7 +27,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmPublishSelectedChanges) < pro
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          {private.i18n.id('workspaces.publishSelectedChangesTo').arguments([props.baseWorkspaceTitle])}
+          {private.i18n.id('workspaces.publishSelectedChangesTo').arguments([String.htmlSpecialChars(props.baseWorkspaceTitle)])}
         </div>
       </header>
       <section>

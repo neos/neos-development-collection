@@ -26,7 +26,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDiscardAllChanges) < prototyp
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          {private.i18n.id('workspaces.discardAllChangesInWorkspaceConfirmation').arguments([props.workspaceTitle])}
+          {private.i18n.id('workspaces.discardAllChangesInWorkspaceConfirmation').arguments([String.htmlSpecialChars(props.workspaceTitle)])}
         </div>
       </header>
       <footer>

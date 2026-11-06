@@ -33,7 +33,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.RebaseConfirm) < prototype(Neos.Fusi
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          <i class="fas fa-exclamation-triangle"></i> {private.i18n.id('workspaces.dialog.ConfirmationDropConflictingChanges').arguments([props.workspaceTitle])}
+          <i class="fas fa-exclamation-triangle"></i> {private.i18n.id('workspaces.dialog.ConfirmationDropConflictingChanges').arguments([String.htmlSpecialChars(props.workspaceTitle)])}
         </div>
       </header>
       <section>
