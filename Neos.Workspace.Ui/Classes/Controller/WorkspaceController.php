@@ -1025,7 +1025,11 @@ class WorkspaceController extends AbstractModuleController
                 )
             );
         }
-        foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
+        $changedProperties = iterator_to_array($changedNode->properties);
+        $originalProperties = $originalNode !== null ? iterator_to_array($originalNode->properties) : [];
+        foreach (array_keys($changedProperties + $originalProperties) as $propertyName) {
+            $changedPropertyValue = $changedProperties[$propertyName] ?? null;
+            $originalPropertyValue = $originalProperties[$propertyName] ?? null;
             if (
                 ($originalNode === null && empty($changedPropertyValue))
                 || (
@@ -1035,8 +1039,6 @@ class WorkspaceController extends AbstractModuleController
             ) {
                 continue;
             }
-
-            $originalPropertyValue = ($originalNode?->getProperty($propertyName));
 
             if ($changedPropertyValue === $originalPropertyValue) {
                 continue;

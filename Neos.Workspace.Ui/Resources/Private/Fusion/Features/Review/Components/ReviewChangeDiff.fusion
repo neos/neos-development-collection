@@ -85,10 +85,10 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
             </ins>
           </td>
           <td @if.isDatetime={contentChanges.properties.type == 'datetime'}>
-            {Date.format(contentChanges.changes.original, 'Y-m-d H:i')}
+            {contentChanges.changes.original != null ? Date.format(contentChanges.changes.original, 'Y-m-d H:i') : ''}
           </td>
           <td @if.isDatetime={contentChanges.properties.type == 'datetime'}>
-            {Date.format(contentChanges.changes.changed, 'Y-m-d H:i')}
+            {contentChanges.changes.changed != null ? Date.format(contentChanges.changes.changed, 'Y-m-d H:i') : ''}
           </td>
           <td @if.isTag={contentChanges.properties.type == 'tags'} class="diff-property-content-left">
             <Neos.Fusion:Loop items={contentChanges.changes.addedTags} itemName="tag">
