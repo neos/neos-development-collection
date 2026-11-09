@@ -44,7 +44,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          {private.i18n.id('workspaces.editWorkspace').arguments([props.workspaceTitle])}
+          {private.i18n.id('workspaces.editWorkspace').arguments([String.htmlSpecialChars(props.workspaceTitle)])}
         </div>
       </header>
       <Neos.Fusion.Form:Form
@@ -104,7 +104,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Edit) < prototype(Neos.Fusion:Compon
                     option.value={workspaceName}
                     attributes.selected={workspaceName == props.baseWorkspaceName}
                   >
-                    {workspaceTitle}
+                    {String.htmlSpecialChars(workspaceTitle)}
                   </Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>

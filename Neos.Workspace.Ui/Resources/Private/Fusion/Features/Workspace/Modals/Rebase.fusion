@@ -34,11 +34,11 @@ prototype(Neos.Workspace.Ui:Component.Modal.Rebase) < prototype(Neos.Fusion:Comp
           <Neos.Workspace.Ui:Component.Icon icon="times"/>
         </button>
         <div class="neos-header">
-          <i class="fas fa-bolt"></i> {private.i18n.id('workspaces.dialog.forceSyncWorkspace').arguments([props.workspaceTitle, props.baseWorkspaceTitle])}
+          <i class="fas fa-bolt"></i> {private.i18n.id('workspaces.dialog.forceSyncWorkspace').arguments([String.htmlSpecialChars(props.workspaceTitle), String.htmlSpecialChars(props.baseWorkspaceTitle)])}
         </div>
       </header>
       <section>
-        <p>{private.i18n.id('workspaces.dialog.thisCanLeadToLostChanges').arguments([props.baseWorkspaceTitle, props.workspaceTitle])}</p>
+        <p>{private.i18n.id('workspaces.dialog.thisCanLeadToLostChanges').arguments([String.htmlSpecialChars(props.baseWorkspaceTitle), String.htmlSpecialChars(props.workspaceTitle)])}</p>
         <details>
           <summary>
             {private.i18n.id('workspaces.dialog.ShowInformationAboutConflict').arguments([Array.length(props.conflictInformation)])}
