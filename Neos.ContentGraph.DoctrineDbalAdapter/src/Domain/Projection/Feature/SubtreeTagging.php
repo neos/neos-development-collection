@@ -228,6 +228,7 @@ trait SubtreeTagging
     private function moveSubtreeTags(ContentStreamLayers $contentStreamLayers, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
     {
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint);
+        // Mysql hack (NO_MERGE), too eager to optimize https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html
         $moveSubtreeTagsStatement = <<<SQL
             INSERT INTO {$this->tableNames->hierarchyRelation()} (
               id, parentnodeanchor, childnodeanchor,
@@ -245,6 +246,7 @@ trait SubtreeTagging
             FROM
               (
                 SELECT
+                  /*+ NO_MERGE(r) */
                   h.id,
                   h.parentnodeanchor,
                   h.childnodeanchor,
@@ -300,8 +302,6 @@ trait SubtreeTagging
             ON DUPLICATE KEY UPDATE subtreetags = VALUES(subtreetags)
             SQL;
         try {
-            // Mysql hack, too eager to optimize https://dev.mysql.com/doc/refman/8.4/en/derived-table-optimization.html
-            $this->dbal->executeQuery('set optimizer_switch="derived_merge=off"');
             $this->dbal->executeStatement($moveSubtreeTagsStatement, [
                 'newParentNodeAggregateId' => $newParentNodeAggregateId->value,
                 'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,

@@ -34,7 +34,6 @@ final readonly class HierarchyRelation
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
         public DimensionSpacePoint $dimensionSpacePoint,
-        public string $dimensionSpacePointHash,
         public int $position,
         public NodeTags $subtreeTags,
     ) {
@@ -56,7 +55,6 @@ final readonly class HierarchyRelation
             parentNodeAnchor: $parentNodeAnchor ?? $this->parentNodeAnchor,
             childNodeAnchor: $childNodeAnchor ?? $this->childNodeAnchor,
             dimensionSpacePoint: $dimensionSpacePoint ?? $this->dimensionSpacePoint,
-            dimensionSpacePointHash: $dimensionSpacePointHash ?? $this->dimensionSpacePointHash,
             position: $position ?? $this->position,
             subtreeTags: $subtreeTags ?? $this->subtreeTags,
         );
@@ -78,7 +76,7 @@ final readonly class HierarchyRelation
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'contentstreamlayer' => $this->contentStreamLayer->value,
-                'dimensionspacepointhash' => $this->dimensionSpacePointHash,
+                'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
                 'position' => $this->position,
                 'subtreetags' => $subtreeTagsJson,
             ]);
@@ -162,7 +160,7 @@ final readonly class HierarchyRelation
                 'parentnodeanchor' => $this->parentNodeAnchor->value,
                 'childnodeanchor' => $this->childNodeAnchor->value,
                 'contentstreamlayer' => $this->contentStreamLayer->value,
-                'dimensionspacepointhash' => $this->dimensionSpacePointHash
+                'dimensionspacepointhash' => $this->dimensionSpacePoint->hash
             ])), 1775979706);
         }
         return [

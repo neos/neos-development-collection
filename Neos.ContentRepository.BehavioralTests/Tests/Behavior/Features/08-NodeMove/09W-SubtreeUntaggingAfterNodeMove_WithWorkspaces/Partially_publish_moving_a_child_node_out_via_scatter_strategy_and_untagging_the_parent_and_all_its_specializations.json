@@ -1,0 +1,265 @@
+{
+    "@feature": "09W-SubtreeUntaggingAfterNodeMove_WithWorkspaces.feature",
+    "@scenario": "Partially publish moving a child node out via scatter strategy and untagging the parent and all its specializations",
+    "lady-eleonode-rootford": {
+        "{\"example\":\"source\"}": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": []
+                    },
+                    "sir-nodeward-nodington-iii"
+                ]
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": []
+                    },
+                    "sir-nodeward-nodington-iii"
+                ]
+            }
+        }
+    },
+    "nodimus-mediocre": {
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nodimus-mediocre",
+                "tags": []
+            },
+            "parent": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": []
+            }
+        }
+    },
+    "nodimus-prime": {
+        "{\"example\":\"source\"}": {
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "tags": {
+                            "my-tag": null
+                        },
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nody-mc-nodeface": {
+        "{\"example\":\"source\"}": {
+            "parent": {
+                "_discriminator": "sir-nodeward-nodington-iii",
+                "aggregateId": "sir-nodeward-nodington-iii",
+                "name": "esquire"
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-prime",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodimus-prime",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire-child",
+                        "tags": {
+                            "my-tag": null
+                        },
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-o-nodeface": "nody-o-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": []
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": []
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodimus-mediocre",
+                        "tags": []
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": []
+                    }
+                ]
+            }
+        }
+    },
+    "nody-o-nodeface": {
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": []
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": []
+            },
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nody-o-nodeface",
+                "tags": []
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": []
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": []
+                    }
+                ]
+            }
+        }
+    },
+    "sir-david-nodenborough": {
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": []
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": []
+                    }
+                ],
+                "removedNodes": {
+                    "nody-mc-nodeface": "nody-mc-nodeface"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": []
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": []
+                    },
+                    {
+                        "_discriminator": "nody-o-nodeface",
+                        "tags": []
+                    }
+                ]
+            }
+        }
+    },
+    "sir-nodeward-nodington-iii": {
+        "{\"example\":\"source\"}": {
+            "children": {
+                "nodes": [
+                    "nodimus-prime",
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nody-mc-nodeface",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "document",
+                        "tags": {
+                            "my-tag": null
+                        },
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": []
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": []
+                    }
+                ]
+            }
+        }
+    }
+}

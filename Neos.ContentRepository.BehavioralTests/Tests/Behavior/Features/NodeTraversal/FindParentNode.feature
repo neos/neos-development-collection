@@ -112,8 +112,8 @@ Feature: Find nodes using the findParentNodes query
     # multiple parent node aggregates (via move) are fetched
     When I execute the findParentNodeAggregates query for node aggregate id "b" I expect the following node aggregates to be returned:
       | nodeAggregateId | nodeTypeName                            | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |
-      | home            | Neos.ContentRepository.Testing:Homepage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
       | a               | Neos.ContentRepository.Testing:Page     | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
+      | home            | Neos.ContentRepository.Testing:Homepage | [{"language":"de"},{"language":"ch"}] | [{"language":"de"}]          | []                           |
 
     When I execute the findParentNodeAggregates query for node aggregate id "non-existing" I expect the following node aggregates to be returned:
       | nodeAggregateId | nodeTypeName                        | coveredDimensionSpacePoints           | occupiedDimensionSpacePoints | explicitlyDisabledDimensions |

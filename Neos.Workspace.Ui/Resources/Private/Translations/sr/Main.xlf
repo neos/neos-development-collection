@@ -257,10 +257,6 @@
         <source>Apply changes</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Примени измене</target>
       </trans-unit>
-      <trans-unit id="restore.table.label" xml:space="preserve">
-        <source>Element</source>
-        <target state="needs-translation" state-qualifier="leveraged-mt">Наслов</target>
-      </trans-unit>
       <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
         <source>Cancel</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Откажи</target>
@@ -276,6 +272,22 @@
       <trans-unit id="workspaces.discardChanges" xml:space="preserve">
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Одбаци</target>
+      </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Затвори</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Откажи</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Уклони</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Тип</target>
       </trans-unit>
     </body>
   </file>

@@ -22,7 +22,7 @@ use Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker;
 final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphProjectionFactoryInterface
 {
     public function __construct(
-        private readonly Connection $dbal,
+        private readonly Connection $dbal
     ) {
     }
 
@@ -62,7 +62,8 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             ),
             new ProjectionContentGraph(
                 $this->dbal,
-                $tableNames
+                $tableNames,
+                new DimensionSpacePointsRepository($this->dbal, $tableNames)
             ),
             $tableNames,
             $dimensionSpacePointsRepository,
