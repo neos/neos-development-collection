@@ -11,39 +11,39 @@ final readonly class ReferenceTypeGraph
 {
     /**
      * @param array<string,ReferenceTypeNameList> $declaredSuperTypeNames - direct; indexed by child name
-     * @param array<string,ReferenceTypeNameList> $superTypeNames - recursive; indexed by descendant name
+     * @param array<string,ReferenceTypeDistances> $superTypeDistances - recursive; indexed by descendant name
      * @param array<string,ReferenceTypeNameList> $declaredSubTypesNames - indexed by parent name
-     * @param array<string,ReferenceTypeNameList> $subTypeNames - recursive; indexed by ancestor name
+     * @param array<string,ReferenceTypeDistances> $subTypeDistances - recursive; indexed by ancestor name
      * @param array<string,ReferenceType> $referenceTypes - indexed by name
      */
     private function __construct(
         private array $declaredSuperTypeNames,
-        private array $superTypeNames,
+        private array $superTypeDistances,
         private array $declaredSubTypesNames,
-        private array $subTypeNames,
+        private array $subTypeDistances,
         private array $referenceTypes,
     ) {
     }
 
     /**
      * @param array<string,ReferenceTypeNameList> $declaredSuperTypeNames - direct; indexed by child name
-     * @param array<string,ReferenceTypeNameList> $superTypeNames - recursive; indexed by descendant name
+     * @param array<string,ReferenceTypeDistances> $superTypeDistances - recursive; indexed by descendant name
      * @param array<string,ReferenceTypeNameList> $declaredSubTypesNames - indexed by parent name
-     * @param array<string,ReferenceTypeNameList> $subTypeNames - recursive; indexed by ancestor name
+     * @param array<string,ReferenceTypeDistances> $subTypeDistances - recursive; indexed by ancestor name
      * @param array<string,ReferenceType> $referenceTypes - indexed by name
      */
     public static function create(
         array $declaredSuperTypeNames,
-        array $superTypeNames,
+        array $superTypeDistances,
         array $declaredSubTypesNames,
-        array $subTypeNames,
+        array $subTypeDistances,
         array $referenceTypes,
     ): self {
         return new self(
             declaredSuperTypeNames: $declaredSuperTypeNames,
-            superTypeNames: $superTypeNames,
+            superTypeDistances: $superTypeDistances,
             declaredSubTypesNames: $declaredSubTypesNames,
-            subTypeNames: $subTypeNames,
+            subTypeDistances: $subTypeDistances,
             referenceTypes: $referenceTypes,
         );
     }
@@ -60,7 +60,7 @@ final readonly class ReferenceTypeGraph
 
     public function getSuperTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
     {
-        return $this->superTypeNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
+        return ($this->superTypeDistances[$referenceTypeName->value] ?? null)?->toList() ?: ReferenceTypeNameList::list();
     }
 
     public function getDeclaredSubTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
@@ -70,7 +70,7 @@ final readonly class ReferenceTypeGraph
 
     public function getSubTypeNames(ReferenceTypeName $referenceTypeName): ReferenceTypeNameList
     {
-        return $this->subTypeNames[$referenceTypeName->value] ?? ReferenceTypeNameList::list();
+        return ($this->subTypeDistances[$referenceTypeName->value] ?? null)?->toList() ?: ReferenceTypeNameList::list();
     }
 
     public function getReferenceTypesMatchingConstraints(
@@ -147,17 +147,7 @@ final readonly class ReferenceTypeGraph
         }
         $distances = [];
         foreach ($superTypeNames as $superTypeName) {
-            if (!$this->getSubTypeNames($superTypeName)->contains($referenceTypeName)) {
-                // not a constrained subtype
-                continue;
-            }
-            $distance = $this->calculateMinimumDistanceToSuperType(
-                referenceTypeName: $referenceTypeName,
-                superTypeNames: ReferenceTypeNameSet::fromList(
-                    $this->subTypeNames[$superTypeName->value] ?? ReferenceTypeNameList::list()
-                ),
-                currentDistance: 1,
-            );
+            $distance = ($this->superTypeDistances[$referenceTypeName->value] ?? null)?->getDistance($superTypeName);
             if ($distance === null) {
                 // not a constrained subtype
                 continue;
@@ -169,34 +159,5 @@ final readonly class ReferenceTypeGraph
         }
 
         return min($distances);
-    }
-
-    /**
-     * Calculates the minimum distance to a reference type name - breadth first
-     */
-    private function calculateMinimumDistanceToSuperType(
-        ReferenceTypeName $referenceTypeName,
-        ReferenceTypeNameSet $superTypeNames,
-        int $currentDistance,
-    ): ?int {
-        $nextLevelSuperTypes = ReferenceTypeNameSet::create();
-        foreach ($superTypeNames as $superTypeName) {
-            if ($superTypeName === $referenceTypeName) {
-                return $currentDistance;
-            }
-            $nextLevelSuperTypes = $nextLevelSuperTypes->union(
-                ReferenceTypeNameSet::fromList($this->subTypeNames[$superTypeName->value] ?? ReferenceTypeNameList::list())
-            );
-        }
-
-        if ($nextLevelSuperTypes->isEmpty()) {
-            return null;
-        }
-
-        return $this->calculateMinimumDistanceToSuperType(
-            referenceTypeName: $referenceTypeName,
-            superTypeNames: $nextLevelSuperTypes,
-            currentDistance: $currentDistance + 1,
-        );
     }
 }

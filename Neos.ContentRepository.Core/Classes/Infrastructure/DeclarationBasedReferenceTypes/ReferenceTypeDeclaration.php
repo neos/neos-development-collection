@@ -77,22 +77,23 @@ final readonly class ReferenceTypeDeclaration
 
     /**
      * @param array<string,ReferenceType> $referenceTypes
-     * @param array<string,array<string,ReferenceTypeName>> $superTypeNames
+     * @param array<string,array<string,int>> $superTypeDistances
      * @param array<string,array<string,ReferenceTypeName>> $declaredSubTypeNames
-     * @param array<string,array<string,ReferenceTypeName>> $subTypeNames
+     * @param array<string,array<string,int>> $subTypeDistances
      * @param-out array<string,ReferenceType> $referenceTypes
-     * @param-out array<string,array<string,ReferenceTypeName>> $superTypeNames
+     * @param-out array<string,array<string,int>> $superTypeDistances
      * @param-out array<string,array<string,ReferenceTypeName>> $declaredSubTypeNames
-     * @param-out array<string,array<string,ReferenceTypeName>> $subTypeNames
+     * @param-out array<string,array<string,int>> $subTypeDistances
      * @throws ReferenceTypeDeclarationIsInvalid
      */
     public function resolveReferenceTypeHierarchy(
         ReferenceTypeDeclarationDictionary $dictionary,
         ReferenceTypeNameList $hierarchySoFar,
         array &$referenceTypes,
-        array &$superTypeNames,
+        array &$superTypeDistances,
         array &$declaredSubTypeNames,
-        array &$subTypeNames,
+        array &$subTypeDistances,
+        int $currentHierarchyLevel,
     ): void {
         $hierarchySoFar = $hierarchySoFar->append($this->name);
         $unknownSuperTypeNames = [];
@@ -122,9 +123,10 @@ final readonly class ReferenceTypeDeclaration
                     dictionary: $dictionary,
                     hierarchySoFar: $hierarchySoFar,
                     referenceTypes: $referenceTypes,
-                    superTypeNames: $superTypeNames,
+                    superTypeDistances: $superTypeDistances,
                     declaredSubTypeNames: $declaredSubTypeNames,
-                    subTypeNames: $subTypeNames,
+                    subTypeDistances: $subTypeDistances,
+                    currentHierarchyLevel: $currentHierarchyLevel + 1,
                 );
             } else {
                 if ($dictionary->getReferenceTypeDeclaration($superTypeName)?->isFinal) {
@@ -132,15 +134,24 @@ final readonly class ReferenceTypeDeclaration
                     continue;
                 }
             }
-            foreach ($hierarchySoFar as $subTypeName) {
-                $superTypeNames[$subTypeName->value] = array_merge(
-                    $superTypeNames[$subTypeName->value] ?? [],
-                    [$superTypeName->value => $superTypeName],
-                    $superTypeNames[$superTypeName->value] ?? [],
-                );
-                $subTypeNames[$superTypeName->value][$subTypeName->value] = $subTypeName;
-                foreach ($superTypeNames[$subTypeName->value] ?? [] as $ancestorSuperType) {
-                    $subTypeNames[$ancestorSuperType->value][$subTypeName->value] = $subTypeName;
+            foreach ($hierarchySoFar->reverse() as $subTypeLevel => $subTypeName) {
+                $subTypeHierarchyLevel = $currentHierarchyLevel - $subTypeLevel;
+                $superTypeDistances[$subTypeName->value] ??= [];
+                if (
+                    !array_key_exists($superTypeName->value, $superTypeDistances[$subTypeName->value])
+                    || $superTypeDistances[$subTypeName->value][$superTypeName->value] > $subTypeHierarchyLevel
+                ) {
+                    $superTypeDistances[$subTypeName->value][$superTypeName->value] = $subTypeHierarchyLevel;
+                    $subTypeDistances[$superTypeName->value][$subTypeName->value] = $subTypeHierarchyLevel;
+                }
+                foreach ($superTypeDistances[$superTypeName->value] as $ancestorSubTypeName => $distance) {
+                    if (
+                        !array_key_exists($ancestorSubTypeName, $superTypeDistances[$subTypeName->value])
+                        || $superTypeDistances[$ancestorSubTypeName][$superTypeName->value] > $subTypeHierarchyLevel
+                    ) {
+                        $superTypeDistances[$ancestorSubTypeName][$superTypeName->value] = $subTypeHierarchyLevel;
+                        $subTypeDistances[$superTypeName->value][$ancestorSubTypeName] = $subTypeHierarchyLevel;
+                    }
                 }
             }
             $superTypes[] = $referenceTypes[$superTypeName->value];

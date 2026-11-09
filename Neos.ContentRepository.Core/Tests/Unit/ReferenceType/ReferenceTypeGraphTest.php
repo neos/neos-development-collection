@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDistances;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
@@ -241,7 +242,7 @@ class ReferenceTypeGraphTest extends TestCase
 
         yield 'conflictingSuperTypesWithoutWildcard' => [
             'constraints' => ReferenceTypeFilters::create(
-                includeWildcard: true,
+                includeWildcard: false,
                 includeAbstract: true,
                 explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
@@ -262,18 +263,19 @@ class ReferenceTypeGraphTest extends TestCase
             declaredSuperTypeNames: [
                 'Acme.Site:Reference' => ReferenceTypeNameList::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
+                    'Acme.Site:Root',
                 ]),
                 'Acme.Site:AbstractIntermediary' => ReferenceTypeNameList::fromStringArray([
                     'Acme.Site:Root',
                 ]),
             ],
-            superTypeNames: [
-                'Acme.Site:Reference' => ReferenceTypeNameList::fromStringArray([
-                    'Acme.Site:AbstractIntermediary',
-                    'Acme.Site:Root',
+            superTypeDistances: [
+                'Acme.Site:Reference' => ReferenceTypeDistances::create([
+                    'Acme.Site:AbstractIntermediary' => 1,
+                    'Acme.Site:Root' => 1,
                 ]),
-                'Acme.Site:AbstractIntermediary' => ReferenceTypeNameList::fromStringArray([
-                    'Acme.Site:Root',
+                'Acme.Site:AbstractIntermediary' => ReferenceTypeDistances::create([
+                    'Acme.Site:Root' => 1,
                 ]),
             ],
             declaredSubTypesNames: [
@@ -284,13 +286,13 @@ class ReferenceTypeGraphTest extends TestCase
                     'Acme.Site:AbstractIntermediary',
                 ]),
             ],
-            subTypeNames: [
-                'Acme.Site:Root' => ReferenceTypeNameList::fromStringArray([
-                    'Acme.Site:Reference',
+            subTypeDistances: [
+                'Acme.Site:Root' => ReferenceTypeDistances::create([
+                    'Acme.Site:AbstractIntermediary' => 1,
+                    'Acme.Site:Reference' => 1,
                 ]),
-                'Acme.Site:AbstractIntermediary' => ReferenceTypeNameList::fromStringArray([
-                    'Acme.Site:AbstractIntermediary',
-                    'Acme.Site:Reference',
+                'Acme.Site:AbstractIntermediary' => ReferenceTypeDistances::create([
+                    'Acme.Site:Reference' => 1,
                 ]),
             ],
             referenceTypes: self::createConstraintCheckSubjectReferenceTypes([

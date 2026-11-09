@@ -18,8 +18,10 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Property\GenericArrayPropertyMetadata;
 use Neos\ContentRepository\Core\SharedModel\Property\Property;
@@ -841,6 +843,291 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
                 ),
             ),
+        );
+    }
+
+    #[DataProvider('constraintProvider')]
+    public function testGetReferenceTypesMatchingConstraints(
+        ReferenceTypeFilters $constraints,
+        ReferenceTypeNameSet $expectedResult,
+    ): void {
+        Assert::assertEquals(
+            $expectedResult,
+            self::createConstraintCheckSubject()->expandToGraph()->getReferenceTypesMatchingConstraints($constraints)->toNames(),
+        );
+    }
+
+    /**
+     * @return iterable<string,array{
+     *     constraints: ReferenceTypeFilters,
+     *     expectedResult: ReferenceTypeNameSet,
+     * }>
+     */
+    public static function constraintProvider(): iterable
+    {
+        yield 'unconstrained' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+                'Acme.Site:AbstractIntermediary',
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'forbidden' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::create(),
+        ];
+
+        yield 'excludingAbstract' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: false,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'everythingAndThenSome' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Reference',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+                'Acme.Site:AbstractIntermediary',
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'onlyUndefined' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Undefined',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([]),
+        ];
+
+        yield 'onlyLeaf' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Reference',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+            ]),
+        ];
+
+        yield 'onlyIntermediary' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+                'Acme.Site:AbstractIntermediary',
+            ]),
+        ];
+
+        yield 'onlyIntermediaryButNoAbstract' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
+                includeAbstract: false,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+            ]),
+        ];
+
+        yield 'everythingButTheLeaf' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Reference',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:AbstractIntermediary',
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'everythingButTheLeafButNoAbstract' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: false,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Reference',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'everythingButTheIntermediary' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'bothExplicitWithWildcard' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Reference',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+                'Acme.Site:Root',
+            ]),
+        ];
+
+        yield 'bothExplicitWithoutWildcard' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: false,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Reference',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:Reference',
+            ]),
+        ];
+
+        yield 'conflictingSuperTypesWithWildcard' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Root',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:AbstractIntermediary',
+            ]),
+        ];
+
+        yield 'conflictingSuperTypesWithoutWildcard' => [
+            'constraints' => ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:AbstractIntermediary',
+                ]),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
+                    'Acme.Site:Root',
+                ]),
+            ),
+            'expectedResult' => ReferenceTypeNameSet::fromStringArray([
+                'Acme.Site:AbstractIntermediary',
+            ]),
+        ];
+    }
+
+    private static function createConstraintCheckSubject(): ReferenceTypeDeclarationDictionary
+    {
+        return ReferenceTypeDeclarationDictionary::create(
+            self::createConstraintCheckSubjectReferenceType(
+                name: 'Acme.Site:Reference',
+                isAbstract: false,
+                superTypeNames: ReferenceTypeNameList::list(
+                    ReferenceTypeName::fromString('Acme.Site:AbstractIntermediary'),
+                )
+            ),
+            self::createConstraintCheckSubjectReferenceType(
+                name: 'Acme.Site:AbstractIntermediary',
+                isAbstract: true,
+                superTypeNames: ReferenceTypeNameList::list(
+                    ReferenceTypeName::fromString('Acme.Site:Root'),
+                )
+            ),
+            self::createConstraintCheckSubjectReferenceType(
+                name: 'Acme.Site:Root',
+                isAbstract: false,
+                superTypeNames: ReferenceTypeNameList::list()
+            ),
+        );
+    }
+
+    private static function createConstraintCheckSubjectReferenceType(
+        string $name,
+        bool $isAbstract,
+        ReferenceTypeNameList $superTypeNames,
+    ): ReferenceTypeDeclaration {
+        return ReferenceTypeDeclaration::create(
+            name: ReferenceTypeName::fromString($name),
+            isAbstract: $isAbstract,
+            isFinal: false,
+            superTypeNames: $superTypeNames,
+            constraints: ReferenceTypeConstraintsDeclaration::create(
+                sourceNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [],
+                ),
+                targetNodeTypes: NodeTypeFiltersDeclaration::create(
+                    includeWildcard: true,
+                    filteredNodeTypes: [],
+                ),
+            ),
+            properties: PropertyDeclarationDictionary::create(),
         );
     }
 }

@@ -44,6 +44,11 @@ final class ReferenceTypeNameList implements \JsonSerializable, \IteratorAggrega
         ));
     }
 
+    public function reverse(): self
+    {
+        return new self(array_reverse($this->items));
+    }
+
     public function contains(ReferenceTypeName $item): bool
     {
         return in_array($item, $this->items);

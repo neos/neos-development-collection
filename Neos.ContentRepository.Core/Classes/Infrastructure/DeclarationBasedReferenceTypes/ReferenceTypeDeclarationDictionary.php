@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
 
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDistances;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
@@ -53,9 +54,10 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
     public function expandToGraph(): ReferenceTypeGraph
     {
         $referenceTypes = [];
-        $superTypeNames = [];
+        $superTypeDistances = [];
         $declaredSubTypeNames = [];
-        $subTypeNames = [];
+        $subTypeDistances = [];
+        $currentHierarchyLevel = 0;
 
         foreach ($this->items as $declaration) {
             if (!array_key_exists($declaration->name->value, $referenceTypes)) {
@@ -63,9 +65,10 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
                     dictionary: $this,
                     hierarchySoFar: ReferenceTypeNameList::list(),
                     referenceTypes: $referenceTypes,
-                    superTypeNames: $superTypeNames,
+                    superTypeDistances: $superTypeDistances,
                     declaredSubTypeNames: $declaredSubTypeNames,
-                    subTypeNames: $subTypeNames,
+                    subTypeDistances: $subTypeDistances,
+                    currentHierarchyLevel: $currentHierarchyLevel,
                 );
             }
         }
@@ -75,20 +78,20 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
                 fn (ReferenceTypeDeclaration $declaration): ReferenceTypeNameList => $declaration->superTypeNames,
                 $this->items,
             ),
-            superTypeNames: array_map(
-                fn (array $superTypeNamesForSubType): ReferenceTypeNameList
-                => ReferenceTypeNameList::list(...$superTypeNamesForSubType),
-                $superTypeNames,
+            superTypeDistances: array_map(
+                fn (array $superTypeDistancesForSubType): ReferenceTypeDistances
+                    => ReferenceTypeDistances::create($superTypeDistancesForSubType),
+                $superTypeDistances,
             ),
             declaredSubTypesNames: array_map(
                 fn (array $declaredSubTypeNamesForSuperType): ReferenceTypeNameList
-                => ReferenceTypeNameList::list(...$declaredSubTypeNamesForSuperType),
+                    => ReferenceTypeNameList::list(...$declaredSubTypeNamesForSuperType),
                 $declaredSubTypeNames,
             ),
-            subTypeNames: array_map(
-                fn (array $subTypeNamesForSuperType): ReferenceTypeNameList
-                => ReferenceTypeNameList::list(...$subTypeNamesForSuperType),
-                $subTypeNames,
+            subTypeDistances: array_map(
+                fn (array $subTypeNamesForSuperType): ReferenceTypeDistances
+                    => ReferenceTypeDistances::create($subTypeNamesForSuperType),
+                $subTypeDistances,
             ),
             referenceTypes: $referenceTypes,
         );
