@@ -72,23 +72,23 @@ prototype(Neos.Workspace.Ui:Component.ReviewChangeDiff) < prototype(Neos.Fusion:
           </td>
           <td @if.isAsset={contentChanges.properties.type == 'asset'}>
             <del @if.hasOriginal={contentChanges.changes.original.resource}>
-              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changes.original.resource}>
+              <Neos.Fusion:Link.Resource class="resource-link" href.resource={contentChanges.changes.original.resource}>
                 {String.htmlSpecialChars(contentChanges.changes.original.resource.filename)}
               </Neos.Fusion:Link.Resource>
             </del>
           </td>
           <td @if.isAsset={contentChanges.properties.type == 'asset'}>
             <ins>
-              <Neos.Fusion:Link.Resource class="resource-link" href.path={contentChanges.changes.changed.resource}>
+              <Neos.Fusion:Link.Resource class="resource-link" href.resource={contentChanges.changes.changed.resource}>
                 {String.htmlSpecialChars(contentChanges.changes.changed.resource.filename)}
               </Neos.Fusion:Link.Resource>
             </ins>
           </td>
           <td @if.isDatetime={contentChanges.properties.type == 'datetime'}>
-            {Date.format(contentChanges.changes.original, 'Y-m-d H:i')}
+            {contentChanges.changes.original != null ? Date.format(contentChanges.changes.original, 'Y-m-d H:i') : ''}
           </td>
           <td @if.isDatetime={contentChanges.properties.type == 'datetime'}>
-            {Date.format(contentChanges.changes.changed, 'Y-m-d H:i')}
+            {contentChanges.changes.changed != null ? Date.format(contentChanges.changes.changed, 'Y-m-d H:i') : ''}
           </td>
           <td @if.isTag={contentChanges.properties.type == 'tags'} class="diff-property-content-left">
             <Neos.Fusion:Loop items={contentChanges.changes.addedTags} itemName="tag">
