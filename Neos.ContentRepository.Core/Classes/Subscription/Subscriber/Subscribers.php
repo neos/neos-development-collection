@@ -33,9 +33,6 @@ final class Subscribers implements \IteratorAggregate, \Countable, \JsonSerializ
     {
         $subscribersById = [];
         foreach ($subscribers as $subscriber) {
-            if (!$subscriber instanceof ProjectionSubscriber) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', ProjectionSubscriber::class, get_debug_type($subscriber)), 1721731490);
-            }
             if (array_key_exists($subscriber->id->value, $subscribersById)) {
                 throw new \InvalidArgumentException(sprintf('Subscriber with id "%s" is already part of this set', $subscriber->id->value), 1721731494);
             }

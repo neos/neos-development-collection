@@ -125,12 +125,12 @@ class EventsConcurrentWorkspaceRebasesUpgrade
                     'stream' => ContentStreamEventStreamName::fromContentStreamId($newContentStreamId)->getEventStreamName()->value,
                 ]));
 
-                /** @var RebaseEmptyWorkspaceSequence|RebaseSequenceContentStreamPatch $previousContentStreamPatch */
                 $previousContentStreamPatch = $rebaseWorkspaceSequence;
                 if (isset($rebaseSequencesToPatchContentStream[$forkCorrelationId->value])) {
                     $previousContentStreamPatch = $rebaseSequencesToPatchContentStream[$forkCorrelationId->value];
                     unset($rebaseSequencesToPatchContentStream[$forkCorrelationId->value]);
                 }
+                /** @var RebaseEmptyWorkspaceSequence|RebaseSequenceContentStreamPatch $previousContentStreamPatch */
 
                 if ($remainingContentStreamEvents !== []) {
                     try {
@@ -269,7 +269,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
     {
         $rows = $this->context->dbal->fetchAllAssociative(<<<SQL
         SELECT
-          -- invariant: single entry as content stream can only be removed once 
+          -- invariant: single entry as content stream can only be removed once
           MIN(IF(type = 'ContentStreamWasRemoved', sequencenumber, null)) as removalSequenceNumber,
           GROUP_CONCAT(IF(type = 'ContentStreamWasRemoved', JSON_VALUE(payload, '$.contentStreamId'), null)) as sourceContentStreamId,
           -- multiple forks of source content stream
@@ -285,7 +285,7 @@ class EventsConcurrentWorkspaceRebasesUpgrade
           WHEN 'ContentStreamWasRemoved' THEN JSON_VALUE(payload, '$.contentStreamId')
         END
         HAVING removalSequenceNumber < maxForkSequenceNumber
-        ORDER BY removalSequenceNumber;        
+        ORDER BY removalSequenceNumber;
         SQL);
 
         return array_map(IllegalContentStreamForks::fromRow(...), $rows);

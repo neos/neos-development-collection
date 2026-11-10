@@ -28,9 +28,6 @@ final class SubscriptionStatusFilter implements \IteratorAggregate
             if (is_string($singleStatus)) {
                 $singleStatus = SubscriptionStatus::from($singleStatus);
             }
-            if (!$singleStatus instanceof SubscriptionStatus) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', SubscriptionStatus::class, get_debug_type($singleStatus)), 1731580994);
-            }
             if (array_key_exists($singleStatus->value, $statusByValue)) {
                 throw new \InvalidArgumentException(sprintf('Status "%s" is already part of this set', $singleStatus->value), 1731581002);
             }

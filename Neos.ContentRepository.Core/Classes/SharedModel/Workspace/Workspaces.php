@@ -38,18 +38,12 @@ final readonly class Workspaces implements \IteratorAggregate, \Countable
      */
     private array $rootWorkspaces;
 
-    /**
-     * @param iterable<Workspace> $collection
-     */
-    private function __construct(iterable $collection)
+    private function __construct(Workspace ...$collection)
     {
         $workspaces = [];
         $rootWorkspaces = [];
         $workspacesByBaseWorkspaceName = [];
         foreach ($collection as $item) {
-            if (!$item instanceof Workspace) {
-                throw new \InvalidArgumentException(sprintf('Workspaces must only consist of %s objects, got: %s', Workspace::class, get_debug_type($item)), 1677833509);
-            }
             $workspaces[$item->workspaceName->value] = $item;
             if ($item->baseWorkspaceName !== null) {
                 $workspacesByBaseWorkspaceName[$item->baseWorkspaceName->value][] = $item;
@@ -68,12 +62,12 @@ final readonly class Workspaces implements \IteratorAggregate, \Countable
      */
     public static function fromArray(array $workspaces): self
     {
-        return new self($workspaces);
+        return new self(...$workspaces);
     }
 
     public static function createEmpty(): self
     {
-        return new self([]);
+        return new self();
     }
 
     public function get(WorkspaceName $workspaceName): ?Workspace
@@ -139,7 +133,7 @@ final readonly class Workspaces implements \IteratorAggregate, \Countable
      */
     public function filter(\Closure $callback): self
     {
-        return new self(array_filter($this->workspaces, $callback));
+        return new self(...array_filter($this->workspaces, $callback));
     }
 
     /**

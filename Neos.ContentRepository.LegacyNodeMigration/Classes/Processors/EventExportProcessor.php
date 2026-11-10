@@ -213,12 +213,9 @@ final class EventExportProcessor implements ProcessorInterface
 
 
     /**
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateId
      * @param array<string, mixed> $nodeDataRow
-     * @return NodeName[]|void
      */
-    public function processNodeDataWithoutFallbackToEmptyDimension(ProcessingContext $context, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow)
+    public function processNodeDataWithoutFallbackToEmptyDimension(ProcessingContext $context, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow): void
     {
         $nodePath = NodePath::fromString(strtolower($nodeDataRow['path']));
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
@@ -433,6 +430,7 @@ final class EventExportProcessor implements ProcessorInterface
         }
         $this->exportEvent($variantCreatedEvent);
 
+        /** @var ?OriginDimensionSpacePoint $variantSourceOriginDimensionSpacePoint */
         $sourceVariant = $variantSourceOriginDimensionSpacePoint !== null
             ? $this->visitedNodes->getByNodeAggregateId($nodeAggregateId)->getVariant($variantSourceOriginDimensionSpacePoint)
             : null;
@@ -441,7 +439,7 @@ final class EventExportProcessor implements ProcessorInterface
         // dimension's node data row does not set, so a copied-over value does not surface where the row left
         // the property empty or did not carry it at all.
         $ownPropertyNames = $serializedPropertyValuesAndReferences->serializedPropertyValues->getPropertyNames();
-        $copiedPropertyNames = $sourceVariant?->propertyNames ?? PropertyNames::createEmpty();
+        $copiedPropertyNames = $sourceVariant?->propertyNames ?: PropertyNames::createEmpty();
         $propertiesToUnset = $copiedPropertyNames->getDifference($ownPropertyNames);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0
             || !$propertiesToUnset->isEmpty()

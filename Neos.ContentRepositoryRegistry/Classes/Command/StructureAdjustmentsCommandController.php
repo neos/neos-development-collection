@@ -74,7 +74,6 @@ final class StructureAdjustmentsCommandController extends CommandController
         }
 
         foreach ($errors as $error) {
-            assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
             $structureAdjustmentService->fixError($error);
         }
@@ -87,7 +86,6 @@ final class StructureAdjustmentsCommandController extends CommandController
     private function printErrors(\Generator $errors): void
     {
         foreach ($errors as $error) {
-            assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
         }
     }

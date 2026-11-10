@@ -40,9 +40,6 @@ final readonly class ContentRepositoryIds implements \IteratorAggregate, \Counta
             if (is_string($id)) {
                 $id = ContentRepositoryId::fromString($id);
             }
-            if (!$id instanceof ContentRepositoryId) {
-                throw new \InvalidArgumentException(sprintf('Expected string or instance of %s, got: %s', ContentRepositoryId::class, get_debug_type($id)), 1720424666);
-            }
             $processedIds[] = $id;
         }
         return new self(...$processedIds);

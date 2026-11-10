@@ -116,7 +116,7 @@ final class QueryBuilder extends DBALQueryBuilder
     }
 
     /**
-     * @param array<string|int, mixed> $otherValues
+     * @param list<mixed>|array<string, mixed> $otherValues
      * @param array<string|int, int|string|Type|null> $otherTypes
      */
     private function mergeDbalParameters(array $otherValues, array $otherTypes): void

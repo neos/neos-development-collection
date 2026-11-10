@@ -311,7 +311,7 @@ final class NodeTypeManager
     /**
      * Evaluates the given superTypes configuation and returns the array of effective superTypes.
      *
-     * @param array<string,mixed> $superTypesConfiguration
+     * @param array<string|int,mixed> $superTypesConfiguration
      * @param array<string,mixed> $completeNodeTypeConfiguration
      * @return array<string,NodeType|null>
      */

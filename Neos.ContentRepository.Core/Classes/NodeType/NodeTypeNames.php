@@ -83,7 +83,7 @@ final class NodeTypeNames implements \IteratorAggregate
      */
     public function map(\Closure $callback): array
     {
-        return array_map($callback, $this->nodeTypeNames);
+        return array_values(array_map($callback, $this->nodeTypeNames));
     }
 
     /**

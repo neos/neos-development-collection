@@ -93,23 +93,21 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
                 if ($status instanceof DetachedSubscriptionStatus) {
                     continue;
                 }
-                if ($status instanceof ProjectionSubscriptionStatus) {
-                    if ($status->subscriptionStatus !== SubscriptionStatus::ERROR) {
-                        continue;
+                if ($status->subscriptionStatus !== SubscriptionStatus::ERROR) {
+                    continue;
+                }
+                $message[] = sprintf('    Projection: in %s', $status->subscriptionStatus->value);
+                if ($status->subscriptionError !== null) {
+                    $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: 'No details available.');
+                    foreach ($lines as $line) {
+                        $message[] = sprintf('      %s', $line);
                     }
-                    $message[] = sprintf('    Projection: in %s', $status->subscriptionStatus->value);
-                    if ($status->subscriptionError !== null) {
-                        $lines = explode(chr(10), $status->subscriptionError->errorMessage ?: 'No details available.');
-                        foreach ($lines as $line) {
-                            $message[] = sprintf('      %s', $line);
-                        }
-                    }
-                    $message[] = sprintf('    Setup: %s', $status->setupStatus->type->name);
-                    if ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details) {
-                        $lines = explode(chr(10), $status->setupStatus->details);
-                        foreach ($lines as $line) {
-                            $message[] = '      ' . $line;
-                        }
+                }
+                $message[] = sprintf('    Setup: %s', $status->setupStatus->type->name);
+                if ($status->setupStatus->type !== ProjectionStatusType::OK || $status->setupStatus->details) {
+                    $lines = explode(chr(10), $status->setupStatus->details);
+                    foreach ($lines as $line) {
+                        $message[] = '      ' . $line;
                     }
                 }
             }
@@ -132,7 +130,7 @@ final readonly class ContentRepositoryMaintainer implements ContentRepositorySer
     {
         try {
             $lastEventEnvelope = current(iterator_to_array($this->eventStore->load(VirtualStreamName::all())->backwards()->limit(1))) ?: null;
-            $sequenceNumber = $lastEventEnvelope?->sequenceNumber ?? SequenceNumber::none();
+            $sequenceNumber = $lastEventEnvelope?->sequenceNumber ?: SequenceNumber::none();
         } catch (\Doctrine\DBAL\Exception) {
             // todo do not depend on the dbal exception as this is totally implementation specific and the core has no dependency to dbal!
             $sequenceNumber = null;

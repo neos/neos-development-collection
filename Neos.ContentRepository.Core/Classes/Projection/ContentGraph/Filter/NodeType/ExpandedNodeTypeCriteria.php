@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType;
 
-use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -69,7 +68,6 @@ final readonly class ExpandedNodeTypeCriteria
             $processedNodeTypeNames[$nodeTypeName->value] = $nodeTypeName;
             $subNodeTypes = $nodeTypeManager->getSubNodeTypes($nodeTypeName, true);
             foreach ($subNodeTypes as $subNodeType) {
-                assert($subNodeType instanceof NodeType);
                 $processedNodeTypeNames[$subNodeType->name->value] = $subNodeType->name;
             }
         }

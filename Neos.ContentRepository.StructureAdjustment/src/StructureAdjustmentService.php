@@ -134,7 +134,6 @@ final class StructureAdjustmentService implements ContentRepositoryServiceInterf
             return;
         }
         $events = ($adjustment->remediation)();
-        assert($events instanceof Events);
 
         // set correlation id and add debug metadata
         $correlationId = CorrelationId::fromString(sprintf('StructureAdjustment_%s', bin2hex(random_bytes(9))));
@@ -144,7 +143,7 @@ final class StructureAdjustmentService implements ContentRepositoryServiceInterf
             $correlationId,
             $adjustment
         ) {
-            $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
+            $metadata = $event instanceof DecoratedEvent ? ($event->eventMetadata?->value ?: []) : [];
             if ($isFirstEvent) {
                 $metadata['debug_reason'] = mb_strimwidth($adjustment->render(), 0, 250, '…');
                 $isFirstEvent = false;

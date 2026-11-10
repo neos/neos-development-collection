@@ -114,7 +114,7 @@ class HasOperation extends AbstractOperation
                     }
                 }
             }
-            $filteredContext = array_unique($filteredContext);
+            $filteredContext = array_unique($filteredContext, SORT_REGULAR);
         }
 
         $flowQuery->setContext($filteredContext);

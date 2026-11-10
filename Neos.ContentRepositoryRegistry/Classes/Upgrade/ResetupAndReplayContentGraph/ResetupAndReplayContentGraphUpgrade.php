@@ -122,7 +122,7 @@ final readonly class ResetupAndReplayContentGraphUpgrade
     private function getEventStorePosition(): SequenceNumber
     {
         $lastEventEnvelope = current(iterator_to_array($this->context->doctrineEventStore->load(VirtualStreamName::all())->backwards()->limit(1))) ?: null;
-        return $lastEventEnvelope?->sequenceNumber ?? SequenceNumber::none();
+        return $lastEventEnvelope?->sequenceNumber ?: SequenceNumber::none();
     }
 
     private function getGraphProjectionStatus(): ProjectionSubscriptionStatus

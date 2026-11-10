@@ -91,12 +91,11 @@ class ParentsUntilOperation extends AbstractOperation
                 $filteredParents = Nodes::fromArray(iterator_to_array($filterQuery));
             }
 
-            if (isset($filteredParents) && $filteredParents instanceof Nodes && !$filteredParents->isEmpty()) {
+            if (isset($filteredParents) && !$filteredParents->isEmpty()) {
                 $parentNodes = $parentNodes->previousAll($filteredParents->first());
             }
             foreach ($parentNodes as $parentNode) {
-                if ($parentNode !== null
-                    && !isset($outputNodeAggregateIds[$parentNode->aggregateId->value])) {
+                if (!isset($outputNodeAggregateIds[$parentNode->aggregateId->value])) {
                     $outputNodeAggregateIds[$parentNode->aggregateId->value] = true;
                     $output[] = $parentNode;
                 }

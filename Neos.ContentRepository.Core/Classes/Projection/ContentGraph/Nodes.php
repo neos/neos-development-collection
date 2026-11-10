@@ -27,27 +27,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 {
     /**
-     * @var array<int,Node>
+     * @var list<Node>
      */
     private array $nodes;
 
-    /**
-     * @param iterable<int,Node> $collection
-     */
-    private function __construct(iterable $collection)
+    private function __construct(Node ...$collection)
     {
-        $nodes = [];
-        foreach ($collection as $item) {
-            if (!$item instanceof Node) {
-                throw new \InvalidArgumentException(
-                    'Nodes can only consist of ' . Node::class . ' objects.',
-                    1618044512
-                );
-            }
-            $nodes[] = $item;
-        }
-
-        $this->nodes = $nodes;
+        $this->nodes = array_values($collection);
     }
 
     /**
@@ -55,12 +41,12 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
      */
     public static function fromArray(array $nodes): self
     {
-        return new self($nodes);
+        return new self(...$nodes);
     }
 
     public static function createEmpty(): self
     {
-        return new self([]);
+        return new self();
     }
 
     public function offsetGet(mixed $offset): ?Node
@@ -122,17 +108,17 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 
     public function prepend(Node $node): self
     {
-        return new self([$node, ...$this->nodes]);
+        return new self($node, ...$this->nodes);
     }
 
     public function append(Node $node): self
     {
-        return new self([...$this->nodes, $node]);
+        return new self(...$this->nodes, $node);
     }
 
     public function reverse(): self
     {
-        return new self(array_reverse($this->nodes));
+        return new self(...array_reverse($this->nodes));
     }
 
     /**
@@ -177,7 +163,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
-        return new self(array_slice($this->nodes, 0, $referenceNodeIndex));
+        return new self(...array_slice($this->nodes, 0, $referenceNodeIndex));
     }
 
     /**
@@ -201,7 +187,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     {
         $referenceNodeIndex = $this->getNodeIndex($referenceNode);
 
-        return new self(array_slice($this->nodes, $referenceNodeIndex + 1));
+        return new self(...array_slice($this->nodes, $referenceNodeIndex + 1));
     }
 
     /**

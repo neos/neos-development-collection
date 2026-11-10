@@ -23,7 +23,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\Search
 final readonly class FindSucceedingSiblingNodesFilter
 {
     /**
-     * @internal (the properties themselves are readonly; only the write-methods are API.
+     * @internal
+     * the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
         public ?NodeTypeCriteria $nodeTypes,
