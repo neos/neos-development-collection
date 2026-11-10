@@ -12,7 +12,6 @@ use Neos\ContentRepository\Core\Subscription\DetachedSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\Engine\Errors;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngineCriteria;
-use Neos\ContentRepository\Core\Subscription\ProjectionSubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionId;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatus;
 use Neos\ContentRepository\Core\Subscription\SubscriptionStatusCollection;

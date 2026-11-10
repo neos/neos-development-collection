@@ -32,23 +32,12 @@ use Neos\ContentRepository\Core\Dimension;
  */
 final readonly class ContentSubgraphVariationWeight implements \JsonSerializable
 {
+    /**
+     * @param array<string,Dimension\ContentDimensionValueSpecializationDepth> $value
+     */
     public function __construct(
-        /**
-         * @var array<string,Dimension\ContentDimensionValueSpecializationDepth>
-         */
         public array $value
     ) {
-        foreach ($value as $dimensionId => $specializationDepth) {
-            if (!$specializationDepth instanceof Dimension\ContentDimensionValueSpecializationDepth) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Weight component %s was not of type ContentDimensionValueSpecializationDepth',
-                        get_debug_type($specializationDepth)
-                    ),
-                    1531477454
-                );
-            }
-        }
     }
 
     public function getWeightInDimension(

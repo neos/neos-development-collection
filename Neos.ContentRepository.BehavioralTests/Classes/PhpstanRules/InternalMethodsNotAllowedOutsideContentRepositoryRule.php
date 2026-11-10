@@ -10,7 +10,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\ObjectType;
 
 /**
  * @implements Rule<Node\Expr\CallLike>
@@ -29,8 +28,6 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        assert($node instanceof Node\Expr\CallLike);
-
         if (
             $scope->getNamespace()
             && (
@@ -52,31 +49,29 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
         }
         if ($node instanceof Node\Expr\MethodCall) {
             $methodCallTargetClass = $scope->getType($node->var);
-            if ($methodCallTargetClass instanceof ObjectType) {
-                $targetClassName = $methodCallTargetClass->getClassName();
-                if (
-                    !str_starts_with($targetClassName, 'Neos\ContentRepository\Core')
-                ) {
+            if ($methodCallTargetClass->isObject()->yes()) {
+                foreach ($methodCallTargetClass->getObjectClassNames() as $targetClassName) {
                     // currently only access to methods on the cr core is protected.
-                    return [];
-                }
+                    if (!str_starts_with($targetClassName, 'Neos\ContentRepository\Core')) {
+                        continue;
+                    }
 
+                    // here, we know an OUTSIDE class is calling into Neos\ContentRepository Core -> only allowed to use
+                    // public API
 
-                // here, we know an OUTSIDE class is calling into Neos\ContentRepository Core -> only allowed to use
-                // public API
-
-                $targetClassReflection = $this->reflectionProvider->getClass($targetClassName);
-                $classification = ClassClassification::fromClassReflection($targetClassReflection);
-                if (!$classification->isApi && $node->name instanceof Node\Identifier) {
-                    return [
-                        RuleErrorBuilder::message(
-                            sprintf(
-                                'The internal method "%s::%s" is called.',
-                                $targetClassName,
-                                $node->name->toString()
-                            )
-                        )->identifier('neos.cr.internal')->build(),
-                    ];
+                    $targetClassReflection = $this->reflectionProvider->getClass($targetClassName);
+                    $classification = ClassClassification::fromClassReflection($targetClassReflection);
+                    if (!$classification->isApi && $node->name instanceof Node\Identifier) {
+                        return [
+                            RuleErrorBuilder::message(
+                                sprintf(
+                                    'The internal method "%s::%s" is called.',
+                                    $targetClassName,
+                                    $node->name->toString()
+                                )
+                            )->identifier('neos.cr.internal')->build(),
+                        ];
+                    }
                 }
             }
         }

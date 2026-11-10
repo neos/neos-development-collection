@@ -153,6 +153,7 @@ final class NodeFactory
         if (empty($nodeRows)) {
             return null;
         }
+        // as at lease one node row exists, so does the node aggregate
 
         $rawNodeAggregateId = '';
         $rawNodeTypeName = '';
@@ -205,11 +206,6 @@ final class NodeFactory
         }
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
-
-        // a nodeAggregate only exists if it at least contains one node
-        if ($nodesByOccupiedDimensionSpacePoint === []) {
-            throw new \RuntimeException(sprintf('Fatal, no occupation found in fetched node rows for aggregate "%s"', $nodeRows[0]['nodeaggregateid'] ?? ''), 1778049288);
-        }
 
         return NodeAggregate::create(
             $this->contentRepositoryId,

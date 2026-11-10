@@ -113,7 +113,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 
     public function append(Node $node): self
     {
-        return new self(...$this->nodes, $node);
+        return new self(...$this->nodes, ...[$node]);
     }
 
     public function reverse(): self

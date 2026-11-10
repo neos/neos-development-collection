@@ -42,7 +42,7 @@ final readonly class InitiatingEventMetadata
                 $initiatingUserId,
                 $initiatingTimestampFormatted
             ) {
-                $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
+                $metadata = $event instanceof DecoratedEvent ? ($event->eventMetadata?->value ?: []) : [];
                 $metadata[self::INITIATING_USER_ID] ??= $initiatingUserId;
                 $metadata[self::INITIATING_TIMESTAMP] ??= $initiatingTimestampFormatted;
 

@@ -53,6 +53,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $values = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
+            /** @phpstan-ignore function.alreadyNarrowedType (part of the API and thus cannot be trusted) */
             if (!is_string($propertyName)) {
                 throw new \InvalidArgumentException(sprintf('Invalid property name. Expected string, got: %s', get_debug_type($propertyName)), 1681326239);
             }

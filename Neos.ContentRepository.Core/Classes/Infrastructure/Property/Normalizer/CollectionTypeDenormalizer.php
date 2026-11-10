@@ -25,7 +25,7 @@ final class CollectionTypeDenormalizer implements
     SerializerAwareInterface,
     CacheableSupportsMethodInterface
 {
-    private ?DenormalizerInterface $serializer;
+    private ?DenormalizerInterface $serializer = null;
 
     /**
      * {@inheritdoc}
@@ -96,10 +96,8 @@ final class CollectionTypeDenormalizer implements
                 $context
             );
         }
-        if (method_exists($this->serializer, 'supportsDenormalization')) {
-            return $this->serializer->supportsDenormalization(reset($data), $parsedType['elementType'], $format);
-        }
-        return false;
+
+        return $this->serializer->supportsDenormalization(reset($data), $parsedType['elementType'], $format);
     }
 
     /**

@@ -646,9 +646,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-    /**
-     * @phpstan-pure this method is pure, to persist the events they must be handled outside
-     */
     private function discardWorkspace(
         Workspace $workspace,
         Workspace $baseWorkspace,

@@ -50,6 +50,7 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable
     final protected static function validateCoordinates(array $coordinates): void
     {
         foreach ($coordinates as $dimensionName => $dimensionValue) {
+            /** @phpstan-ignore function.alreadyNarrowedType (part of the API and thus cannot be trusted) */
             if (!is_string($dimensionName)) {
                 throw new \InvalidArgumentException(
                     sprintf('Dimension name "%s" is not a string', $dimensionName),
@@ -59,6 +60,7 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable
             if ($dimensionName === '') {
                 throw new \InvalidArgumentException('Dimension name must not be empty', 1639733123);
             }
+            /** @phpstan-ignore function.alreadyNarrowedType (part of the API and thus cannot be trusted) */
             if (!is_string($dimensionValue)) {
                 throw new \InvalidArgumentException(
                     sprintf(

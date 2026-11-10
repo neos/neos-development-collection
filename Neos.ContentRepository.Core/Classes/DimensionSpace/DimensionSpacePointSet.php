@@ -50,6 +50,7 @@ final readonly class DimensionSpacePointSet implements
                 $pointCandidate = DimensionSpacePoint::fromArray($pointCandidate);
             }
 
+            /** @phpstan-ignore instanceof.alwaysTrue (part of the API and thus cannot be trusted) */
             if (!$pointCandidate instanceof DimensionSpacePoint) {
                 throw new \InvalidArgumentException(sprintf('Point %s was not of type DimensionSpacePoint', $index));
             }

@@ -20,7 +20,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 final readonly class ContentStreamLayers
 {
     /**
-     * @param array<int,ContentStreamLayer> $items
+     * @param non-empty-array<int,ContentStreamLayer> $items
      */
     private function __construct(
         public array $items
@@ -72,6 +72,7 @@ final readonly class ContentStreamLayers
             return null;
         }
         $withoutLastEntry = array_slice($this->items, 0, -1, preserve_keys: true);
+        /** @phpstan-ignore argument.type (cannot be empty, there are at leaset 2 items) */
         return new self($withoutLastEntry);
     }
 
