@@ -48,7 +48,7 @@ class ProjectionContentGraph
     public function __construct(
         private readonly Connection $dbal,
         private readonly ContentGraphTableNames $tableNames,
-        private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository
+        private readonly DimensionSpacePointsRepository $dimensionSpacePointsRepository,
     ) {
         $this->subqueries = SqlTableSubqueryFactory::for($this->tableNames);
     }
@@ -56,7 +56,7 @@ class ProjectionContentGraph
     public function findParentNode(
         ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $childNodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): ?NodeRecord {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId);
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($originDimensionSpacePoint->toDimensionSpacePoint())->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
@@ -91,7 +91,7 @@ class ProjectionContentGraph
     public function findNodeInAggregate(
         ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $nodeAggregateId,
-        DimensionSpacePoint $coveredDimensionSpacePoint
+        DimensionSpacePoint $coveredDimensionSpacePoint,
     ): ?NodeRecord {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($coveredDimensionSpacePoint)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
@@ -123,7 +123,7 @@ class ProjectionContentGraph
     public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        ContentStreamLayers $contentStreamLayers
+        ContentStreamLayers $contentStreamLayers,
     ): ?NodeRelationAnchorPoint {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
@@ -161,7 +161,7 @@ class ProjectionContentGraph
      */
     public function getAnchorPointsForNodeAggregateInContentStream(
         NodeAggregateId $nodeAggregateId,
-        ContentStreamLayers $contentStreamLayers
+        ContentStreamLayers $contentStreamLayers,
     ): iterable {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
@@ -215,13 +215,16 @@ class ProjectionContentGraph
         NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
     ): NodeSortPath {
 
+        $succeedingSiblingRelationData = null;
+        $precedingSiblingRelationData = null;
         if ($succeedingSiblingAnchorPoint) {
-
             [$succeedingSiblingRelationData, $precedingSiblingRelationData] = $this->getDirectSiblingsRelationData($contentStreamLayers, $dimensionSpacePoint, $parentAnchorPoint, $succeedingSiblingAnchorPoint);
+        }
 
+        if ($succeedingSiblingAnchorPoint && $succeedingSiblingRelationData !== null) {
             $succeedingSiblingSortPath = NodeSortPath::fromString($succeedingSiblingRelationData['sortpath']);
             $precedingSiblingSortPath = null;
             if ($precedingSiblingRelationData['sortpath'] ?? false) {
@@ -260,7 +263,7 @@ class ProjectionContentGraph
     public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
-        DimensionSpacePoint $dimensionSpacePoint
+        DimensionSpacePoint $dimensionSpacePoint,
     ): array {
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoint($dimensionSpacePoint)->withParentNodeRelationAnchor($parentAnchorPoint);
         $outgoingHierarchyRelationsStatement = <<<SQL
@@ -287,7 +290,7 @@ class ProjectionContentGraph
     public function findIngoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $childAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
-        ?DimensionSpacePointSet $restrictToSet = null
+        ?DimensionSpacePointSet $restrictToSet = null,
     ): array {
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withChildNodeRelationAnchor($childAnchorPoint);
         if ($restrictToSet !== null) {
@@ -318,7 +321,7 @@ class ProjectionContentGraph
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ContentStreamLayers $contentStreamLayers,
-        ?DimensionSpacePointSet $restrictToSet = null
+        ?DimensionSpacePointSet $restrictToSet = null,
     ): array {
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withParentNodeRelationAnchor($parentAnchorPoint);
         if ($restrictToSet !== null) {
@@ -349,7 +352,7 @@ class ProjectionContentGraph
     public function findOutgoingHierarchyRelationsForNodeAggregate(
         ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $nodeAggregateId,
-        DimensionSpacePointSet $dimensionSpacePointSet
+        DimensionSpacePointSet $dimensionSpacePointSet,
     ): array {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withDimensionSpacePoints($dimensionSpacePointSet)->withPossibleParentNodeAggregateId($nodeAggregateIdCondition);
@@ -382,7 +385,7 @@ class ProjectionContentGraph
     public function findIngoingHierarchyRelationsForNodeAggregate(
         ContentStreamLayers $contentStreamLayers,
         NodeAggregateId $nodeAggregateId,
-        ?DimensionSpacePointSet $dimensionSpacePointSet = null
+        ?DimensionSpacePointSet $dimensionSpacePointSet = null,
     ): array {
         $nodeAggregateIdCondition = NodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId);
         $hierarchyRelationQuery = $this->subqueries->forHierarchyRelation($contentStreamLayers)->withPossibleChildNodeAggregateId($nodeAggregateIdCondition);
@@ -415,7 +418,7 @@ class ProjectionContentGraph
     }
 
     public function getAllContentStreamLayersAnchorPointIsContainedIn(
-        NodeRelationAnchorPoint $nodeRelationAnchorPoint
+        NodeRelationAnchorPoint $nodeRelationAnchorPoint,
     ): ContentStreamLayers {
         $contentStreamLayersStatement = <<<SQL
             SELECT
@@ -458,9 +461,10 @@ class ProjectionContentGraph
 
     /**
      * Returns the sort paths of the succeeding sibling and its direct predecessor below the given parent.
-     * The succeeding sibling must be a child of the parent, otherwise the lookup fails.
+     * The succeeding sibling must be a child of the parent, otherwise the lookup fails and an empty array is returned.
+     * This shouldn't happen, but due to broken events with wrong succeeding sibling anchor points we need to handle it gracefully.
      *
-     * @return array<int,array<string,mixed>>
+     * @return array<int,null|array<string,mixed>>
      */
     private function getDirectSiblingsRelationData(ContentStreamLayers $contentStreamLayers, DimensionSpacePoint $dimensionSpacePoint, NodeRelationAnchorPoint $parentAnchorPoint, NodeRelationAnchorPoint $succeedingSiblingAnchorPoint): array
     {
@@ -490,13 +494,6 @@ class ProjectionContentGraph
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf('Failed to load direct sibling relations for content stream %s, anchor point %s and dimension space point %s from database: %s', $contentStreamLayers->toDebugString(), $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->toJson(), $e->getMessage()), 1716474854, $e);
-        }
-
-        if (!$directSiblingRelations) {
-            throw new \RuntimeException(
-                sprintf('Could not fetch succeeding sibling relation for anchor point: %s with dimensionSpacePointHash : %s', $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->hash),
-                1696405259
-            );
         }
 
         return array_pad($directSiblingRelations, 2, null);
