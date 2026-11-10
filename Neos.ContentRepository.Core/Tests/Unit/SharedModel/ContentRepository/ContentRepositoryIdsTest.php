@@ -38,7 +38,7 @@ class ContentRepositoryIdsTest extends TestCase
     #[Test]
     public function fromArrayThrowsExceptionForInvalidItem(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         ContentRepositoryIds::fromArray([1234]);
     }
 }

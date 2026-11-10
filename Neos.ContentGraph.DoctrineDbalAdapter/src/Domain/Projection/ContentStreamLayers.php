@@ -72,7 +72,7 @@ final readonly class ContentStreamLayers
             return null;
         }
         $withoutLastEntry = array_slice($this->items, 0, -1, preserve_keys: true);
-        /** @phpstan-ignore argument.type (cannot be empty, there are at leaset 2 items) */
+        /** @phpstan-ignore argument.type (cannot be empty, there are at least 2 items) */
         return new self($withoutLastEntry);
     }
 

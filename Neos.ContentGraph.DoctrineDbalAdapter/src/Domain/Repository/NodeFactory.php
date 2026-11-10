@@ -153,7 +153,7 @@ final class NodeFactory
         if (empty($nodeRows)) {
             return null;
         }
-        // as at lease one node row exists, so does the node aggregate
+        // as at least one node row exists, so does the node aggregate
 
         $rawNodeAggregateId = '';
         $rawNodeTypeName = '';
