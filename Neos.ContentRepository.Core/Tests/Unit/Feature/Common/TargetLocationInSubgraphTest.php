@@ -326,8 +326,7 @@ class TargetLocationInSubgraphTest extends TestCase
             fn (Node $node): NodeAggregate => self::createNodeAggregate($node),
             $nodes,
         );
-        return new readonly class ($nodeAggregates, $subgraph) implements ContentGraphInterface
-        {
+        return new readonly class ($nodeAggregates, $subgraph) implements ContentGraphInterface {
             public function __construct(
                 private array $nodeAggregates,
                 private ContentSubgraphInterface $subgraph,
@@ -448,8 +447,7 @@ class TargetLocationInSubgraphTest extends TestCase
         array $succeedingSiblings,
         array $precedingSiblings,
     ): ContentSubgraphInterface {
-        return new class($nodes, $parents, $succeedingSiblings, $precedingSiblings) implements ContentSubgraphInterface
-        {
+        return new class ($nodes, $parents, $succeedingSiblings, $precedingSiblings) implements ContentSubgraphInterface {
             /**
              * @param array<string,Node> $nodes
              * @param array<string,Node> $parents
