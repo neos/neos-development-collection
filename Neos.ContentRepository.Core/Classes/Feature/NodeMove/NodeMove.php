@@ -124,35 +124,13 @@ trait NodeMove
         );
 
         $interdimensionalSiblings = InterdimensionalSiblings::fromTargetLocationForDimensionSpacePoints(
-            $targetLocation,
-            $affectedDimensionSpacePoints,
-            $command->dimensionSpacePoint,
-            $contentGraph,
+            targetLocation: $targetLocation,
+            dimensionSpacePoints: $affectedDimensionSpacePoints,
+            sourceDimensionSpacePoint: $command->dimensionSpacePoint,
+            contentGraph: $contentGraph,
+            completeSet: $command->newParentNodeAggregateId
+                || (!$command->newSucceedingSiblingNodeAggregateId && !$command->newPrecedingSiblingNodeAggregateId),
         );
-
-        if ($command->newParentNodeAggregateId) {
-            if (
-                $command->newSucceedingSiblingNodeAggregateId !== null
-                && $command->newPrecedingSiblingNodeAggregateId === null
-            ) {
-                $interdimensionalSiblings = $interdimensionalSiblings->reduceToSiblingsWithNodeAggregateId();
-            }
-        } else {
-            if ($command->newSucceedingSiblingNodeAggregateId || $command->newPrecedingSiblingNodeAggregateId) {
-                if (
-                    $command->newSucceedingSiblingNodeAggregateId !== null
-                    || $command->newPrecedingSiblingNodeAggregateId === null
-                ) {
-                    $interdimensionalSiblings = $interdimensionalSiblings->reduceToSiblingsWithNodeAggregateId();
-                }
-                if (
-                    $command->newPrecedingSiblingNodeAggregateId !== null
-                    && $command->newSucceedingSiblingNodeAggregateId === null
-                ) {
-                    $interdimensionalSiblings = $interdimensionalSiblings->reduceToSiblingsWithNodeAggregateId();
-                }
-            }
-        }
 
         $events = Events::with(
             new NodeAggregateWasMoved(

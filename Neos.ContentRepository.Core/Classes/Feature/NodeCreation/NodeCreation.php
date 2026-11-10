@@ -198,6 +198,7 @@ trait NodeCreation
             dimensionSpacePoints: $coveredDimensionSpacePoints,
             sourceDimensionSpacePoint: $command->originDimensionSpacePoint->toDimensionSpacePoint(),
             contentGraph: $contentGraph,
+            completeSet: true,
         );
 
         $events = [

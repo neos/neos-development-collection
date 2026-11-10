@@ -126,6 +126,7 @@ trait NodeVariationInternals
                 dimensionSpacePoints: $coverage,
                 sourceDimensionSpacePoint: $sourceOrigin->toDimensionSpacePoint(),
                 contentGraph: $contentGraph,
+                completeSet: true,
             ),
         );
 
@@ -198,6 +199,7 @@ trait NodeVariationInternals
                 dimensionSpacePoints: $coverage,
                 sourceDimensionSpacePoint: $sourceOrigin->toDimensionSpacePoint(),
                 contentGraph: $contentGraph,
+                completeSet: true,
             ),
         );
 
@@ -266,10 +268,11 @@ trait NodeVariationInternals
             $sourceOrigin,
             $targetOrigin,
             InterdimensionalSiblings::fromTargetLocationForDimensionSpacePoints(
-                $targetLocation,
-                $coverage,
-                $sourceOrigin->toDimensionSpacePoint(),
-                $contentGraph,
+                targetLocation: $targetLocation,
+                dimensionSpacePoints: $coverage,
+                sourceDimensionSpacePoint: $sourceOrigin->toDimensionSpacePoint(),
+                contentGraph: $contentGraph,
+                completeSet: true,
             )
         );
 

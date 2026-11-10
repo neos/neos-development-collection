@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -164,66 +165,84 @@ final readonly class TargetLocationInSubgraph
         }
     }
 
-    public function resolveInterdimensionalSibling(
-        ContentSubgraphInterface $subgraph,
-        ContentSubgraphInterface $sourceSubgraph
-    ): InterdimensionalSibling {
+    public function tryResolveInterdimensionalSibling(
+        ContentSubgraphInterface $targetSubgraph,
+        ContentSubgraphInterface $sourceSubgraph,
+        bool $allowNullSibling,
+    ): ?InterdimensionalSibling {
         $succeedingSiblingId = null;
         if ($this->succeedingSiblingNodeAggregateId) {
-            if ($subgraph->findNodeById($this->succeedingSiblingNodeAggregateId)) {
+            if ($this->isSibling($this->succeedingSiblingNodeAggregateId, $targetSubgraph)) {
                 $succeedingSiblingId = $this->succeedingSiblingNodeAggregateId;
             } else {
                 foreach (
                     $sourceSubgraph->findSucceedingSiblingNodes(
                         $this->succeedingSiblingNodeAggregateId,
                         FindSucceedingSiblingNodesFilter::create(),
-                    ) as $furtherSucceedingSibling
+                    ) as $furtherSucceedingSiblingInSource
                 ) {
-                    if (
-                        !$furtherSucceedingSibling->aggregateId->equals($this->nodeAggregateId)
-                        && $subgraph->findNodeById($furtherSucceedingSibling->aggregateId)
-                    ) {
-                        $succeedingSiblingId = $furtherSucceedingSibling->aggregateId;
+                    if ($this->isSibling($furtherSucceedingSiblingInSource->aggregateId, $targetSubgraph)) {
+                        $succeedingSiblingId = $furtherSucceedingSiblingInSource->aggregateId;
                         break;
                     }
                 }
             }
         }
         if (!$succeedingSiblingId && $this->precedingSiblingNodeAggregateId) {
-            $succeedingSibling = $subgraph->findSucceedingSiblingNodes(
+            $sourcePrecedingSiblings = $sourceSubgraph->findPrecedingSiblingNodes(
                 $this->precedingSiblingNodeAggregateId,
-                FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
-            )->first();
-            if ($succeedingSibling && !$succeedingSibling->aggregateId->equals($this->nodeAggregateId)) {
-                $succeedingSiblingId = $succeedingSibling->aggregateId;
-            } else {
-                $precedingSiblings = $sourceSubgraph->findPrecedingSiblingNodes(
-                    $this->precedingSiblingNodeAggregateId,
-                    FindPrecedingSiblingNodesFilter::create(),
-                );
-                $precedingSiblingIds = $precedingSiblings->toNodeAggregateIds()
-                    ->merge(NodeAggregateIds::fromArray([$this->precedingSiblingNodeAggregateId]));
-                foreach ($precedingSiblings as $furtherSourcePrecedingSibling) {
-                    $succeedingSibling = $subgraph->findSucceedingSiblingNodes(
-                        $furtherSourcePrecedingSibling->aggregateId,
+                FindPrecedingSiblingNodesFilter::create(),
+            );
+            $precedingSiblingIds = NodeAggregateIds::fromArray([$this->precedingSiblingNodeAggregateId])
+                ->merge($sourcePrecedingSiblings->toNodeAggregateIds());
+
+            foreach ($precedingSiblingIds as $precedingSiblingId) {
+                if ($this->isSibling($precedingSiblingId, $targetSubgraph, true)) {
+                    // one of the source preceding siblings is also a sibling in the target subgraph,
+                    // so if no succeeding sibling can be resolved we explicitly select the end of the sibling list
+                    $allowNullSibling = true;
+
+                    $succeedingSibling = $targetSubgraph->findSucceedingSiblingNodes(
+                        $precedingSiblingId,
                         FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
                     )->first();
-                    if ($succeedingSibling) {
-                        if (
-                            !$succeedingSibling->aggregateId->equals($this->nodeAggregateId)
-                            && !$precedingSiblingIds->contain($succeedingSibling->aggregateId)
-                        ) {
-                            $succeedingSiblingId = $succeedingSibling->aggregateId;
-                        }
+                    if (
+                        $succeedingSibling
+                        && $this->isSiblingNode($succeedingSibling, $targetSubgraph)
+                        && !$precedingSiblingIds->contain($succeedingSibling->aggregateId)
+                    ) {
+                        $succeedingSiblingId = $succeedingSibling->aggregateId;
                         break;
                     }
                 }
             }
         }
 
-        return new InterdimensionalSibling(
-            $subgraph->getDimensionSpacePoint(),
-            $succeedingSiblingId,
+        return $succeedingSiblingId || $allowNullSibling
+            ? new InterdimensionalSibling(
+                $targetSubgraph->getDimensionSpacePoint(),
+                $succeedingSiblingId,
+            )
+            : null;
+    }
+
+    private function isSibling(NodeAggregateId $siblingCandidate, ContentSubgraphInterface $subgraph, bool $includeSelf = false): bool
+    {
+        return (
+            ($siblingNode = $subgraph->findNodeById($siblingCandidate))
+            && $this->isSiblingNode($siblingNode, $subgraph, $includeSelf)
         );
+    }
+
+    private function isSiblingNode(Node $siblingCandidate, ContentSubgraphInterface $subgraph, bool $includeSelf = false): bool
+    {
+        $parentNodeAggregateId = $this->parentNodeAggregateId
+            ?: $subgraph->findParentNode($this->nodeAggregateId)?->aggregateId;
+        // root node aggregates can neither be moved, varied or created under another parent
+        assert($parentNodeAggregateId instanceof NodeAggregateId);
+        return ($includeSelf || !$siblingCandidate->aggregateId->equals($this->nodeAggregateId))
+            && $subgraph->findNodeById($siblingCandidate->aggregateId)
+            && $subgraph->findParentNode($siblingCandidate->aggregateId)
+                ?->aggregateId->equals($parentNodeAggregateId);
     }
 }

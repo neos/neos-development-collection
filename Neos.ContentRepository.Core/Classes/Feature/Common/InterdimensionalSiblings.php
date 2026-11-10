@@ -59,12 +59,16 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
         DimensionSpacePointSet $dimensionSpacePoints,
         DimensionSpacePoint $sourceDimensionSpacePoint,
         ContentGraphInterface $contentGraph,
+        bool $completeSet,
     ): self {
         $siblings = [];
         $sourceSubgraph = $contentGraph->getSubgraph($sourceDimensionSpacePoint, VisibilityConstraints::createEmpty());
         foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
             $subgraph = $contentGraph->getSubgraph($dimensionSpacePoint, VisibilityConstraints::createEmpty());
-            $siblings[] = $targetLocation->resolveInterdimensionalSibling($subgraph, $sourceSubgraph);
+            $sibling = $targetLocation->tryResolveInterdimensionalSibling($subgraph, $sourceSubgraph, $completeSet);
+            if ($sibling) {
+                $siblings[] = $sibling;
+            }
         }
 
         return new self(...$siblings);
@@ -91,11 +95,13 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
         ));
     }
 
-    public function reduceToSiblingsWithNodeAggregateId(): self
+    public function reduceToSiblingsWithNodeAggregateId(DimensionSpacePoint $sourceDimensionSpacePoint): self
     {
         return new self(...array_filter(
             $this->items,
-            fn (InterdimensionalSibling $sibling): bool => $sibling->nodeAggregateId !== null,
+            fn (InterdimensionalSibling $sibling): bool =>
+                $sibling->nodeAggregateId !== null
+                || $sibling->dimensionSpacePoint->equals($sourceDimensionSpacePoint),
         ));
     }
 
