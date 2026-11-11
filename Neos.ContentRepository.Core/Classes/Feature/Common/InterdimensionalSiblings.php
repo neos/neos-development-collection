@@ -95,16 +95,6 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
         ));
     }
 
-    public function reduceToSiblingsWithNodeAggregateId(DimensionSpacePoint $sourceDimensionSpacePoint): self
-    {
-        return new self(...array_filter(
-            $this->items,
-            fn (InterdimensionalSibling $sibling): bool =>
-                $sibling->nodeAggregateId !== null
-                || $sibling->dimensionSpacePoint->equals($sourceDimensionSpacePoint),
-        ));
-    }
-
     public function getSucceedingSiblingIdForDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): ?NodeAggregateId
     {
         foreach ($this->items as $sibling) {
