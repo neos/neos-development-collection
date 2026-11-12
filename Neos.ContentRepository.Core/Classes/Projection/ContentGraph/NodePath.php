@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * The relative node path is a collection of node names {@see NodeName}.
@@ -38,7 +40,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @api
  */
-final readonly class NodePath implements \JsonSerializable
+final readonly class NodePath implements ProvidesSchema, \JsonSerializable
 {
     /**
      * @var array<NodeName>
@@ -78,8 +80,7 @@ final readonly class NodePath implements \JsonSerializable
                     return NodeName::fromString($pathPart);
                 } catch (\InvalidArgumentException) {
                     throw new \InvalidArgumentException(sprintf(
-                        'The path "%s" is no valid NodePath because it contains a segment "%s"'
-                            . ' that is no valid NodeName',
+                        'The path "%s" is no valid NodePath because it contains a segment "%s" that is no valid NodeName',
                         implode('/', $pathSegments),
                         $pathPart
                     ), 1548157108);
@@ -142,6 +143,19 @@ final readonly class NodePath implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->serializeToString();
+    }
+
+    /**
+     * Describes the serialized form: {@see NodeName}s separated by "/", or an empty string for the root path
+     */
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'A path of node names separated by "/", relative to an ancestor node (an empty string denotes the ancestor itself)',
+            examples: ['my-document/main', ''],
+            pattern: '^(?:[a-z0-9\-]+(?:/[a-z0-9\-]+)*)?$',
+        );
     }
 
     public function __toString(): string

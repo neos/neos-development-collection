@@ -14,11 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\ContentRepository;
 
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\Schema;
+
 /**
  * @implements \IteratorAggregate<ContentRepositoryId>
  * @api
  */
-final readonly class ContentRepositoryIds implements \IteratorAggregate, \Countable
+final readonly class ContentRepositoryIds implements ProvidesSchema, \IteratorAggregate, \Countable
 {
     /**
      * @var array<ContentRepositoryId>
@@ -56,5 +60,14 @@ final readonly class ContentRepositoryIds implements \IteratorAggregate, \Counta
     public function count(): int
     {
         return count($this->ids);
+    }
+
+    public static function schema(): Schema
+    {
+        static $schema = null;
+        return $schema ??= ArraySchema::create(
+            description: 'A list of content repository identifiers',
+            items: ContentRepositoryId::schema(),
+        );
     }
 }

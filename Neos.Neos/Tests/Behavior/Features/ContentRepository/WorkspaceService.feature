@@ -31,7 +31,7 @@ Feature: Neos WorkspaceService related features
     When the root workspace "some-name-that-exceeds-the-max-allowed-length" is created
     Then an exception of type "InvalidArgumentException" should be thrown with message:
     """
-    Invalid workspace name "some-name-that-exceeds-the-max-allowed-length" given. A workspace name has to consist of at most 36 lower case characters
+    Invalid workspace name "some-name-that-exceeds-the-max-allowed-length": <root>: Value must be at most 36 character(s) long (too_long)
     """
 
   Scenario: Create root workspace with a name that is already used

@@ -14,12 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
+
 /**
  * The classification of a node aggregate
  *
  * @api
  */
-enum NodeAggregateClassification: string implements \JsonSerializable
+enum NodeAggregateClassification: string implements ProvidesSchema, \JsonSerializable
 {
     /**
      * Denotes a regular node aggregate
@@ -69,5 +72,18 @@ enum NodeAggregateClassification: string implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        // note: a static variable is used instead of a static property because enums must not declare properties
+        static $schemaRuntimeCache = null;
+        if ($schemaRuntimeCache === null) {
+            $schemaRuntimeCache = StringSchema::create(
+                description: 'Classification of a node aggregate',
+                enum: array_column(self::cases(), 'value'),
+            );
+        }
+        return $schemaRuntimeCache;
     }
 }

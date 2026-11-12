@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Behat\Transliterator\Transliterator;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * The Node name is the "path part" of the node; i.e. when accessing the node "/foo" via path {@see NodePath},
@@ -36,19 +38,18 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
  *
  * @api
  */
-final readonly class NodeName implements \JsonSerializable
+final readonly class NodeName implements ProvidesSchema, \JsonSerializable
 {
-    public const PATTERN = '/^[a-z0-9\-]+$/';
+    private const SCHEMA_PATTERN = '^[a-z0-9\-]+$';
+
+    public const PATTERN = '/' . self::SCHEMA_PATTERN . '/';
 
     private function __construct(
         public string $value
     ) {
-        if (preg_match(self::PATTERN, $this->value) !== 1) {
-            throw new \InvalidArgumentException(
-                'Invalid node name "' . $this->value
-                    . '" (a node name must only contain lowercase characters, numbers and the "-" sign).',
-                1364290748
-            );
+        $validationResult = self::schema()->validate($this->value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid node name "%s": %s', $this->value, $validationResult->issues), 1364290748);
         }
     }
 
@@ -94,6 +95,17 @@ final readonly class NodeName implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Name of a node, i.e. a segment of a node path',
+            examples: ['main', 'my-document'],
+            minLength: 1,
+            pattern: self::SCHEMA_PATTERN,
+        );
     }
 
     public function equals(NodeName $other): bool

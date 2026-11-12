@@ -16,6 +16,8 @@ namespace Neos\Neos\Domain\Model;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * This is the node name underneath "/sites" which uniquely identifies the specific site; and which is defined
@@ -23,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final readonly class SiteNodeName
+final readonly class SiteNodeName implements ProvidesSchema
 {
     private function __construct(
         public string $value
@@ -48,6 +50,16 @@ final readonly class SiteNodeName
     public function __toString(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        // note: no constraints, because the site node name is not validated (only {@see self::toNodeName()} requires a valid {@see NodeName})
+        return $schema ??= StringSchema::create(
+            description: 'Name of the site node underneath "/sites" that uniquely identifies a site',
+            examples: ['neosdemo'],
+        );
     }
 
     public function toNodeName(): NodeName
