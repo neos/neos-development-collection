@@ -167,10 +167,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
         // Zero-dimensional means DimensionSpacePoint::fromArray([])->hash
         assert(is_string($anyPointHash));
 
-        $nodeInSomeDimension = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $nodeInSomeDimension = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateId,
             $anyPointHash
-        ));
+        );
 
         if ($nodeInSomeDimension === null) {
             return;
@@ -216,10 +216,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
 
         foreach ($event->succeedingSiblingsForCoverage->toDimensionSpacePointSet() as $dimensionSpacePoint) {
-            $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $parentNode = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->parentNodeAggregateId,
                 $dimensionSpacePoint->hash
-            ));
+            );
             if ($parentNode === null) {
                 // this should not happen
                 continue;
@@ -229,10 +229,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
             $succeedingSiblingNodeAggregateId = $event->succeedingSiblingsForCoverage->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
             if ($succeedingSiblingNodeAggregateId === null) {
-                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNode(
+                $precedingNode = $this->documentUriPathFinder->getLastChildNode(
                     $parentNode->getNodeAggregateId(),
                     $dimensionSpacePoint->hash
-                ));
+                );
                 if ($precedingNode !== null) {
                     // make the new node the new succeeding node of the previously last child
                     // (= insert at the end of all children)
@@ -241,11 +241,11 @@ final class DocumentUriPathProjection implements ProjectionInterface
                     ]);
                 }
             } else {
-                $precedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode(
+                $precedingNode = $this->documentUriPathFinder->getPrecedingNode(
                     $succeedingSiblingNodeAggregateId,
                     $parentNode->getNodeAggregateId(),
                     $dimensionSpacePoint->hash
-                ));
+                );
                 if ($precedingNode !== null) {
                     // make the new node the new succeeding node of the previously preceding node
                     // of the specified succeeding node (= re-wire <preceding>-<succeeding> to <preceding>-<new node>)
@@ -370,10 +370,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
         OriginDimensionSpacePoint $targetOrigin,
         InterdimensionalSiblings $interdimensionalSiblings,
     ): void {
-        $sourceNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $sourceNode = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $nodeAggregateId,
             $sourceOrigin->hash
-        ));
+        );
         if ($sourceNode === null) {
             // Probably not a document node
             return;
@@ -390,10 +390,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
 
             // check the parent in the "target" dimensionSpacePoint for the "URI prefix",
             // may be different, see neos/neos-development-collection#5090
-            $parentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $parentNode = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $sourceNode->getParentNodeAggregateId(),
                 $interdimensionalSibling->dimensionSpacePoint->hash
-            ));
+            );
             if ($parentNode !== null) {
                 $uriPathSegments = explode('/', $sourceNode->getUriPath());
                 $uriPathSegment = $uriPathSegments[array_key_last($uriPathSegments)];
@@ -415,10 +415,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
                 $dimensionSpacePoint->hash
-            ));
+            );
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -444,19 +444,19 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
 
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
                 $dimensionSpacePoint->hash
-            ));
+            );
             if ($node === null) {
                 // Probably not a document node
                 continue;
             }
 
-            $parentNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+            $parentNode = $this->getState()->getByIdAndDimensionSpacePointHash(
                 $node->getParentNodeAggregateId(),
                 $node->getDimensionSpacePointHash()
-            ));
+            );
 
             // If a node was not tagged, decrementing an untagged node ($nodeTagLevel === 0) would cause an unsigned integer underflow.
             // A node might not have been tagged in the first place and just untagged with allVariants or the variant was already untagged.
@@ -490,10 +490,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return;
         }
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
                 $dimensionSpacePoint->hash
-            ));
+            );
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -530,10 +530,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
 
         foreach ($event->affectedDimensionSpacePoints as $affectedDimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
                 $affectedDimensionSpacePoint->hash
-            ));
+            );
 
             if (
                 $node === null
@@ -592,10 +592,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
 
         foreach ($event->succeedingSiblingsForCoverage as $succeedingSiblingForCoverage) {
-            $node = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $node = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
                 $succeedingSiblingForCoverage->dimensionSpacePoint->hash
-            ));
+            );
             if (!$node) {
                 // node probably no document node, skip
                 continue;
@@ -621,20 +621,20 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if (!$newParentNodeAggregateId || $newParentNodeAggregateId->equals($node->getParentNodeAggregateId())) {
             return;
         }
-        $newParentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $newParentNode = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $newParentNodeAggregateId,
             $node->getDimensionSpacePointHash()
-        ));
+        );
         if ($newParentNode === null) {
             // This happens if the parent node does not exist in the moved variant.
             // Can happen if the content dimension configuration was updated, and dimension migrations were not run.
             return;
         }
 
-        $oldParentNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+        $oldParentNode = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
             $node->getParentNodeAggregateId(),
             $node->getDimensionSpacePointHash()
-        ));
+        );
 
         $disabledDelta = $newParentNode->getDisableLevel() - $node->getDisableLevel();
         if ($this->isNodeExplicitlyDisabled($node, $oldParentNode)) {
@@ -734,16 +734,6 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
 
         return $this->documentTypeClassificationRuntimeCache[$nodeTypeName->value];
-    }
-
-    private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
-    {
-        try {
-            return $closure();
-        } catch (NodeNotFoundException $_) {
-            /** @noinspection BadExceptionsProcessingInspection */
-            return null;
-        }
     }
 
     /**
@@ -889,11 +879,11 @@ final class DocumentUriPathProjection implements ProjectionInterface
         ?NodeAggregateId $newSucceedingNodeAggregateId,
     ): void {
         if ($newSucceedingNodeAggregateId !== null) {
-            $newPrecedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getPrecedingNode(
+            $newPrecedingNode = $this->documentUriPathFinder->getPrecedingNode(
                 $newSucceedingNodeAggregateId,
                 $parentNodeAggregateId,
                 $node->getDimensionSpacePointHash()
-            ));
+            );
 
             // update new succeeding node
             $this->updateNodeByIdAndDimensionSpacePointHash(
@@ -902,11 +892,11 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 ['precedingNodeAggregateId' => $node->getNodeAggregateId()->value]
             );
         } else {
-            $newPrecedingNode = $this->tryGetNode(fn () => $this->documentUriPathFinder->getLastChildNodeNotBeing(
+            $newPrecedingNode = $this->documentUriPathFinder->getLastChildNodeNotBeing(
                 $parentNodeAggregateId,
                 $node->getDimensionSpacePointHash(),
                 $node->getNodeAggregateId()
-            ));
+            );
         }
         if (
             $newPrecedingNode !== null

@@ -30,7 +30,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param SiteNodeName $siteNodeName
      * @param string $uriPath
      * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
+     * @return DocumentNodeInfo|null
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      * (node is disabled, node doesn't exist in live workspace, projection not up to date)
      */
@@ -38,7 +38,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         SiteNodeName $siteNodeName,
         string $uriPath,
         string $dimensionSpacePointHash
-    ): DocumentNodeInfo {
+    ): ?DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND siteNodeName = :siteNodeName
@@ -61,14 +61,14 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      *
      * @param NodeAggregateId $nodeAggregateId
      * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
+     * @return DocumentNodeInfo|null
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (node doesn't exist in live workspace, projection not up to date)
      */
     public function getByIdAndDimensionSpacePointHash(
         NodeAggregateId $nodeAggregateId,
         string $dimensionSpacePointHash
-    ): DocumentNodeInfo {
+    ): ?DocumentNodeInfo {
         $result = $this->fetchSingle(
             'nodeAggregateId = :nodeAggregateId
                 AND dimensionSpacePointHash = :dimensionSpacePointHash',
@@ -86,11 +86,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * (e.g. in order to display a custom error)
      *
      * @param DocumentNodeInfo $nodeInfo
-     * @return DocumentNodeInfo
+     * @return DocumentNodeInfo|null
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (given $nodeInfo belongs to a site root node, projection not up to date)
      */
-    public function getParentNode(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
+    public function getParentNode(DocumentNodeInfo $nodeInfo): ?DocumentNodeInfo
     {
         return $this->getByIdAndDimensionSpacePointHash(
             $nodeInfo->getParentNodeAggregateId(),
@@ -107,7 +107,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param NodeAggregateId $succeedingNodeAggregateId
      * @param NodeAggregateId $parentNodeAggregateId
      * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
+     * @return DocumentNodeInfo|null
      * @throws NodeNotFoundException if no preceding DocumentNodeInfo can be found
      *  (given $succeedingNodeAggregateId doesn't exist or refers to the first/only node
      *  with the given $parentNodeAggregateId)
@@ -117,7 +117,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         NodeAggregateId $succeedingNodeAggregateId,
         NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash
-    ): DocumentNodeInfo {
+    ): ?DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
@@ -137,13 +137,13 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      *
      * @param NodeAggregateId $parentNodeAggregateId
      * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
+     * @return DocumentNodeInfo|null
      * @throws NodeNotFoundException
      */
     public function getFirstEnabledChildNode(
         NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash
-    ): DocumentNodeInfo {
+    ): ?DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
@@ -160,14 +160,14 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     /**
      * @param NodeAggregateId $parentNodeAggregateId
      * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
+     * @return DocumentNodeInfo|null
      * @throws NodeNotFoundException
      * @internal only for use within the document uri path projection
      */
     public function getLastChildNode(
         NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash
-    ): DocumentNodeInfo {
+    ): ?DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
@@ -187,7 +187,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash,
         NodeAggregateId $excludedNodeAggregateId
-    ): DocumentNodeInfo {
+    ): ?DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
@@ -205,7 +205,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param array<string,mixed> $parameters
      * @throws NodeNotFoundException
      */
-    private function fetchSingle(string $where, array $parameters): DocumentNodeInfo
+    private function fetchSingle(string $where, array $parameters): ?DocumentNodeInfo
     {
         # NOTE: "LIMIT 1" in the following query is just a performance optimization
         # since Connection::fetchAssoc() only returns the first result anyways
@@ -224,11 +224,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             ), 1599664746, $e);
         }
         if ($row === false) {
-            throw new NodeNotFoundException(sprintf(
-                'No matching node found for query "%s" with params %s',
-                $where,
-                json_encode($parameters)
-            ), 1599667143);
+            return null;
         }
         return DocumentNodeInfo::fromDatabaseRow($row);
     }
