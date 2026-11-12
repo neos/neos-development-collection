@@ -726,7 +726,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         $view->setFusionPath('contentCache/nesting/' . $fusionPath);
 
         /** @var ActionRequest $actionRequest */
-        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest = $this->request;
         $actionRequest->setArgument('testArgument', '1');
         $firstRenderResult = $view->render();
 
@@ -758,7 +758,7 @@ class ContentCacheTest extends AbstractFusionObjectTestCase
         $view->setFusionPath('contentCache/nesting/cachedOuterWithCachedSegmentsContainingDynamicSegments');
 
         /** @var ActionRequest $actionRequest */
-        $actionRequest = $this->controllerContext->getRequest();
+        $actionRequest = $this->request;
         $actionRequest->setArgument('testArgument', '1');
         $firstRenderResult = $view->render();
 
