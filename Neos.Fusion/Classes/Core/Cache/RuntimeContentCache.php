@@ -190,8 +190,8 @@ class RuntimeContentCache
                         // "outer segment is a cache miss" state: otherwise getCachedSegment() forces a re-render instead of
                         // using its own cache entry. Its result replaces a placeholder in an already cached segment, so no
                         // markers are needed. Restored afterwards, because the nested entry point resets it in postProcess().
-                        $previouslyAddCacheSegmentMarkersToPlaceholders = $self->addCacheSegmentMarkersToPlaceholders;
-                        $self->addCacheSegmentMarkersToPlaceholders = false;
+                        $previouslyAddCacheSegmentMarkersToPlaceholders = $this->addCacheSegmentMarkersToPlaceholders;
+                        $this->addCacheSegmentMarkersToPlaceholders = false;
 
                         $unserializedContext = $this->unserializeContext($additionalData['context']);
                         $this->runtime->pushContextArray($unserializedContext);
@@ -201,7 +201,7 @@ class RuntimeContentCache
                             // Restore the state even if the evaluation throws, so it does not leak into the outer segment
                             $this->runtime->popContext();
                             $this->inCacheEntryPoint = $previouslyInCacheEntryPoint;
-                            $self->addCacheSegmentMarkersToPlaceholders = $previouslyAddCacheSegmentMarkersToPlaceholders;
+                            $this->addCacheSegmentMarkersToPlaceholders = $previouslyAddCacheSegmentMarkersToPlaceholders;
                         }
                     } else {
                         throw new Exception(sprintf('Unknown uncached command "%s"', $command), 1392837596);
