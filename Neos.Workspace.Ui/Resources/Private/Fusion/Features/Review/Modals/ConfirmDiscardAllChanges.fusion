@@ -19,7 +19,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDiscardAllChanges) < prototyp
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
-          {private.i18n.id('workspaces.discardAllChangesInWorkspaceConfirmation').arguments([props.workspaceTitle])}
+          {private.i18n.id('workspaces.discardAllChangesInWorkspaceConfirmation').arguments([String.htmlSpecialChars(props.workspaceTitle)])}
         </div>
       </header>
       <footer>

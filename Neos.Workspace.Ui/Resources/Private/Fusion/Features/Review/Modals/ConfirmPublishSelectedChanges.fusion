@@ -20,7 +20,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmPublishSelectedChanges) < pro
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
-          {private.i18n.id('workspaces.publishSelectedChangesTo').arguments([props.baseWorkspaceTitle])}
+          {private.i18n.id('workspaces.publishSelectedChangesTo').arguments([String.htmlSpecialChars(props.baseWorkspaceTitle)])}
         </div>
       </header>
       <section>

@@ -15,7 +15,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Delete) < prototype(Neos.Fusion:Comp
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
-          {private.i18n.id('workspaces.dialog.confirmWorkspaceDeletion').arguments([props.workspaceTitle])}
+          {private.i18n.id('workspaces.dialog.confirmWorkspaceDeletion').arguments([String.htmlSpecialChars(props.workspaceTitle)])}
         </div>
       </header>
       <section>
