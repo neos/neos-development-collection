@@ -58,12 +58,9 @@ Feature: Test cases for partial publish to live and uri path generation
       | nodesToPublish            | ["justsomepage"] |
 
     Then I expect the documenturipath table to contain exactly:
-      # source: 65901ded4f068dac14ad0dce4f459b29
-      # spec: 9a723c057afa02982dae9d0b541739be
-      # leafSpec: c60c44685475d0e2e4f2b964e6158ce2
-      | dimensionspacepointhash            | uripath    | nodeaggregateidpath                                          | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename         |
-      | "2ca4fae2f65267c94c85602df0cbb728" | ""         | "lady-eleonode-rootford"                                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
-      | "65901ded4f068dac14ad0dce4f459b29" | ""         | "lady-eleonode-rootford"                                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
-      | "fbe53ddc3305685fbb4dbf529f283a0e" | ""         | "lady-eleonode-rootford"                                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
-      | "65901ded4f068dac14ad0dce4f459b29" | ""         | "lady-eleonode-rootford/shernode-homes"                      | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Site"     |
-      | "65901ded4f068dac14ad0dce4f459b29" | "just"     | "lady-eleonode-rootford/shernode-homes/justsomepage"         | "justsomepage"           | "shernode-homes"         | null                     | null                      | "Neos.Neos:Document"     |
+      | dimensionspacepointhash    | uripath | nodeaggregateidpath                                  | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename         |
+      | hash{"example":"peerSpec"} | ""      | "lady-eleonode-rootford"                             | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
+      | hash{"example":"source"}   | ""      | "lady-eleonode-rootford"                             | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
+      | hash{"example":"peer"}     | ""      | "lady-eleonode-rootford"                             | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"    |
+      | hash{"example":"source"}   | ""      | "lady-eleonode-rootford/shernode-homes"              | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Site"     |
+      | hash{"example":"source"}   | "just"  | "lady-eleonode-rootford/shernode-homes/justsomepage" | "justsomepage"           | "shernode-homes"         | null                     | null                      | "Neos.Neos:Document" |
