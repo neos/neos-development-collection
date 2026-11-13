@@ -214,7 +214,7 @@ final readonly class PropertyType
                 return false;
             }
             foreach ($propertyValue as $value) {
-                if (!$this->arrayOfType?->isMatchedBy($value)) {
+                if ($this->arrayOfType?->isMatchedBy($value) !== true) {
                     return false;
                 }
             }
