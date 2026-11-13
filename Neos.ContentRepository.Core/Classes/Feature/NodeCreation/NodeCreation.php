@@ -21,8 +21,8 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\InterdimensionalSiblings;
+use Neos\ContentRepository\Core\Feature\Common\TargetLocationInSubgraph;
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
-use Neos\ContentRepository\Core\Feature\Common\NodeCreationInternals;
 use Neos\ContentRepository\Core\Feature\Common\NodeReferencingInternals;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
@@ -52,7 +52,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  */
 trait NodeCreation
 {
-    use NodeCreationInternals;
     use NodeReferencingInternals;
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
@@ -159,15 +158,13 @@ trait NodeCreation
             $contentGraph,
             $command->parentNodeAggregateId
         );
-        if ($command->succeedingSiblingNodeAggregateId) {
-            $this->requireProjectedNodeAggregate(
-                $contentGraph,
-                $command->succeedingSiblingNodeAggregateId
-            );
-        }
-        $this->requireNodeAggregateToCoverDimensionSpacePoint(
-            $parentNodeAggregate,
-            $command->originDimensionSpacePoint->toDimensionSpacePoint()
+        $targetLocation = TargetLocationInSubgraph::create(
+            nodeAggregateId: $command->nodeAggregateId,
+            dimensionSpacePoint: $command->originDimensionSpacePoint->toDimensionSpacePoint(),
+            parentNodeAggregateId: $command->parentNodeAggregateId,
+            succeedingSiblingNodeAggregateId: $command->succeedingSiblingNodeAggregateId,
+            precedingSiblingNodeAggregateId: null,
+            contentGraph: $contentGraph,
         );
         $specializations = $this->getInterDimensionalVariationGraph()->getSpecializationSet(
             $command->originDimensionSpacePoint->toDimensionSpacePoint()
@@ -201,12 +198,19 @@ trait NodeCreation
 
         $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType, $this->getPropertyConverter());
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
+        $interdimensionalSiblings = InterdimensionalSiblings::fromTargetLocationForDimensionSpacePoints(
+            targetLocation: $targetLocation,
+            dimensionSpacePoints: $coveredDimensionSpacePoints,
+            sourceDimensionSpacePoint: $command->originDimensionSpacePoint->toDimensionSpacePoint(),
+            contentGraph: $contentGraph,
+            completeSet: true,
+        );
 
         $events = [
             $this->createRegularWithNode(
+                $interdimensionalSiblings,
                 $contentGraph,
                 $command,
-                $coveredDimensionSpacePoints,
                 $initialPropertyValues
             )
         ];
@@ -230,25 +234,18 @@ trait NodeCreation
     }
 
     private function createRegularWithNode(
+        InterdimensionalSiblings $interdimensionalSiblings,
         ContentGraphInterface $contentGraph,
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        DimensionSpacePointSet $coveredDimensionSpacePoints,
         SerializedPropertyValues $initialPropertyValues,
     ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
-            $contentGraph->getWorkspaceName(),
+            $command->workspaceName,
             $contentGraph->getContentStreamId(),
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $command->originDimensionSpacePoint,
-            $command->succeedingSiblingNodeAggregateId ?
-                $this->resolveInterdimensionalSiblingsForCreation(
-                    $contentGraph,
-                    $command->succeedingSiblingNodeAggregateId,
-                    $command->originDimensionSpacePoint,
-                    $coveredDimensionSpacePoints
-                )
-                : InterdimensionalSiblings::fromDimensionSpacePointSetWithoutSucceedingSiblings($coveredDimensionSpacePoints),
+            $interdimensionalSiblings,
             $command->parentNodeAggregateId,
             $command->nodeName,
             $initialPropertyValues,

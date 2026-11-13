@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  * source code.
  */
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * The exception to be thrown if a requested node aggregate does not currently exist
@@ -22,4 +23,11 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  */
 final class NodeAggregateCurrentlyDoesNotExist extends \DomainException
 {
+    public static function butWasExpectedTo(NodeAggregateId $nodeAggregateId): self
+    {
+        return new self(
+            'Node aggregate "' . $nodeAggregateId->value . '" does currently not exist.',
+            1541678486
+        );
+    }
 }
