@@ -30,7 +30,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 final readonly class CountReferencesFilter
 {
     /**
-     * @internal (the properties themselves are readonly; only the write-methods are API.
+     * @internal
+     * the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
         public ?NodeTypeCriteria $nodeTypes,

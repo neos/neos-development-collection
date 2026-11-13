@@ -25,15 +25,15 @@ use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
  *
  * See {@see EventSourcedFrontendNodeRoutePartHandler} for documentation.
  *
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope('singleton')]
 final class CrossSiteLinker implements CrossSiteLinkerInterface
 {
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     public function applyCrossSiteUriConstraints(

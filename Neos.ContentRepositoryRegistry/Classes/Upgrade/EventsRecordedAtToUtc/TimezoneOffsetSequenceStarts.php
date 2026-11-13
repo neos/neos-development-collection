@@ -37,7 +37,7 @@ final readonly class TimezoneOffsetSequenceStarts implements \JsonSerializable
      */
     public static function uniqueOffsets(array $sequences): array
     {
-        return array_unique(array_column($sequences, 'tzOffset'));
+        return array_values(array_unique(array_column($sequences, 'tzOffset')));
     }
 
     /** @return array<int|string,mixed> */

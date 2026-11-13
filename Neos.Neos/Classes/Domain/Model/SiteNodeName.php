@@ -20,10 +20,9 @@ use Neos\Flow\Annotations as Flow;
 /**
  * This is the node name underneath "/sites" which uniquely identifies the specific site; and which is defined
  * by the user.
- *
- * @Flow\Proxy(false)
  */
-final readonly class SiteNodeName
+#[Flow\Proxy(false)]
+final readonly class SiteNodeName implements \Stringable
 {
     private function __construct(
         public string $value

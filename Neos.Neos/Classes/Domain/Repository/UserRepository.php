@@ -23,10 +23,10 @@ use Neos\Neos\Domain\Model\User;
 /**
  * The User Repository
  *
- * @Flow\Scope("singleton")
  * @extends Repository<User>
  * @api
  */
+#[Flow\Scope('singleton')]
 class UserRepository extends Repository
 {
     /**

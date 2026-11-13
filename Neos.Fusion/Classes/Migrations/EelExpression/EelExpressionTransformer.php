@@ -10,9 +10,9 @@ use Neos\Fusion\Afx\Parser\Parser as AfxParser;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class EelExpressionTransformer
 {
     private function __construct(private readonly string $fileContent, private readonly string $commentPrefix, private readonly \Closure $onWarning)
@@ -145,10 +145,6 @@ final class EelExpressionTransformer
         return $eelExpressions;
     }
 
-    /**
-     * @param array $afxAst
-     * @return EelExpressionPositions
-     */
     private static function findEelExpressionsInAfxAst(array $afxAst): EelExpressionPositions
     {
         $result = [];
@@ -159,9 +155,7 @@ final class EelExpressionTransformer
     }
 
     /**
-     * @param array $afxElement
      * @param EelExpressionPosition[] $result
-     * @return void
      */
     private static function findEelExpressionsInAfxAstElement(array $afxElement, array &$result): void
     {
@@ -187,8 +181,7 @@ final class EelExpressionTransformer
             $result[] = new EelExpressionPosition(
                 $afxElement['payload']['payload'],
                 $afxElement['from'] + 1,
-                $afxElement['to'] + 2,
-                null
+                $afxElement['to'] + 2
             );
             return;
         }
@@ -198,8 +191,7 @@ final class EelExpressionTransformer
             $result[] = new EelExpressionPosition(
                 $afxElement['payload'],
                 $afxElement['from'] + 1,
-                $afxElement['to'] + 2,
-                null
+                $afxElement['to'] + 2
             );
         }
     }

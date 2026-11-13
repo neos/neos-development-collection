@@ -274,7 +274,7 @@ Feature: Tests for sub-request on the frontend node controller in case of the "N
 
         public function buildUrisAction()
         {
-            $this->view->assign('node', $this->request->getInternalArgument('__node'));
+            $this->view?->assign('node', $this->request->getInternalArgument('__node'));
         }
     }
     """

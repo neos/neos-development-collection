@@ -26,27 +26,27 @@ use Neos\Neos\Domain\Model\Site;
 class FusionService
 {
     /**
-     * @Flow\Inject
      * @var Parser
      */
+    #[Flow\Inject]
     protected $fusionParser;
 
     /**
-     * @Flow\Inject
      * @var FusionSourceCodeFactory
      */
+    #[Flow\Inject]
     protected $fusionSourceCodeFactory;
 
     /**
-     * @Flow\Inject
      * @var FusionConfigurationCache
      */
+    #[Flow\Inject]
     protected $fusionConfigurationCache;
 
     /**
-     * @Flow\Inject
      * @var FusionAutoIncludeHandler
      */
+    #[Flow\Inject]
     protected $fusionAutoIncludeHandler;
 
     public function createFusionConfigurationFromSite(Site $site): FusionConfiguration

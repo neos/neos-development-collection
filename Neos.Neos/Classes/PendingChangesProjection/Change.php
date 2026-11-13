@@ -25,11 +25,11 @@ use Neos\Flow\Annotations as Flow;
  * Read model for pending changes
  *
  * @internal Only for consumption inside Neos. Not public api because the implementation will be refactored sooner or later: https://github.com/neos/neos-development-collection/issues/5493
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class Change
 {
-    public const AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER = 'AGGREGATE';
+    public const string AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER = 'AGGREGATE';
 
     public function __construct(
         public ContentStreamId $contentStreamId,
@@ -43,9 +43,6 @@ final class Change
     ) {
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         try {

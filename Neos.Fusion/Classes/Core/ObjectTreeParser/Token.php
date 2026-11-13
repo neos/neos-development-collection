@@ -65,12 +65,18 @@ class Token
     public const LBRACE = 30;
     public const RBRACE = 31;
 
+    /**
+     * @param int<1, 31> $type
+     */
     public function __construct(
         protected int $type,
         protected string $value,
     ) {
     }
 
+    /**
+     * @return int<1, 31>
+     */
     public function getType(): int
     {
         return $this->type;
@@ -100,9 +106,9 @@ class Token
     }
 
     /**
-     * @Flow\CompileStatic
      * @return array<string, int>
      */
+    #[Flow\CompileStatic]
     protected static function getConstants(): array
     {
         $reflection = new \ReflectionClass(self::class);

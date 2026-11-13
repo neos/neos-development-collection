@@ -48,14 +48,12 @@ abstract class AbstractSubtreeTagBasedPrivilege extends AbstractPrivilege
     /**
      * Returns true, if this privilege covers the given subject
      *
-     * @param PrivilegeSubjectInterface $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
         if (!$subject instanceof SubtreeTagPrivilegeSubject) {
-            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" but we got a subject of type: "%s".', self::class, SubtreeTagPrivilegeSubject::class, get_class($subject)), 1729173985);
+            throw new InvalidPrivilegeTypeException(sprintf('Privileges of type "%s" only support subjects of type "%s" but we got a subject of type: "%s".', self::class, SubtreeTagPrivilegeSubject::class, $subject::class), 1729173985);
         }
         $contentRepositoryId = $this->getContentRepositoryId();
         if ($contentRepositoryId !== null && $subject->contentRepositoryId !== null && !$contentRepositoryId->equals($subject->contentRepositoryId)) {

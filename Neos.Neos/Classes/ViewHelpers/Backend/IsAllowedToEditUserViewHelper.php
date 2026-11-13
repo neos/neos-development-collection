@@ -31,9 +31,9 @@ class IsAllowedToEditUserViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**

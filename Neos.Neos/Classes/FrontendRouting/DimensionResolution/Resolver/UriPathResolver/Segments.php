@@ -8,9 +8,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\PositionalArraySorter;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final readonly class Segments
 {
     /**
@@ -30,19 +28,16 @@ final readonly class Segments
 
     /**
      * @param array<string,mixed> $arr
-     * @return static
      */
     public static function fromArray(array $arr): self
     {
         // TODO:
-        $arr = (new PositionalArraySorter($arr))->toArray();
+        $arr = new PositionalArraySorter($arr)->toArray();
 
-        $segments = array_map(function (array $segArr) {
-            return Segment::create(
-                new ContentDimensionId($segArr['dimensionIdentifier']),
-                SegmentMapping::fromArray($segArr['dimensionValueMapping'] ?? []),
-            );
-        }, $arr);
+        $segments = array_map(fn (array $segArr) => Segment::create(
+            new ContentDimensionId($segArr['dimensionIdentifier']),
+            SegmentMapping::fromArray($segArr['dimensionValueMapping'] ?? []),
+        ), $arr);
 
         return new self(...$segments);
     }

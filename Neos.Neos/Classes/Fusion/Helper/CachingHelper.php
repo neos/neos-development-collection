@@ -32,9 +32,9 @@ use Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier;
 class CachingHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
@@ -43,7 +43,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      * given nodes (for any variant) is updated.
      *
      * @param iterable<Node>|Node $nodes (A single Node or array or \Traversable of Nodes)
-     * @return array<int,string>,
+     * @return array<int,string>
      */
     public function nodeTag(iterable|Node $nodes): array
     {
@@ -77,8 +77,6 @@ class CachingHelper implements ProtectedContextAwareInterface
     /**
      * Generate a `@cache` entry tag for a single node identifier.
      *
-     * @param string $identifier
-     * @param Node $contextNode
      * @return string[]
      */
     public function nodeTagForIdentifier(string $identifier, Node $contextNode): array

@@ -29,9 +29,7 @@ final class HttpHeaderFlashMessageStorage implements FlashMessageStorageInterfac
 
     public function load(HttpRequestInterface $request): FlashMessageContainer
     {
-        if ($this->flashMessageContainer === null) {
-            $this->flashMessageContainer = new FlashMessageContainer();
-        }
+        $this->flashMessageContainer ??= new FlashMessageContainer();
         return $this->flashMessageContainer;
     }
 

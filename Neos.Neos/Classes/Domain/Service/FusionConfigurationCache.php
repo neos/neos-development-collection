@@ -20,9 +20,9 @@ use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Neos\Domain\Model\Site;
 
 /**
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope('singleton')]
 final class FusionConfigurationCache
 {
     public function __construct(

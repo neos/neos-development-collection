@@ -21,9 +21,9 @@ use Neos\Media\Exception\AssetSourceServiceException;
 class AssetProxyController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var AssetSourceService
      */
+    #[Flow\Inject]
     protected $assetSourceService;
 
     /**
@@ -31,7 +31,6 @@ class AssetProxyController extends ActionController
      *
      * @param string $assetSourceIdentifier Identifier of the asset source to import from, e.g. "neos"
      * @param string $assetIdentifier The asset-source specific identifier of the asset to import
-     * @return string
      */
     public function importAction(string $assetSourceIdentifier, string $assetIdentifier): string
     {

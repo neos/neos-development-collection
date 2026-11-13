@@ -26,7 +26,7 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  * Provides a chainable interface to build a label for a nodetype
  * with a fallback mechanism.
  */
-class NodeLabelToken implements ProtectedContextAwareInterface
+class NodeLabelToken implements ProtectedContextAwareInterface, \Stringable
 {
     use NodeTypeWithFallbackProvider;
 
@@ -34,15 +34,15 @@ class NodeLabelToken implements ProtectedContextAwareInterface
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var TranslationHelper
      */
+    #[Flow\Inject]
     protected $translationHelper;
 
     /**
-     * @Flow\Inject
      * @var StringHelper
      */
+    #[Flow\Inject]
     protected $stringHelper;
 
     /**
@@ -171,7 +171,6 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      * All methods are considered safe
      *
      * @param string $methodName
-     * @return boolean
      */
     public function allowsCallOfMethod($methodName): bool
     {

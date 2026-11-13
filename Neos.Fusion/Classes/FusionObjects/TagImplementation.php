@@ -40,9 +40,7 @@ class TagImplementation extends AbstractFusionObject
     public function getTagName()
     {
         $tagName = $this->fusionValue('tagName');
-        if ($tagName === null) {
-            $tagName = 'div';
-        }
+        $tagName ??= 'div';
         return $tagName;
     }
 

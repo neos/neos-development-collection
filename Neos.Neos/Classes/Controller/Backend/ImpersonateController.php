@@ -27,21 +27,20 @@ use Neos\Party\Domain\Service\PartyService;
 
 /**
  * The Impersonate controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ImpersonateController extends ActionController
 {
     /**
      * @var ImpersonateService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $impersonateService;
 
     /**
      * @var PartyService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $partyService;
 
     /**
@@ -114,8 +113,8 @@ class ImpersonateController extends ActionController
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
 
-        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+        if ($packageKey !== null && str_contains($packageKey, '\\')) {
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }
@@ -146,7 +145,7 @@ class ImpersonateController extends ActionController
         $account = $accounts->first();
         $this->impersonateService->impersonate($account);
         $impersonateStatus = $this->getImpersonateStatus();
-        $this->view->assign('value', $impersonateStatus);
+        $this->view?->assign('value', $impersonateStatus);
     }
 
     /**
@@ -182,13 +181,13 @@ class ImpersonateController extends ActionController
         }
 
         $this->impersonateService->restoreOriginalIdentity();
-        $this->view->assign('value', $response);
+        $this->view?->assign('value', $response);
     }
 
     public function statusAction(): void
     {
         $impersonateStatus = $this->getImpersonateStatus();
-        $this->view->assign('value', $impersonateStatus);
+        $this->view?->assign('value', $impersonateStatus);
     }
 
     /**

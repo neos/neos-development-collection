@@ -80,7 +80,6 @@ final class NodeType
      * @param NodeTypeName $name Name of the node type
      * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
-     * @throws \InvalidArgumentException
      *
      * @internal
      */
@@ -130,7 +129,7 @@ final class NodeType
      */
     protected function initialize(): void
     {
-        if ($this->initialized === true) {
+        if ($this->initialized) {
             return;
         }
         $this->initialized = true;
@@ -146,7 +145,7 @@ final class NodeType
     {
         $mergedConfiguration = [];
         $applicableSuperTypes = static::getFlattenedSuperTypes($this);
-        foreach ($applicableSuperTypes as $key => $superType) {
+        foreach ($applicableSuperTypes as $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule(
                 $mergedConfiguration,
                 $superType->getLocalConfiguration()
@@ -236,14 +235,14 @@ final class NodeType
         if (!isset($fullConfiguration['postprocessors'])) {
             return $fullConfiguration;
         }
-        $sortedPostProcessors = (new PositionalArraySorter($this->fullConfiguration['postprocessors']))->toArray();
+        $sortedPostProcessors = new PositionalArraySorter($this->fullConfiguration['postprocessors'])->toArray();
         foreach ($sortedPostProcessors as $postprocessorConfiguration) {
             $postprocessor = new $postprocessorConfiguration['postprocessor']();
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
                 throw new InvalidNodeTypePostprocessorException(
                     sprintf(
                         'Expected NodeTypePostprocessorInterface but got "%s"',
-                        get_class($postprocessor)
+                        $postprocessor::class
                     ),
                     1364759955
                 );
@@ -286,9 +285,7 @@ final class NodeType
      */
     public function getDeclaredSuperTypes(): array
     {
-        return array_filter($this->declaredSuperTypes, function ($value) {
-            return $value !== null;
-        });
+        return array_filter($this->declaredSuperTypes, fn ($value) => $value !== null);
     }
 
     /**
@@ -309,13 +306,7 @@ final class NodeType
         if (array_key_exists($nodeTypeName, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeTypeName] === null) {
             return false;
         }
-        foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType !== null && $superType->isOfType($nodeTypeName) === true) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->declaredSuperTypes, fn ($superType) => $superType !== null && $superType->isOfType($nodeTypeName) === true);
     }
 
     /**

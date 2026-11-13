@@ -32,9 +32,9 @@ class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
     protected $configurationCache;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**

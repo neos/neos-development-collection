@@ -53,39 +53,37 @@ use Psr\Log\LoggerInterface;
 class NodeUriImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**
-     * @Flow\Inject
      * @var NodePathResolver
      */
+    #[Flow\Inject]
     protected $nodeAddressNormalizer;
 
     /**
-     * @Flow\Inject
      * @var LegacyNodePathNormalizer
      */
+    #[Flow\Inject]
     protected $legacyNodePathNormalizer;
 
     /**
      * The requested format, for example "html"
-     *
-     * @return string
      */
     public function getFormat(): string
     {
@@ -124,8 +122,6 @@ class NodeUriImplementation extends AbstractFusionObject
 
     /**
      * The name of the base node inside the Fusion context to use for resolving relative paths.
-     *
-     * @return string
      */
     public function getBaseNodeName(): string
     {

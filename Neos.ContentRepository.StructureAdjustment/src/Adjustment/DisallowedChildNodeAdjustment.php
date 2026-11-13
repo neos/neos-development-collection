@@ -94,9 +94,9 @@ final class DisallowedChildNodeAdjustment
                     and the grandparent node type "%s" is not allowing grandchildren of type "%s".
                     Thus, the node is invalid at this location and should be removed.
                 ',
-                        $parentNode?->nodeTypeName->value ?? '',
+                        $parentNode->nodeTypeName->value,
                         $node->nodeTypeName->value,
-                        $grandparentNode?->nodeTypeName->value ?? '',
+                        $grandparentNode?->nodeTypeName->value ?: '',
                         $node->nodeTypeName->value,
                     );
 
@@ -104,12 +104,10 @@ final class DisallowedChildNodeAdjustment
                         $node,
                         StructureAdjustment::DISALLOWED_CHILD_NODE,
                         $message,
-                        function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
-                            return $this->removeNodeInSingleDimensionSpacePoint(
-                                $nodeAggregate,
-                                $coveredDimensionSpacePoint
-                            );
-                        }
+                        fn () => $this->removeNodeInSingleDimensionSpacePoint(
+                            $nodeAggregate,
+                            $coveredDimensionSpacePoint
+                        )
                     );
                 }
             }

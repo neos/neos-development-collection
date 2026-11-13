@@ -185,9 +185,7 @@ trait ProjectedNodeAggregateTrait
     {
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedNodeAggregateIds) {
-            $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->currentWorkspaceName->value . ';' . $nodeAggregateId->value;
-            }, iterator_to_array($expectedNodeAggregateIds)));
+            $expectedDiscriminators = array_values(array_map(fn (NodeAggregateId $nodeAggregateId) => $this->currentWorkspaceName->value . ';' . $nodeAggregateId->value, iterator_to_array($expectedNodeAggregateIds)));
             $actualDiscriminators = array_values(array_map(
                 fn (NodeAggregate $parentNodeAggregate): string
                     => $parentNodeAggregate->workspaceName->value . ';' . $parentNodeAggregate->nodeAggregateId->value,
@@ -222,7 +220,6 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect this node aggregate to have the child node aggregates (.*)$/
-     * @param string $serializedExpectedNodeAggregateIds
      */
     public function iExpectThisNodeAggregateToHaveTheChildNodeAggregates(string $serializedExpectedNodeAggregateIds): void
     {

@@ -27,7 +27,6 @@ final readonly class AssetUsagesByContentRepository implements \IteratorAggregat
     }
 
     /**
-     * @param \Closure $callback
      * @return \Traversable<mixed>
      */
     public function map(\Closure $callback): \Traversable
@@ -39,6 +38,6 @@ final readonly class AssetUsagesByContentRepository implements \IteratorAggregat
 
     public function count(): int
     {
-        return (int)array_sum(array_map(static fn (AssetUsages $assetUsages) => $assetUsages->count(), $this->assetUsages));
+        return array_sum(array_map(static fn (AssetUsages $assetUsages) => $assetUsages->count(), $this->assetUsages));
     }
 }

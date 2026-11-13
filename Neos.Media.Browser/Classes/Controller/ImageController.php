@@ -26,15 +26,15 @@ use Neos\Media\Domain\Repository\ImageRepository;
 class ImageController extends AssetController
 {
     /**
-     * @Flow\Inject
      * @var ImageRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Media\Domain\Repository\ImportedAssetRepository
      */
+    #[Flow\Inject]
     protected $importedAssetRepository;
 
     /**
@@ -50,12 +50,11 @@ class ImageController extends AssetController
      * @param int $collectionMode
      * @param AssetCollection $assetCollection
      * @param string $assetSourceIdentifier
-     * @return void
      * @throws \Neos\Utility\Exception\FilesException
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, ?Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, ?AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
     {
-        $this->view->assign('filterOptions', []);
+        $this->view?->assign('filterOptions', []);
         parent::indexAction($view, $sortBy, $sortDirection, 'Image', $tagMode, $tag, $searchTerm, $collectionMode, $assetCollection, $assetSourceIdentifier);
     }
 
@@ -63,7 +62,6 @@ class ImageController extends AssetController
      * @param string $assetSourceIdentifier
      * @param string $assetProxyIdentifier
      * @param AssetInterface $asset
-     * @return void
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function editAction(?string $assetSourceIdentifier = null, ?string $assetProxyIdentifier = null, ?AssetInterface $asset = null): void

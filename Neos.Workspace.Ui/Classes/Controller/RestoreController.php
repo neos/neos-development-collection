@@ -23,7 +23,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -157,7 +156,7 @@ class RestoreController extends AbstractModuleController
                 $details[] = new RestoreListItemVariantDetails(
                     label: $this->nodeLabelGenerator->getLabel($removedNode),
                     ancestorLabels: array_map(
-                        fn (Node $ancestor): string => $this->nodeLabelGenerator->getLabel($ancestor),
+                        $this->nodeLabelGenerator->getLabel(...),
                         iterator_to_array($subgraph->findAncestorNodes(
                             $trashBinItem->nodeAggregateId,
                             FindAncestorNodesFilter::create()
@@ -199,10 +198,10 @@ class RestoreController extends AbstractModuleController
         }
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceLabel' => $workspaceMetadata->title->value,
-            'restoreListItems' => $listItems ? RestoreListItems::fromArray($listItems) : array(),
+            'restoreListItems' => $listItems ? RestoreListItems::fromArray($listItems) : [],
             'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
             'sorting' => $sortingObject,
             'searchTerm' => $searchTerm,
@@ -299,7 +298,7 @@ class RestoreController extends AbstractModuleController
             $nodeForLabel = reset($nodes) ?: null;
         }
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspaceName);
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceLabel' => $workspaceMetadata->title->value,
             'nodeAggregateId' => $nodeAggregateId->value,
             'nodeLabel' => $nodeForLabel

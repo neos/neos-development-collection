@@ -8,7 +8,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\ObjectType;
 
 /**
  * @implements Rule<\PhpParser\Node\Expr\Cast\String_>
@@ -30,21 +29,26 @@ class NoStringCastingRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        assert($node instanceof \PhpParser\Node\Expr\Cast\String_);
         $expressionType = $scope->getType($node->expr);
-        if (!$expressionType instanceof ObjectType || !$this->classNameIsWithinConfiguredNamespaces($expressionType->getClassName())) {
+        if (!$expressionType->isObject()->yes() || !$this->classNameIsWithinConfiguredNamespaces($expressionType->getObjectClassNames())) {
             return [];
         }
         return [
-            RuleErrorBuilder::message("Casting objects of class {$expressionType->getClassName()} to string is not allowed.")->build(),
+            RuleErrorBuilder::message("Casting objects of class " . implode(', ', $expressionType->getObjectClassNames())
+                . " to string is not allowed.")->identifier('cr.noStringCasting')->build(),
         ];
     }
 
-    private function classNameIsWithinConfiguredNamespaces(string $className): bool
+    /**
+     * @param array<string> $classNames
+     */
+    private function classNameIsWithinConfiguredNamespaces(array $classNames): bool
     {
-        foreach ($this->namespacePrefixesWhichShouldBeEnforced as $namespacePrefix) {
-            if (str_starts_with($className, $namespacePrefix . '\\')) {
-                return true;
+        foreach ($classNames as $className) {
+            foreach ($this->namespacePrefixesWhichShouldBeEnforced as $namespacePrefix) {
+                if (str_starts_with($className, $namespacePrefix . '\\')) {
+                    return true;
+                }
             }
         }
         return false;

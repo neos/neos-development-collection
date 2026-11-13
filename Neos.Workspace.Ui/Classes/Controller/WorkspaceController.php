@@ -165,8 +165,9 @@ class WorkspaceController extends AbstractModuleController
         $workspaceListItems = $this->getWorkspaceListItems($contentRepository);
         $workspaceListItems = match ($sorting->sortBy) {
             'title' => $workspaceListItems->sortByTitle($sorting->sortAscending),
+            default => $workspaceListItems
         };
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceListItems' => $workspaceListItems,
             'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
             'sorting' => $sorting,
@@ -212,12 +213,12 @@ class WorkspaceController extends AbstractModuleController
             $baseWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $baseWorkspace->workspaceName);
             $baseWorkspacePermissions = $this->authorizationService->getWorkspacePermissions($contentRepositoryId, $baseWorkspace->workspaceName, $this->securityContext->getRoles(), $currentUser->getId());
         }
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'selectedWorkspaceName' => $workspaceObj->workspaceName->value,
             'selectedWorkspaceLabel' => $workspaceMetadata->title->value,
             'baseWorkspaceName' => $workspaceObj->baseWorkspaceName,
             'baseWorkspaceLabel' => $baseWorkspaceMetadata?->title->value,
-            'canPublishToBaseWorkspace' => $baseWorkspacePermissions?->write ?? false,
+            'canPublishToBaseWorkspace' => $baseWorkspacePermissions?->write ?: false,
             'canPublishToWorkspace' => $workspacePermissions->write,
             'siteChanges' => $this->computeSiteChanges($workspaceObj, $contentRepository),
             'contentDimensions' => $contentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority(),
@@ -230,7 +231,7 @@ class WorkspaceController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, null));
+        $this->view?->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, null));
     }
 
     public function createAction(
@@ -318,18 +319,18 @@ class WorkspaceController extends AbstractModuleController
             baseWorkspaceOptions: $this->prepareBaseWorkspaceOptions($contentRepository, $workspaceName),
         );
 
-        $this->view->assign('editWorkspaceFormData', $editWorkspaceDto);
+        $this->view?->assign('editWorkspaceFormData', $editWorkspaceDto);
     }
 
     /**
      * Update a workspace
      *
-     * @Flow\Validate(argumentName="title", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @param WorkspaceName $workspaceName The name of the workspace that is being updated
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
      * @param WorkspaceName|null $baseWorkspace The base workspace to rebase this workspace onto if modified
      */
+    #[Flow\Validate(argumentName: 'title', type: \Neos\Flow\Validation\Validator\NotEmptyValidator::class)]
     public function updateAction(
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,
@@ -445,7 +446,7 @@ class WorkspaceController extends AbstractModuleController
                 ->countByContentStreamId(
                     $workspace->currentContentStreamId
                 );
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $message = $this->getModuleLabel(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
                 [$workspaceMetadata->title->value],
@@ -473,8 +474,8 @@ class WorkspaceController extends AbstractModuleController
             );
             // Render a confirmation form if the request is not a POST request
         } else {
-            $this->view->assign('workspaceName', $workspace->workspaceName->value);
-            $this->view->assign('workspaceTitle', $workspaceMetadata->title->value);
+            $this->view?->assign('workspaceName', $workspace->workspaceName->value);
+            $this->view?->assign('workspaceTitle', $workspaceMetadata->title->value);
         }
     }
 
@@ -546,7 +547,7 @@ class WorkspaceController extends AbstractModuleController
             groupRoleAssignments: $workspaceGroupRoleAssignments,
         );
 
-        $this->view->assign('editWorkspaceRoleAssignmentsFormData', $editWorkspaceRoleAssignmentsFormData);
+        $this->view?->assign('editWorkspaceRoleAssignmentsFormData', $editWorkspaceRoleAssignmentsFormData);
     }
 
     public function createUserWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName): void
@@ -582,7 +583,7 @@ class WorkspaceController extends AbstractModuleController
         }
         asort($roleOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $this->view->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
+        $this->view?->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
             workspaceName: $workspaceName,
             workspaceTitle: $workspaceMetadata->title,
             options: $userOptions,
@@ -625,7 +626,7 @@ class WorkspaceController extends AbstractModuleController
         }
         asort($roleOptions, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $this->view->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
+        $this->view?->assign('createWorkspaceRoleAssignmentFormData', new CreateWorkspaceRoleAssignmentFormData(
             workspaceName: $workspaceName,
             workspaceTitle: $workspaceMetadata->title,
             options: $groupOptions,
@@ -677,6 +678,7 @@ class WorkspaceController extends AbstractModuleController
                 );
                 $roleAdded = $this->addWorkspaceRoleAssignment($workspaceName, $workspaceRoleAssignment);
             }
+            /** @phpstan-ignore identical.alwaysTrue (for readability) */
         } elseif ($workspaceRoleSubjectType === WorkspaceRoleSubjectType::GROUP) {
             $workspaceRoleAssignment = WorkspaceRoleAssignment::createForGroup(
                 $workspaceRoleSubject->value,
@@ -722,7 +724,7 @@ class WorkspaceController extends AbstractModuleController
             roleLabel: $roleLabel,
         );
 
-        $this->view->assign('confirmDeleteWorkspaceRoleAssignmentFormData', $confirmDeleteWorkspaceRoleAssignmentFormData);
+        $this->view?->assign('confirmDeleteWorkspaceRoleAssignmentFormData', $confirmDeleteWorkspaceRoleAssignmentFormData);
     }
 
     public function deleteWorkspaceRoleAssignmentAction(WorkspaceName $workspaceName, string $subjectValue, string $subjectType): void
@@ -874,7 +876,7 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceTitle' => $workspaceMetadata->title->value,
         ]);
@@ -895,7 +897,7 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceTitle' => $workspaceMetadata->title->value,
         ]);
@@ -917,7 +919,7 @@ class WorkspaceController extends AbstractModuleController
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         $baseWorkspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $baseWorkspace->workspaceName);
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'baseWorkspaceTitle' => $baseWorkspaceMetadata->title->value,
         ]);
@@ -938,7 +940,7 @@ class WorkspaceController extends AbstractModuleController
         }
 
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceTitle' => $workspaceMetadata->title->value,
         ]);
@@ -946,8 +948,6 @@ class WorkspaceController extends AbstractModuleController
 
     /**
      * Discards content of the whole workspace
-     *
-     * @param WorkspaceName $workspace
      */
     public function discardWorkspaceAction(WorkspaceName $workspace): void
     {
@@ -989,7 +989,7 @@ class WorkspaceController extends AbstractModuleController
             $conflictInformation = array_map(fn (ConflictingEvent $conflictingEvent) => [
                 'error' => $conflictingEvent->getException()->getMessage(),
                 'affectedNode' => $conflictingEvent->getAffectedNodeAggregateId(),
-                'event' => (new \ReflectionClass($conflictingEvent->getEvent()))->getShortName() . ' ' . $conflictingEvent->getSequenceNumber()->value,
+                'event' => new \ReflectionClass($conflictingEvent->getEvent())->getShortName() . ' ' . $conflictingEvent->getSequenceNumber()->value,
                 'eventPayload' => htmlentities(json_encode($conflictingEvent->getEvent(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT), ENT_NOQUOTES),
             ], iterator_to_array($e->conflictingEvents));
         }
@@ -1016,7 +1016,7 @@ class WorkspaceController extends AbstractModuleController
         $this->response->addHttpHeader('HX-Retarget', '#popover-container');
         $this->response->addHttpHeader('HX-ReSwap', 'innerHTML');
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceTitle' => $workspaceMetadata->title->value,
             'baseWorkspaceTitle' => $baseWorkspaceMetadata->title->value,
@@ -1043,7 +1043,7 @@ class WorkspaceController extends AbstractModuleController
         }
         $workspaceMetadata = $this->workspaceService->getWorkspaceMetadata($contentRepositoryId, $workspace->workspaceName);
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'workspaceName' => $workspaceName->value,
             'workspaceTitle' => $workspaceMetadata->title->value,
             'conflictCount' => $conflictCount
@@ -1121,9 +1121,7 @@ class WorkspaceController extends AbstractModuleController
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                         $documentPathSegments[] = $pathSegment;
                         $documentPathSegmentsNames[] = $this->nodeLabelGenerator->getLabel($ancestor);
-                        if (is_null($documentNode)) {
-                            $documentNode = $ancestor;
-                        }
+                        $documentNode ??= $ancestor;
                     }
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
                         $siteNode = $ancestor;
@@ -1405,7 +1403,7 @@ class WorkspaceController extends AbstractModuleController
         }
 
         // hack, we use the eel helper here to support the shorthand syntax: PackageKey:Source:trans-unit-id
-        return (new TranslationHelper())->translate($label) ?: $label;
+        return new TranslationHelper()->translate($label) ?: $label;
     }
 
     /**

@@ -16,9 +16,7 @@ namespace Neos\ContentRepositoryRegistry\Infrastructure;
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 final class GenericObjectFactory
 {
     /**

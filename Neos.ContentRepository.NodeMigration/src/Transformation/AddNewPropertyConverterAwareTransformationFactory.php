@@ -33,7 +33,7 @@ class AddNewPropertyConverterAwareTransformationFactory implements PropertyConve
         ContentRepository $contentRepository,
         PropertyConverter $propertyConverter,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class (
+        return new readonly class (
             $settings['newPropertyName'],
             $settings['type'],
             $settings['serializedValue'],
@@ -43,13 +43,13 @@ class AddNewPropertyConverterAwareTransformationFactory implements PropertyConve
                 /**
                  * Sets the name of the new property to be added.
                  */
-                private readonly string $newPropertyName,
-                private readonly string $type,
+                private string $newPropertyName,
+                private string $type,
                 /**
                  * Serialized Property value to be set.
                  */
-                private readonly mixed $serializedValue,
-                private readonly PropertyConverter $propertyConverter,
+                private mixed $serializedValue,
+                private PropertyConverter $propertyConverter,
             ) {
             }
 

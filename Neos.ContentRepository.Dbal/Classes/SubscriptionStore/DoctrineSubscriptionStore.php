@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\Dbal\SubscriptionStore;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
@@ -45,13 +44,13 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
             'charset' => 'utf8mb4'
         ]);
         $tableSchema = new Table($this->tableName, [
-            (new Column('id', Type::getType(Types::STRING)))->setNotnull(true)->setLength(SubscriptionId::MAX_LENGTH),
-            (new Column('position', Type::getType(Types::INTEGER)))->setNotnull(true),
-            (new Column('status', Type::getType(Types::STRING)))->setNotnull(true)->setLength(32),
-            (new Column('error_message', Type::getType(Types::TEXT)))->setNotnull(false),
-            (new Column('error_previous_status', Type::getType(Types::STRING)))->setNotnull(false)->setLength(32),
-            (new Column('error_trace', Type::getType(Types::TEXT)))->setNotnull(false),
-            (new Column('last_saved_at', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(true),
+            new Column('id', Type::getType(Types::STRING))->setNotnull(true)->setLength(SubscriptionId::MAX_LENGTH),
+            new Column('position', Type::getType(Types::INTEGER))->setNotnull(true),
+            new Column('status', Type::getType(Types::STRING))->setNotnull(true)->setLength(32),
+            new Column('error_message', Type::getType(Types::TEXT))->setNotnull(false),
+            new Column('error_previous_status', Type::getType(Types::STRING))->setNotnull(false)->setLength(32),
+            new Column('error_trace', Type::getType(Types::TEXT))->setNotnull(false),
+            new Column('last_saved_at', Type::getType(Types::DATETIME_IMMUTABLE))->setNotnull(true),
         ]);
         $tableSchema->setPrimaryKey(['id']);
         $tableSchema->addIndex(['status']);
@@ -91,7 +90,6 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
                 );
         }
         $result = $queryBuilder->executeQuery();
-        assert($result instanceof Result);
         $rows = $result->fetchAllAssociative();
         if ($rows === []) {
             return Subscriptions::createEmpty();

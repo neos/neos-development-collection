@@ -91,7 +91,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $danglingContentStreamPresent = true;
         }
 
-        if ($danglingContentStreamPresent === true) {
+        if ($danglingContentStreamPresent) {
             $outputFn('To remove the dangling streams from the projections please run ./flow contentStream:removeDangling');
             $outputFn('Then they are ready for removal from the event stream');
             $outputFn();
@@ -111,7 +111,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $outputFn(sprintf('  id: %s previous state: %s', $pruneableContentStream->id->value, $pruneableContentStream->status->value));
         }
 
-        if ($pruneableContentStreamPresent === true) {
+        if ($pruneableContentStreamPresent) {
             $outputFn('To prune the removed streams from the event stream run ./flow contentStream:pruneRemovedFromEventstream');
         } else {
             $outputFn('Okay. No pruneable streams in the event stream');
@@ -336,11 +336,6 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
             switch ($domainEvent::class) {
                 case RootWorkspaceWasCreated::class:
-                    if (isset($cs[$domainEvent->newContentStreamId->value])) {
-                        $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
-                                ->withWorkspace($domainEvent->workspaceName);
-                    }
-                    break;
                 case WorkspaceWasCreated::class:
                     if (isset($cs[$domainEvent->newContentStreamId->value])) {
                         $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
@@ -348,6 +343,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                     }
                     break;
                 case WorkspaceWasDiscarded::class:
+                case WorkspaceWasRebased::class:
                     if (isset($cs[$domainEvent->newContentStreamId->value])) {
                         $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
                             ->withWorkspace($domainEvent->workspaceName);
@@ -364,16 +360,6 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
                     }
                     if (isset($cs[$domainEvent->previousSourceContentStreamId->value])) {
                         $cs[$domainEvent->previousSourceContentStreamId->value] = $cs[$domainEvent->previousSourceContentStreamId->value]
-                            ->withNoLongerInUse();
-                    }
-                    break;
-                case WorkspaceWasRebased::class:
-                    if (isset($cs[$domainEvent->newContentStreamId->value])) {
-                        $cs[$domainEvent->newContentStreamId->value] = $cs[$domainEvent->newContentStreamId->value]
-                            ->withWorkspace($domainEvent->workspaceName);
-                    }
-                    if (isset($cs[$domainEvent->previousContentStreamId->value])) {
-                        $cs[$domainEvent->previousContentStreamId->value] = $cs[$domainEvent->previousContentStreamId->value]
                             ->withNoLongerInUse();
                     }
                     break;

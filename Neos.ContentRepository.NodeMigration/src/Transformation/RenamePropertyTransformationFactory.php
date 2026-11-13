@@ -33,7 +33,7 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
         array $settings,
         ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class (
+        return new readonly class (
             $settings['from'],
             $settings['to'],
         ) implements NodeBasedTransformationInterface {
@@ -41,11 +41,11 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                 /**
                  * Property name to change
                  */
-                private readonly string $from,
+                private string $from,
                 /**
                  * New name of property
                  */
-                private readonly string $to,
+                private string $to,
             ) {
             }
 

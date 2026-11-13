@@ -34,45 +34,43 @@ use Neos\Neos\Service\XliffService;
 
 /**
  * The Neos Backend controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class BackendController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var BackendRedirectionService
      */
+    #[Flow\Inject]
     protected $backendRedirectionService;
 
     /**
-     * @Flow\Inject
      * @var XliffService
      */
+    #[Flow\Inject]
     protected $xliffService;
 
     /**
-     * @Flow\Inject
      * @var LinkingService
      */
+    #[Flow\Inject]
     protected $linkingService;
 
     /**
-     * @Flow\Inject
      * @var StringFrontend
      */
+    #[Flow\Inject]
     protected $loginTokenCache;
 
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $currentSession;
 
     /**
      * Default action of the backend controller.
      *
-     * @return void
      * @throws MissingActionNameException
      * @throws StopActionException
      * @throws \Neos\Flow\Http\Exception
@@ -81,9 +79,7 @@ class BackendController extends ActionController
     public function indexAction(): void
     {
         $redirectionUri = $this->backendRedirectionService->getAfterLoginRedirectionUri($this->controllerContext);
-        if ($redirectionUri === null) {
-            $redirectionUri = $this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos');
-        }
+        $redirectionUri ??= $this->uriBuilder->uriFor('index', [], 'Login', 'Neos.Neos');
         $this->redirectToUri($redirectionUri);
     }
 
@@ -91,7 +87,6 @@ class BackendController extends ActionController
      * Redirects to the Neos backend on the given site, passing a one-time login token
      *
      * @param Site $site
-     * @return void
      * @throws \Neos\Cache\Exception
      * @throws InvalidDataException
      * @throws StopActionException
@@ -115,8 +110,6 @@ class BackendController extends ActionController
     /**
      * Returns the cached json array with the xliff labels
      *
-     * @param string $locale
-     * @return string
      * @throws InvalidLocaleIdentifierException
      * @throws \Neos\Cache\Exception
      * @throws UnknownPackageException

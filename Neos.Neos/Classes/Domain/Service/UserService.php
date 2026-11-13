@@ -49,9 +49,9 @@ use Neos\Party\Domain\Service\PartyService;
 /**
  * A service for managing users
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class UserService
 {
     /**
@@ -62,99 +62,99 @@ class UserService
     protected $defaultAuthenticationProviderName = 'Neos.Neos:Backend';
 
     /**
-     * @Flow\Inject
      * @var PartyRepository
      */
+    #[Flow\Inject]
     protected $partyRepository;
 
     /**
-     * @Flow\Inject
      * @var UserRepository
      */
+    #[Flow\Inject]
     protected $userRepository;
 
     /**
-     * @Flow\Inject
      * @var PartyService
      */
+    #[Flow\Inject]
     protected $partyService;
 
     /**
-     * @Flow\Inject
      * @var AccountFactory
      */
+    #[Flow\Inject]
     protected $accountFactory;
 
     /**
-     * @Flow\Inject
      * @var AccountRepository
      */
+    #[Flow\Inject]
     protected $accountRepository;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
-     * @Flow\Inject
      * @var AuthenticationManagerInterface
      */
+    #[Flow\Inject]
     protected $authenticationManager;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var TokenAndProviderFactoryInterface
      */
+    #[Flow\Inject]
     protected $tokenAndProviderFactory;
 
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var SessionManager
      */
+    #[Flow\Inject]
     protected $sessionManager;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var Now
      */
+    #[Flow\Inject(lazy: false)]
     protected $now;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceService
      */
+    #[Flow\Inject]
     protected $workspaceService;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceMetadataAndRoleRepository
      */
+    #[Flow\Inject]
     protected $workspaceMetadataAndRoleRepository;
 
     /**
@@ -165,7 +165,6 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
-     * @param string $sortBy
      * @param 'ASC'|'DESC' $sortDirection
      * @return QueryResultInterface<User> The users
      * @api
@@ -178,8 +177,6 @@ class UserService
     }
 
     /**
-     * @param string $searchTerm
-     * @param string $sortBy
      * @param 'ASC'|'DESC' $sortDirection
      * @return QueryResultInterface<User>
      */
@@ -232,7 +229,6 @@ class UserService
      * (or, if authenticationProviderName is specified, for the account matching the given authentication provider)
      * and return the account's identifier.
      *
-     * @param User $user
      * @param string $authenticationProviderName
      * @return ?string The username or null if the given user does not have a backend account
      */
@@ -333,9 +329,7 @@ class UserService
         ?array $roleIdentifiers = null,
         $authenticationProviderName = null
     ) {
-        if ($roleIdentifiers === null) {
-            $roleIdentifiers = ['Neos.Neos:Editor'];
-        }
+        $roleIdentifiers ??= ['Neos.Neos:Editor'];
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword(
             $username,
@@ -358,9 +352,9 @@ class UserService
      *
      * @param User $user The created user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserCreated(User $user)
     {
     }
@@ -396,9 +390,9 @@ class UserService
      *
      * @param User $user The created user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserDeleted(User $user)
     {
     }
@@ -504,9 +498,9 @@ class UserService
      *
      * @param User $user The created user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserUpdated(User $user)
     {
     }
@@ -571,9 +565,9 @@ class UserService
      * @param Account $account The account
      * @param array<Role> $roles An array of Role objects which have been added for that account
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitRolesAdded(Account $account, array $roles)
     {
     }
@@ -611,9 +605,9 @@ class UserService
      * @param Account $account The account
      * @param array<Role> $roles An array of Role objects which have been removed
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitRolesRemoved(Account $account, array $roles)
     {
     }
@@ -629,7 +623,7 @@ class UserService
     {
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            $account->setExpirationDate(null);
+            $account->setExpirationDate();
             $this->accountRepository->update($account);
         }
         $this->emitUserActivated($user);
@@ -640,9 +634,9 @@ class UserService
      *
      * @param User $user The user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserActivated(User $user)
     {
     }
@@ -651,7 +645,6 @@ class UserService
      * Deactivates the given user
      *
      * @param User $user The user to deactivate
-     * @return void
      * @throws IllegalObjectTypeException
      * @throws SessionNotStartedException
      * @api
@@ -674,7 +667,6 @@ class UserService
     }
 
     /**
-     * @return bool
      * @throws NoSuchRoleException
      * @throws \Neos\Flow\Security\Exception
      */
@@ -699,9 +691,9 @@ class UserService
      *
      * @param User $user The user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserDeactivated(User $user)
     {
     }
@@ -732,7 +724,7 @@ class UserService
      */
     protected function normalizeRoleIdentifier($roleIdentifier)
     {
-        if (strpos($roleIdentifier, ':') === false) {
+        if (!str_contains($roleIdentifier, ':')) {
             $roleIdentifier = 'Neos.Neos:' . $roleIdentifier;
         }
         if (!$this->policyService->hasRole($roleIdentifier)) {
@@ -775,10 +767,6 @@ class UserService
         return $roles;
     }
 
-    /**
-     * @param User $user
-     * @param bool $keepCurrentSession
-     */
     private function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
     {
         $sessionToKeep = $keepCurrentSession ? $this->sessionManager->getCurrentSession() : null;
@@ -828,7 +816,7 @@ class UserService
                 sprintf(
                     'Unexpected user type "%s". An account with the identifier "%s" exists,'
                     . ' but the corresponding party is not a Neos User.',
-                    get_class($user),
+                    $user::class,
                     $username
                 ),
                 1422270948
@@ -838,10 +826,6 @@ class UserService
         return $user;
     }
 
-    /**
-     * @param Account $account
-     * @return User|null
-     */
     private function getNeosUserForAccount(Account $account): ?User
     {
         $user = $this->partyService->getAssignedPartyOfAccount($account);

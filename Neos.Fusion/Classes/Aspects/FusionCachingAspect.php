@@ -17,23 +17,21 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Fusion\View\FusionView;
 
-/**
- * @Flow\Scope("singleton")
- * @Flow\Aspect
- */
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class FusionCachingAspect
 {
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $fusionCache;
 
     /**
-     * @Flow\Around("setting(Neos.Fusion.enableObjectTreeCache) && method(Neos\Fusion\View\FusionView->getMergedFusionObjectTree())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
+    #[Flow\Around('setting(Neos.Fusion.enableObjectTreeCache) && method(Neos\Fusion\View\FusionView->getMergedFusionObjectTree())')]
     public function cacheGetMergedFusionObjectTree(JoinPointInterface $joinPoint)
     {
         /** @var FusionView $view */

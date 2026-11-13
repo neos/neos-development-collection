@@ -25,32 +25,31 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  * The content element editable service adds the necessary markup around
  * a content element such that it can be edited using the inline editing
  * of the Neos Backend.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ContentElementEditableService
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var FusionHtmlAugmenter
      */
+    #[Flow\Inject]
     protected $htmlAugmenter;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     public function wrapContentProperty(Node $node, string $property, string $content): string
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(
+        $this->contentRepositoryRegistry->get(
             $node->contentRepositoryId
         );
 

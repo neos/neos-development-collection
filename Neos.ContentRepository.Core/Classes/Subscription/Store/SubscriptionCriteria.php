@@ -23,7 +23,6 @@ final readonly class SubscriptionCriteria
 
     /**
      * @param SubscriptionIds|array<string|SubscriptionId>|null $ids
-     * @param SubscriptionStatusFilter|null $status
      */
     public static function create(
         SubscriptionIds|array|null $ids = null,

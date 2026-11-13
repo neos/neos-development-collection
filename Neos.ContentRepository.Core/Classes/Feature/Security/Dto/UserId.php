@@ -19,9 +19,9 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 /**
  * @api
  */
-final class UserId implements \JsonSerializable
+final class UserId implements \JsonSerializable, \Stringable
 {
-    private const SYSTEM_USER_ID = 'system';
+    private const string SYSTEM_USER_ID = 'system';
 
     /**
      * @var array<string,self>

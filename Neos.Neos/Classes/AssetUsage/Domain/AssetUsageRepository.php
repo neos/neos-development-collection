@@ -24,7 +24,7 @@ use Neos\Neos\AssetUsage\Dto\AssetUsages;
 #[Scope("singleton")]
 final class AssetUsageRepository
 {
-    public const TABLE = 'neos_asset_usage';
+    public const string TABLE = 'neos_asset_usage';
 
     public function __construct(
         private readonly Connection $dbal,
@@ -38,7 +38,7 @@ final class AssetUsageRepository
         $queryBuilder->andWhere('contentrepositoryid = :contentRepositoryId');
         $queryBuilder->setParameter('contentRepositoryId', $contentRepositoryId->value);
         if ($filter->hasAssetId()) {
-            if ($filter->includeVariantsOfAsset === true) {
+            if ($filter->includeVariantsOfAsset) {
                 $queryBuilder->andWhere(
                     $queryBuilder->expr()->or(
                         $queryBuilder->expr()->eq('assetid', ':assetId'),
@@ -89,34 +89,39 @@ final class AssetUsageRepository
         } else {
             $queryBuilder->select('*');
         }
-        return new AssetUsages(function () use ($queryBuilder) {
-            $result = $queryBuilder->execute();
-            if (!$result instanceof Result) {
-                throw new \RuntimeException(sprintf(
-                    'Expected instance of "%s", got: "%s"',
-                    Result::class,
-                    get_debug_type($result)
-                ), 1646320966);
-            }
-            /** @var array{contentrepositoryid: string,assetid: string, workspacename: string, origindimensionspacepointhash: string, origindimensionspacepoint: string, nodeaggregateid: string, propertyname: string} $row */
-            foreach ($result->iterateAssociative() as $row) {
-                yield new AssetUsage(
-                    ContentRepositoryId::fromString($row['contentrepositoryid']),
-                    $row['assetid'],
-                    WorkspaceName::fromString($row['workspacename']),
-                    OriginDimensionSpacePoint::fromJsonString($row['origindimensionspacepoint']),
-                    NodeAggregateId::fromString($row['nodeaggregateid']),
-                    $row['propertyname']
+        return new AssetUsages(
+            function () use ($queryBuilder) {
+                $result = $queryBuilder->execute();
+                if (!$result instanceof Result) {
+                    throw new \RuntimeException(sprintf(
+                        'Expected instance of "%s", got: "%s"',
+                        Result::class,
+                        get_debug_type($result)
+                    ), 1646320966);
+                }
+                /** @var array{contentrepositoryid: string,assetid: string, workspacename: string, origindimensionspacepointhash: string, origindimensionspacepoint: string, nodeaggregateid: string, propertyname: string} $row */
+                foreach ($result->iterateAssociative() as $row) {
+                    yield new AssetUsage(
+                        ContentRepositoryId::fromString($row['contentrepositoryid']),
+                        $row['assetid'],
+                        WorkspaceName::fromString($row['workspacename']),
+                        OriginDimensionSpacePoint::fromJsonString($row['origindimensionspacepoint']),
+                        NodeAggregateId::fromString($row['nodeaggregateid']),
+                        $row['propertyname']
+                    );
+                }
+            },
+            function () use ($queryBuilder) {
+                /** @var numeric-string $count */
+                $count = $this->dbal->fetchOne(
+                    'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s',
+                    $queryBuilder->getParameters()
                 );
+                /** @var int<0, max> $result */
+                $result = (int)$count;
+                return $result;
             }
-        }, function () use ($queryBuilder) {
-            /** @var string $count */
-            $count = $this->dbal->fetchOne(
-                'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s',
-                $queryBuilder->getParameters()
-            );
-            return (int)$count;
-        });
+        );
     }
 
     /**
@@ -171,7 +176,7 @@ final class AssetUsageRepository
                 'origindimensionspacepointhash' => $node->dimensionSpacePoint->hash,
                 'propertyname' => $propertyName,
             ]);
-        } catch (UniqueConstraintViolationException $e) {
+        } catch (UniqueConstraintViolationException) {
             // A usage already exists for this node and property -> can be ignored
         }
     }
@@ -247,16 +252,20 @@ final class AssetUsageRepository
                     AND assetId = :assetId
             SQL;
 
-        $this->dbal->executeStatement($sql, [
-            'contentRepositoryId' => $contentRepositoryId->value,
-            'nodeAggregateId' => $nodeAggregateId->value,
-            'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'workspaceNames' => array_map(fn ($workspaceName) => $workspaceName->value, $workspaceNames),
-            'propertyName' => $propertyName,
-            'assetId' => $assetId,
-        ], [
-            'workspaceNames' => Connection::PARAM_STR_ARRAY,
-        ]);
+        $this->dbal->executeStatement(
+            $sql,
+            [
+                'contentRepositoryId' => $contentRepositoryId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
+                'originDimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                'workspaceNames' => array_map(fn ($workspaceName) => $workspaceName->value, $workspaceNames),
+                'propertyName' => $propertyName,
+                'assetId' => $assetId,
+            ],
+            [
+                'workspaceNames' => Connection::PARAM_STR_ARRAY,
+            ]
+        );
     }
 
     public function removeAsset(ContentRepositoryId $contentRepositoryId, string $assetId): void

@@ -41,7 +41,7 @@ class RuntimeContentCache
     /**
      * @var boolean|null
      */
-    protected $inCacheEntryPoint = null;
+    protected $inCacheEntryPoint;
 
     /**
      * @var boolean
@@ -56,9 +56,9 @@ class RuntimeContentCache
     protected $cacheMetadata = [];
 
     /**
-     * @Flow\Inject
      * @var ContentCache
      */
+    #[Flow\Inject]
     protected $contentCache;
 
     /**
@@ -68,9 +68,6 @@ class RuntimeContentCache
 
     private NormalizerInterface&DenormalizerInterface $serializer;
 
-    /**
-     * @param Runtime $runtime
-     */
     public function __construct(Runtime $runtime)
     {
         $this->runtime = $runtime;
@@ -113,7 +110,6 @@ class RuntimeContentCache
      * Needs to be called right before evaluation of a path starts to check the cache mode and set internal state
      * like the cache entry point.
      *
-     * @param array $configuration
      * @param string $fusionPath
      * @return array An evaluate context array that needs to be passed to subsequent calls to pass the current state
      * @throws Exception
@@ -163,14 +159,14 @@ class RuntimeContentCache
             }
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
-                $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
+                $cacheDiscriminator = $evaluateContext['cacheDiscriminator'] ?? null;
                 $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) {
-                    if (strpos($command, 'eval=') === 0) {
+                    if (str_starts_with($command, 'eval=')) {
                         $unserializedContext = $this->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);
                         $result = $this->evaluateUncached($path, $unserializedContext);
                         return $result;
-                    } elseif (strpos($command, 'evalCached=') === 0) {
+                    } elseif (str_starts_with($command, 'evalCached=')) {
                         /*
                          * Why do we need the following line:
                          * - in "enter" the cache context is decided upon which contains "currentPathIsEntryPoint".
@@ -301,7 +297,6 @@ class RuntimeContentCache
      * This is used to render uncached segments "out of band" in getCachedSegment of ContentCache.
      *
      * @param string $path
-     * @param array $contextArray
      * @return mixed
      *
      * TODO Find another way of disabling the cache (especially to allow cached content inside uncached content)
@@ -321,7 +316,6 @@ class RuntimeContentCache
      * Builds an array of additional key / values which must go into the calculation of the cache entry identifier for
      * a cached content segment.
      *
-     * @param array $configuration
      * @param string $fusionPath
      * @param object $fusionObject The actual Fusion object
      * @return array
@@ -338,7 +332,6 @@ class RuntimeContentCache
     /**
      * Builds an array of string which must be used as tags for the cache entry identifier of a specific cached content segment.
      *
-     * @param array $configuration
      * @param string $fusionPath
      * @param object $fusionObject The actual Fusion object
      * @return array
@@ -355,7 +348,7 @@ class RuntimeContentCache
                     $cacheTags[] = $tagValue;
                 }
             }
-            foreach ($this->flushTags() as $tagKey => $tagValue) {
+            foreach ($this->flushTags() as $tagValue) {
                 $cacheTags[] = $tagValue;
             }
         } else {

@@ -24,15 +24,15 @@ use Neos\Utility\Arrays;
  * This happens BEFORE the node types are merged with the super types (in the node type management); but
  * this is implemented as the last step of the {@see NodeTypesLoader}.
  *
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope('singleton')]
 class NodeTypeEnrichmentService
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
@@ -49,9 +49,7 @@ class NodeTypeEnrichmentService
     }
 
     /**
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
-     * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
     protected function addLabelsToNodeTypeConfiguration(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver)
@@ -75,7 +73,6 @@ class NodeTypeEnrichmentService
 
 
     /**
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
      * @return void
      */
@@ -91,7 +88,6 @@ class NodeTypeEnrichmentService
 
     /**
      * @param array<string,mixed> $configuration
-     * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
     protected function setLabels(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver, string $configurationType)
@@ -117,14 +113,12 @@ class NodeTypeEnrichmentService
                     }
                     $superTypeConfiguration = $superTypeConfigResolver->getLocalConfiguration($superTypeName);
                     return $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
-                }, null);
+                });
             $hasEditor = !is_null($editorName);
             $hasEditorOptions = isset($propertyConfiguration['ui']['inspector']['editorOptions']);
 
             if ($hasEditor && $hasEditorOptions) {
-                $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName, $configurationType) {
-                    return $this->getConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path, $configurationType);
-                };
+                $translationIdGenerator = (fn ($path) => $this->getConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path, $configurationType));
                 $this->applyEditorLabels(
                     $nodeTypeLabelIdPrefix,
                     $propertyName,
@@ -171,7 +165,7 @@ class NodeTypeEnrichmentService
     /**
      * Resolve help message thumbnail url
      *
-     * @param string $nodeTypeName
+     * @param string|null $nodeTypeName @todo non-nullable string in 10.0
      * @param string|null $configurationThumbnail
      * @return string $thumbnailUrl
      */
@@ -181,7 +175,7 @@ class NodeTypeEnrichmentService
         if ($nodeTypeName !== null) {
             if (isset($configurationThumbnail)) {
                 $thumbnailUrl = $configurationThumbnail;
-                if (strpos($thumbnailUrl, 'resource://') === 0) {
+                if (str_starts_with($thumbnailUrl, 'resource://')) {
                     $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
                 }
             } else {
@@ -254,9 +248,7 @@ class NodeTypeEnrichmentService
     /**
      * Sets labels for global NodeType elements like tabs and groups and the general label.
      *
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
-     * @return void
      */
     protected function setGlobalUiElementLabels(string $nodeTypeName, array &$configuration): void
     {
@@ -316,13 +308,11 @@ class NodeTypeEnrichmentService
                     isset($elementConfiguration['ui']['editor'])
                     && isset($elementConfiguration['ui']['editorOptions'])
                 ) {
-                    $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $elementName) {
-                        return $this->getInspectorElementTranslationId(
-                            $nodeTypeLabelIdPrefix,
-                            'creationDialog',
-                            $elementName . '.' . $path
-                        );
-                    };
+                    $translationIdGenerator = (fn ($path) => $this->getInspectorElementTranslationId(
+                        $nodeTypeLabelIdPrefix,
+                        'creationDialog',
+                        $elementName . '.' . $path
+                    ));
                     $this->applyEditorLabels(
                         $nodeTypeLabelIdPrefix,
                         $elementName,
@@ -348,7 +338,6 @@ class NodeTypeEnrichmentService
      *
      * @param array<string,mixed> $parentConfiguration
      * @param string $fieldName Name of the possibly existing subfield
-     * @return boolean
      */
     protected function shouldFetchTranslation(array $parentConfiguration, string $fieldName = 'label'): bool
     {
@@ -359,11 +348,6 @@ class NodeTypeEnrichmentService
 
     /**
      * Generates a generic inspector element label with the given $nodeTypeSpecificPrefix.
-     *
-     * @param string $nodeTypeSpecificPrefix
-     * @param string $elementType
-     * @param string $elementName
-     * @return string
      */
     protected function getInspectorElementTranslationId(string $nodeTypeSpecificPrefix, string $elementType, string $elementName): string
     {
@@ -372,10 +356,6 @@ class NodeTypeEnrichmentService
 
     /**
      * Generates a property label with the given $nodeTypeSpecificPrefix.
-     *
-     * @param string $nodeTypeSpecificPrefix
-     * @param string $propertyName
-     * @return string
      */
     protected function getLabelTranslationId(string $nodeTypeSpecificPrefix, string $propertyName, string $configurationType): string
     {
@@ -384,11 +364,6 @@ class NodeTypeEnrichmentService
 
     /**
      * Generates a property configuration-label with the given $nodeTypeSpecificPrefix.
-     *
-     * @param string $nodeTypeSpecificPrefix
-     * @param string $propertyName
-     * @param string $labelPath
-     * @return string
      */
     protected function getConfigurationTranslationId(string $nodeTypeSpecificPrefix, string $propertyName, string $labelPath, string $configurationType): string
     {
@@ -407,7 +382,7 @@ class NodeTypeEnrichmentService
         // in case the NodeType has just one section we default to 'Neos.Neos' as package
         // as we don't have any further information.
         $packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'Neos.Neos';
-        $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
+        $nodeTypeName = $nodeTypeNameParts[1] ?? $nodeTypeNameParts[0];
 
         return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
     }

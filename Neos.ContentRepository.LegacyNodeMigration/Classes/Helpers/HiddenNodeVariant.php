@@ -11,9 +11,8 @@ use Neos\Flow\Annotations as Flow;
 /**
  * A node variant that was hidden in the legacy data and is disabled via a deferred SubtreeWasTagged
  * event at the end of the migration, once all variants of its node aggregate are known.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class HiddenNodeVariant
 {
     public function __construct(

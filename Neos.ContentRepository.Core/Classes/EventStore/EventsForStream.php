@@ -14,10 +14,6 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 final readonly class EventsForStream
 {
-    /**
-     * @param StreamName $streamName
-     * @param Events $events
-     */
     private function __construct(
         public StreamName $streamName,
         public Events $events,

@@ -44,9 +44,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
     }
 
     /**
-     * @param ReferenceName $referenceName
      * @param SerializedNodeReference[] $references
-     * @return self
      */
     public static function fromSerializedReferences(ReferenceName $referenceName, array $references): self
     {
@@ -66,7 +64,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
     {
         return new self(
             ReferenceName::fromString($array['referenceName']),
-            ...array_map(static fn (array $reference) => SerializedNodeReference::fromArray($reference), array_values($array['references']))
+            ...array_map(SerializedNodeReference::fromArray(...), array_values($array['references']))
         );
     }
 

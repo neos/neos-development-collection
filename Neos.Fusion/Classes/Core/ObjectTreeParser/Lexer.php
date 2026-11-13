@@ -156,6 +156,9 @@ class Lexer
         return $token;
     }
 
+    /**
+     * @param int<1,31> $tokenType
+     */
     public function getCachedLookaheadOrTryToGenerateLookaheadForTokenAndGetLookahead(int $tokenType): ?Token
     {
         if ($this->lookahead !== null) {

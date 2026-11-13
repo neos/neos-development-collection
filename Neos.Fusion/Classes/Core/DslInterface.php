@@ -46,8 +46,6 @@ interface DslInterface
     /**
      * Transpile the given dsl-code to fusion-code
      *
-     * @param string $code
-     * @return string
      * @throws Fusion\Exception
      */
     public function transpile(string $code): string;

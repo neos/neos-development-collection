@@ -45,7 +45,7 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
     public static function fromArray(array $array): self
     {
         return new self(...array_map(
-            fn (string $shorthand): NodeDiscriminator => NodeDiscriminator::fromShorthand($shorthand),
+            NodeDiscriminator::fromShorthand(...),
             $array
         ));
     }

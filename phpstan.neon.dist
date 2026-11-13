@@ -27,6 +27,10 @@ parameters:
         - Neos.Media.Browser/Classes/Controller/UsageController.php
     bootstrapFiles:
          - ../Framework/bootstrap-phpstan.php
+    ignoreErrors:
+        -
+            identifier: trait.unused
+            path: Neos.ContentRepository.TestSuite/Classes/Behavior/Features/Bootstrap/*.php
 rules:
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule

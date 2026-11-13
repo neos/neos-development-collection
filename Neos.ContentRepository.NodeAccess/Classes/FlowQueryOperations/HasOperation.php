@@ -45,9 +45,9 @@ class HasOperation extends AbstractOperation
     protected static $priority = 100;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
@@ -114,7 +114,7 @@ class HasOperation extends AbstractOperation
                     }
                 }
             }
-            $filteredContext = array_unique($filteredContext);
+            $filteredContext = array_unique($filteredContext, SORT_REGULAR);
         }
 
         $flowQuery->setContext($filteredContext);

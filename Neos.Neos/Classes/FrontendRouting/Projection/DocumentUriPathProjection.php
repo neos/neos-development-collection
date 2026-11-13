@@ -42,7 +42,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
  */
 final class DocumentUriPathProjection implements ProjectionInterface
 {
-    public const COLUMN_TYPES_DOCUMENT_URIS = [
+    public const array COLUMN_TYPES_DOCUMENT_URIS = [
         'shortcutTarget' => Types::JSON,
     ];
 
@@ -91,7 +91,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($this->dbal);
+        $schema = new DocumentUriPathSchemaBuilder($this->tableNamePrefix)->buildSchema($this->dbal);
         $statements = DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
 
         return $statements;
@@ -705,7 +705,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return false;
         }
         if ($parentNode === null) {
-            return $node->getDisableLevel() !== 0;
+            return true;
         }
         return $node->getDisableLevel() - $parentNode->getDisableLevel() !== 0;
     }
@@ -716,7 +716,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             return false;
         }
         if ($parentNode === null) {
-            return $node->getRemovedLevel() !== 0;
+            return true;
         }
         return $node->getRemovedLevel() - $parentNode->getRemovedLevel() !== 0;
     }
@@ -740,7 +740,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         try {
             return $closure();
-        } catch (NodeNotFoundException $_) {
+        } catch (NodeNotFoundException) {
             /** @noinspection BadExceptionsProcessingInspection */
             return null;
         }

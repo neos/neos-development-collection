@@ -33,15 +33,15 @@ use Neos\Fusion\Exception as FusionException;
 class ResourceUriImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var Service
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**
@@ -107,7 +107,7 @@ class ResourceUriImplementation extends AbstractFusionObject
         if ($path === null) {
             throw new FusionException('Neither "resource" nor "path" were specified', 1386458763);
         }
-        if (strpos($path, 'resource://') === 0) {
+        if (str_starts_with($path, 'resource://')) {
             $matches = [];
             if (preg_match('#^resource://([^/]+)/Public/(.*)#', $path, $matches) !== 1) {
                 throw new FusionException(sprintf('The specified path "%s" does not point to a public resource.', $path), 1386458851);

@@ -6,10 +6,8 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver
 
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
-final readonly class Separator
+#[Flow\Proxy(false)]
+final readonly class Separator implements \Stringable
 {
     private function __construct(
         public string $value

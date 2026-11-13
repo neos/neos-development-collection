@@ -33,7 +33,7 @@ final readonly class ReferenceDiscriminators implements \JsonSerializable, \Iter
     public static function fromReferences(References $references): self
     {
         return new self(array_map(
-            fn (Reference $reference): ReferenceDiscriminator => ReferenceDiscriminator::fromReference($reference),
+            ReferenceDiscriminator::fromReference(...),
             $references->references,
         ));
     }

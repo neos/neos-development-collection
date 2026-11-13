@@ -25,9 +25,9 @@ use Psr\Http\Message\ResponseInterface;
 class ResponseHeadImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var ResponseFactoryInterface
      */
+    #[Flow\Inject]
     protected $responseFactory;
 
     /**
@@ -38,9 +38,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     public function getHttpVersion()
     {
         $httpVersion = $this->fusionValue('httpVersion');
-        if ($httpVersion === null) {
-            $httpVersion = 'HTTP/1.1';
-        }
+        $httpVersion ??= 'HTTP/1.1';
         return trim($httpVersion);
     }
 
@@ -50,18 +48,13 @@ class ResponseHeadImplementation extends AbstractFusionObject
     public function getStatusCode()
     {
         $statusCode = $this->fusionValue('statusCode');
-        if ($statusCode === null) {
-            $statusCode = 200;
-        }
+        $statusCode ??= 200;
         if (ResponseInformationHelper::getStatusMessageByCode($statusCode) === 'Unknown Status') {
             throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
         }
         return (int)$statusCode;
     }
 
-    /**
-     * @return array
-     */
     public function getHeaders(): array
     {
         $headers = $this->fusionValue('headers');
@@ -73,13 +66,11 @@ class ResponseHeadImplementation extends AbstractFusionObject
 
     /**
      * Just return the processed value
-     *
-     * @return ResponseInterface
      */
     public function evaluate(): ResponseInterface
     {
         $httpVersion = $this->getHttpVersion();
-        if (strpos($httpVersion, 'HTTP/') === 0) {
+        if (str_starts_with($httpVersion, 'HTTP/')) {
             $httpVersion = substr($httpVersion, 5);
         }
 

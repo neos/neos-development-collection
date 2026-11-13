@@ -87,7 +87,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use SubtreeTagging;
     use Workspace;
 
-    public const RELATION_DEFAULT_OFFSET = 128;
+    public const int RELATION_DEFAULT_OFFSET = 128;
 
     private SqlTableSubqueryFactory $subqueries;
 
@@ -246,7 +246,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             $forkParentReadLayers = $sourceContentStreamLayers->getParentReadLayers();
         }
 
-        foreach ($forkParentReadLayers?->items ?? [] as $sourceContentStreamLayer) {
+        foreach ($forkParentReadLayers?->items ?: [] as $sourceContentStreamLayer) {
             $this->dbal->insert($this->tableNames->contentStreamLayer(), [
                 'contentStreamId' => $event->newContentStreamId,
                 'contentStreamLayer' => $sourceContentStreamLayer->value
@@ -301,6 +301,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             }
         }
 
+        /** @phpstan-ignore notIdentical.alwaysTrue (can both be null) */
         if ($contentStreamLayerToMergeFrom !== null && $contentStreamLayerToMergeInto !== null) {
             $mergeHierarchyRelationsStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()} (
@@ -375,7 +376,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced nodes (which will not have a hierarchy relation anymore)
         $deleteNodesStatement = <<<SQL
             DELETE n FROM {$this->tableNames->node()} n
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
             LEFT JOIN {$this->tableNames->hierarchyRelation()} h
               ON h.childnodeanchor = n.relationanchorpoint
                 AND h.contentstreamlayer != :targetContentStreamLayer
@@ -392,7 +393,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced reference relations (i.e. because the referenced nodes will be gone)
         $deleteReferencesStatement = <<<SQL
             DELETE r FROM {$this->tableNames->referenceRelation()} r
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
               LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = r.nodeanchorpoint
                 AND h.contentstreamlayer != :targetContentStreamLayer
@@ -660,7 +661,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             if (is_null($nodeAnchorPoint)) {
                 throw new \InvalidArgumentException(
-                    'Could not apply event of type "' . get_class($event)
+                    'Could not apply event of type "' . $event::class
                     . '" since no anchor point could be resolved for node '
                     . $event->getNodeAggregateId()->value . ' in content stream '
                     . $event->getContentStreamId()->value,
@@ -719,7 +720,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         foreach ($nodeReferences as $referencesByProperty) {
             foreach ($referencesByProperty->references as $reference) {
                 $referencePropertiesJson = null;
-                if ($reference->properties !== null && $reference->properties->count() > 0) {
+                if ($reference->properties->count() > 0) {
                     try {
                         $referencePropertiesJson = \json_encode($reference->properties, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT);
                     } catch (\JsonException $e) {
@@ -869,7 +870,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNames))->buildSchema($this->dbal);
+        $schema = new DoctrineDbalContentGraphSchemaBuilder($this->tableNames)->buildSchema($this->dbal);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 
@@ -1052,34 +1053,31 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // reconnect parent relations
         $missingParentRelations = $coverageSucceedingSiblings->toDimensionSpacePointSet()->points;
 
-        if (!empty($missingParentRelations)) {
-            // add yet missing parent relations
+        // add yet missing parent relations
+        foreach ($missingParentRelations as $dimensionSpacePoint) {
+            $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+                $contentStreamLayers,
+                $parentNodeAggregateId,
+                $dimensionSpacePoint
+            );
 
-            foreach ($missingParentRelations as $dimensionSpacePoint) {
-                $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+            $succeedingSiblingNodeAggregateId = $coverageSucceedingSiblings->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
+            $succeedingSibling = $succeedingSiblingNodeAggregateId
+                ? $this->projectionContentGraph->findNodeInAggregate(
                     $contentStreamLayers,
-                    $parentNodeAggregateId,
+                    $succeedingSiblingNodeAggregateId,
                     $dimensionSpacePoint
+                )
+                : null;
+
+            if ($parentNode) {
+                $this->connectHierarchy(
+                    $contentStreamLayers,
+                    $parentNode->relationAnchorPoint,
+                    $node->relationAnchorPoint,
+                    new DimensionSpacePointSet([$dimensionSpacePoint]),
+                    $succeedingSibling?->relationAnchorPoint,
                 );
-
-                $succeedingSiblingNodeAggregateId = $coverageSucceedingSiblings->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
-                $succeedingSibling = $succeedingSiblingNodeAggregateId
-                    ? $this->projectionContentGraph->findNodeInAggregate(
-                        $contentStreamLayers,
-                        $succeedingSiblingNodeAggregateId,
-                        $dimensionSpacePoint
-                    )
-                    : null;
-
-                if ($parentNode) {
-                    $this->connectHierarchy(
-                        $contentStreamLayers,
-                        $parentNode->relationAnchorPoint,
-                        $node->relationAnchorPoint,
-                        new DimensionSpacePointSet([$dimensionSpacePoint]),
-                        $succeedingSibling?->relationAnchorPoint,
-                    );
-                }
             }
         }
 

@@ -40,7 +40,6 @@ final class TetheredNodeTypeDefinitions implements \IteratorAggregate
     {
         $tetheredNodeTypeDefinitionDefinitionByName = [];
         foreach ($tetheredNodeTypeDefinitions as $index => $tetheredNodeTypeDefinitionDefinition) {
-            $tetheredNodeTypeDefinitionDefinition instanceof TetheredNodeTypeDefinition || throw new \InvalidArgumentException(sprintf('expected instance of %s, got: %s at index %s', TetheredNodeTypeDefinition::class, get_debug_type($tetheredNodeTypeDefinitionDefinition), $index), 1713549511);
             !array_key_exists($tetheredNodeTypeDefinitionDefinition->name->value, $tetheredNodeTypeDefinitionDefinitionByName) || throw new \InvalidArgumentException(sprintf('Tethered node type definition with name "%s" is already registered at index %s', $tetheredNodeTypeDefinitionDefinition->name->value, $index), 1713549527);
             $tetheredNodeTypeDefinitionDefinitionByName[$tetheredNodeTypeDefinitionDefinition->name->value] = $tetheredNodeTypeDefinitionDefinition;
         }

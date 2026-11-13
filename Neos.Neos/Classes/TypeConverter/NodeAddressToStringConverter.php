@@ -22,9 +22,8 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 /**
  * An Object Converter for Node Addresses which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodeAddressToStringConverter extends AbstractTypeConverter
 {
     /**

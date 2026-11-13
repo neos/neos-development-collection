@@ -39,9 +39,9 @@ use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 /**
  * Service to copy node recursively - as there is no equivalent content repository core command.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 final class NodeDuplicationService
 {
     public function __construct(
@@ -320,9 +320,7 @@ final class NodeDuplicationService
     {
         $serializedReferencesByName = [];
         foreach ($references as $reference) {
-            if (!isset($serializedReferencesByName[$reference->name->value])) {
-                $serializedReferencesByName[$reference->name->value] = [];
-            }
+            $serializedReferencesByName[$reference->name->value] ??= [];
             $serializedReferencesByName[$reference->name->value][] = NodeReferenceToWrite::fromTargetAndProperties($reference->node->aggregateId, $reference->properties?->count() > 0 ? PropertyValuesToWrite::fromArray(iterator_to_array($reference->properties)) : PropertyValuesToWrite::createEmpty());
         }
 

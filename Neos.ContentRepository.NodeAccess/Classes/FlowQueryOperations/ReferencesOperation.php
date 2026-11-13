@@ -58,9 +58,9 @@ final class ReferencesOperation implements OperationInterface
     protected static $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /** @param array<int, mixed> $context */

@@ -25,8 +25,8 @@ use Psr\Http\Message\ResponseInterface;
  *
  * @deprecated with Neos 9, the JsonView should not be used
  * @internal only to be used internally
- * @Flow\Scope("prototype")
  */
+#[Flow\Scope('prototype')]
 class AssetJsonView extends JsonView
 {
     /**

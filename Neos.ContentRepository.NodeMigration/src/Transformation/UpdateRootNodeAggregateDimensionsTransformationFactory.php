@@ -28,19 +28,19 @@ class UpdateRootNodeAggregateDimensionsTransformationFactory implements Transfor
         }
         try {
             $nodeTypeName = NodeTypeName::fromString($settings['nodeType']);
-        } catch (\InvalidArgumentException $exception) {
+        } catch (\InvalidArgumentException) {
             throw new MigrationException(
                 sprintf('The given "nodeType" ("%s") is not valid.', $settings['nodeType']),
                 1726754273
             );
         }
-        return new class (
+        return new readonly class (
             $nodeTypeName,
             $contentRepository
         ) implements GlobalTransformationInterface {
             public function __construct(
-                private readonly NodeTypeName $nodeTypeName,
-                private readonly ContentRepository $contentRepository,
+                private NodeTypeName $nodeTypeName,
+                private ContentRepository $contentRepository,
             ) {
             }
 

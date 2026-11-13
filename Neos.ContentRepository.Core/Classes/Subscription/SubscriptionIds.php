@@ -28,9 +28,6 @@ final class SubscriptionIds implements \IteratorAggregate, \Countable, \JsonSeri
             if (is_string($id)) {
                 $id = SubscriptionId::fromString($id);
             }
-            if (!$id instanceof SubscriptionId) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', SubscriptionId::class, get_debug_type($id)), 1731580820);
-            }
             if (array_key_exists($id->value, $subscriptionIdsById)) {
                 throw new \InvalidArgumentException(sprintf('Subscription id "%s" is already part of this set', $id->value), 1731580838);
             }

@@ -35,15 +35,12 @@ trait NodeModification
 
     /**
      * @Given /^the event NodePropertiesWereSet was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['originDimensionSpacePoint'])) {
-            $eventPayload['originDimensionSpacePoint'] = json_encode($this->currentDimensionSpacePoint);
-        }
+        $eventPayload['originDimensionSpacePoint'] ??= json_encode($this->currentDimensionSpacePoint);
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             $contentStreamId

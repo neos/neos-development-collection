@@ -25,8 +25,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * @implements ProjectionInterface<DebugEventProjectionState>
  * @internal
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class DebugEventProjection implements ProjectionInterface
 {
     private DebugEventProjectionState $state;
@@ -69,7 +69,7 @@ final class DebugEventProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->dbal->createSchemaManager();
+        $this->dbal->createSchemaManager();
 
         $table = new Table($this->tableNamePrefix, [
             (new Column('sequencenumber', Type::getType(Types::INTEGER))),
@@ -126,7 +126,7 @@ final class DebugEventProjection implements ProjectionInterface
 
     public function schemaNeedsAdditionalColumn(string $name): void
     {
-        $this->additionalColumnsForSchema[$name] = (new Column($name, Type::getType(Types::STRING)))->setNotnull(false);
+        $this->additionalColumnsForSchema[$name] = new Column($name, Type::getType(Types::STRING))->setNotnull(false);
     }
 
     public function dropTables(): void

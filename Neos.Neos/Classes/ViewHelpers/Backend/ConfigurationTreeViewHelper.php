@@ -46,7 +46,6 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
     /**
      * Render the $configuration
      *
-     * @return string
      * @throws \Exception
      */
     public function render(): string
@@ -61,7 +60,6 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
      *
      * @param array<string|int,mixed> $configuration
      * @param string $relativePath the path up-to-now
-     * @return void
      */
     protected function renderSingleLevel(array $configuration, ?string $relativePath = null): void
     {

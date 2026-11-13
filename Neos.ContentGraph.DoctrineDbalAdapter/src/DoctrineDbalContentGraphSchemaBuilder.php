@@ -44,13 +44,13 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename', $platform),
-            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(false),
+            new Column('name', self::type(Types::STRING))->setLength(255)->setNotnull(false),
             DbalSchemaFactory::columnForProperties('properties', $platform)->setNotnull(true),
-            (new Column('classification', self::type(Types::BINARY)))->setLength(20)->setNotnull(true),
-            (new Column('created', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
-            (new Column('originalcreated', self::type(Types::DATETIME_IMMUTABLE)))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
-            (new Column('lastmodified', self::type(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null),
-            (new Column('originallastmodified', self::type(Types::DATETIME_IMMUTABLE)))->setNotnull(false)->setDefault(null)
+            new Column('classification', self::type(Types::BINARY))->setLength(20)->setNotnull(true),
+            new Column('created', self::type(Types::DATETIME_IMMUTABLE))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
+            new Column('originalcreated', self::type(Types::DATETIME_IMMUTABLE))->setDefault('CURRENT_TIMESTAMP')->setNotnull(true),
+            new Column('lastmodified', self::type(Types::DATETIME_IMMUTABLE))->setNotnull(false)->setDefault(null),
+            new Column('originallastmodified', self::type(Types::DATETIME_IMMUTABLE))->setNotnull(false)->setDefault(null)
         ]);
 
         return $table
@@ -62,13 +62,13 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createHierarchyRelationTable(AbstractPlatform $platform): Table
     {
         $table = self::createTable($this->tableNames->hierarchyRelation(), [
-            (new Column('id', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
-            (new Column('contentstreamlayer', self::type(Types::INTEGER)))->setNotnull(true),
-            (new Column('position', self::type(Types::INTEGER)))->setNotnull(false),
+            new Column('id', Type::getType(Types::INTEGER))->setAutoincrement(true)->setNotnull(true),
+            new Column('contentstreamlayer', self::type(Types::INTEGER))->setNotnull(true),
+            new Column('position', self::type(Types::INTEGER))->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('parentnodeanchor', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAnchorPoint('childnodeanchor', $platform)->setNotnull(false),
-            (new Column('subtreetags', self::type(Types::JSON)))->setNotnull(false),
+            new Column('subtreetags', self::type(Types::JSON))->setNotnull(false),
         ]);
 
         return $table
@@ -99,8 +99,8 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createReferenceRelationTable(AbstractPlatform $platform): Table
     {
         $table = self::createTable($this->tableNames->referenceRelation(), [
-            (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true),
-            (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
+            new Column('name', self::type(Types::STRING))->setLength(255)->setNotnull(true),
+            new Column('position', self::type(Types::INTEGER))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint', $platform),
             DbalSchemaFactory::columnForProperties('properties', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForNodeAggregateId('destinationnodeaggregateid', $platform)->setNotnull(true)
@@ -117,7 +117,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             DbalSchemaFactory::columnForWorkspaceName('name', $platform)->setNotnull(true),
             DbalSchemaFactory::columnForWorkspaceName('baseWorkspaceName', $platform)->setNotnull(false),
             DbalSchemaFactory::columnForContentStreamId('currentContentStreamId', $platform)->setNotNull(true),
-            (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
+            new Column('version', Type::getType(Types::INTEGER))->setNotnull(true),
         ]);
 
         $workspaceTable->addUniqueIndex(['currentContentStreamId']);
@@ -129,10 +129,10 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $contentStreamTable = self::createTable($this->tableNames->contentStream(), [
             DbalSchemaFactory::columnForContentStreamId('id', $platform)->setNotnull(true),
-            (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
+            new Column('version', Type::getType(Types::INTEGER))->setNotnull(true),
             DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId', $platform)->setNotnull(false),
-            (new Column('sourceContentStreamVersion', Type::getType(Types::INTEGER)))->setNotnull(false),
-            (new Column('hasChanges', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            new Column('sourceContentStreamVersion', Type::getType(Types::INTEGER))->setNotnull(false),
+            new Column('hasChanges', Type::getType(Types::BOOLEAN))->setNotnull(true),
         ]);
 
         return $contentStreamTable
@@ -143,7 +143,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $contentStreamLayerTable = self::createTable($this->tableNames->contentStreamLayer(), [
             DbalSchemaFactory::columnForContentStreamId('contentStreamId', $platform)->setNotnull(true),
-            (new Column('contentStreamLayer', Type::getType(Types::INTEGER)))->setAutoincrement(true)->setNotnull(true),
+            new Column('contentStreamLayer', Type::getType(Types::INTEGER))->setAutoincrement(true)->setNotnull(true),
         ]);
 
         return $contentStreamLayerTable

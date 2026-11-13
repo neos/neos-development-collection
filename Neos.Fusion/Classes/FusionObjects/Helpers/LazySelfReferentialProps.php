@@ -26,8 +26,8 @@ use Neos\Fusion\Core\Runtime;
  * and using a Neos.Fusion:DataStructure wouldn't be lazy.
  *
  * @internal
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
 {
     /** @var array<string, LazyReference> */

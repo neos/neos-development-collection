@@ -40,17 +40,11 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
      */
     private $renderTechnicalDetails;
 
-    /**
-     * @param LoggerInterface $logger
-     */
     public function injectLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
 
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;

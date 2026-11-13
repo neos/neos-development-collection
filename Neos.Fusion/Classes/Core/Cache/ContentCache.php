@@ -42,8 +42,8 @@ use Neos\Fusion\Exception\CacheException;
  *       TaggableBackendInterface.
  *
  * @internal
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ContentCache
 {
     public const CACHE_SEGMENT_START_TOKEN = "\x02";
@@ -69,14 +69,14 @@ class ContentCache
 
     /**
      * @var StringFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**
      * @var Context
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -146,9 +146,8 @@ class ContentCache
      * @param string $content The content rendered by the Fusion Runtime
      * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array<string, array{type: string, value: mixed}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
-     * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
-     * @param integer $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
+     * @param integer|null $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
      * @param string $cacheDiscriminator The evaluated cache discriminator value
      * @return string The original content, but with additional markers added
      */
@@ -173,7 +172,6 @@ class ContentCache
      * Renders an identifier for a content cache entry
      *
      * @param string $fusionPath
-     * @param array $cacheIdentifierValues
      * @return string An MD5 hash built from the fusionPath and certain elements of the given identifier values
      * @throws CacheException If an invalid entry identifier value is given
      */
@@ -281,11 +279,13 @@ class ContentCache
      * @param string $content
      * @param boolean $addCacheSegmentMarkersToPlaceholders
      * @return integer|boolean Number of replaced placeholders or false if a placeholder couldn't be found
+     * @param-out string $content
      */
     protected function replaceCachePlaceholders(&$content, $addCacheSegmentMarkersToPlaceholders)
     {
         $cache = $this->cache;
         $foundMissingIdentifier = false;
+        /** @phpstan-ignore paramOut.type (the pattern is constant and will always yield a string) */
         $content = preg_replace_callback(self::CACHE_PLACEHOLDER_REGEX, function ($match) use ($cache, &$foundMissingIdentifier, $addCacheSegmentMarkersToPlaceholders) {
             $identifier = $match['identifier'];
             $entry = $cache->get($identifier);
@@ -309,13 +309,14 @@ class ContentCache
     /**
      * Replace segments which are marked as not-cacheable by their actual content by invoking the Fusion Runtime.
      *
-     * @param \Closure $uncachedCommandCallback
      * @param string $content The content potentially containing not cacheable segments marked by the respective tokens
      * @return integer Number of replaced placeholders
+     * @param-out string $content
      */
     protected function replaceUncachedPlaceholders(\Closure $uncachedCommandCallback, &$content)
     {
         $cache = $this->cache;
+        /** @phpstan-ignore paramOut.type (the pattern is constant and will always yield a string) */
         $content = preg_replace_callback(self::EVAL_PLACEHOLDER_REGEX, function ($match) use ($uncachedCommandCallback, $cache) {
             $command = $match['command'];
             $additionalData = json_decode($match['data'], true);

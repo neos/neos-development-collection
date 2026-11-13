@@ -32,37 +32,36 @@ class ModuleController extends ActionController
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var MenuHelper
      */
+    #[Flow\Inject]
     protected $menuHelper;
 
     /**
-     * @Flow\Inject
      * @var PartyService
      */
+    #[Flow\Inject]
     protected $partyService;
 
     /**
-     * @Flow\Inject
      * @var BackendRedirectionService
      */
+    #[Flow\Inject]
     protected $backendRedirectionService;
 
     /**
-     * @param array $module
      * @phpstan-param array<string,mixed> $module
      * @return mixed
      * @throws DisabledModuleException
@@ -128,7 +127,7 @@ class ModuleController extends ActionController
 
             $sites = $this->menuHelper->buildSiteList($this->controllerContext);
 
-            $this->view->assignMultiple([
+            $this->view?->assignMultiple([
                 'moduleClass' => implode('-', $modules),
                 'moduleContents' => $moduleResponse->getBody()->getContents(),
                 'title' => $moduleRequest->hasArgument('title')

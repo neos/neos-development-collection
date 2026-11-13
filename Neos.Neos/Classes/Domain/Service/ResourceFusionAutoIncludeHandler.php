@@ -9,8 +9,8 @@ use Neos\Fusion\Core\FusionSourceCodeCollection;
 
 /**
  * @internal
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ResourceFusionAutoIncludeHandler implements FusionAutoIncludeHandler
 {
     public function loadFusionFromPackage(string $packageKey, FusionSourceCodeCollection $sourceCodeCollection): FusionSourceCodeCollection

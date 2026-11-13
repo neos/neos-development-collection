@@ -24,21 +24,20 @@ use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 
 /**
  * Takes care of cleaning up ImageVariants.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ImageVariantGarbageCollector
 {
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     #[Flow\Inject]

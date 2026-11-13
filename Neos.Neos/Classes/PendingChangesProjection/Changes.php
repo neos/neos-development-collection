@@ -20,9 +20,9 @@ use Neos\Flow\Annotations as Flow;
  * Read model for a set of pending changes
  *
  * @internal Only for consumption inside Neos. Not public api because the implementation will be refactored sooner or later: https://github.com/neos/neos-development-collection/issues/5493
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<Change>
  */
+#[Flow\Proxy(false)]
 final readonly class Changes implements \IteratorAggregate, \Countable
 {
     /**
@@ -33,17 +33,16 @@ final readonly class Changes implements \IteratorAggregate, \Countable
     ) {
     }
 
+    public static function fromItems(Change ... $changes): self
+    {
+        return new self(array_values($changes));
+    }
     /**
      * @param list<Change> $changes
      */
     public static function fromArray(array $changes): self
     {
-        foreach ($changes as $change) {
-            if (!$change instanceof Change) {
-                throw new \InvalidArgumentException(sprintf('Changes can only consist of %s instances, given: %s', Change::class, get_debug_type($change)), 1727273148);
-            }
-        }
-        return new self($changes);
+        return self::fromItems(...$changes);
     }
 
     public function getIterator(): \Traversable

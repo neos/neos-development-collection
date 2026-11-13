@@ -57,7 +57,6 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     /**
      * @Then /^I expect the integrity violation detection result to contain exactly (\d+) errors?$/
-     * @param int $expectedNumberOfErrors
      */
     public function iExpectTheIntegrityViolationDetectionResultToContainExactlyNErrors(int $expectedNumberOfErrors): void
     {
@@ -71,8 +70,6 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     /**
      * @Then /^I expect integrity violation detection result error number (\d+) to have code (\d+)$/
-     * @param int $errorNumber
-     * @param int $expectedErrorCode
      */
     public function iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeX(int $errorNumber, int $expectedErrorCode): void
     {

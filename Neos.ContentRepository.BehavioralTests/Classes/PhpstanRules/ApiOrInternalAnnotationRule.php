@@ -37,8 +37,6 @@ class ApiOrInternalAnnotationRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        assert($node instanceof \PhpParser\Node\Stmt\Class_);
-
         if (!$node->namespacedName) {
             return [];
         }

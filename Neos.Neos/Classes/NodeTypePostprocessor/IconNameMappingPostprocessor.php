@@ -27,16 +27,15 @@ use Neos\Utility\Arrays;
 class IconNameMappingPostprocessor implements NodeTypePostprocessorInterface
 {
     /**
-     * @Flow\Inject
      * @var IconNameMappingService
      */
+    #[Flow\Inject]
     protected $iconNameMappingService;
 
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
      * @param array<string,mixed> $configuration input configuration
      * @param array<string,mixed> $options The processor options
-     * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {

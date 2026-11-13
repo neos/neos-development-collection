@@ -31,35 +31,34 @@ use Neos\Neos\View\Service\AssetJsonView;
 
 /**
  * Rudimentary REST service for assets
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AssetProxiesController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var AssetSourceService
      */
+    #[Flow\Inject]
     protected $assetSourceService;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Media", path="asyncThumbnails")
      * @var boolean
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Media', path: 'asyncThumbnails')]
     protected $asyncThumbnails;
 
     /**
@@ -82,7 +81,6 @@ class AssetProxiesController extends ActionController
     ];
 
     /**
-     * @param ViewInterface $view
      * @return void
      */
     protected function initializeView(ViewInterface $view)
@@ -95,7 +93,6 @@ class AssetProxiesController extends ActionController
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
      * @param int $limit The maximum number of results shown in total
-     * @return void
      */
     public function indexAction(string $searchTerm = '', int $limit = 10): void
     {
@@ -132,15 +129,12 @@ class AssetProxiesController extends ActionController
                 }
             }
         }
-        $this->view->assign('assetProxiesByAssetSource', $assetProxiesByAssetSource);
+        $this->view?->assign('assetProxiesByAssetSource', $assetProxiesByAssetSource);
     }
 
     /**
      * Shows a specific asset proxy
      *
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @return void
      * @throws StopActionException
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
@@ -153,17 +147,14 @@ class AssetProxiesController extends ActionController
         $assetProxyRepository = $assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
         try {
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
-        } catch (NeosAssetNotFoundException $exception) {
+        } catch (NeosAssetNotFoundException) {
             $this->throwStatus(404, 'Asset not found');
         }
 
-        $this->view->assign('assetProxy', $assetProxy);
+        $this->view?->assign('assetProxy', $assetProxy);
     }
 
     /**
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @return void
      * @throws AssetSourceServiceException
      * @throws StopActionException
      */
@@ -180,6 +171,6 @@ class AssetProxiesController extends ActionController
         $assetProxy->identifier = $assetProxyIdentifier;
         $assetProxy->assetSource = $assetSources[$assetSourceIdentifier];
         $assetProxy->localAssetIdentifier = $importedAsset->getLocalAssetIdentifier();
-        $this->view->assign('assetProxy', $assetProxy);
+        $this->view?->assign('assetProxy', $assetProxy);
     }
 }

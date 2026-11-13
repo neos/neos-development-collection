@@ -36,8 +36,6 @@ trait NodeRemoval
     abstract protected function areAncestorNodeTypeConstraintChecksEnabled(): bool;
 
     /**
-     * @param RemoveNodeAggregate $command
-     * @return EventsToPublish
      * @throws DimensionSpacePointNotFound
      */
     private function handleRemoveNodeAggregate(

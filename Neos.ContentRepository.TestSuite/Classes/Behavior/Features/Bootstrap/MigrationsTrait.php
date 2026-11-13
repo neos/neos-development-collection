@@ -49,7 +49,7 @@ trait MigrationsTrait
         if ($publishingOnSuccess === false) {
             $command = $command->withoutPublishOnSuccess();
         }
-        if ($force === true) {
+        if ($force) {
             $command = $command->withoutRequiringConfirmation();
         }
 

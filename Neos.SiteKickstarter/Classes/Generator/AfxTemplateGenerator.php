@@ -30,22 +30,21 @@ use Neos\Utility\Files;
 class AfxTemplateGenerator extends GeneratorService implements SitePackageGeneratorInterface
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var SimpleTemplateRenderer
      */
+    #[Flow\Inject]
     protected $simpleTemplateRenderer;
 
     /**
      * Generate a site package and fill it with boilerplate data.
      *
-     * @param string $packageKey
-     * @return list<string>
+     * @return array<int, string>
      * @throws \Neos\Flow\Composer\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\Package\Exception
      * @throws \Neos\Flow\Package\Exception\CorruptPackageException
@@ -65,7 +64,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
         ]);
 
         if (!$package instanceof FlowPackageInterface) {
-            throw new \RuntimeException('Expected to generate flow site package for "' . $packageKey . '" but got ' . get_class($package));
+            throw new \RuntimeException('Expected to generate flow site package for "' . $packageKey . '" but got ' . $package::class);
         }
 
         $this->generateSitesFusionDirectory($package);

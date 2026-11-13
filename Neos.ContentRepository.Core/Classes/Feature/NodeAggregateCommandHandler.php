@@ -89,7 +89,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool
     {
-        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
+        return method_exists($this, 'handle' . new \ReflectionClass($command)->getShortName());
     }
 
     public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish
@@ -151,8 +151,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      *
      * You can disable this because many old sites have this constraint violated more or less;
      * and it's easy to fix later on; as it does not touch the fundamental integrity of the CR.
-     *
-     * @param \Closure $callback
      */
     public function withoutAncestorNodeTypeConstraintChecks(\Closure $callback): void
     {

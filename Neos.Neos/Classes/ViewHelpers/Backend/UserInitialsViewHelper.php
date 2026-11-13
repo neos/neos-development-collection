@@ -30,21 +30,21 @@ use Neos\Party\Domain\Model\Person;
 class UserInitialsViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var AccountRepository
      */
+    #[Flow\Inject]
     protected $accountRepository;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\Inject
      * @var DomainUserService
      */
+    #[Flow\Inject]
     protected $domainUserService;
 
     /**
@@ -67,7 +67,6 @@ class UserInitialsViewHelper extends AbstractViewHelper
      * Render user initials or an abbreviated name for a given username.
      * If the account was deleted, use the username as fallback.
      *
-     * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
     public function render(): string

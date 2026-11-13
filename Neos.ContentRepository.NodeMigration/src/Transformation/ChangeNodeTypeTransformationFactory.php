@@ -41,7 +41,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 = NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::STRATEGY_DELETE;
         }
 
-        return new class (
+        return new readonly class (
             $settings['newType'],
             $nodeAggregateTypeChangeChildConstraintConflictResolutionStrategy,
         ) implements NodeAggregateBasedTransformationInterface {
@@ -49,8 +49,8 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 /**
                  * The new Node Type to use as a string
                  */
-                private readonly string $newType,
-                private readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
+                private string $newType,
+                private NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
             ) {
             }
 

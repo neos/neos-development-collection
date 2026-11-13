@@ -22,16 +22,14 @@ use Neos\Flow\Annotations as Flow;
 class FusionRecursiveDirectoryRenderer
 {
     /**
-     * @Flow\Inject
      * @var SimpleTemplateRenderer
      */
+    #[Flow\Inject]
     protected $simpleTemplateRenderer;
 
     /**
      * Renders whole directory recursivly
      *
-     * @param string $srcDirectory
-     * @param string $targetDirectory
      * @param array<string, string> $variables
      * @throws \Neos\Utility\Exception\FilesException
      */
@@ -39,7 +37,7 @@ class FusionRecursiveDirectoryRenderer
     {
         $files = scandir($srcDirectory) ?: [];
 
-        foreach ($files as $key => $value) {
+        foreach ($files as $value) {
             $path = realpath($srcDirectory . DIRECTORY_SEPARATOR . $value);
             if ($path === false) {
                 throw new \RuntimeException('Could not read directory "' . $srcDirectory . DIRECTORY_SEPARATOR . $value . '".');

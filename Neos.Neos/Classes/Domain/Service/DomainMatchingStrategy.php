@@ -18,9 +18,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * Strategy for matching domains
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DomainMatchingStrategy
 {
     public const EXACTMATCH = 300;

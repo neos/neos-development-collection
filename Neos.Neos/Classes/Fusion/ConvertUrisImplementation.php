@@ -74,36 +74,36 @@ use Psr\Log\LoggerInterface;
  */
 class ConvertUrisImplementation extends AbstractFusionObject
 {
-    private const PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+)/';
+    private const string PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+)/';
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**
@@ -259,10 +259,10 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 $target = null;
                 $isExternalLink = \is_string($uriHost) && $uriHost !== $host;
 
-                if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
+                if ($externalLinkTarget && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget && $resourceLinkTarget !== '' && str_contains($linkHref, '_Resources')) {
+                if ($resourceLinkTarget && str_contains($linkHref, '_Resources')) {
                     $target = $resourceLinkTarget;
                 }
                 if ($isExternalLink && $setNoOpener) {
@@ -271,7 +271,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if ($isExternalLink && $setExternal) {
                     $linkText = self::setAttribute('rel', 'external', $linkText);
                 }
-                if (is_string($target) && $target !== '') {
+                if (is_string($target)) {
                     return self::setAttribute('target', $target, $linkText);
                 }
                 return $linkText;
@@ -289,7 +289,6 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * @param string $attribute The attribute, ('target' or 'rel')
      * @param string $value The value of the attribute to add
      * @param string $content The content to parse
-     * @return string
      */
     private static function setAttribute(string $attribute, string $value, string $content): string
     {

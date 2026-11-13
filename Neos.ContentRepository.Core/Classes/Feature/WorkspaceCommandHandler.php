@@ -87,7 +87,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface|RebasableToOtherWorkspaceInterface $command): bool
     {
-        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
+        return method_exists($this, 'handle' . new \ReflectionClass($command)->getShortName());
     }
 
     public function handle(CommandInterface|RebasableToOtherWorkspaceInterface $command): EventsToPublish
@@ -150,7 +150,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @param CreateRootWorkspace $command
      * @throws WorkspaceAlreadyExists
      * @throws ContentStreamAlreadyExists
      */
@@ -646,9 +645,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
-    /**
-     * @phpstan-pure this method is pure, to persist the events they must be handled outside
-     */
     private function discardWorkspace(
         Workspace $workspace,
         Workspace $baseWorkspace,

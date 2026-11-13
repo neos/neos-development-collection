@@ -22,15 +22,15 @@ namespace Neos\ContentRepository\Core\Infrastructure\PerformanceTracing;
  */
 final class ReplayThroughputTracer implements PerformanceTracerInterface
 {
-    private const NANOS_PER_SECOND = 1_000_000_000;
+    private const int NANOS_PER_SECOND = 1_000_000_000;
 
     // SVG geometry (all values are user units = px in the default viewBox)
-    private const WIDTH = 1000;
-    private const MARGIN_LEFT = 70;   // room for the Y axis labels
-    private const MARGIN_RIGHT = 20;
-    private const PANEL_HEIGHT = 240; // plot height of a single chart
-    private const PANEL_GAP = 70;     // vertical space between stacked charts (also holds a chart's legend)
-    private const TOP_MARGIN = 40;    // room for the title above the first chart
+    private const int WIDTH = 1000;
+    private const int MARGIN_LEFT = 70;   // room for the Y axis labels
+    private const int MARGIN_RIGHT = 20;
+    private const int PANEL_HEIGHT = 240; // plot height of a single chart
+    private const int PANEL_GAP = 70;     // vertical space between stacked charts (also holds a chart's legend)
+    private const int TOP_MARGIN = 40;    // room for the title above the first chart
 
     private readonly int $startedAtNanos;
 

@@ -54,7 +54,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     /**
      * Checks wether this Array fusion object should have sorted properties (according to __meta.position) or not
      *
-     * @return bool
      * @see applyPositionalArraySorterToProperties
      */
     public function shouldSortProperties(): bool
@@ -69,7 +68,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
 
     /**
      * @param mixed $offset
-     * @return boolean
      */
     public function offsetExists($offset): bool
     {
@@ -78,7 +76,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
 
     /**
      * @param mixed $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -88,7 +85,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     /**
      * @param mixed $offset
      * @param mixed $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -97,7 +93,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
 
     /**
      * @param mixed $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {
@@ -105,8 +100,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
-     * @param string|null $defaultFusionPrototypeName
-     * @return array
      * @throws FusionException
      * @throws \Neos\Flow\Configuration\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
@@ -144,8 +137,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
-     * @param array $properties
-     * @param array $ignoredProperties
      * @return array<string> Fusion keys in this Array fusion object
      * @throws FusionException
      */
@@ -157,8 +148,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
     }
 
     /**
-     * @param array $properties
-     * @return array
      * @throws FusionException
      */
     protected function applyPositionalArraySorterToProperties(array $properties): array
@@ -175,10 +164,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
 
     /**
      * Filters properties by ignoredProperties
-     *
-     * @param array $properties
-     * @param array $ignoredProperties
-     * @return array
      */
     protected function filterIgnoredProperties(array $properties, array $ignoredProperties): array
     {
@@ -193,7 +178,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * Returns TRUE if the given fusion key has been removed via ">"
      *
      * @param string|int $key fusion child key path to check
-     * @return bool
      */
     protected function isUnset(string|int $key): bool
     {
@@ -205,7 +189,6 @@ abstract class AbstractArrayFusionObject extends AbstractFusionObject implements
      * having a fusion objectType, eelExpression or value
      *
      * @param string|int $key fusion child key path to check
-     * @return bool
      */
     protected function isUntyped(string|int $key): bool
     {

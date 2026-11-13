@@ -74,7 +74,7 @@ trait CRTestSuiteTrait
      */
     public static function initPhpunit(): void
     {
-        (new \PHPUnit\TextUI\Configuration\Builder())->build([]);
+        new \PHPUnit\TextUI\Configuration\Builder()->build([]);
     }
 
     /**
@@ -181,7 +181,6 @@ trait CRTestSuiteTrait
 
     /**
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
-     * @param int $expectedNumberOfNodes
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {

@@ -149,7 +149,7 @@ final readonly class VisualInterDimensionalVariationGraph
             );
         }
 
-        foreach ($variationGraph->getWeightedSpecializations($startingPoint) as $weight => $specializations) {
+        foreach ($variationGraph->getWeightedSpecializations($startingPoint) as $specializations) {
             foreach ($specializations as $specialization) {
                 $dimensionSpacePoints[$specialization->hash] = $specialization;
                 $weightedSpecialization = $variationGraph

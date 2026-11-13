@@ -16,9 +16,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * A container for the state the media browser is in.
- *
- * @Flow\Scope("session")
  */
+#[Flow\Scope('session')]
 class BrowserState
 {
     /**
@@ -34,11 +33,10 @@ class BrowserState
     /**
      * Set a $value for $key
      *
-     * @param string $key
      * @param mixed $value
      * @return void
-     * @Flow\Session(autoStart = true)
      */
+    #[Flow\Session(autoStart: true)]
     public function set(string $key, $value)
     {
         if (!isset($this->data[$this->activeAssetSourceIdentifier])) {
@@ -50,7 +48,6 @@ class BrowserState
     /**
      * Return a value for $key.
      *
-     * @param string $key
      * @return mixed
      */
     public function get(string $key)
@@ -61,25 +58,16 @@ class BrowserState
         return $this->data[$this->activeAssetSourceIdentifier][$key] ?? null;
     }
 
-    /**
-     * @return string
-     */
     public function getActiveAssetSourceIdentifier(): string
     {
         return $this->activeAssetSourceIdentifier;
     }
 
-    /**
-     * @param string $activeAssetSourceIdentifier
-     */
     public function setActiveAssetSourceIdentifier(string $activeAssetSourceIdentifier)
     {
         $this->activeAssetSourceIdentifier = $activeAssetSourceIdentifier;
     }
 
-    /**
-     * @param string $assetSourceIdentifier
-     */
     private function initializeData(string $assetSourceIdentifier)
     {
         $this->data[$assetSourceIdentifier] = [

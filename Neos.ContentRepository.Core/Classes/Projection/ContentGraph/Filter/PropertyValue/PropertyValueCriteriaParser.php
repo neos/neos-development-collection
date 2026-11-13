@@ -104,7 +104,7 @@ final class PropertyValueCriteriaParser
 
     private static string $query = '';
 
-    private const TOKEN_PATTERNS = [
+    private const array TOKEN_PATTERNS = [
         '/^(AND)/' => TokenType::AND,
         '/^(OR)/' => TokenType::OR,
         '/^(NOT)/' => TokenType::NOT,
@@ -251,7 +251,7 @@ final class PropertyValueCriteriaParser
                 TokenType::EQUALS, TokenType::EQUALS_CI => PropertyValueEquals::create($propertyName, $value, $operator->type->isCaseSensitive()),
                 default => self::throwParserException(sprintf('Invalid comparison token type "%s"', $operator->type->name), self::$index),
             };
-        } catch (\TypeError $_) {
+        } catch (\TypeError) {
             self::throwParserException(sprintf('The %s operator does not support values of type %s', $operator->type->name, get_debug_type($value)), self::$index - 2);
         }
     }
@@ -315,6 +315,6 @@ final class PropertyValueCriteriaParser
     private static function throwParserException(string $message, int $tokenIndex): void
     {
         $token = self::$tokens[$tokenIndex] ?? null;
-        throw new ParserException($message, self::$query, $token?->offsetEnd ?? 0);
+        throw new ParserException($message, self::$query, $token?->offsetEnd ?: 0);
     }
 }

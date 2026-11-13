@@ -28,11 +28,6 @@ use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
  */
 interface CrossSiteLinkerInterface
 {
-    /**
-     * @param Site $targetSite
-     * @param UriConstraints $uriConstraints
-     * @return UriConstraints
-     */
     public function applyCrossSiteUriConstraints(
         Site $targetSite,
         UriConstraints $uriConstraints,

@@ -79,9 +79,9 @@ final readonly class Parameters implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param array<string|int, mixed> $existingValues
-     * @param array<string|int, mixed> $otherValues
-     * @return array<string|int, mixed>
+     * @param list<mixed>|array<string, mixed> $existingValues
+     * @param list<mixed>|array<string, mixed> $otherValues
+     * @return list<mixed>|array<string, mixed>
      */
     public static function mergeDbalValues(array $existingValues, array $otherValues): array
     {

@@ -515,13 +515,9 @@ class IconNameMappingService
         'youtube-square'
     ];
 
-    /**
-     * @param string $iconName
-     * @return string
-     */
     public function convert(string $iconName): string
     {
-        if (strpos($iconName, 'icon-') === false) {
+        if (!str_contains($iconName, 'icon-')) {
             return $iconName;
         }
 

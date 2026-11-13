@@ -82,14 +82,14 @@ class Runtime
 
     /**
      * @var \Neos\Eel\CompilingEvaluator
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $eelEvaluator;
 
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
@@ -205,7 +205,6 @@ class Runtime
      * Relying on this behaviour is highly discouraged but leveraged by Neos.Fusion.Form {@see FusionGlobals}.
      *
      * @internal purely internal method, should not be called outside Neos.Fusion.
-     * @param array $contextArray
      * @return void
      */
     public function pushContextArray(array $contextArray)
@@ -360,9 +359,6 @@ class Runtime
      * Handle an Exception thrown while rendering Fusion according to
      * settings specified in Neos.Fusion.rendering.exceptionHandler or {@exceptionHandler}
      *
-     * @param string $fusionPath
-     * @param \Exception $exception
-     * @param boolean $useInnerExceptionHandler
      * @return string
      * @throws Exception
      * @throws InvalidConfigurationException
@@ -440,7 +436,6 @@ class Runtime
     /**
      * Evaluate an absolute Fusion path and return the result
      *
-     * @param string $fusionPath
      * @param mixed $contextObject The object which will be "this" in Eel expressions. ONLY FOR INTERNAL USE!
      * @param (Runtime::BEHAVIOR_EXCEPTION|Runtime::BEHAVIOR_RETURNNULL) $behaviorIfPathNotFound
      * @return mixed
@@ -571,6 +566,9 @@ class Runtime
      * @param \Neos\Fusion\FusionObjects\AbstractFusionObject $contextObject An optional object for the "this" value inside the context
      * @return mixed The result of the evaluation
      * @throws Exception
+     * @throws StopActionException
+     * @throws ForwardException
+     * @throws SecurityException
      */
     protected function evaluateExpressionOrValueInternal($fusionPath, $fusionConfiguration, $contextObject)
     {
@@ -626,7 +624,6 @@ class Runtime
      * Possibly prepares a new context for the current FusionObject and cache context and pushes it to the stack.
      * Returns if a new context was pushed to the stack or not.
      *
-     * @param AbstractFusionObject $fusionObject
      * @param string $fusionPath
      * @param array $fusionConfiguration
      * @param array $cacheContext
@@ -694,7 +691,7 @@ class Runtime
         /** @var AbstractFusionObject $fusionObject */
         $fusionObject = new $fusionObjectClassName($this, $fusionPath, $fusionObjectType);
         if ($this->shouldAssignPropertiesToFusionObject($fusionObject)) {
-            /** @var $fusionObject AbstractArrayFusionObject */
+            /** @var AbstractArrayFusionObject $fusionObject*/
             if (isset($fusionConfiguration['__meta']['ignoreProperties'])) {
                 $evaluatedIgnores = $this->evaluate($fusionPath . '/__meta/ignoreProperties', $fusionObject);
                 $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : []);
@@ -728,34 +725,32 @@ class Runtime
             ObjectAccess::setProperty($fusionObject, $key, $value);
         }
 
-        if ($applyValuePaths !== []) {
-            foreach ($applyValuePaths as $path) {
-                $entry = $this->currentApplyValues[$path];
-                $key = $entry['key'];
-                if (isset($entry['lazy'])) {
-                    $valueAst = [
-                        '__eelExpression' => null,
-                        // Mark this property as not having a simple value in the AST -
-                        // the object implementation has to evaluate the key through the Runtime
-                        '__objectType' => 'Neos.Fusion:Lazy',
-                        '__value' => null
-                    ];
-                } else {
-                    $valueAst = [
-                        '__eelExpression' => null,
-                        '__objectType' => null,
-                        '__value' => $entry['value']
-                    ];
-                }
-
-                // merge existing meta-configuration to valueAst
-                // to preserve @if, @process and @position informations
-                if ($meta = Arrays::getValueByPath($fusionConfiguration, [$key, '__meta'])) {
-                    $valueAst['__meta'] = $meta;
-                }
-
-                ObjectAccess::setProperty($fusionObject, $entry['key'], $valueAst);
+        foreach ($applyValuePaths as $path) {
+            $entry = $this->currentApplyValues[$path];
+            $key = $entry['key'];
+            if (isset($entry['lazy'])) {
+                $valueAst = [
+                    '__eelExpression' => null,
+                    // Mark this property as not having a simple value in the AST -
+                    // the object implementation has to evaluate the key through the Runtime
+                    '__objectType' => 'Neos.Fusion:Lazy',
+                    '__value' => null
+                ];
+            } else {
+                $valueAst = [
+                    '__eelExpression' => null,
+                    '__objectType' => null,
+                    '__value' => $entry['value']
+                ];
             }
+
+            // merge existing meta-configuration to valueAst
+            // to preserve @if, @process and @position informations
+            if ($meta = Arrays::getValueByPath($fusionConfiguration, [$key, '__meta'])) {
+                $valueAst['__meta'] = $meta;
+            }
+
+            ObjectAccess::setProperty($fusionObject, $entry['key'], $valueAst);
         }
     }
 
@@ -810,7 +805,6 @@ class Runtime
      *
      * @param array $configurationWithEventualProperties
      * @param string $fusionPath
-     * @return array|null
      */
     protected function evaluateApplyValues($configurationWithEventualProperties, $fusionPath): ?array
     {
@@ -854,9 +848,7 @@ class Runtime
                         for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
                             $combinedApplyValues[$fusionPath . '/' . $key] = [
                                 'key' => $key,
-                                'value' => function () use ($singleApplyValues, $key) {
-                                    return $singleApplyValues[$key];
-                                },
+                                'value' => fn () => $singleApplyValues[$key],
                                 'lazy' => true
                             ];
                         }
@@ -987,19 +979,21 @@ class Runtime
             $this->legacyActionResponseForCurrentRendering = null;
         }
 
-        // transfer possible headers that have been set dynamically
-        foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
-            if ($httpResponseOrStream instanceof StreamInterface) {
-                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+        if ($toBeMergedLegacyActionResponse) {
+            // transfer possible headers that have been set dynamically
+            foreach ($toBeMergedLegacyActionResponse->buildHttpResponse()->getHeaders() as $name => $values) {
+                if ($httpResponseOrStream instanceof StreamInterface) {
+                    $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+                }
+                $httpResponseOrStream = $httpResponseOrStream->withAddedHeader($name, $values);
             }
-            $httpResponseOrStream = $httpResponseOrStream->withAddedHeader($name, $values);
-        }
-        // if the status code is 200 we assume it's the default and will not overrule it
-        if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
-            if ($httpResponseOrStream instanceof StreamInterface) {
-                $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+            // if the status code is 200 we assume it's the default and will not overrule it
+            if ($toBeMergedLegacyActionResponse->getStatusCode() !== 200) {
+                if ($httpResponseOrStream instanceof StreamInterface) {
+                    $httpResponseOrStream = new Response(body: $httpResponseOrStream);
+                }
+                $httpResponseOrStream = $httpResponseOrStream->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
             }
-            $httpResponseOrStream = $httpResponseOrStream->withStatus($toBeMergedLegacyActionResponse->getStatusCode());
         }
 
         return $httpResponseOrStream;
@@ -1023,7 +1017,7 @@ class Runtime
         // legacy controller context layer
         $actionRequest = $this->fusionGlobals->get('request');
         if ($this->legacyActionResponseForCurrentRendering === null || !$actionRequest instanceof ActionRequest) {
-            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderEntryPathWithContext` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
+            throw new Exception('Fusions simulated legacy controller context is only available inside `Runtime::renderEntryPathWithContext` and when the Fusion global "request" is an ActionRequest.', 1706458355);
         }
 
         return new LegacyFusionControllerContext(

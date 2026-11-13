@@ -50,9 +50,6 @@ class ComponentImplementation extends AbstractArrayFusionObject
 
     /**
      * Prepare the context for the renderer
-     *
-     * @param array $context
-     * @return array
      */
     protected function prepare(array $context): array
     {
@@ -63,9 +60,6 @@ class ComponentImplementation extends AbstractArrayFusionObject
 
     /**
      * Calculate the component props
-     *
-     * @param array $context
-     * @return \ArrayAccess
      */
     protected function getProps(array $context): \ArrayAccess
     {
@@ -87,7 +81,6 @@ class ComponentImplementation extends AbstractArrayFusionObject
     /**
      * Evaluate the renderer with the give context and return
      *
-     * @param array $context
      * @return mixed
      */
     protected function render(array $context)

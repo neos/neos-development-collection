@@ -34,14 +34,14 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
         ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $propertyName = $settings['property'];
-        return new class (
+        return new readonly class (
             $propertyName,
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
                  * the name of the property to be removed.
                  */
-                private readonly string $propertyName,
+                private string $propertyName,
             ) {
             }
             public function execute(

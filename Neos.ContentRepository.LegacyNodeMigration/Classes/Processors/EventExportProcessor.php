@@ -213,12 +213,9 @@ final class EventExportProcessor implements ProcessorInterface
 
 
     /**
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateId
      * @param array<string, mixed> $nodeDataRow
-     * @return NodeName[]|void
      */
-    public function processNodeDataWithoutFallbackToEmptyDimension(ProcessingContext $context, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow)
+    public function processNodeDataWithoutFallbackToEmptyDimension(ProcessingContext $context, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow): void
     {
         $nodePath = NodePath::fromString(strtolower($nodeDataRow['path']));
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
@@ -312,7 +309,7 @@ final class EventExportProcessor implements ProcessorInterface
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
         try {
-            $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
+            $decodedProperties = new JsonArrayType()->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
         } catch (ConversionException $exception) {
             throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value, $exception->getMessage()), 1695391558, $exception);
         }
@@ -433,6 +430,7 @@ final class EventExportProcessor implements ProcessorInterface
         }
         $this->exportEvent($variantCreatedEvent);
 
+        /** @var ?OriginDimensionSpacePoint $variantSourceOriginDimensionSpacePoint */
         $sourceVariant = $variantSourceOriginDimensionSpacePoint !== null
             ? $this->visitedNodes->getByNodeAggregateId($nodeAggregateId)->getVariant($variantSourceOriginDimensionSpacePoint)
             : null;
@@ -441,7 +439,7 @@ final class EventExportProcessor implements ProcessorInterface
         // dimension's node data row does not set, so a copied-over value does not surface where the row left
         // the property empty or did not carry it at all.
         $ownPropertyNames = $serializedPropertyValuesAndReferences->serializedPropertyValues->getPropertyNames();
-        $copiedPropertyNames = $sourceVariant?->propertyNames ?? PropertyNames::createEmpty();
+        $copiedPropertyNames = $sourceVariant?->propertyNames ?: PropertyNames::createEmpty();
         $propertiesToUnset = $copiedPropertyNames->getDifference($ownPropertyNames);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0
             || !$propertiesToUnset->isEmpty()
@@ -564,6 +562,6 @@ final class EventExportProcessor implements ProcessorInterface
 
     private function isRootNodePath(string $path): bool
     {
-        return strpos($path, '/') === 0 && strpos($path, '/', 1) === false;
+        return str_starts_with($path, '/') && strpos($path, '/', 1) === false;
     }
 }

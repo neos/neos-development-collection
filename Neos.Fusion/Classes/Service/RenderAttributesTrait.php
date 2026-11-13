@@ -24,7 +24,6 @@ trait RenderAttributesTrait
      * if a value is an iterable it will be concatenated with spaces as separator
      *
      * @param iterable<mixed,int|string|null|bool|array<string|bool|null|\Stringable>> $attributes
-     * @param bool $allowEmpty
      */
     protected function renderAttributes(iterable $attributes, bool $allowEmpty = true): string
     {

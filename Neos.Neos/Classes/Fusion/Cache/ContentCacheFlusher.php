@@ -183,7 +183,7 @@ class ContentCacheFlusher
             $tagsToFlush[$nodeTypeNameCacheIdentifier->value] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameCacheIdentifier->value,
-                ($referenceNodeIdentifier?->value ?? ''),
+                ($referenceNodeIdentifier->value ?? ''),
                 $nodeTypeName->value
             );
         }
@@ -241,7 +241,6 @@ class ContentCacheFlusher
     }
 
     /**
-     * @param NodeType $nodeType
      * @return array<string>
      */
     protected function getAllImplementedNodeTypeNames(NodeType $nodeType): array
@@ -249,9 +248,7 @@ class ContentCacheFlusher
         $self = $this;
         $types = array_reduce(
             $nodeType->getDeclaredSuperTypes(),
-            function (array $types, NodeType $superType) use ($self) {
-                return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
-            },
+            fn (array $types, NodeType $superType) => array_merge($types, $self->getAllImplementedNodeTypeNames($superType)),
             [$nodeType->name->value]
         );
 
@@ -275,10 +272,9 @@ class ContentCacheFlusher
     /**
      * Signal that is triggered whenever cache tags get flushed
      *
-     * @Flow\Signal
      * @param array<string, string> $tagsToFlush
-     * @return void
      */
+    #[Flow\Signal]
     protected function emitTagsFlushed(array $tagsToFlush): void
     {
     }

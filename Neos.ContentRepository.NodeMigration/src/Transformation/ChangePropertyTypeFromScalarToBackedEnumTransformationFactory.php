@@ -34,7 +34,7 @@ class ChangePropertyTypeFromScalarToBackedEnumTransformationFactory implements T
         array $settings,
         ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class (
+        return new readonly class (
             $settings['property'],
             $contentRepository->getNodeTypeManager(),
         ) implements NodeAggregateBasedTransformationInterface {
@@ -42,8 +42,8 @@ class ChangePropertyTypeFromScalarToBackedEnumTransformationFactory implements T
                 /**
                  * Name of the property to be transformed
                  */
-                private readonly string $property,
-                private readonly NodeTypeManager $nodeTypeManager,
+                private string $property,
+                private NodeTypeManager $nodeTypeManager,
             ) {
             }
 

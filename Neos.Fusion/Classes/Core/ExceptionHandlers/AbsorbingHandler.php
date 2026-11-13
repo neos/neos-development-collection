@@ -24,15 +24,15 @@ use Psr\Log\LoggerInterface;
 class AbsorbingHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
@@ -55,7 +55,6 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      * therefor caching is desired.
      *
      * @param string $fusionPath
-     * @param \Exception $exception
      * @return boolean
      */
     protected function exceptionDisablesCache($fusionPath, \Exception $exception)

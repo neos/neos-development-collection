@@ -102,9 +102,9 @@ use Neos\Flow\Annotations as Flow;
 final class RaceTrackerCatchUpHook implements CatchUpHookInterface
 {
     /**
-     * @Flow\InjectConfiguration("raceConditionTracker")
      * @var array<mixed>
      */
+    #[Flow\InjectConfiguration('raceConditionTracker')]
     protected $configuration;
     private bool $inCriticalSection = false;
 

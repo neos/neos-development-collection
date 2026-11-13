@@ -41,7 +41,7 @@ class ExpressionBasedNodeLabelGenerator implements NodeLabelGeneratorInterface
      * @var array<string, string>
      */
     #[Flow\InjectConfiguration('labelGenerator.eel.defaultContext', 'Neos.Neos')]
-    protected ?array $defaultContextConfiguration;
+    protected ?array $defaultContextConfiguration = null;
 
     protected string $expression = <<<'EEL'
     ${(Neos.Node.nodeType(node).label || node.nodeTypeName) + (node.nodeName ? ' (' + node.nodeName + ')' : '')}

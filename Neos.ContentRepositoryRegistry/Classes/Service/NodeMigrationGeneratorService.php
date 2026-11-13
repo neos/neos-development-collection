@@ -34,7 +34,6 @@ class NodeMigrationGeneratorService
      * Creates a node migration for the given $packageKey
      *
      * @param string $packageKey the package key
-     * @return string
      * @throws UnknownPackageException
      * @throws FilesException
      */
@@ -43,7 +42,7 @@ class NodeMigrationGeneratorService
         $templatePath = 'resource://Neos.ContentRepositoryRegistry/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
         $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';
 
-        $timeStamp = (new \DateTimeImmutable())->format('YmdHis');
+        $timeStamp = new \DateTimeImmutable()->format('YmdHis');
         $nodeMigrationFileName = 'Version' . $timeStamp . '.yaml';
 
         $targetPathAndFilename = $nodeMigrationPath . $nodeMigrationFileName;

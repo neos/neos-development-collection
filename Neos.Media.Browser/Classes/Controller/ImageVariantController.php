@@ -16,9 +16,9 @@ use Neos\Media\Domain\Repository\AssetRepository;
 class ImageVariantController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     public function initializeUpdateAction()
@@ -31,12 +31,9 @@ class ImageVariantController extends ActionController
         $mappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
     }
 
-    /**
-     * @param ImageVariant $imageVariant
-     */
     public function updateAction(ImageVariant $imageVariant)
     {
         $this->assetRepository->update($imageVariant);
-        return json_encode((new ImageMapper($imageVariant))->getMappingResult());
+        return json_encode(new ImageMapper($imageVariant)->getMappingResult());
     }
 }

@@ -33,14 +33,14 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
         array $settings,
         ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class (
+        return new readonly class (
             $settings['property'],
         ) implements NodeBasedTransformationInterface {
             public function __construct(
                 /**
                  * the name of the property to work on.
                  */
-                private readonly string $propertyName,
+                private string $propertyName,
             ) {
             }
 

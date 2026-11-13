@@ -23,9 +23,9 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 class PackagesController extends AbstractModuleController
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
@@ -50,7 +50,7 @@ class PackagesController extends AbstractModuleController
         foreach (array_keys($packageGroups) as $packageGroup) {
             ksort($packageGroups[$packageGroup]);
         }
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'packageGroups' => $packageGroups,
             'isDevelopmentContext' => $this->objectManager->getContext()->isDevelopment()
         ]);

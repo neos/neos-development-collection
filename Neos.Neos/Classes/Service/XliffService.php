@@ -28,9 +28,8 @@ use Neos\Utility\Unicode\Functions as UnicodeFunctions;
 
 /**
  * The XLIFF service provides methods to find XLIFF files and parse them to json
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class XliffService
 {
     /**
@@ -41,46 +40,46 @@ class XliffService
     protected $xliffBasePath = 'Private/Translations/';
 
     /**
-     * @Flow\Inject
      * @var XliffReader
      */
+    #[Flow\Inject]
     protected $xliffReader;
 
     /**
-     * @Flow\Inject
      * @var LocalizationService
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $xliffToJsonTranslationsCache;
 
     /**
-     * @Flow\InjectConfiguration(path="userInterface.scrambleTranslatedLabels", package="Neos.Neos")
      * @var boolean
      */
+    #[Flow\InjectConfiguration(path: 'userInterface.scrambleTranslatedLabels', package: 'Neos.Neos')]
     protected $scrambleTranslatedLabels = false;
 
     /**
-     * @Flow\InjectConfiguration(path="userInterface.translation.autoInclude", package="Neos.Neos")
      * @var array
      * @phpstan-var array<string,array<mixed>>
      */
+    #[Flow\InjectConfiguration(path: 'userInterface.translation.autoInclude', package: 'Neos.Neos')]
     protected $packagesRegisteredForAutoInclusion = [];
 
     /**
-     * @Flow\Inject
      * @var XliffFileProvider
      */
+    #[Flow\Inject]
     protected $xliffFileProvider;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
@@ -88,7 +87,6 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @return string
      * @throws \Neos\Cache\Exception
      * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
@@ -102,6 +100,7 @@ class XliffService
             $labels = [];
 
             foreach ($this->packagesRegisteredForAutoInclusion as $packageKey => $sourcesToBeIncluded) {
+                /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
                 if (!is_array($sourcesToBeIncluded)) {
                     continue;
                 }
@@ -173,7 +172,6 @@ class XliffService
      * If sourcesToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
      * array-values
      *
-     * @param PackageInterface $package
      * @param array<int,string> $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
      * @return array<string>
      */
@@ -218,13 +216,7 @@ class XliffService
                         return;
                     }
                     if (is_array($sourcesToBeIncluded)) {
-                        $addSource = false;
-                        foreach ($sourcesToBeIncluded as $sourcePattern) {
-                            if (fnmatch($sourcePattern, $source)) {
-                                $addSource = true;
-                                break;
-                            }
-                        }
+                        $addSource = array_any($sourcesToBeIncluded, fn ($sourcePattern) => fnmatch($sourcePattern, $source));
                         if (!$addSource) {
                             return;
                         }

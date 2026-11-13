@@ -34,9 +34,9 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 class PaginateViewHelper extends AbstractWidgetViewHelper
 {
     /**
-     * @Flow\Inject
      * @var PaginateController
      */
+    #[Flow\Inject]
     protected $controller;
 
     /**
@@ -55,7 +55,6 @@ class PaginateViewHelper extends AbstractWidgetViewHelper
     /**
      * Render this view helper
      *
-     * @return string
      * @throws \Neos\Flow\Mvc\Exception\InfiniteLoopException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\FluidAdaptor\Core\Widget\Exception\InvalidControllerException

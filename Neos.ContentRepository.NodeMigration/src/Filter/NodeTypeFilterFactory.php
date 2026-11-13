@@ -40,7 +40,7 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
             $exclude = (bool)$settings['exclude'];
         }
 
-        return new class (
+        return new readonly class (
             $nodeType,
             $withSubTypes,
             $exclude,
@@ -50,7 +50,7 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
                 /**
                  * Sets the node type name to match on.
                  */
-                private readonly NodeTypeName $nodeTypeName,
+                private NodeTypeName $nodeTypeName,
                 /**
                  * Whether the filter should match also on all subtypes of the configured
                  * node type.
@@ -58,12 +58,12 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
                  * Note: This can only be used with node types still available in the
                  * system!
                  */
-                private readonly bool $withSubTypes,
+                private bool $withSubTypes,
                 /**
                  * Whether the filter should exclude the given NodeType instead of including only this node type.
                  */
-                private readonly bool $exclude,
-                private readonly NodeTypeManager $nodeTypeManager
+                private bool $exclude,
+                private NodeTypeManager $nodeTypeManager
             ) {
             }
 

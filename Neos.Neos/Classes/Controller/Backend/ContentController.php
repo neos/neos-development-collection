@@ -43,9 +43,8 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos ContentModule controller; providing backend functionality for the Content Module.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
@@ -55,51 +54,51 @@ class ContentController extends ActionController
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var ImageRepository
      */
+    #[Flow\Inject]
     protected $imageRepository;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ImageInterfaceArrayPresenter
      */
+    #[Flow\Inject]
     protected $imageInterfaceArrayPresenter;
 
     /**
-     * @Flow\Inject
      * @var EntityToIdentityConverter
      */
+    #[Flow\Inject]
     protected $entityToIdentityConverter;
 
     /**
-     * @Flow\Inject
      * @var ThumbnailService
      */
+    #[Flow\Inject]
     protected $thumbnailService;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
@@ -133,7 +132,6 @@ class ContentController extends ActionController
      * Note: This action triggers the AssetUploaded signal that can be used to adjust the asset based on the
      * (site) node it was attached to.
      *
-     * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
      * @param string $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
@@ -191,7 +189,6 @@ class ContentController extends ActionController
     /**
      * Generate a new image variant from given data.
      *
-     * @param ImageVariant $asset
      * @return string
      * @throws IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
@@ -216,7 +213,6 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for a given image
      *
-     * @param ImageInterface $image
      *
      * @return string JSON encoded response
      * @throws ThumbnailServiceException
@@ -259,7 +255,6 @@ class ContentController extends ActionController
     }
 
     /**
-     * @param Image $image
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
@@ -289,7 +284,6 @@ class ContentController extends ActionController
     }
 
     /**
-     * @param ImageVariant $imageVariant
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
@@ -368,8 +362,8 @@ class ContentController extends ActionController
      * @param Node|null $node The node the asset belongs to
      * @param string $propertyName The node property name the asset is assigned to
      * @return void
-     * @Flow\Signal
      */
+    #[Flow\Signal]
     protected function emitAssetUploaded(Asset $asset, ?Node $node, string $propertyName)
     {
     }

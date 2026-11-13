@@ -13,9 +13,9 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
- * @Flow\Proxy(false)
  * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
+#[Flow\Proxy(false)]
 final class DocumentUriPathFinder implements ProjectionStateInterface
 {
     public function __construct(
@@ -27,10 +27,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     /**
      * Returns the DocumentNodeInfo of a node for the given $siteNodeName and $uriPath
      *
-     * @param SiteNodeName $siteNodeName
-     * @param string $uriPath
-     * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      * (node is disabled, node doesn't exist in live workspace, projection not up to date)
      */
@@ -59,9 +55,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * Note: This will not exclude *disabled* nodes in order to allow the calling side
      * to make a distinction (e.g. in order to display a custom error)
      *
-     * @param NodeAggregateId $nodeAggregateId
-     * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (node doesn't exist in live workspace, projection not up to date)
      */
@@ -85,8 +78,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction
      * (e.g. in order to display a custom error)
      *
-     * @param DocumentNodeInfo $nodeInfo
-     * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (given $nodeInfo belongs to a site root node, projection not up to date)
      */
@@ -104,10 +95,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * Note: This will not exclude *disabled* nodes in order to allow the calling side
      * to make a distinction (e.g. in order to display a custom error)
      *
-     * @param NodeAggregateId $succeedingNodeAggregateId
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no preceding DocumentNodeInfo can be found
      *  (given $succeedingNodeAggregateId doesn't exist or refers to the first/only node
      *  with the given $parentNodeAggregateId)
@@ -135,9 +122,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction
      * (e.g. in order to display a custom error)
      *
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
      * @throws NodeNotFoundException
      */
     public function getFirstEnabledChildNode(
@@ -158,9 +142,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     }
 
     /**
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param string $dimensionSpacePointHash
-     * @return DocumentNodeInfo
      * @throws NodeNotFoundException
      * @internal only for use within the document uri path projection
      */
@@ -234,9 +215,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     }
 
     /**
-     * @param string $where
      * @param array<string> $parameters
-     * @return DocumentNodeInfos
      */
     private function fetchMultiple(string $where, array $parameters): DocumentNodeInfos
     {
@@ -264,9 +243,6 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * Returns the DocumentNodeInfos of all descendants of a given node.
      * Note: This will not exclude *disabled* nodes in order to allow the calling side
      * to make a distinction (e.g. in order to display a custom error)
-     *
-     * @param DocumentNodeInfo $node
-     * @return DocumentNodeInfos
      */
     public function getDescendantsOfNode(DocumentNodeInfo $node): DocumentNodeInfos
     {

@@ -27,9 +27,8 @@ use Neos\Utility\ObjectAccess;
 
 /**
  * Data Source Controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DataSourceController extends AbstractServiceController
 {
     #[Flow\Inject]
@@ -69,7 +68,7 @@ class DataSourceController extends AbstractServiceController
 
         $values = $dataSource->getData($this->deserializeNodeFromNodeAddress($node), $arguments);
 
-        $this->view->assign('value', $values);
+        $this->view?->assign('value', $values);
     }
 
     private function deserializeNodeFromNodeAddress(?string $stringFormattedNodeAddress): ?Node
@@ -90,9 +89,9 @@ class DataSourceController extends AbstractServiceController
      *
      * @param ObjectManagerInterface $objectManager
      * @return array<string,class-string> Data source class names indexed by identifier
-     * @Flow\CompileStatic
      * @throws NeosException
      */
+    #[Flow\CompileStatic]
     public static function getDataSources($objectManager)
     {
         /** @var ReflectionService $reflectionService */

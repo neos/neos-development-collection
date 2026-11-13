@@ -61,46 +61,46 @@ use Psr\Log\LoggerInterface;
  * ``~`` results in ``/sites/acmecom``.
  *
  * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodePathResolver::resolveNodeAddressByPath()} or utilize the {@see LinkHelper} from Fusion
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class LinkingService
 {
-    protected ?Node $lastLinkedNode;
+    protected ?Node $lastLinkedNode = null;
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**
-     * @Flow\Inject
      * @var NodePathResolver
      */
+    #[Flow\Inject]
     protected $nodePathResolver;
 
     /**
-     * @Flow\Inject
      * @var LegacyNodePathNormalizer
      */
+    #[Flow\Inject]
     protected $legacyNodePathNormalizer;
 
     /**
-     * @Flow\Inject
      * @var LinkHelper
      */
+    #[Flow\Inject]
     protected $newLinkHelper;
 
     #[Flow\Inject]
@@ -108,7 +108,6 @@ class LinkingService
 
     /**
      * @param string|UriInterface $uri
-     * @return boolean
      * @deprecated with Neos 9
      */
     public function hasSupportedScheme($uri): bool
@@ -118,7 +117,6 @@ class LinkingService
 
     /**
      * @param string|UriInterface $uri
-     * @return string
      * @deprecated with Neos 9
      */
     public function getScheme($uri): string
@@ -129,10 +127,6 @@ class LinkingService
     /**
      * Resolves a given node:// URI to a "normal" HTTP(S) URI for the addressed node.
      *
-     * @param string $uri
-     * @param Node $contextNode
-     * @param ControllerContext $controllerContext
-     * @param bool $absolute
      * @return string|null If the node cannot be resolved, null is returned
      * @throws NeosException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
@@ -166,7 +160,6 @@ class LinkingService
     /**
      * Resolves a given asset:// URI to a "normal" HTTP(S) URI for the addressed asset's resource.
      *
-     * @param string $uri
      * @return string|null If the URI cannot be resolved, null is returned
      * @deprecated with Neos 9
      */
@@ -199,10 +192,8 @@ class LinkingService
     /**
      * Renders the URI to a given node instance or -path.
      *
-     * @param ControllerContext $controllerContext
      * @param Node|string|null $node A node object or a string node path,
      *                    if a relative path is provided the baseNode argument is required
-     * @param Node|null $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param array<string,mixed> $arguments Additional arguments to be passed to the UriBuilder
@@ -327,9 +318,6 @@ class LinkingService
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @param Site $site
-     * @return string
      * @throws NeosException
      * @throws HttpException
      * @deprecated with Neos 9 - todo find alternative

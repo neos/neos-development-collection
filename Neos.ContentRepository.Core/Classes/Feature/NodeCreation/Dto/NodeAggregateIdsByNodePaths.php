@@ -46,6 +46,7 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
     {
         foreach ($nodeAggregateIds as $nodePath => $nodeAggregateId) {
             $nodePath = NodePath::fromString($nodePath);
+            /** @phpstan-ignore instanceof.alwaysTrue (part of the API and thus cannot be trusted) */
             if (!$nodeAggregateId instanceof NodeAggregateId) {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIdsByNodePaths objects can only be composed of NodeAggregateIds.',
@@ -79,6 +80,7 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
     {
         $nodeAggregateIds = [];
         foreach ($array as $rawNodePath => $rawNodeAggregateId) {
+            /** @phpstan-ignore function.alreadyNarrowedType (part of the API and thus cannot be trusted) */
             if (!is_string($rawNodePath)) {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIdsByNodePaths must be indexed by node path.',

@@ -37,7 +37,6 @@ trait NodeCreation
 
     /**
      * @Given /^the event RootNodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
@@ -53,24 +52,15 @@ trait NodeCreation
 
     /**
      * @Given /^the event NodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initialPropertyValues'])) {
-            $eventPayload['initialPropertyValues'] = [];
-        }
-        if (!isset($eventPayload['originDimensionSpacePoint'])) {
-            $eventPayload['originDimensionSpacePoint'] = [];
-        }
-        if (!isset($eventPayload['coveredDimensionSpacePoints'])) {
-            $eventPayload['coveredDimensionSpacePoints'] = [[]];
-        }
-        if (!isset($eventPayload['nodeName'])) {
-            $eventPayload['nodeName'] = null;
-        }
+        $eventPayload['initialPropertyValues'] ??= [];
+        $eventPayload['originDimensionSpacePoint'] ??= [];
+        $eventPayload['coveredDimensionSpacePoints'] ??= [[]];
+        $eventPayload['nodeName'] ??= null;
 
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);

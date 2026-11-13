@@ -8,9 +8,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * TODO: BASE EXCEPTION
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class AutoUriPathResolverConfigurationException extends \RuntimeException
 {
 }

@@ -32,21 +32,6 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
      */
     public function __construct(array $array)
     {
-        foreach ($array as $dimensionId => $constraints) {
-            if (!is_string($dimensionId) || empty($dimensionId)) {
-                throw new \InvalidArgumentException(
-                    'ContentDimensionConstraintSets must be indexed by dimension id',
-                    1639654304
-                );
-            }
-            if (!$constraints instanceof ContentDimensionConstraints) {
-                throw new \InvalidArgumentException(
-                    'ContentDimensionConstraintSets may only contain ContentDimensionConstraints objects',
-                    1639654348
-                );
-            }
-        }
-
         $this->constraints = $array;
     }
 

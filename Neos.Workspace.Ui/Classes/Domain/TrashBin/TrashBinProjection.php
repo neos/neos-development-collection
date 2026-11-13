@@ -65,7 +65,6 @@ class TrashBinProjection implements ProjectionInterface
     }
 
     /**
-     * @return void
      * @throws DBALException
      */
     public function setUp(): void
@@ -108,9 +107,9 @@ class TrashBinProjection implements ProjectionInterface
             [
                 DbalSchemaFactory::columnForWorkspaceName('workspace_name', $platform)->setNotNull(true),
                 DbalSchemaFactory::columnForNodeAggregateId('node_aggregate_id', $platform)->setNotnull(true),
-                (new Column('user_id', Type::getType(Types::STRING)))->setLength(36)->setNotnull(false),
-                (new Column('delete_time', Type::getType(Types::DATETIME_IMMUTABLE)))->setNotnull(false),
-                (new Column('affected_dimension_space_points', Type::getType(Types::JSON)))->setNotnull(true),
+                new Column('user_id', Type::getType(Types::STRING))->setLength(36)->setNotnull(false),
+                new Column('delete_time', Type::getType(Types::DATETIME_IMMUTABLE))->setNotnull(false),
+                new Column('affected_dimension_space_points', Type::getType(Types::JSON))->setNotnull(true),
                 DbalSchemaFactory::columnForDimensionSpacePointHash('affected_dimension_space_points_hash', $platform)->setNotnull(false),
             ]
         );

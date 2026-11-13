@@ -25,7 +25,6 @@ final readonly class PublishedEvents implements \IteratorAggregate, \Countable
 
     /**
      * @param non-empty-array<EventInterface> $events
-     * @return static
      */
     public static function fromArray(array $events): self
     {
@@ -66,7 +65,7 @@ final readonly class PublishedEvents implements \IteratorAggregate, \Countable
      */
     public function map(\Closure $callback): array
     {
-        return array_map($callback, $this->items);
+        return array_values(array_map($callback, $this->items));
     }
 
     public function count(): int

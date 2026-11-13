@@ -22,16 +22,16 @@ use Neos\Flow\I18n\Service as LocalizationService;
 class TransliterationService
 {
     /**
-     * @Flow\Inject
      * @var LocalizationService
      */
+    #[Flow\Inject]
     protected $localizationService;
 
     /**
-     * @Flow\InjectConfiguration("transliterationRules")
      * @var array
      * @phpstan-var array<string,mixed>
      */
+    #[Flow\InjectConfiguration('transliterationRules')]
     protected $transliterationRules;
 
     /**

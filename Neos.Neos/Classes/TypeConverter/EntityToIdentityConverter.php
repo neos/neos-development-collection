@@ -47,9 +47,9 @@ class EntityToIdentityConverter extends AbstractTypeConverter
     protected $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**

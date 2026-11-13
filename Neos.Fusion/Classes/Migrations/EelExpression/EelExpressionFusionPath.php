@@ -5,9 +5,9 @@ namespace Neos\Fusion\Migrations\EelExpression;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class EelExpressionFusionPath
 {
     private function __construct(

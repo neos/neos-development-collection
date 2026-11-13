@@ -48,9 +48,9 @@ class WrapViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
-     * @Flow\Inject
      * @var ContentElementWrappingService
      */
+    #[Flow\Inject]
     protected $contentElementWrappingService;
 
     /**

@@ -32,27 +32,27 @@ use Neos\Neos\Service\ContentElementWrappingService;
 class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
      * @var ContentElementWrappingService
      */
+    #[Flow\Inject]
     protected $contentElementWrappingService;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
@@ -61,7 +61,6 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
      * @param string $fusionPath - path causing the exception
      * @param \Exception $exception - exception to handle
      * @param string|null $referenceCode - might be unset
-     * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode): string
     {

@@ -38,15 +38,15 @@ class Parser
     public static array $reservedParseTreeKeys = ['__meta', '__prototypes', '__stopInheritanceChain', '__prototypeObjectName', '__prototypeChain', '__value', '__objectType', '__eelExpression'];
 
     /**
-     * @Flow\Inject
      * @var DslFactory
      */
+    #[Flow\Inject]
     protected $dslFactory;
 
     /**
-     * @Flow\Inject
      * @var ParserCache
      */
+    #[Flow\Inject]
     protected $parserCache;
 
     /**

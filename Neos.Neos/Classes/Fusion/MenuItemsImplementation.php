@@ -89,9 +89,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function getFilter(): string
     {
         $filter = $this->fusionValue('filter');
-        if ($filter === null) {
-            $filter = NodeTypeNameFactory::NAME_DOCUMENT;
-        }
+        $filter ??= NodeTypeNameFactory::NAME_DOCUMENT;
 
         return $filter;
     }
@@ -99,7 +97,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Maximum number of levels which should be rendered in this menu.
      */
-    protected function getMaximumLevels(): int
+    protected function getMaximumLevels(): ?int
     {
         if ($this->maximumLevels === null) {
             $this->maximumLevels = $this->fusionValue('maximumLevels');
@@ -128,9 +126,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
     protected function getStartingPoint(): ?Node
     {
-        if ($this->startingPoint === null) {
-            $this->startingPoint = $this->fusionValue('startingPoint');
-        }
+        $this->startingPoint ??= $this->fusionValue('startingPoint');
 
         return $this->startingPoint;
     }
@@ -258,19 +254,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      *
      * If entryLevel is configured this will be taken into account as well.
      *
-     * @return NodeAggregateId|null
      * @throws FusionException
      */
     protected function findMenuStartingPointAggregateId(): ?NodeAggregateId
     {
         $traversalStartingPoint = $this->getStartingPoint() ?: $this->getCurrentNode();
-
-        if (!$traversalStartingPoint instanceof Node) {
-            throw new FusionException(
-                'You must either set a "startingPoint" for the menu or "node" must be set in the Fusion context.',
-                1369596980
-            );
-        }
 
         if ($this->getEntryLevel() === 0) {
             return $traversalStartingPoint->aggregateId;

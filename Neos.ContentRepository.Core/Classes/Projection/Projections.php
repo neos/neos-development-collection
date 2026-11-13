@@ -35,7 +35,6 @@ final class Projections implements \IteratorAggregate, \Countable
 
     /**
      * @param array<string, ProjectionInterface<ProjectionStateInterface>> $projections
-     * @return self
      */
     public static function fromArray(array $projections): self
     {
@@ -73,7 +72,6 @@ final class Projections implements \IteratorAggregate, \Countable
 
     /**
      * @param ProjectionInterface<ProjectionStateInterface> $projection
-     * @return self
      */
     public function with(SubscriptionId $id, ProjectionInterface $projection): self
     {

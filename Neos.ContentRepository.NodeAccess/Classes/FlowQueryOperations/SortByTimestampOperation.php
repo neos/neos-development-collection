@@ -43,7 +43,7 @@ class SortByTimestampOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (is_array($context) === true && (current($context) instanceof Node));
+        return count($context) === 0 || (is_array($context) && (current($context) instanceof Node));
     }
 
     /**

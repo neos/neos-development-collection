@@ -15,9 +15,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class VisitedNodeAggregates
 {
     /**

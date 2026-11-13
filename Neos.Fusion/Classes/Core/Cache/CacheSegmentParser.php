@@ -95,6 +95,7 @@ class CacheSegmentParser
         $this->output .= $part;
         $this->outerSegmentContent .= $part;
         // we no longer need the content
+        /** @phpstan-ignore unset.possiblyHookedProperty (class is internal and will not be subclassed) */
         unset($this->content);
     }
 
@@ -153,13 +154,13 @@ class CacheSegmentParser
         $segmentData['metadata'] = $contextOrMetadata;
         $segmentData['context'] = $contextOrMetadata;
 
-        if (strpos($identifier, 'eval=') === 0) {
+        if (str_starts_with($identifier, 'eval=')) {
             $segmentData['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
             unset($segmentData['metadata']);
             $this->uncachedPartCount++;
         }
 
-        if (strpos($identifier, 'evalCached=') === 0) {
+        if (str_starts_with($identifier, 'evalCached=')) {
             $segmentData['type'] = ContentCache::SEGMENT_TYPE_DYNAMICCACHED;
             $segmentData['identifier'] = substr($identifier, 11);
             $additionalData = json_decode($contextOrMetadata, true);
@@ -179,7 +180,6 @@ class CacheSegmentParser
 
     /**
      * @param integer $currentPosition
-     * @param array $segmentData
      * @return array
      */
     protected function extractContentAndSubSegments($currentPosition, array $segmentData)
@@ -223,7 +223,6 @@ class CacheSegmentParser
     /**
      * Make sure that we keep only necessary information for caching and strip all internal segment data.
      *
-     * @param array $segmentData
      * @return array
      */
     protected function reduceSegmentDataToCacheRelevantInformation(array $segmentData)

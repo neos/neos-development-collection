@@ -75,12 +75,11 @@ final class ContentRepository
     /**
      * The only API to send commands (mutation intentions) to the system.
      *
-     * @param CommandInterface $command
      * @throws AccessDenied
      */
     public function handle(CommandInterface $command): void
     {
-        $this->performanceTracer?->openSpan(TracePoint::ContentRepositoryHandle, ['c' => get_class($command)]);
+        $this->performanceTracer?->openSpan(TracePoint::ContentRepositoryHandle, ['c' => $command::class]);
         try {
             $command = $this->commandHook->onBeforeHandle($command);
             $this->performanceTracer?->mark(TracePoint::CommandHookOnBeforeHandle);

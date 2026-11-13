@@ -25,27 +25,26 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * Domain command controller for the Neos.Neos package
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DomainCommandController extends CommandController
 {
     /**
      * @var DomainRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
      * @var SiteRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
      * @var ValidatorResolver
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**
@@ -146,7 +145,7 @@ class DomainCommandController extends CommandController
         foreach ($domains as $domain) {
             $site = $domain->getSite();
             if ($site->getPrimaryDomain() === $domain) {
-                $site->setPrimaryDomain(null);
+                $site->setPrimaryDomain();
                 $this->siteRepository->update($site);
             }
             $this->domainRepository->remove($domain);
@@ -204,9 +203,7 @@ class DomainCommandController extends CommandController
     {
         return array_filter(
             $this->domainRepository->findAll()->toArray(),
-            function ($domain) use ($hostnamePattern) {
-                return fnmatch($hostnamePattern, $domain->getHostname());
-            }
+            fn ($domain) => fnmatch($hostnamePattern, $domain->getHostname())
         );
     }
 }

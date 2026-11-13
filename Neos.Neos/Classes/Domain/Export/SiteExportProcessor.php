@@ -78,7 +78,6 @@ final readonly class SiteExportProcessor implements ProcessorInterface
     }
 
     /**
-     * @param WorkspaceName $workspaceName
      * @return Site[]
      */
     private function findSites(WorkspaceName $workspaceName): array

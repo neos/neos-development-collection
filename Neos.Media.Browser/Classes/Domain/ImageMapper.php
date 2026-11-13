@@ -35,17 +35,11 @@ class ImageMapper
      */
     private $persistenceManager;
 
-    /**
-     * @param ResourceManager $resourceManager
-     */
     public function injectResourceManager(ResourceManager $resourceManager)
     {
         $this->resourceManager = $resourceManager;
     }
 
-    /**
-     * @param PersistenceManagerInterface $persistenceManager
-     */
     public function injectPersistenceManager(PersistenceManagerInterface $persistenceManager)
     {
         $this->persistenceManager = $persistenceManager;
@@ -53,8 +47,6 @@ class ImageMapper
 
     /**
      * ImageMapper constructor.
-     *
-     * @param ImageInterface $image
      */
     public function __construct(ImageInterface $image)
     {
@@ -72,9 +64,6 @@ class ImageMapper
         $this->image = null;
     }
 
-    /**
-     * @return array
-     */
     public function getMappingResult(): array
     {
         return $this->mappingResult;
@@ -82,8 +71,6 @@ class ImageMapper
 
     /**
      * Map the image object attached to this mapper to basic properties.
-     *
-     * @return array
      */
     private function mapImage(): array
     {
@@ -97,10 +84,6 @@ class ImageMapper
         ];
     }
 
-    /**
-     * @param ImageVariant $imageVariant
-     * @return array
-     */
     private function mapVariant(ImageVariant $imageVariant): array
     {
         $variantInformation = [
@@ -122,8 +105,6 @@ class ImageMapper
     /**
      * Map crop information for user interface.
      *
-     * @param ImageVariant $imageVariant
-     * @param CropImageAdjustment $adjustment
      * @return array
      */
     private function mapCrop(ImageVariant $imageVariant, CropImageAdjustment $adjustment)

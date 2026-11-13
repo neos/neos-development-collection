@@ -43,6 +43,6 @@ final class DbalSchemaDiff
             }
         }
         $fromSchema = new Schema($fromTableSchemas, [], $schemaManager->createSchemaConfig());
-        return (new Comparator())->compare($fromSchema, $schema)->toSql($platform);
+        return new Comparator()->compare($fromSchema, $schema)->toSql($platform);
     }
 }

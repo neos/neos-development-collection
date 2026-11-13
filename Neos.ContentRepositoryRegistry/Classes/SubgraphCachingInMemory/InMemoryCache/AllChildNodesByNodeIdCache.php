@@ -33,7 +33,7 @@ final class AllChildNodesByNodeIdCache
         ?NodeTypeCriteria $nodeTypeCriteria,
         Nodes $childNodes
     ): void {
-        $nodeTypeCriteriaKey = $nodeTypeCriteria !== null ? $nodeTypeCriteria->toFilterString() : '*';
+        $nodeTypeCriteriaKey = $nodeTypeCriteria?->toFilterString() ?? '*';
         $this->childNodes[$parentNodeAggregateId->value][$nodeTypeCriteriaKey] = $childNodes;
     }
 
@@ -41,7 +41,7 @@ final class AllChildNodesByNodeIdCache
         NodeAggregateId $parentNodeAggregateId,
         ?NodeTypeCriteria $nodeTypeCriteria
     ): bool {
-        $nodeTypeCriteriaKey = $nodeTypeCriteria !== null ? $nodeTypeCriteria->toFilterString() : '*';
+        $nodeTypeCriteriaKey = $nodeTypeCriteria?->toFilterString() ?? '*';
         return isset($this->childNodes[$parentNodeAggregateId->value][$nodeTypeCriteriaKey]);
     }
 
@@ -49,7 +49,7 @@ final class AllChildNodesByNodeIdCache
         NodeAggregateId $parentNodeAggregateId,
         ?NodeTypeCriteria $nodeTypeCriteria,
     ): Nodes {
-        $nodeTypeCriteriaKey = $nodeTypeCriteria !== null ? $nodeTypeCriteria->toFilterString() : '*';
+        $nodeTypeCriteriaKey = $nodeTypeCriteria?->toFilterString() ?? '*';
         return $this->childNodes[$parentNodeAggregateId->value][$nodeTypeCriteriaKey] ?? Nodes::createEmpty();
     }
 

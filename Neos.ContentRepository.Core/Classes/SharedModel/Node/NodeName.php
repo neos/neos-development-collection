@@ -36,9 +36,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
  *
  * @api
  */
-final readonly class NodeName implements \JsonSerializable
+final readonly class NodeName implements \JsonSerializable, \Stringable
 {
-    public const PATTERN = '/^[a-z0-9\-]+$/';
+    public const string PATTERN = '/^[a-z0-9\-]+$/';
 
     private function __construct(
         public string $value

@@ -43,6 +43,7 @@ final readonly class ContentDimensionValues implements \IteratorAggregate
         $maximumDepth = ContentDimensionValueSpecializationDepth::zero();
         $indexedValues = [];
         foreach ($values as $dimensionValue) {
+            /** @phpstan-ignore instanceof.alwaysTrue (part of the API and thus cannot be trusted) */
             if (!$dimensionValue instanceof ContentDimensionValue) {
                 throw new \InvalidArgumentException(
                     'ContentDimensionValues may only contain ContentDimensionValue objects',
@@ -76,9 +77,7 @@ final readonly class ContentDimensionValues implements \IteratorAggregate
     {
         return array_filter(
             $this->values,
-            function (ContentDimensionValue $value): bool {
-                return $value->specializationDepth->isZero();
-            }
+            fn (ContentDimensionValue $value): bool => $value->specializationDepth->isZero()
         );
     }
 }

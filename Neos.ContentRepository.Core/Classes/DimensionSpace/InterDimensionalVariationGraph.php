@@ -166,10 +166,7 @@ final class InterDimensionalVariationGraph
         $indexedSpecializations = [];
 
         foreach ($this->getWeightedDimensionSpacePoints() as $generalizationHash => $generalization) {
-            if (!isset($normalizedVariationWeights[$generalizationHash])) {
-                $normalizedVariationWeights[$generalizationHash]
-                    = $generalization->weight->normalize($this->determineWeightNormalizationBase());
-            }
+            $normalizedVariationWeights[$generalizationHash] ??= $generalization->weight->normalize($this->determineWeightNormalizationBase());
 
             foreach ($generalization->dimensionValues as $rawDimensionId => $contentDimensionValue) {
                 $dimensionId = new Dimension\ContentDimensionId($rawDimensionId);
@@ -189,10 +186,7 @@ final class InterDimensionalVariationGraph
                         $specializedDimensionSpacePoint
                     );
 
-                    if (!isset($normalizedVariationWeights[$specialization->getIdentityHash()])) {
-                        $normalizedVariationWeights[$specialization->getIdentityHash()]
-                            = $specialization->weight->normalize($this->determineWeightNormalizationBase());
-                    }
+                    $normalizedVariationWeights[$specialization->getIdentityHash()] ??= $specialization->weight->normalize($this->determineWeightNormalizationBase());
                     $this->initializeVariationsForDimensionSpacePointPair(
                         $specialization,
                         $generalization,
@@ -221,7 +215,7 @@ final class InterDimensionalVariationGraph
             $this->indexedSpecializations[$generalizationHash] = new DimensionSpacePointSet($specializations);
         }
 
-        foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
+        foreach ($this->weightedGeneralizations as &$generalizationsByWeight) {
             ksort($generalizationsByWeight);
         }
     }

@@ -40,7 +40,6 @@ interface PerformanceTracerInterface
 
     /**
      * Close a span, opened by {@see self::openSpan()} before.
-     * @return void
      */
     public function closeSpan(): void;
 

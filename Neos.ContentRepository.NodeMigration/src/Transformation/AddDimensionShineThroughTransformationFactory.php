@@ -35,13 +35,13 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
         array $settings,
         ContentRepository $contentRepository,
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
-        return new class (
+        return new readonly class (
             DimensionSpacePoint::fromArray($settings['from']),
             DimensionSpacePoint::fromArray($settings['to']),
         ) implements GlobalTransformationInterface {
             public function __construct(
-                private readonly DimensionSpacePoint $from,
-                private readonly DimensionSpacePoint $to,
+                private DimensionSpacePoint $from,
+                private DimensionSpacePoint $to,
             ) {
             }
 

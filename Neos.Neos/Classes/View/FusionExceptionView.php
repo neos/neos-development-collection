@@ -52,21 +52,21 @@ class FusionExceptionView extends AbstractView
     ];
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
      * @var FusionService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $fusionService;
 
     /**
@@ -169,7 +169,7 @@ class FusionExceptionView extends AbstractView
                 $fusionGlobals
             );
 
-            if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
+            if (isset($this->options['enableContentCache'])) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
             }
         }

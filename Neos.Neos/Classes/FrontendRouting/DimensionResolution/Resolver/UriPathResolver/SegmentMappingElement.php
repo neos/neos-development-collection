@@ -7,9 +7,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final readonly class SegmentMappingElement
 {
     private function __construct(

@@ -22,13 +22,13 @@ use Behat\Transliterator\Transliterator;
  *
  * @api
  */
-final class WorkspaceName implements \JsonSerializable
+final class WorkspaceName implements \JsonSerializable, \Stringable
 {
-    public const MAX_LENGTH = 36;
+    public const int MAX_LENGTH = 36;
 
-    private const PATTERN = '/^[a-z0-9][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
+    private const string PATTERN = '/^[a-z0-9][a-z0-9\-]{0,' . (self::MAX_LENGTH - 1) . '}$/';
 
-    public const WORKSPACE_NAME_LIVE = 'live';
+    public const string WORKSPACE_NAME_LIVE = 'live';
 
     /**
      * phpstan prefix because https://github.com/neos/flow-development-collection/issues/3464

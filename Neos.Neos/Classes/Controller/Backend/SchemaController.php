@@ -25,21 +25,19 @@ use Neos\Neos\Service\NodeTypeSchemaBuilder;
 class SchemaController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $nodeTypeSchemaCache;
 
     /**
      * @var ContentRepositoryRegistry
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
      * Get the node type configuration schema for the Neos UI
-     *
-     * @return string
      */
     public function nodeTypeSchemaAction(): string
     {

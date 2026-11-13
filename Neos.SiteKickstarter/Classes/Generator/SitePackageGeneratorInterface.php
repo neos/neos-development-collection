@@ -22,15 +22,12 @@ interface SitePackageGeneratorInterface
     /**
      * returns generated files as an array
      *
-     * @param string $packageKey
      * @return list<string>
      */
     public function generateSitePackage(string $packageKey): array;
 
     /**
      * returns the human-readable name of the generator
-     *
-     * @return string
      */
     public function getGeneratorName(): string;
 }

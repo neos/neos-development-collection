@@ -31,43 +31,43 @@ use Psr\Log\LoggerInterface;
 
 class LinkHelper implements ProtectedContextAwareInterface
 {
-    private const NODE_SCHEME = 'node';
-    private const ASSET_SCHEME = 'asset';
+    private const string NODE_SCHEME = 'node';
+    private const string ASSET_SCHEME = 'asset';
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**
-     * @Flow\Inject
      * @var LinkingService
      */
+    #[Flow\Inject]
     protected $linkingService;
 
     public function hasSupportedScheme(string|UriInterface|null $uri): bool
@@ -88,10 +88,6 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string|UriInterface $uri
-     * @param Node $contextNode
-     * @param ControllerContext $controllerContext
-     * @return string|null
      * @deprecated with Neos 9 as the linking service is deprecated and this helper cannot be invoked from Fusion either way as the $controllerContext is not available.
      */
     public function resolveNodeUri(string|UriInterface $uri, Node $contextNode, ControllerContext $controllerContext): ?string
@@ -151,7 +147,6 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return boolean
      */
     public function allowsCallOfMethod($methodName): bool
     {

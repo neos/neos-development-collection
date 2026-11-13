@@ -33,9 +33,8 @@ use Psr\Http\Message\UriInterface;
  * Can resolve the target for a given shortcut.
  * Used for Neos Routing ({@see EventSourcedFrontendNodeRoutePartHandler}),
  * and redirects to a shortcut target when visiting the shortcut itself.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodeShortcutResolver
 {
     public function __construct(
@@ -83,7 +82,6 @@ class NodeShortcutResolver
      * Note: The ContentStreamId is not required for this service,
      * because it is only covering the live workspace
      *
-     * @param DocumentNodeInfo $documentNodeInfo
      * @return \Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo|UriInterface
      * DocumentNodeInfo is returned if we want to link to another node
      * (i.e. node is NOT a shortcut node; or target is a node);

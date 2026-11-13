@@ -16,15 +16,15 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 final class DoctrinePersistentObjectNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var ReflectionService
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

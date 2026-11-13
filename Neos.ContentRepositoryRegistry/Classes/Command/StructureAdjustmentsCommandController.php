@@ -25,9 +25,9 @@ use Neos\Flow\Cli\CommandController;
 final class StructureAdjustmentsCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
 
@@ -58,7 +58,6 @@ final class StructureAdjustmentsCommandController extends CommandController
      *
      * @param string|null $nodeType The node type to apply structure adjustments for. If not provided, all found adjustments will be applied. (Default: null)
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
-     * @return void
      */
     public function fixCommand(?string $nodeType = null, string $contentRepository = 'default'): void
     {
@@ -74,7 +73,6 @@ final class StructureAdjustmentsCommandController extends CommandController
         }
 
         foreach ($errors as $error) {
-            assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
             $structureAdjustmentService->fixError($error);
         }
@@ -87,7 +85,6 @@ final class StructureAdjustmentsCommandController extends CommandController
     private function printErrors(\Generator $errors): void
     {
         foreach ($errors as $error) {
-            assert($error instanceof StructureAdjustment);
             $this->outputLine($error->render());
         }
     }

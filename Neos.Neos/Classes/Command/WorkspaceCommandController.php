@@ -118,10 +118,10 @@ class WorkspaceCommandController extends CommandController
                 WorkspaceName::fromString($workspace),
                 $force ? RebaseErrorHandlingStrategy::STRATEGY_FORCE : RebaseErrorHandlingStrategy::STRATEGY_FAIL,
             );
-        } catch (WorkspaceDoesNotExist $exception) {
+        } catch (WorkspaceDoesNotExist) {
             $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
             $this->quit(1);
-        } catch (WorkspaceRebaseFailed $exception) {
+        } catch (WorkspaceRebaseFailed) {
             $this->outputLine('<error>Rebasing of workspace "%s" is not possible due to conflicts. You can try the <em>--force</em> option.</error>', [$workspace]);
             $this->quit(1);
         }
@@ -414,7 +414,6 @@ class WorkspaceCommandController extends CommandController
      * Rebase all outdated content streams
      *
      * @param string $contentRepository The name of the content repository. (Default: 'default')
-     * @param boolean $force
      */
     public function rebaseOutdatedCommand(string $contentRepository = 'default', bool $force = false): void
     {

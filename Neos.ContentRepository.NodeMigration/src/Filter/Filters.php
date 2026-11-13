@@ -37,7 +37,7 @@ final class Filters
                     'Filter object must implement either %s or %s. Given: %s',
                     NodeBasedFilterInterface::class,
                     NodeAggregateBasedFilterInterface::class,
-                    is_object($filterObject) ? get_class($filterObject) : gettype($filterObject)
+                    get_debug_type($filterObject)
                 ), 1611735521);
             }
         }
@@ -55,23 +55,11 @@ final class Filters
 
     public function matchesNodeAggregate(NodeAggregate $nodeAggregate): bool
     {
-        foreach ($this->nodeAggregateBasedFilters as $filter) {
-            if (!$filter->matches($nodeAggregate)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->nodeAggregateBasedFilters, fn ($filter) => $filter->matches($nodeAggregate));
     }
 
     public function matchesNode(Node $node): bool
     {
-        foreach ($this->nodeBasedFilters as $filter) {
-            if (!$filter->matches($node)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->nodeBasedFilters, fn ($filter) => $filter->matches($node));
     }
 }

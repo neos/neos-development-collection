@@ -153,6 +153,7 @@ final class NodeFactory
         if (empty($nodeRows)) {
             return null;
         }
+        // as at least one node row exists, so does the node aggregate
 
         $rawNodeAggregateId = '';
         $rawNodeTypeName = '';
@@ -205,11 +206,6 @@ final class NodeFactory
         }
         ksort($occupiedDimensionSpacePoints);
         ksort($coveredDimensionSpacePoints);
-
-        // a nodeAggregate only exists if it at least contains one node
-        if ($nodesByOccupiedDimensionSpacePoint === []) {
-            throw new \RuntimeException(sprintf('Fatal, no occupation found in fetched node rows for aggregate "%s"', $nodeRows[0]['nodeaggregateid'] ?? ''), 1778049288);
-        }
 
         return NodeAggregate::create(
             $this->contentRepositoryId,
@@ -270,13 +266,9 @@ final class NodeFactory
                     );
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][]
                     = $occupiedDimensionSpacePoint;
-                $nodeTypeNames[$rawNodeAggregateId] = $nodeTypeNames[$rawNodeAggregateId]
-                    ?? NodeTypeName::fromString($nodeRow['nodetypename']);
-                $nodeNames[$rawNodeAggregateId] = $nodeNames[$rawNodeAggregateId]
-                    ?? ($nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null);
-                $classificationByNodeAggregate[$rawNodeAggregateId]
-                    = $classificationByNodeAggregate[$rawNodeAggregateId]
-                    ?? NodeAggregateClassification::from($nodeRow['classification']);
+                $nodeTypeNames[$rawNodeAggregateId] ??= NodeTypeName::fromString($nodeRow['nodetypename']);
+                $nodeNames[$rawNodeAggregateId] ??= $nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null;
+                $classificationByNodeAggregate[$rawNodeAggregateId] ??= NodeAggregateClassification::from($nodeRow['classification']);
             }
             // ... and coverage always ...
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(

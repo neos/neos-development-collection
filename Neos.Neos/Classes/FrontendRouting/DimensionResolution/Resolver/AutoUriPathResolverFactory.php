@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
-use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\Model\SiteConfiguration;
@@ -51,7 +50,6 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
                 return UriPathResolver::createForNoDimensions();
             case 1:
                 $contentDimension = reset($contentDimensions);
-                assert($contentDimension instanceof ContentDimension);
                 $mapping = [];
                 foreach ($contentDimension->values as $value) {
                     // we'll take the Dimension Value as Uri Path Segment value.

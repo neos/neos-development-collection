@@ -33,7 +33,6 @@ trait NodeMove
 
     /**
      * @Given /^the event NodeAggregateWasMoved was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)

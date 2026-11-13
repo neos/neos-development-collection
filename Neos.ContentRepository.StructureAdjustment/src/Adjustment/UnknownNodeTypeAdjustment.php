@@ -43,9 +43,7 @@ final class UnknownNodeTypeAdjustment
                 StructureAdjustment::NODE_TYPE_MISSING,
                 'The node type "' . $nodeTypeName->value
                     . '" is not found; so the node should be removed (or converted)',
-                function () use ($nodeAggregate) {
-                    return $this->removeNodeAggregate($this->contentGraph, $nodeAggregate);
-                }
+                fn () => $this->removeNodeAggregate($this->contentGraph, $nodeAggregate)
             );
         }
     }

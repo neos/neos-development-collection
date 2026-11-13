@@ -28,7 +28,6 @@ final readonly class SerializedResource implements \JsonSerializable
 
     /**
      * @param array{filename: string, collectionName: string, mediaType: string, sha1: string} $array
-     * @return static
      */
     public static function fromArray(array $array): self
     {

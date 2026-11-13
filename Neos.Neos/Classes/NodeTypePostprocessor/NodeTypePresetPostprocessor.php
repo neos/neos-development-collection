@@ -27,22 +27,21 @@ class NodeTypePresetPostprocessor implements NodeTypePostprocessorInterface
     /**
      * @var array
      * @phpstan-var array<string,mixed>
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.properties")
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Neos', path: 'nodeTypes.presets.properties')]
     protected $propertyPresetConfiguration;
 
     /**
      * @var array
      * @phpstan-var array<string,mixed>
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="nodeTypes.presets.childNodes")
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Neos', path: 'nodeTypes.presets.childNodes')]
     protected $childNodePresetConfiguration;
 
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
      * @param array<string,mixed> $configuration input configuration
      * @param array<string,mixed> $options The processor options
-     * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {

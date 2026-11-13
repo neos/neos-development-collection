@@ -44,39 +44,39 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var Service
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var BackendAssetsUtility
      */
+    #[Flow\Inject]
     protected $backendAssetsUtility;
 
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
@@ -84,9 +84,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     private $throwableStorage;
 
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;

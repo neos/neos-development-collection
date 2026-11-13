@@ -32,15 +32,15 @@ class ImageUriImplementation extends AbstractFusionObject
     /**
      * Resource publisher
      *
-     * @Flow\Inject
      * @var AssetService
      */
+    #[Flow\Inject]
     protected $assetService;
 
     /**
-     * @Flow\Inject
      * @var ThumbnailService
      */
+    #[Flow\Inject]
     protected $thumbnailService;
 
     /**
@@ -135,8 +135,6 @@ class ImageUriImplementation extends AbstractFusionObject
 
     /**
      * Async
-     *
-     * @return string|null
      */
     public function getFormat(): ?string
     {
@@ -164,6 +162,7 @@ class ImageUriImplementation extends AbstractFusionObject
         $asset = $this->getAsset();
         $preset = $this->getPreset();
 
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
         if (!$asset instanceof AssetInterface) {
             throw new \Exception('No asset given for rendering.', 1415184217);
         }

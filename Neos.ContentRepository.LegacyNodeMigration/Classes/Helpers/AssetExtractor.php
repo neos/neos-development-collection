@@ -34,7 +34,7 @@ final class AssetExtractor
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
             try {
                 // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
-                $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
+                $decodedProperties = new JsonArrayType()->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
             } catch (\Throwable $e) {
                 throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeTypeName->value, $e->getMessage()), 1656057030, $e);
             }

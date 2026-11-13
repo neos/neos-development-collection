@@ -43,29 +43,28 @@ use Neos\Neos\View\Service\NodeJsonView;
 
 /**
  * Rudimentary REST service for nodes
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodesController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var NodePropertyConverterService
      */
+    #[Flow\Inject]
     protected $nodePropertyConverterService;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
-     * @Flow\Inject()
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
@@ -193,7 +192,7 @@ class NodesController extends ActionController
                 }
             }
         }
-        $this->view->assign('nodes', $nodes);
+        $this->view?->assign('nodes', $nodes);
     }
 
 
@@ -240,7 +239,7 @@ class NodesController extends ActionController
 
         $nodeAddress = NodeAddress::fromNode($node)->toJson();
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'node' => $node,
             'nodeContextPath' => $nodeAddress,
             'convertedNodeProperties' => $convertedNodeProperties
@@ -256,12 +255,10 @@ class NodesController extends ActionController
      *   - $identifier, $workspaceName and $sourceDimensions specify the source node
      *   - $identifier, $workspaceName and $dimensions specify the target node
      *
-     * @param string $mode
      * @param string $identifier Specifies the identifier of the node to be created; if source
      * @param string $workspaceName Name of the workspace where to create the node in
      * @param array $dimensions Optional list of dimensions and their values in which the node should be created
      * @phpstan-param array<string,array<string>> $dimensions
-     * @param array $sourceDimensions
      * @phpstan-param array<string,array<string>> $sourceDimensions
      */
     public function createAction(
@@ -355,14 +352,7 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
-     * @param WorkspaceName $workspaceName
-     * @param NodeAggregateId $nodeAggregateId
-     * @param ContentSubgraphInterface $sourceSubgraph
-     * @param ContentSubgraphInterface $targetSubgraph
-     * @param DimensionSpacePoint $targetDimensionSpacePoint
-     * @param ContentRepository $contentRepository
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
-     * @return void
      */
     protected function adoptNodeAndParents(
         WorkspaceName $workspaceName,
@@ -387,7 +377,6 @@ class NodesController extends ActionController
         // TODO: TEST THAT AUTO CREATED CHILD NODES WORK (though this should not have influence)
 
         foreach (array_reverse($identifiersFromRootlineToTranslate) as $identifier) {
-            assert($identifier instanceof NodeAggregateId);
             // NOTE: for creating node variants, we need to find the ORIGIN DSP
             // of the source node (in order to unambiguously identify it);
             // so we need to load it from the source subgraph
@@ -405,7 +394,7 @@ class NodesController extends ActionController
                 )
             );
 
-            if ($copyContent === true) {
+            if ($copyContent) {
                 $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
                     $workspaceName,

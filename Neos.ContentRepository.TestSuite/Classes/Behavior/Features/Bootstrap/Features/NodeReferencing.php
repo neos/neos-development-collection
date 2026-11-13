@@ -33,7 +33,6 @@ trait NodeReferencing
 
     /**
      * @Given /^the event NodeReferencesWereSet was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodeReferencesWereSetWasPublishedWithPayload(TableNode $payloadTable)

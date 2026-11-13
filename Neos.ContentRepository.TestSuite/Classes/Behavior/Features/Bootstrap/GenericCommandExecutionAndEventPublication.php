@@ -375,15 +375,13 @@ trait GenericCommandExecutionAndEventPublication
      */
     protected function addDefaultCommandArgumentValues(string $commandClassName, array $commandArguments): array
     {
-        $commandArguments['workspaceName'] = $commandArguments['workspaceName'] ?? $this->currentWorkspaceName?->value;
-        $commandArguments['coveredDimensionSpacePoint'] = $commandArguments['coveredDimensionSpacePoint'] ?? $this->currentDimensionSpacePoint?->coordinates;
+        $commandArguments['workspaceName'] ??= $this->currentWorkspaceName?->value;
+        $commandArguments['coveredDimensionSpacePoint'] ??= $this->currentDimensionSpacePoint?->coordinates;
         if (is_string($commandArguments['coveredDimensionSpacePoint'])) {
             $commandArguments['coveredDimensionSpacePoint'] = \json_decode($commandArguments['coveredDimensionSpacePoint'], true, 512, JSON_THROW_ON_ERROR);
         }
-        $commandArguments['dimensionSpacePoint'] = $commandArguments['dimensionSpacePoint'] ?? $this->currentDimensionSpacePoint?->coordinates;
-        if (!isset($commandArguments['nodeAggregateId'])) {
-            $commandArguments['nodeAggregateId'] = $this->getCurrentNodeAggregateId()?->value;
-        }
+        $commandArguments['dimensionSpacePoint'] ??= $this->currentDimensionSpacePoint?->coordinates;
+        $commandArguments['nodeAggregateId'] ??= $this->getCurrentNodeAggregateId()?->value;
         if ($commandClassName === CreateNodeAggregateWithNode::class) {
             if (is_string($commandArguments['initialPropertyValues'] ?? null)) {
                 $commandArguments['initialPropertyValues'] = $this->deserializeProperties(json_decode($commandArguments['initialPropertyValues'], true, 512, JSON_THROW_ON_ERROR))->values;
@@ -424,9 +422,7 @@ trait GenericCommandExecutionAndEventPublication
             } elseif (!isset($commandArguments['sourceOriginDimensionSpacePoint'])) {
                 $commandArguments['sourceOriginDimensionSpacePoint'] = $this->currentDimensionSpacePoint?->coordinates;
             }
-            if (!isset($commandArguments['sourceNodeAggregateId'])) {
-                $commandArguments['sourceNodeAggregateId'] = $this->currentNodeAggregate?->nodeAggregateId->value;
-            }
+            $commandArguments['sourceNodeAggregateId'] ??= $this->currentNodeAggregate?->nodeAggregateId->value;
         }
         if ($commandClassName === CreateNodeAggregateWithNode::class || $commandClassName === ChangeNodeAggregateType::class || $commandClassName === CreateRootNodeAggregateWithNode::class) {
             if (is_string($commandArguments['tetheredDescendantNodeAggregateIds'] ?? null)) {
@@ -541,7 +537,7 @@ trait GenericCommandExecutionAndEventPublication
         }
 
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
-        $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();
+        $lastCommandExceptionShortName = new \ReflectionClass($this->lastCommandException)->getShortName();
         Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_debug_type($this->lastCommandException), $this->lastCommandException->getCode(), $this->lastCommandException->getMessage()));
         if ($expectedCode !== null) {
             Assert::assertSame($expectedCode, $this->lastCommandException->getCode(), sprintf(
@@ -567,16 +563,16 @@ trait GenericCommandExecutionAndEventPublication
         Assert::assertNotNull($exception, 'Command did not throw exception');
 
         match ($shortExceptionName) {
-            'WorkspaceRebaseFailed' => Assert::assertInstanceOf(WorkspaceRebaseFailed::class, $exception, sprintf('Actual exception: %s (%s): %s', get_class($exception), $exception->getCode(), $exception->getMessage())),
-            'PartialWorkspaceRebaseFailed' => Assert::assertInstanceOf(PartialWorkspaceRebaseFailed::class, $exception, sprintf('Actual exception: %s (%s): %s', get_class($exception), $exception->getCode(), $exception->getMessage())),
+            'WorkspaceRebaseFailed' => Assert::assertInstanceOf(WorkspaceRebaseFailed::class, $exception, sprintf('Actual exception: %s (%s): %s', $exception::class, $exception->getCode(), $exception->getMessage())),
+            'PartialWorkspaceRebaseFailed' => Assert::assertInstanceOf(PartialWorkspaceRebaseFailed::class, $exception, sprintf('Actual exception: %s (%s): %s', $exception::class, $exception->getCode(), $exception->getMessage())),
         };
 
         $actualComparableHash = [];
         foreach ($exception->conflictingEvents as $conflictingEvent) {
             $actualComparableHash[] = [
                 'SequenceNumber' => (string)$conflictingEvent->getSequenceNumber()->value,
-                'Event' =>  (new \ReflectionClass($conflictingEvent->getEvent()))->getShortName(),
-                'Exception' =>  (new \ReflectionClass($conflictingEvent->getException()))->getShortName(),
+                'Event' =>  new \ReflectionClass($conflictingEvent->getEvent())->getShortName(),
+                'Exception' =>  new \ReflectionClass($conflictingEvent->getException())->getShortName(),
             ];
         }
 
@@ -602,8 +598,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream "([^"]*)"$/
-     * @param int $numberOfEvents
-     * @param string $streamName
      */
     public function iExpectExactlyEventToBePublishedOnStream(int $numberOfEvents, string $streamName)
     {
@@ -615,8 +609,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream with prefix "([^"]*)"$/
-     * @param int $numberOfEvents
-     * @param string $streamName
      */
     public function iExpectExactlyEventToBePublishedOnStreamWithPrefix(int $numberOfEvents, string $streamName)
     {
@@ -629,9 +621,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^event at index (\d+) is of type "([^"]*)" with payload:/
-     * @param int $eventNumber
-     * @param string $eventType
-     * @param TableNode $payloadTable
      */
     public function eventNumberIs(int $eventNumber, string $eventType, TableNode $payloadTable)
     {
@@ -665,8 +654,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^event data at index (\d+) is:/
-     * @param int $eventNumber
-     * @param TableNode $eventData
      */
     public function eventDataAtNumberIs(int $eventNumber, TableNode $eventData)
     {

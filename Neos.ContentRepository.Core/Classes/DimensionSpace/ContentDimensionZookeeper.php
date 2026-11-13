@@ -41,9 +41,8 @@ final class ContentDimensionZookeeper
             /** @var array<int,array<string,Dimension\ContentDimensionValue>> $dimensionCombinations */
             $dimensionCombinations = [];
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-                assert($contentDimension instanceof Dimension\ContentDimension);
                 if ($dimensionCombinations === []) {
-                    foreach ($contentDimension->values as $serializedValue => $dimensionValue) {
+                    foreach ($contentDimension->values as $dimensionValue) {
                         $dimensionCombinations[] = [$contentDimension->id->value => $dimensionValue];
                     }
                 } else {

@@ -33,7 +33,6 @@ final readonly class SerializedImageAdjustment implements \JsonSerializable
 
     /**
      * @param array{type: string, properties: array<mixed>} $array
-     * @return static
      */
     public static function fromArray(array $array): self
     {

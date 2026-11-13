@@ -42,7 +42,7 @@ class SortOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (is_array($context) === true && (current($context) instanceof Node));
+        return count($context) === 0 || (is_array($context) && (current($context) instanceof Node));
     }
 
     /**
@@ -118,7 +118,7 @@ class SortOperation extends AbstractOperation
         }
 
         // Create the sort sequence
-        $sortFlags = (int)array_sum(array_map('constant', $sortOptions));
+        $sortFlags = (int)array_sum(array_map(constant(...), $sortOptions));
         $sortFlags = $sortFlags === 0 ? SORT_REGULAR : $sortFlags;
         if ($sortOrder === 'DESC') {
             arsort($sortSequence, $sortFlags);

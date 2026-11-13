@@ -62,13 +62,11 @@ class MergedArrayTree
      */
     public function setValueInTree(array $path, $value): void
     {
-        self::arraySetOrMergeValueByPathWithCallback($this->tree, $path, $value, static function ($simpleType) {
-            return [
-                '__value' => $simpleType,
-                '__eelExpression' => null,
-                '__objectType' => null
-            ];
-        });
+        self::arraySetOrMergeValueByPathWithCallback($this->tree, $path, $value, static fn ($simpleType) => [
+            '__value' => $simpleType,
+            '__eelExpression' => null,
+            '__objectType' => null
+        ]);
     }
 
     protected static function arraySetOrMergeValueByPathWithCallback(array &$subject, array $path, mixed $value, callable $toArray): void
@@ -77,9 +75,7 @@ class MergedArrayTree
         $pointer = &$subject;
         foreach ($path as $pathSegment) {
             // can be null because `&$foo['undefined'] === null`
-            if ($pointer === null) {
-                $pointer = [];
-            }
+            $pointer ??= [];
             if (is_array($pointer) === false) {
                 $pointer = $toArray($pointer);
             }

@@ -63,7 +63,7 @@ final readonly class WorkspaceWasRebased implements EventInterface, EmbedsWorksp
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['newContentStreamId']),
             ContentStreamId::fromString($values['previousContentStreamId']),
-            array_map(SequenceNumber::fromInteger(...), $values['skippedEvents'] ?? [])
+            array_values(array_map(SequenceNumber::fromInteger(...), $values['skippedEvents'] ?? [])),
         );
     }
 

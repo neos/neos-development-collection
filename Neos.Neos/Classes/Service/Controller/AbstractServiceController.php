@@ -42,9 +42,9 @@ abstract class AbstractServiceController extends ActionController
     /**
      * Cant be named here $throwableStorage see https://github.com/neos/neos-development-collection/issues/3858
      *
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage2;
 
     #[Flow\Inject]

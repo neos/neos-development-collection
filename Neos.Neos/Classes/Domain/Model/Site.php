@@ -24,10 +24,10 @@ use Neos\Utility\Arrays;
 /**
  * Domain model of a site
  *
- * @Flow\Entity
  * @api
  */
-class Site
+#[Flow\Entity]
+class Site implements \Stringable
 {
     /**
      * Site states
@@ -53,10 +53,10 @@ class Site
      * Name of the site
      *
      * @var string
-     * @Flow\Validate(type="Label")
-     * @Flow\Validate(type="NotEmpty")
-     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
      */
+    #[Flow\Validate(type: 'Label')]
+    #[Flow\Validate(type: 'NotEmpty')]
+    #[Flow\Validate(type: 'StringLength', options: ['minimum' => 1, 'maximum' => 250])]
     protected $name = 'Untitled Site';
 
     /**
@@ -69,48 +69,48 @@ class Site
      * see https://github.com/neos/neos-development-collection/issues/4470
      *
      * @var string
-     * @Flow\Identity
-     * @Flow\Validate(type="NotEmpty")
-     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
-     * @Flow\Validate(type="\Neos\Neos\Validation\Validator\NodeNameValidator")
      */
+    #[Flow\Identity]
+    #[Flow\Validate(type: 'NotEmpty')]
+    #[Flow\Validate(type: 'StringLength', options: ['minimum' => 1, 'maximum' => 250])]
+    #[Flow\Validate(type: \Neos\Neos\Validation\Validator\NodeNameValidator::class)]
     protected $nodeName;
 
     /**
      * @var Collection<Domain>
      * @phpstan-var Collection<int,Domain>
-     * @ORM\OneToMany(mappedBy="site")
-     * @Flow\Lazy
      */
+    #[ORM\OneToMany(mappedBy: 'site')]
+    #[Flow\Lazy]
     protected $domains;
 
     /**
      * @var Domain
      * @phpstan-var ?Domain
-     * @ORM\ManyToOne
-     * @ORM\Column(nullable=true)
      */
+    #[ORM\ManyToOne]
+    #[ORM\Column(nullable: true)]
     protected $primaryDomain;
 
     /**
      * The site's state
      *
      * @var integer
-     * @Flow\Validate(type="NumberRange", options={ "minimum"=1, "maximum"=2 })
      */
+    #[Flow\Validate(type: 'NumberRange', options: ['minimum' => 1, 'maximum' => 2])]
     protected $state = self::STATE_OFFLINE;
 
     /**
      * @var string
-     * @Flow\Validate(type="NotEmpty")
      */
+    #[Flow\Validate(type: 'NotEmpty')]
     protected $siteResourcesPackageKey;
 
     /**
      * @var AssetCollection
      * @phpstan-var ?AssetCollection
-     * @ORM\ManyToOne
      */
+    #[ORM\ManyToOne]
     protected $assetCollection;
 
     /**
@@ -124,10 +124,7 @@ class Site
         $this->domains = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getNodeName()->value;
     }
@@ -276,9 +273,7 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function (int $index, Domain $domain) {
-            return $domain->getActive();
-        });
+        return $this->domains->exists(fn (int $index, Domain $domain) => $domain->getActive());
     }
 
     /**
@@ -288,9 +283,7 @@ class Site
     public function getActiveDomains()
     {
         /** @var Collection<int, Domain> $activeDomains */
-        $activeDomains = $this->domains->filter(function (Domain $domain) {
-            return $domain->getActive();
-        });
+        $activeDomains = $this->domains->filter(fn (Domain $domain) => $domain->getActive());
         return $activeDomains;
     }
 
@@ -365,11 +358,11 @@ class Site
     /**
      * Internal event handler to forward site changes to the "siteChanged" signal
      *
-     * @ORM\PostPersist
-     * @ORM\PostUpdate
-     * @ORM\PostRemove
      * @return void
      */
+    #[ORM\PostPersist]
+    #[ORM\PostUpdate]
+    #[ORM\PostRemove]
     public function onPostFlush()
     {
         $this->emitSiteChanged();
@@ -378,9 +371,9 @@ class Site
     /**
      * Internal signal
      *
-     * @Flow\Signal
      * @return void
      */
+    #[Flow\Signal]
     public function emitSiteChanged()
     {
     }

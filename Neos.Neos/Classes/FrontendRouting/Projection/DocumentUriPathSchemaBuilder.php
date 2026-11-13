@@ -27,8 +27,6 @@ final class DocumentUriPathSchemaBuilder
     }
 
     /**
-     * @param Connection $connection
-     * @return Schema
      * @throws DBALException
      * @throws SchemaException
      */
@@ -45,8 +43,8 @@ final class DocumentUriPathSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid', $platform)->setNotNull(true),
             DbalSchemaFactory::columnForGenericString('uripath', $platform)->setLength(4000)->setDefault('')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash', $platform)->setNotNull(true),
-            (new Column('disabled', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
-            (new Column('removed', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
+            new Column('disabled', Type::getType(Types::INTEGER))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
+            new Column('removed', Type::getType(Types::INTEGER))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
             DbalSchemaFactory::columnForGenericString('nodeaggregateidpath', $platform)->setLength(4000)->setDefault('')->setNotnull(true),
             DbalSchemaFactory::columnForGenericString('sitenodename', $platform)->setLength(255)->setDefault('')->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePointHash('origindimensionspacepointhash', $platform)->setNotNull(true),
@@ -55,7 +53,7 @@ final class DocumentUriPathSchemaBuilder
             DbalSchemaFactory::columnForNodeAggregateId('succeedingnodeaggregateid', $platform)->setNotNull(false),
             DbalSchemaFactory::columnForGenericString('shortcuttarget', $platform)->setLength(1000)->setNotnull(false),
             DbalSchemaFactory::columnForNodeTypeName('nodetypename', $platform),
-            (new Column('isplaceholder', Type::getType(Types::INTEGER)))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
+            new Column('isplaceholder', Type::getType(Types::INTEGER))->setLength(4)->setUnsigned(true)->setDefault(0)->setNotnull(true),
         ]);
 
         $table

@@ -24,9 +24,8 @@ use Neos\Flow\Annotations as Flow;
  * $result = (new HtmlAugmenter())->addAttributes($html, array('foo' => 'bar', 'bar' => 'baz'));
  *
  * // will return '<div foo="existing bar" bar="baz">Some HTML code</div'
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class HtmlAugmenter
 {
     use RenderAttributesTrait;
@@ -71,10 +70,10 @@ class HtmlAugmenter
         $domDocument = new \DOMDocument('1.0', 'UTF-8');
         // ignore parsing errors
         $useInternalErrorsBackup = libxml_use_internal_errors(true);
-        $domDocument->loadHTML((substr($html, 0, 5) === '<?xml') ? $html : '<?xml encoding="UTF-8"?>' . $html);
+        $domDocument->loadHTML((str_starts_with($html, '<?xml')) ? $html : '<?xml encoding="UTF-8"?>' . $html);
         $xPath = new \DOMXPath($domDocument);
         $rootElement = $xPath->query('//html/body/*|//html/head/*');
-        if ($useInternalErrorsBackup !== true) {
+        if (!$useInternalErrorsBackup) {
             libxml_use_internal_errors($useInternalErrorsBackup);
         }
         if ($rootElement === false || $rootElement->length !== 1) {
@@ -91,8 +90,6 @@ class HtmlAugmenter
      * Merges the attributes of $element with the given $newAttributes
      * If an attribute exists in both collections, it is merged to "<new attribute> <old attribute>" (if both values differ)
      *
-     * @param \DOMNode $element
-     * @param array $newAttributes
      * @return void
      */
     protected function mergeAttributes(\DOMNode $element, array &$newAttributes)
@@ -126,7 +123,6 @@ class HtmlAugmenter
     /**
      * Checks whether the given $element contains at least one of the specified $attributes (case insensitive)
      *
-     * @param \DOMNode $element
      * @param array $attributes array of attribute names to check (lowercase)
      * @return boolean true if at least one of the $attributes is contained in the given $element, otherwise false
      */

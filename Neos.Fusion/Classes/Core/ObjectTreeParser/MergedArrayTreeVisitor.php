@@ -49,7 +49,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
      */
     protected array $currentObjectPathStack = [];
 
-    protected ?string $contextPathAndFilename;
+    protected ?string $contextPathAndFilename = null;
 
     protected int $currentObjectStatementCursor;
 

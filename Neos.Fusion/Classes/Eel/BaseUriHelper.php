@@ -19,21 +19,19 @@ use Psr\Http\Message\UriInterface;
 class BaseUriHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**
-     * @param ServerRequestInterface|null $fallbackRequest
-     * @return UriInterface
      * @throws \Exception
      */
     public function getConfiguredBaseUriOrFallbackToCurrentRequest(?ServerRequestInterface $fallbackRequest = null): UriInterface
     {
         try {
             $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // We are avoiding an exception here in favor of trying more fallback variants.
         }
 
@@ -50,7 +48,6 @@ class BaseUriHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return bool
      */
     public function allowsCallOfMethod($methodName): bool
     {

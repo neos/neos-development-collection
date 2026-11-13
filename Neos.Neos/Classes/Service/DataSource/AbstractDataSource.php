@@ -30,7 +30,7 @@ abstract class AbstractDataSource implements DataSourceInterface
      * @var string
      * @api
      */
-    protected static $identifier = null;
+    protected static $identifier;
 
     /**
      * @var ControllerContext
@@ -44,15 +44,15 @@ abstract class AbstractDataSource implements DataSourceInterface
      */
     public static function getIdentifier()
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (Annotations can be wrong) */
         if (!is_string(static::$identifier)) {
-            throw new Exception('Identifier in class ' . __CLASS__ . ' is empty.', 1414090236);
+            throw new Exception('Identifier in class ' . self::class . ' is empty.', 1414090236);
         }
 
         return static::$identifier;
     }
 
     /**
-     * @param ControllerContext $controllerContext
      * @return void
      */
     public function setControllerContext(ControllerContext $controllerContext)

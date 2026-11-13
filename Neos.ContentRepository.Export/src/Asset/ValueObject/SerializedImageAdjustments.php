@@ -21,20 +21,18 @@ final readonly class SerializedImageAdjustments implements \IteratorAggregate, \
 
     /**
      * @param \Traversable<ImageAdjustmentInterface> $adjustments
-     * @return static
      */
     public static function fromAdjustments(\Traversable $adjustments): self
     {
-        return new self(array_map(static fn (ImageAdjustmentInterface $adjustment) => SerializedImageAdjustment::fromImageAdjustment($adjustment), iterator_to_array($adjustments)));
+        return new self(array_map(SerializedImageAdjustment::fromImageAdjustment(...), iterator_to_array($adjustments)));
     }
 
     /**
      * @param array<array{type: string, properties: array<mixed>}> $array
-     * @return static
      */
     public static function fromArray(array $array): self
     {
-        return new self(array_map(static fn (array $adjustment) => SerializedImageAdjustment::fromArray($adjustment), $array));
+        return new self(array_map(SerializedImageAdjustment::fromArray(...), $array));
     }
 
     public function getIterator(): \Traversable

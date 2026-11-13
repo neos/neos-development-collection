@@ -44,7 +44,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = [])
     {
         if ($type === Node::class) {
-            /** @var $data array<string, mixed> */
+            /** @var array<string, mixed> $data */
             return $this->tryDeserializeNode($data);
         }
         return $this->fusionContextSerializer->denormalize($data, $type, $format, $context);
@@ -73,7 +73,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
         try {
             $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
-        } catch (WorkspaceDoesNotExist $exception) {
+        } catch (WorkspaceDoesNotExist) {
             // in case the workspace was deleted the rendering should probably not come to this very point
             // still if it does we fail silently
             // this is also the behaviour for when the property mapper is used

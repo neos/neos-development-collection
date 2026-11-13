@@ -33,7 +33,7 @@ use Neos\Neos\Security\Authorization\Privilege\SubtreeTagPrivilegeSubject;
 #[Flow\Scope('singleton')]
 final readonly class ContentRepositoryAuthorizationService
 {
-    private const ROLE_NEOS_ADMINISTRATOR = 'Neos.Neos:Administrator';
+    private const string ROLE_NEOS_ADMINISTRATOR = 'Neos.Neos:Administrator';
 
     public function __construct(
         private WorkspaceMetadataAndRoleRepository $metadataAndRoleRepository,

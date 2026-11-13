@@ -25,10 +25,10 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @Flow\Proxy(false)
  * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
-final class DocumentNodeInfo
+#[Flow\Proxy(false)]
+final class DocumentNodeInfo implements \Stringable
 {
     /**
      * @var array<string,mixed>
@@ -131,8 +131,6 @@ final class DocumentNodeInfo
 
     /**
      * This is NOT the node path; but the "nodeAggregateIds on the hierarchy; separated by /"
-     *
-     * @return string
      */
     public function getNodeAggregateIdPath(): string
     {
@@ -201,8 +199,6 @@ final class DocumentNodeInfo
     /**
      * As the route tags are based on the node aggregate ids of the node and its parents up to the site,
      * we can extract this from the "nodeAggregateIdPath", which contains these ids.
-     *
-     * @return RouteTags
      */
     public function getRouteTags(): RouteTags
     {
@@ -231,9 +227,7 @@ final class DocumentNodeInfo
                     $e->getMessage()
                 ), 1599036735, $e);
             }
-            if ($this->shortcutTarget === null) {
-                $this->shortcutTarget = ['mode' => 'none', 'target' => null];
-            }
+            $this->shortcutTarget ??= ['mode' => 'none', 'target' => null];
         }
         return $this->shortcutTarget;
     }

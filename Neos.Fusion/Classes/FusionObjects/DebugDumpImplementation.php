@@ -26,8 +26,8 @@ class DebugDumpImplementation extends AbstractFusionObject
 {
     /**
      * @var DebugStack
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $stack;
 
     public function isEnabled(): bool

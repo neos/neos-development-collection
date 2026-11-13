@@ -29,30 +29,27 @@ use Neos\Utility\Arrays;
 
 /**
  * The User Command Controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class UserCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
      * @phpstan-var array<string,mixed>
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'security.authentication.providers')]
     protected $authenticationProviderSettings;
 
     /**
      * List all users
      *
      * This command lists all existing Neos users.
-     *
-     * @return void
      */
     public function listCommand(): void
     {
@@ -81,7 +78,6 @@ class UserCommandController extends CommandController
      * @param string $username The username of the user to show.
      *                         Usually refers to the account identifier of the user's Neos backend account.
      * @param string|null $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
-     * @return void
      * @throws Exception|StopCommandException
      */
     public function showCommand(string $username, ?string $authenticationProvider = null): void
@@ -375,7 +371,7 @@ class UserCommandController extends CommandController
                 } else {
                     $this->outputLine('User "%s" already had the role "%s" assigned.', [$username, $role]);
                 }
-            } catch (NoSuchRoleException $exception) {
+            } catch (NoSuchRoleException) {
                 $this->outputLine('The role "%s" does not exist.', [$role]);
                 $this->quit(2);
             }
@@ -413,7 +409,7 @@ class UserCommandController extends CommandController
                 } else {
                     $this->outputLine('User "%s" did not have the role "%s" assigned.', [$username, $role]);
                 }
-            } catch (NoSuchRoleException $exception) {
+            } catch (NoSuchRoleException) {
                 $this->outputLine('The role "%s" does not exist.', [$role]);
                 $this->quit(2);
             }
@@ -432,12 +428,10 @@ class UserCommandController extends CommandController
         if (preg_match('/[\\?\\*\\{\\[]/u', $usernamePattern)) {
             return array_filter(
                 $this->userService->getUsers()->toArray(),
-                function ($user) use ($usernamePattern, $authenticationProviderName) {
-                    return fnmatch(
-                        $usernamePattern,
-                        $this->userService->getUsername($user, $authenticationProviderName) ?: ''
-                    );
-                }
+                fn ($user) => fnmatch(
+                    $usernamePattern,
+                    $this->userService->getUsername($user, $authenticationProviderName) ?: ''
+                )
             );
         } else {
             $user = $this->userService->getUser($usernamePattern, $authenticationProviderName);

@@ -36,9 +36,6 @@ enum RebaseErrorHandlingStrategy: string implements \JsonSerializable
      */
     case STRATEGY_FORCE = 'force';
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->value;

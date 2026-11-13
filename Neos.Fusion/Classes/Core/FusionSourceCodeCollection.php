@@ -27,9 +27,9 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     private array $fusionCodeCollection;
 
     /**
-     * @Flow\Autowiring(false)
      * @param $fusionSourceCode array<int, FusionSourceCode>
      */
+    #[Flow\Autowiring(false)]
     public function __construct(FusionSourceCode ...$fusionSourceCode)
     {
         $this->fusionCodeCollection = self::deduplicateItemsAndKeepLast($fusionSourceCode);

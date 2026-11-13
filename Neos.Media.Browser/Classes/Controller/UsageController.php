@@ -42,69 +42,67 @@ use Neos\Neos\Service\UserService;
 
 /**
  * Controller for asset usage handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class UsageController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var AssetService
      */
+    #[Flow\Inject]
     protected $assetService;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceService
      */
+    #[Flow\Inject]
     protected $workspaceService;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryAuthorizationService
      */
+    #[Flow\Inject]
     protected $contentRepositoryAuthorizationService;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var DomainUserService
      */
+    #[Flow\Inject]
     protected $domainUserService;
 
     /**
      * Get Related Nodes for an asset
      *
-     * @param AssetInterface $asset
      * @return void
      */
     public function relatedNodesAction(AssetInterface $asset)
@@ -123,7 +121,7 @@ class UsageController extends ActionController
 
         foreach ($usageReferences as $usage) {
             $inaccessibleRelation = [
-                'type' => get_class($usage),
+                'type' => $usage::class,
                 'usage' => $usage
             ];
 
@@ -140,7 +138,7 @@ class UsageController extends ActionController
                         return $contentRepository->getContentGraph($usage->getWorkspaceName())->findNodeAggregateById(
                             $usage->getNodeAggregateId()
                         );
-                    } catch (WorkspaceDoesNotExist $e) {
+                    } catch (WorkspaceDoesNotExist) {
                         return null;
                     }
                 }
@@ -209,7 +207,7 @@ class UsageController extends ActionController
             ];
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'totalUsageCount' => count($usageReferences),
             'nodeUsageClass' => AssetUsageReference::class,
             'asset' => $asset,

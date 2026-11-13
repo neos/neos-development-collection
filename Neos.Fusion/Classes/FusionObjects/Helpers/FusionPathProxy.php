@@ -59,9 +59,7 @@ class FusionPathProxy implements TemplateObjectAccessInterface, \ArrayAccess, \I
     /**
      * Constructor.
      *
-     * @param TemplateImplementation $templateImplementation
      * @param string $path
-     * @param array $partialFusionTree
      */
     public function __construct(TemplateImplementation $templateImplementation, $path, array $partialFusionTree)
     {

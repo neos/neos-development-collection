@@ -11,9 +11,9 @@ use Neos\Fusion\Core\ObjectTreeParser\Lexer;
 use Neos\Fusion\Core\ObjectTreeParser\ObjectTreeParser;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class ExpressionCollectingObjectTreeParser extends ObjectTreeParser
 {
     /**

@@ -75,15 +75,15 @@ class LoginController extends AbstractAuthenticationController
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var StringFrontend
      */
+    #[Flow\Inject]
     protected $loginTokenCache;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="session.name")
      * @var string
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'session.name')]
     protected $sessionName;
 
     /**
@@ -102,9 +102,6 @@ class LoginController extends AbstractAuthenticationController
         'application/json',
     ];
 
-    /**
-     * @return void
-     */
     public function initializeIndexAction(): void
     {
         /** @var array<string,mixed>|string|object|null $authenticationArgument */
@@ -127,8 +124,6 @@ class LoginController extends AbstractAuthenticationController
      * Default action, displays the login screen
      *
      * @param string|null $username Optional: A username to pre-fill into the username field
-     * @param bool $unauthorized
-     * @return void
      * @throws InvalidFlashMessageConfigurationException
      * @throws InvalidRequestPatternException
      * @throws NoRequestPatternFoundException
@@ -144,7 +139,7 @@ class LoginController extends AbstractAuthenticationController
             $this->redirect('index', 'Backend\Backend');
         }
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findDefault();
+        $currentSite = $currentDomain?->getSite() ?? $this->siteRepository->findDefault();
 
         /*
          * Checks whether there is any error in any subscription status for any ContentRepository to
@@ -181,7 +176,7 @@ class LoginController extends AbstractAuthenticationController
             }
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite,
@@ -194,8 +189,6 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Logs a user in if a session identifier is available under the given token in the token cache.
      *
-     * @param string $token
-     * @return void
      * @throws StopActionException
      * @throws SessionNotStartedException
      */
@@ -232,7 +225,6 @@ class LoginController extends AbstractAuthenticationController
      * Is called if authentication failed.
      *
      * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
-     * @return void
      */
     protected function onAuthenticationFailure(?AuthenticationRequiredException $exception = null): void
     {
@@ -283,17 +275,14 @@ class LoginController extends AbstractAuthenticationController
      * Logs out a - possibly - currently logged in account.
      * The possible redirection URI is queried from the redirection service
      * at first, before the actual logout takes place, and the session gets destroyed.
-     *
-     * @Flow\SkipCsrfProtection
-     *
-     * @return void
      */
+    #[Flow\SkipCsrfProtection]
     public function logoutAction(): void
     {
         parent::logoutAction();
         switch ($this->request->getFormat()) {
             case 'json':
-                $this->view->assign('value', ['success' => true]);
+                $this->view?->assign('value', ['success' => true]);
                 break;
             default:
                 $this->addFlashMessage(
@@ -318,9 +307,6 @@ class LoginController extends AbstractAuthenticationController
 
     /**
      * Sets the session cookie to the given identifier, overriding an existing cookie.
-     *
-     * @param string $sessionIdentifier
-     * @return void
      */
     protected function replaceSessionCookie(string $sessionIdentifier): void
     {

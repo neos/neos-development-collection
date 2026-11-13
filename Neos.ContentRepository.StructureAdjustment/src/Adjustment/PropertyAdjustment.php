@@ -72,7 +72,7 @@ final class PropertyAdjustment
                         $message = sprintf(
                             'The property "%s" was not deserializable. Error was: %s %s. Remove the property?',
                             $propertyKey,
-                            get_class($e),
+                            $e::class,
                             $e->getMessage()
                         );
                         yield StructureAdjustment::createForNode(

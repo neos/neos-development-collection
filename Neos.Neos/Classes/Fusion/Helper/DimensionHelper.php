@@ -45,9 +45,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      *     Neos.Dimension.currentValue(node, 'language')
      *
-     * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return ContentDimensionValue|null
      */
     public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
@@ -68,9 +66,7 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      *     Neos.Dimension.originValue(node, 'language')
      *
-     * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return ContentDimensionValue|null
      */
     public function originValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
@@ -114,7 +110,6 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      * @param ContentRepositoryId|Node $subject Node will be used to determine `ContentRepositoryId`
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return ContentDimensionValues|null
      */
     public function allDimensionValues(ContentRepositoryId|Node $subject, ContentDimensionId|string $dimensionName): ?ContentDimensionValues
     {
@@ -134,10 +129,8 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      *     Neos.Dimension.findVariantInDimension(node, 'language', 'en_UK')
      *
-     * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
      * @param ContentDimensionValue|string $dimensionValue String will be converted to `ContentDimensionValue`
-     * @return Node|null
      */
     public function findVariantInDimension(Node $node, ContentDimensionId|string $dimensionName, ContentDimensionValue|string $dimensionValue): ?Node
     {

@@ -460,7 +460,7 @@ final class SubscriptionEngine
                     }
                 }
 
-                if ($continueBatching === true && $errors === []) {
+                if ($continueBatching && $errors === []) {
                     // start new batch
                     $this->subscriptionStore->beginTransaction();
                     $subscriptionsToCatchup = $this->subscriptionStore->findByCriteriaForUpdate($subscriptionCriteria);

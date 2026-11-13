@@ -45,7 +45,6 @@ final class UriPathResolver implements DimensionResolverInterface
     /**
      * @param array<string,DimensionSpacePoint> $uriPathToDimensionSpacePoint
      * @param array<string,string> $dimensionSpacePointHashToUriPath
-     * @param Segments $segments
      */
     private function __construct(
         private readonly array $uriPathToDimensionSpacePoint,
@@ -63,7 +62,7 @@ final class UriPathResolver implements DimensionResolverInterface
         DimensionSpacePoint $defaultDimensionSpacePoint,
     ): self {
         self::validate($segments, $separator, $contentDimensionSource);
-        list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths(
+        [$uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath] = self::calculateUriPaths(
             $segments,
             $separator
         );
@@ -118,8 +117,6 @@ final class UriPathResolver implements DimensionResolverInterface
 
 
     /**
-     * @param Segments $segments
-     * @param Separator $separator
      * @return array<mixed>
      */
     private static function calculateUriPaths(Segments $segments, Separator $separator): array
@@ -130,7 +127,6 @@ final class UriPathResolver implements DimensionResolverInterface
             $segmentParts = [];
             $dimensionSpacePointCoordinates = [];
             foreach ($validCombination as $dimensionName => $value) {
-                assert($value instanceof SegmentMappingElement);
                 if (!empty($value->uriPathSegmentValue)) {
                     $segmentParts[] = $value->uriPathSegmentValue;
                 }
@@ -155,7 +151,6 @@ final class UriPathResolver implements DimensionResolverInterface
     }
 
     /**
-     * @param Segments $segments
      * @return array<int,array<string,SegmentMappingElement>>
      */
     private static function cartesian(Segments $segments): array

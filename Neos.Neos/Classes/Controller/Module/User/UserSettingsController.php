@@ -29,21 +29,20 @@ use Neos\Party\Domain\Model\ElectronicAddress;
 
 /**
  * The Neos User Settings module controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class UserSettingsController extends AbstractModuleController
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
@@ -52,9 +51,9 @@ class UserSettingsController extends AbstractModuleController
     protected $currentUser;
 
     /**
-     * @Flow\Inject
      * @var Translator
      */
+    #[Flow\Inject]
     protected $translator;
 
 
@@ -98,7 +97,7 @@ class UserSettingsController extends AbstractModuleController
     {
         $this->assignElectronicAddressOptions();
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'user' => $this->currentUser
         ]);
     }
@@ -123,12 +122,11 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Edit the given account
      *
-     * @param Account $account
      * @return void
      */
     public function editAccountAction(Account $account)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'account' => $account,
             'user' => $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName())
         ]);
@@ -138,9 +136,9 @@ class UserSettingsController extends AbstractModuleController
      * Update a given account, ie. the password
      *
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
+    #[Flow\Validate(argumentName: 'password', type: \Neos\Neos\Validation\Validator\PasswordValidator::class, options: ['allowEmpty' => 1, 'minimum' => 1, 'maximum' => 255])]
     public function updateAccountAction(array $password = [])
     {
         $user = $this->currentUser;
@@ -171,21 +169,18 @@ class UserSettingsController extends AbstractModuleController
     /**
      * The add new electronic address action
      *
-     * @param User $user
-     * @Flow\IgnoreValidation("$user")
      * @return void
      */
+    #[Flow\IgnoreValidation('$user')]
     public function newElectronicAddressAction(User $user)
     {
         $this->assignElectronicAddressOptions();
-        $this->view->assign('user', $user);
+        $this->view?->assign('user', $user);
     }
 
     /**
      * Create an new electronic address
      *
-     * @param User $user
-     * @param ElectronicAddress $electronicAddress
      * @return void
      */
     public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
@@ -207,8 +202,6 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Delete an electronic address action
      *
-     * @param User $user
-     * @param ElectronicAddress $electronicAddress
      * @return void
      */
     public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
@@ -241,7 +234,7 @@ class UserSettingsController extends AbstractModuleController
             $electronicAddressUsageTypes[$type] = $type;
         }
         array_unshift($electronicAddressUsageTypes, '');
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'electronicAddressTypes' => $electronicAddressTypes,
             'electronicAddressUsageTypes' => $electronicAddressUsageTypes
         ]);

@@ -39,69 +39,68 @@ use Neos\Utility\Files;
 
 /**
  * The Site Command Controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SiteCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteService
      */
+    #[Flow\Inject]
     protected $siteService;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var SiteImportService
      */
+    #[Flow\Inject]
     protected $siteImportService;
 
     /**
-     * @Flow\Inject
      * @var SiteExportService
      */
+    #[Flow\Inject]
     protected $siteExportService;
 
     /**
-     * @Flow\Inject
      * @var SitePruningService
      */
+    #[Flow\Inject]
     protected $sitePruningService;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceService
      */
+    #[Flow\Inject]
     protected $workspaceService;
 
     /**
@@ -135,16 +134,16 @@ class SiteCommandController extends CommandController
 
         try {
             $this->siteService->createSite($packageKey, $name, $nodeType, $nodeName, $inactive);
-        } catch (NodeTypeNotFound $exception) {
+        } catch (NodeTypeNotFound) {
             $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
             $this->quit(1);
-        } catch (SiteNodeTypeIsInvalid $exception) {
+        } catch (SiteNodeTypeIsInvalid) {
             $this->outputLine(
                 '<error>The given node type "%s" is not based on the superType "%s"</error>',
                 [$nodeType, NodeTypeNameFactory::NAME_SITE]
             );
             $this->quit(1);
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered) {
             $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName ?: $name]);
             $this->quit(1);
         }
@@ -170,7 +169,6 @@ class SiteCommandController extends CommandController
      *
      * @param string|null $packageKey Package key specifying the package containing the sites content
      * @param string|null $path relative or absolute path and filename to the export files
-     * @return void
      */
     public function importAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
@@ -210,7 +208,6 @@ class SiteCommandController extends CommandController
      *
      * @param string|null $packageKey Package key specifying the package containing the sites content
      * @param string|null $path relative or absolute path and filename to the export files
-     * @return void
      */
     public function exportAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
@@ -229,7 +226,6 @@ class SiteCommandController extends CommandController
      * This will completely prune the data of the specified content repository and remove all site-records.
      *
      * @param bool $force Prune the cr without confirmation. This cannot be reverted!
-     * @return void
      */
     public function pruneAllCommand(string $contentRepository = 'default', bool $force = false, bool $verbose = false): void
     {
@@ -249,7 +245,6 @@ class SiteCommandController extends CommandController
     /**
      * List available sites
      *
-     * @return void
      * @throws StopCommandException
      */
     public function listCommand(): void
@@ -323,9 +318,7 @@ class SiteCommandController extends CommandController
     {
         return array_filter(
             $this->siteRepository->findAll()->toArray(),
-            function (Site $site) use ($siteNodePattern) {
-                return fnmatch($siteNodePattern, $site->getNodeName()->value);
-            }
+            fn (Site $site) => fnmatch($siteNodePattern, $site->getNodeName()->value)
         );
     }
 

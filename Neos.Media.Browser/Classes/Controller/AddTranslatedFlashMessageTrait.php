@@ -23,9 +23,9 @@ use Neos\Flow\Annotations as Flow;
 trait AddTranslatedFlashMessageTrait
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Translator
      */
+    #[Flow\Inject]
     protected $_translator;
 
     public function addTranslatedFlashMessage(

@@ -24,7 +24,7 @@ final class LogFileTracer implements PerformanceTracerInterface
 {
     private bool $headerWritten = false;
     /** @var resource|null */
-    private $fileHandle = null;
+    private $fileHandle;
     /**
      * @var array<array{s: float, n: string}>
      */

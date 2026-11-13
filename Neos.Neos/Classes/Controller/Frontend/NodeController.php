@@ -51,39 +51,39 @@ class NodeController extends ActionController
     protected SubgraphCachePool $subgraphCachePool;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var Now
      */
+    #[Flow\Inject(lazy: false)]
     protected $now;
 
     /**
-     * @Flow\Inject
      * @var SecurityContext
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $session;
 
     /**
-     * @Flow\Inject
      * @var NodeShortcutResolver
      */
+    #[Flow\Inject]
     protected $nodeShortcutResolver;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
@@ -112,16 +112,13 @@ class NodeController extends ActionController
     protected ContentSubgraphCacheWarmup|null $contentSubgraphCacheWarmup = null;
 
     /**
-     * @param string $node
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
-     * with unsafe requests from widgets or plugins that are rendered on the node
-     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
+    #[Flow\SkipCsrfProtection]
     public function previewAction(string $node): void
     {
         // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
@@ -184,10 +181,8 @@ class NodeController extends ActionController
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
      * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
      * @throws \Neos\Neos\Exception
-     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
-     * with unsafe requests from widgets or plugins that are rendered on the node
-     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
+    #[Flow\SkipCsrfProtection]
     public function showAction(string $node): void
     {
         $nodeAddress = NodeAddress::fromJsonString($node);

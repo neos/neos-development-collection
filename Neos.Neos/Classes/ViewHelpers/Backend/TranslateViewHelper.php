@@ -74,9 +74,9 @@ use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelpe
 class TranslateViewHelper extends FluidTranslateViewHelper
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
@@ -92,12 +92,11 @@ class TranslateViewHelper extends FluidTranslateViewHelper
     public function render()
     {
         $id = $this->arguments['id'];
-        $value = $this->arguments['value'];
         $locale = $this->arguments['locale'];
 
         if (is_string($id) && preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
             // In the longer run, this "extended ID" format should directly be resolved in the localization service
-            list($package, $source, $id) = explode(':', $id, 3);
+            [$package, $source, $id] = explode(':', $id, 3);
             $this->arguments['id'] = $id;
             $this->arguments['package'] = $package;
             $this->arguments['source'] = str_replace('.', '/', $source);

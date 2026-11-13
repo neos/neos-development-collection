@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecial
  */
 final class ConfigurationBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
-    public const CONSTRAINT_IDENTIFIER_WILDCARD = '*';
+    public const string CONSTRAINT_IDENTIFIER_WILDCARD = '*';
 
     /**
      * Needs to stay protected as long as we need to be able to reset it via ObjectAccess

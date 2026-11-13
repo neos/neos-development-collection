@@ -9,9 +9,9 @@ use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTree;
 use Neos\Fusion\Core\ObjectTreeParser\MergedArrayTreeVisitor;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class EelExpressionPathBuilderVisitor extends MergedArrayTreeVisitor
 {
     public function __construct(private readonly EelExpressionPositions $eelExpressionPositions)

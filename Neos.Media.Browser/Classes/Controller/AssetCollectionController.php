@@ -26,35 +26,34 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * Controller for tag handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AssetCollectionController extends ActionController
 {
     use AddTranslatedFlashMessageTrait;
 
     /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
+    #[Flow\Inject]
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
      * @var BrowserState
      */
+    #[Flow\Inject]
     protected $browserState;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     protected function initializeView(ViewInterface $view)
@@ -66,9 +65,9 @@ class AssetCollectionController extends ActionController
     /**
      * @param string $title
      * @return void
-     * @Flow\Validate(argumentName="title", type="NotEmpty")
-     * @Flow\Validate(argumentName="title", type="Label")
      */
+    #[Flow\Validate(argumentName: 'title', type: 'NotEmpty')]
+    #[Flow\Validate(argumentName: 'title', type: 'Label')]
     public function createAction($title)
     {
         $this->assetCollectionRepository->add(new AssetCollection($title));
@@ -77,19 +76,17 @@ class AssetCollectionController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
      * @return void
      */
     public function editAction(AssetCollection $assetCollection)
     {
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'assetCollection' => $assetCollection,
             'tags' => $this->tagRepository->findAll()
         ]);
     }
 
     /**
-     * @param AssetCollection $assetCollection
      * @return void
      */
     public function updateAction(AssetCollection $assetCollection)
@@ -100,7 +97,6 @@ class AssetCollectionController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
      * @return void
      */
     public function deleteAction(AssetCollection $assetCollection)
@@ -121,7 +117,6 @@ class AssetCollectionController extends ActionController
     /**
      * Overridden redirect method that points to the "index" action of the "Asset" controller and adds constraints arguments from the current request
      *
-     * @param array $arguments
      * @throws StopActionException
      */
     private function redirectToAssetIndex(array $arguments = []): void

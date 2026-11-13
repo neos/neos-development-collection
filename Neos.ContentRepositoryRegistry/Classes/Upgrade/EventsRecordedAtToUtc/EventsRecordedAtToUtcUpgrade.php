@@ -155,7 +155,7 @@ final readonly class EventsRecordedAtToUtcUpgrade
             return false;
         }
 
-        $absoluteDifference = (new \DateTimeImmutable('@0'))->add($recordedAt->diff($initiatingTimestamp));
+        $absoluteDifference = new \DateTimeImmutable('@0')->add($recordedAt->diff($initiatingTimestamp));
 
         if (abs($absoluteDifference->getTimestamp()) < 3) {
             // Equal within 3 seconds, as we don't use the same date time instance

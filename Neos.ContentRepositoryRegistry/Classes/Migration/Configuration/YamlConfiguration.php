@@ -27,15 +27,15 @@ use Neos\Utility\Files as Files;
 class YamlConfiguration extends Configuration
 {
     /**
-     * @Flow\Inject
      * @var YamlSource
      */
+    #[Flow\Inject]
     protected $yamlSourceImporter;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
@@ -55,8 +55,6 @@ class YamlConfiguration extends Configuration
     }
 
     /**
-     * @param PackageInterface $package
-     * @param string $directoryName
      * @return void
      * @throws MigrationException
      */
@@ -70,7 +68,7 @@ class YamlConfiguration extends Configuration
         $directoryIterator = new \DirectoryIterator($possibleMigrationsPath);
         foreach ($directoryIterator as $fileInfo) {
             $filename = $fileInfo->getFilename();
-            if ($fileInfo->isFile() && $filename[0] !== '.' && (substr($filename, -5) === '.yaml')) {
+            if ($fileInfo->isFile() && $filename[0] !== '.' && (str_ends_with($filename, '.yaml'))) {
                 if (preg_match('/^Version[0-9]{14}.yaml$/', $filename) !== 1) {
                     throw new MigrationException('The migration file ' . $filename . ' is named wrong, expected format is "VersionYYYYMMDDHHmmss.yaml".', 1515752616);
                 }

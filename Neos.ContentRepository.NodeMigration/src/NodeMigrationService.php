@@ -111,12 +111,12 @@ readonly class NodeMigrationService implements ContentRepositoryServiceInterface
             }
         }
 
-        if ($command->publishOnSuccess === true) {
+        if ($command->publishOnSuccess) {
             $this->contentRepository->handle(
                 PublishWorkspace::create($command->targetWorkspaceName)
             );
 
-            if ($targetWorkspaceWasCreated === true) {
+            if ($targetWorkspaceWasCreated) {
                 $this->contentRepository->handle(
                     DeleteWorkspace::create($command->targetWorkspaceName)
                 );

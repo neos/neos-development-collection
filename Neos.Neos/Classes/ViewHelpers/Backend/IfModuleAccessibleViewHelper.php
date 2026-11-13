@@ -53,8 +53,6 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
     public static function renderStatic(
@@ -71,7 +69,6 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)
@@ -88,7 +85,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         $objectManager = $renderingContext->getObjectManager();
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
-        if ($securityContext !== null && !$securityContext->canBeInitialized()) {
+        if (!$securityContext->canBeInitialized()) {
             return false;
         }
         /** @var PrivilegeManagerInterface $privilegeManager */

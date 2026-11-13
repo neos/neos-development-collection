@@ -30,15 +30,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class SiteDetectionMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -51,10 +51,8 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
                 $activeDomain = $this->domainRepository->findOneByHost($requestUriHost, true);
                 $site = $activeDomain?->getSite();
             }
-            if ($site === null) {
-                // try to get any site
-                $site = $this->siteRepository->findFirstOnline();
-            }
+            // try to get any site
+            $site ??= $this->siteRepository->findFirstOnline();
         } catch (DatabaseException) {
             // doctrine might have not been migrated yet or no database is connected.
         }

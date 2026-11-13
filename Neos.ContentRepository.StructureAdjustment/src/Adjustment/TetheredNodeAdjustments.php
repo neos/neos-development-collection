@@ -120,9 +120,7 @@ final class TetheredNodeAdjustments
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "'
                             . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
-                        function () use ($tetheredNodeAggregate) {
-                            return $this->removeNodeAggregate($this->contentGraph, $tetheredNodeAggregate);
-                        }
+                        fn () => $this->removeNodeAggregate($this->contentGraph, $tetheredNodeAggregate)
                     );
                 }
             }
@@ -145,6 +143,7 @@ final class TetheredNodeAdjustments
                     if (count($expectedTetheredNodeOrder) > 1 && array_keys($actualTetheredChildNodes) !== $expectedTetheredNodeOrder) {
                         /** @var array<int<2,max>,string> $expectedTetheredNodeOrder */
                         // we need to re-order: We go from the last to the first
+                        /** @phpstan-ignore varTag.nativeType (has at least 2 elements) */
                         yield StructureAdjustment::createForNodeIdentity(
                             $nodeAggregate->workspaceName,
                             $originDimensionSpacePoint,

@@ -9,9 +9,9 @@ use Neos\Fusion\Exception;
 use Neos\Utility\Arrays;
 
 /**
- * @Flow\Proxy(false)
  * @internal helper for the Fusion Runtime to calculate fusion path configurations
  */
+#[Flow\Proxy(false)]
 final class RuntimeConfiguration
 {
     /**
@@ -40,24 +40,18 @@ final class RuntimeConfiguration
     {
         $this->fusionConfiguration = $fusionConfiguration;
 
-        $this->simpleTypeToArrayClosure = function ($simpleType) {
-            return $simpleType === null ? null : [
-                '__eelExpression' => null,
-                '__value' => $simpleType,
-                '__objectType' => null
-            ];
-        };
+        $this->simpleTypeToArrayClosure = (fn ($simpleType) => $simpleType === null ? null : [
+            '__eelExpression' => null,
+            '__value' => $simpleType,
+            '__objectType' => null
+        ]);
 
-        $this->shouldOverrideFirstClosure = function ($key, $firstValue, $secondValue): bool {
-            return is_array($secondValue) && isset($secondValue['__stopInheritanceChain']);
-        };
+        $this->shouldOverrideFirstClosure = (fn ($key, $firstValue, $secondValue): bool => is_array($secondValue) && isset($secondValue['__stopInheritanceChain']));
     }
 
     /**
      * Get the expanded Fusion configuration for the given path
      *
-     * @param string $fusionPath
-     * @return array
      * @throws Exception
      */
     public function forPath(string $fusionPath): array
@@ -123,10 +117,6 @@ final class RuntimeConfiguration
     /**
      * Matches the current path segment and prepares the configuration.
      *
-     * @param string $pathPart
-     * @param array $previousConfiguration
-     * @param array $currentPrototypeDefinitions
-     * @return array
      * @throws Exception
      */
     private function matchCurrentPathPart(string $pathPart, array $previousConfiguration, array &$currentPrototypeDefinitions): array
@@ -177,9 +167,6 @@ final class RuntimeConfiguration
     /**
      * Merges the prototype chain into the configuration.
      *
-     * @param array $configuration
-     * @param array $currentPrototypeDefinitions
-     * @return array
      * @throws Exception
      */
     private function mergePrototypesWithConfigurationForPathSegment(array $configuration, array &$currentPrototypeDefinitions): array
@@ -241,8 +228,6 @@ final class RuntimeConfiguration
     /**
      * No API, internal use for testing
      *
-     * @param string $fusionPath
-     * @return bool
      * @internal
      */
     public function isPathCached(string $fusionPath): bool

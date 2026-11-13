@@ -27,25 +27,25 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
 /**
  * The Site Repository
  *
- * @Flow\Scope("singleton")
  * @api
- * @method QueryResultInterface<Domain>|Domain[] findByActive(bool $active)
- * @method QueryResultInterface<Domain>|Domain[] findBySite(Site $site)
- * @method QueryResultInterface<Domain>|Domain[] findByHostname(string $hostname)
+ * @method QueryResultInterface<Domain> findByActive(bool $active)
+ * @method QueryResultInterface<Domain> findBySite(Site $site)
+ * @method QueryResultInterface<Domain> findByHostname(string $hostname)
  * @extends Repository<Domain>
  */
+#[Flow\Scope('singleton')]
 class DomainRepository extends Repository
 {
     /**
-     * @Flow\Inject
      * @var DomainMatchingStrategy
      */
+    #[Flow\Inject]
     protected $domainMatchingStrategy;
 
     /**
-     * @Flow\Inject
      * @var Bootstrap
      */
+    #[Flow\Inject]
     protected $bootstrap;
 
     /**

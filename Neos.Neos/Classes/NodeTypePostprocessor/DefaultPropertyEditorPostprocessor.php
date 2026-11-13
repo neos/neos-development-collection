@@ -27,27 +27,26 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
 {
     /**
      * @var array<string,mixed>
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Neos', path: 'userInterface.inspector.dataTypes')]
     protected $dataTypesDefaultConfiguration;
 
     /**
      * @var array<string,mixed>
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.editors")
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Neos', path: 'userInterface.inspector.editors')]
     protected $editorDefaultConfiguration;
 
     /**
      * @param NodeType $nodeType (uninitialized) The node type to process
      * @param array<string,mixed> $configuration input configuration
      * @param array<string,mixed> $options The processor options
-     * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {
         $nodeTypeName = $nodeType->name->value;
 
-        foreach ($configuration['references'] as $referenceName => &$referenceConfiguration) {
+        foreach ($configuration['references'] as &$referenceConfiguration) {
             if (!isset($referenceConfiguration['ui']['inspector'])) {
                 // we presume that these are properties wich are not shown
                 continue;

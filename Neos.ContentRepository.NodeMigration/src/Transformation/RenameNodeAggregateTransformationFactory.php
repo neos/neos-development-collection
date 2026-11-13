@@ -31,14 +31,14 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $newNodeName = $settings['newNodeName'];
 
-        return new class (
+        return new readonly class (
             $newNodeName,
         ) implements NodeAggregateBasedTransformationInterface {
             public function __construct(
                 /**
                  * The new Node Name to use as a string
                  */
-                private readonly string $newNodeName,
+                private string $newNodeName,
             ) {
             }
 

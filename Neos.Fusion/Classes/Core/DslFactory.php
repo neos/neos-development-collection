@@ -20,20 +20,18 @@ use Neos\Fusion;
 /**
  * This dsl factory takes care of instantiating a Fusion dsl transpilers.
  *
- * @Flow\Scope("singleton")
  * @internal the factory is internal but implementing a DSL is api.
  */
+#[Flow\Scope('singleton')]
 class DslFactory
 {
     /**
-     * @Flow\InjectConfiguration("dsl")
      * @var array<string, class-string<DslInterface>>|null
      */
+    #[Flow\InjectConfiguration('dsl')]
     protected $dslSettings;
 
     /**
-     * @param string $identifier
-     * @return DslInterface
      * @throws Fusion\Exception
      */
     public function create(string $identifier): DslInterface
@@ -44,8 +42,9 @@ class DslFactory
                 throw new Fusion\Exception(sprintf('The fusion dsl-object %s was not found.', $dslObjectName), 1490776462);
             }
             $dslObject = new $dslObjectName();
+            /** @phpstan-ignore instanceof.alwaysTrue (Settings may reference the wrong class) */
             if (!$dslObject instanceof DslInterface) {
-                throw new Fusion\Exception(sprintf('The fusion dsl-object was of type %s but was supposed to be of type %s', get_class($dslObject), DslInterface::class), 1490776470);
+                throw new Fusion\Exception(sprintf('The fusion dsl-object was of type %s but was supposed to be of type %s', $dslObject::class, DslInterface::class), 1490776470);
             }
             return new $dslObject();
         }

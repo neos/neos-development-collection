@@ -28,7 +28,6 @@ use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * A special exception handler that is used on the outer path to catch all unhandled exceptions and uses other exception
@@ -37,21 +36,21 @@ use Psr\Http\Message\ResponseInterface;
 class PageHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var ContentElementWrappingService
      */
+    #[Flow\Inject]
     protected $contentElementWrappingService;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     #[Flow\Inject]
@@ -83,10 +82,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
         /** @var ?Node $siteNode */
         $siteNode = $currentContext['site'] ?? null;
 
-        if ($documentNode === null) {
-            // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
-            $documentNode = $siteNode ?: $node;
-        }
+        // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
+        $documentNode ??= $siteNode ?: $node;
 
         if (!is_null($documentNode)) {
             $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
@@ -113,7 +110,6 @@ class PageHandler extends AbstractRenderingExceptionHandler
      */
     protected function wrapHttpResponse(\Exception $exception, string $bodyContent): string
     {
-        /** @var ResponseInterface $response */
         $response = new \GuzzleHttp\Psr7\Response(
             $exception instanceof FlowException ? $exception->getStatusCode() : 500,
             ['Cache-Control' => 'no-store'],

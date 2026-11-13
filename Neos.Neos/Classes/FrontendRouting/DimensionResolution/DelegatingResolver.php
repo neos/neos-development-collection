@@ -29,9 +29,9 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  *
  * See {@see DimensionResolverInterface} for documentation.
  *
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope('singleton')]
 final class DelegatingResolver implements DimensionResolverInterface
 {
     public function __construct(

@@ -29,26 +29,25 @@ use Neos\Utility\PositionalArraySorter;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MenuHelper
 {
     /**
      * @var array|null
      */
-    protected $moduleListFirstLevelCache = null;
+    protected $moduleListFirstLevelCache;
 
     /**
      * @var SiteRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
      * @var PrivilegeManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
@@ -57,14 +56,11 @@ class MenuHelper
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var IconNameMappingService
      */
+    #[Flow\Inject]
     protected $iconMapper;
 
-    /**
-     * @param array $settings
-     */
     public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
@@ -73,8 +69,6 @@ class MenuHelper
     /**
      * Build a list of sites
      *
-     * @param ControllerContext $controllerContext
-     * @return array
      * @throws MissingActionNameException|Exception
      */
     public function buildSiteList(ControllerContext $controllerContext): array
@@ -100,11 +94,9 @@ class MenuHelper
             */
             $uri = null;
             $active = false;
-            /** @var $site Site */
+            /** @var Site $site */
             if ($site->hasActiveDomains()) {
-                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
-                    return $domain->getHostname();
-                })->toArray();
+                $activeHostPatterns = $site->getActiveDomains()->map(static fn ($domain) => $domain->getHostname())->toArray();
 
                 $active = in_array($requestUriHost, $activeHostPatterns, true);
 
@@ -133,8 +125,6 @@ class MenuHelper
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @return array
      * @throws Exception|MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
@@ -143,7 +133,7 @@ class MenuHelper
             return $this->moduleListFirstLevelCache;
         }
 
-        $moduleSettings = (new PositionalArraySorter($this->settings['modules']))->toArray();
+        $moduleSettings = new PositionalArraySorter($this->settings['modules'])->toArray();
         $this->moduleListFirstLevelCache = [];
 
         foreach ($moduleSettings as $moduleName => $moduleConfiguration) {
@@ -159,7 +149,7 @@ class MenuHelper
             }
             $submodules = [];
             if (isset($moduleConfiguration['submodules']) && is_array($moduleConfiguration['submodules'])) {
-                $submoduleSettings = (new PositionalArraySorter($moduleConfiguration['submodules']))->toArray();
+                $submoduleSettings = new PositionalArraySorter($moduleConfiguration['submodules'])->toArray();
                 foreach ($submoduleSettings as $submoduleName => $submoduleConfiguration) {
                     $modulePath = $moduleName . '/' . $submoduleName;
                     if (!$this->isModuleEnabled($modulePath)) {
@@ -179,7 +169,7 @@ class MenuHelper
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
                 [
                     'group' => $moduleName,
-                    'submodules' => (new PositionalArraySorter($submodules))->toArray(),
+                    'submodules' => new PositionalArraySorter($submodules)->toArray(),
                 ]
             );
         }
@@ -210,11 +200,6 @@ class MenuHelper
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @param string $module
-     * @param array $moduleConfiguration
-     * @param string $modulePath
-     * @return array
      * @throws Exception
      * @throws MissingActionNameException
      */

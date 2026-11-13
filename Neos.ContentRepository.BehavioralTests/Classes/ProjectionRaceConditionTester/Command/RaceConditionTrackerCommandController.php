@@ -30,9 +30,9 @@ use Symfony\Component\Console\Helper\Table;
 final class RaceConditionTrackerCommandController extends CommandController
 {
     /**
-     * @Flow\InjectConfiguration("raceConditionTracker")
      * @var array<mixed>
      */
+    #[Flow\InjectConfiguration('raceConditionTracker')]
     protected $configuration;
 
     /**
@@ -119,7 +119,6 @@ final class RaceConditionTrackerCommandController extends CommandController
     /**
      * @param array<int> $projectionConcurrencyViolationIndices
      * @param array<int,bool> $doubleProcessedEventIndices
-     * @return void
      */
     private function printViolations(
         TraceEntries $traces,

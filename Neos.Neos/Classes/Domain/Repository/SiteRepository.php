@@ -30,12 +30,12 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 /**
  * The Site Repository
  *
- * @Flow\Scope("singleton")
  * @api
- * @method QueryResultInterface|Site[] findByNodeName(string $nodeName)
- * @method QueryResultInterface|Site[] findByState(int $state)
+ * @method QueryResultInterface<Site> findByNodeName(string $nodeName)
+ * @method QueryResultInterface<Site> findByState(int $state)
  * @extends Repository<Site>
  */
+#[Flow\Scope('singleton')]
 class SiteRepository extends Repository
 {
     use NodeTypeWithFallbackProvider;
@@ -52,9 +52,9 @@ class SiteRepository extends Repository
     ];
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="defaultSiteNodeName")
      * @var string
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Neos', path: 'defaultSiteNodeName')]
     protected $defaultSiteNodeName;
 
     /**

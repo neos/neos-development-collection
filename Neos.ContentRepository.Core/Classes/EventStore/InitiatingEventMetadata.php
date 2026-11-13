@@ -12,8 +12,8 @@ use Neos\EventStore\Model\Event\EventMetadata;
  */
 final readonly class InitiatingEventMetadata
 {
-    public const INITIATING_USER_ID = 'initiatingUserId';
-    public const INITIATING_TIMESTAMP = 'initiatingTimestamp';
+    public const string INITIATING_USER_ID = 'initiatingUserId';
+    public const string INITIATING_TIMESTAMP = 'initiatingTimestamp';
 
     private function __construct()
     {
@@ -42,7 +42,7 @@ final readonly class InitiatingEventMetadata
                 $initiatingUserId,
                 $initiatingTimestampFormatted
             ) {
-                $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
+                $metadata = $event instanceof DecoratedEvent ? ($event->eventMetadata?->value ?: []) : [];
                 $metadata[self::INITIATING_USER_ID] ??= $initiatingUserId;
                 $metadata[self::INITIATING_TIMESTAMP] ??= $initiatingTimestampFormatted;
 

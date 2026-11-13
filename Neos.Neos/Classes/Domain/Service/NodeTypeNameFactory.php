@@ -20,13 +20,13 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final class NodeTypeNameFactory
 {
-    public const NAME_CONTENT = 'Neos.Neos:Content';
-    public const NAME_CONTENT_COLLECTION = 'Neos.Neos:ContentCollection';
-    public const NAME_DOCUMENT = 'Neos.Neos:Document';
-    public const NAME_FALLBACK = 'Neos.Neos:FallbackNode';
-    public const NAME_SHORTCUT = 'Neos.Neos:Shortcut';
-    public const NAME_SITE = 'Neos.Neos:Site';
-    public const NAME_SITES = 'Neos.Neos:Sites';
+    public const string NAME_CONTENT = 'Neos.Neos:Content';
+    public const string NAME_CONTENT_COLLECTION = 'Neos.Neos:ContentCollection';
+    public const string NAME_DOCUMENT = 'Neos.Neos:Document';
+    public const string NAME_FALLBACK = 'Neos.Neos:FallbackNode';
+    public const string NAME_SHORTCUT = 'Neos.Neos:Shortcut';
+    public const string NAME_SITE = 'Neos.Neos:Site';
+    public const string NAME_SITES = 'Neos.Neos:Sites';
 
     public static function forContent(): NodeTypeName
     {

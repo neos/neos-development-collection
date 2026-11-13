@@ -21,34 +21,33 @@ use Neos\Neos\Domain\Model\RenderingMode;
 
 /**
  * Service to build and find RenderingMode objects
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class RenderingModeService
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\InjectConfiguration(path="userInterface.editPreviewModes", package="Neos.Neos")
      * @var array
      * @phpstan-var array<string,mixed>
      */
+    #[Flow\InjectConfiguration(path: 'userInterface.editPreviewModes', package: 'Neos.Neos')]
     protected $editPreviewModes;
 
     /**
-     * @Flow\InjectConfiguration(path="userInterface.defaultEditPreviewMode", package="Neos.Neos")
      * @var string
      */
+    #[Flow\InjectConfiguration(path: 'userInterface.defaultEditPreviewMode', package: 'Neos.Neos')]
     protected $defaultEditPreviewMode;
 
     /**
@@ -70,9 +69,7 @@ class RenderingModeService
         }
 
         $modeName = $this->userService->getUserPreference('contentEditing.editPreviewMode');
-        if ($modeName === null) {
-            $modeName = $this->defaultEditPreviewMode;
-        }
+        $modeName ??= $this->defaultEditPreviewMode;
 
         return $this->findByName($modeName);
     }

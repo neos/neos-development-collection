@@ -38,7 +38,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @api
  */
-final readonly class NodePath implements \JsonSerializable
+final readonly class NodePath implements \JsonSerializable, \Stringable
 {
     /**
      * @var array<NodeName>

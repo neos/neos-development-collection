@@ -63,7 +63,7 @@ class ChangePropertyValueConverterAwareTransformationFactory implements Property
             $currentValuePlaceholder = $settings['currentValuePlaceholder'];
         }
 
-        return new class (
+        return new readonly class (
             $settings['property'],
             $newSerializedValue,
             $search,
@@ -75,28 +75,28 @@ class ChangePropertyValueConverterAwareTransformationFactory implements Property
                 /**
                  * The name of the property to change.
                  */
-                private readonly string $propertyName,
+                private string $propertyName,
                 /**
                  * New property value to be set.
                  *
                  * The value of the option "currentValuePlaceholder" (defaults to "{current}") will be
                  * used to include the current property value into the new value.
                  */
-                private readonly string $newSerializedValue,
+                private string $newSerializedValue,
                 /**
                  * Search string to replace in current property value.
                  */
-                private readonly string $search,
+                private string $search,
                 /**
                  * Replacement for the search string
                  */
-                private readonly string $replace,
+                private string $replace,
                 /**
                  * The value of this option (defaults to "{current}") will be used to include the
                  * current property value into the new value.
                  */
-                private readonly string $currentValuePlaceholder,
-                private readonly PropertyConverter $propertyConverter,
+                private string $currentValuePlaceholder,
+                private PropertyConverter $propertyConverter,
             ) {
             }
 

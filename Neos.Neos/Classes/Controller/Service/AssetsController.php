@@ -26,29 +26,28 @@ use Neos\Neos\View\Service\AssetJsonView;
 
 /**
  * Rudimentary REST service for assets
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AssetsController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Media", path="asyncThumbnails")
      * @var boolean
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Media', path: 'asyncThumbnails')]
     protected $asyncThumbnails;
 
     /**
@@ -71,7 +70,6 @@ class AssetsController extends ActionController
     ];
 
     /**
-     * @param ViewInterface $view
      * @return void
      */
     protected function initializeView(ViewInterface $view)
@@ -91,7 +89,7 @@ class AssetsController extends ActionController
             $this->tagRepository->findBySearchTerm($searchTerm)->toArray()
         );
 
-        $this->view->assign('assets', $assets);
+        $this->view?->assign('assets', $assets);
     }
 
     /**
@@ -108,6 +106,6 @@ class AssetsController extends ActionController
             $this->throwStatus(404);
         }
 
-        $this->view->assign('asset', $asset);
+        $this->view?->assign('asset', $asset);
     }
 }

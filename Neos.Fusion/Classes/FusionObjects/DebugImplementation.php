@@ -38,8 +38,8 @@ class DebugImplementation extends AbstractArrayFusionObject
 
     /**
      * @var DebugStack
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $stack;
 
     public function getTitle(): string

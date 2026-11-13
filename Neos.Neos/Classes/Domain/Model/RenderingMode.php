@@ -22,7 +22,7 @@ use Neos\Neos\Domain\Exception;
  */
 final readonly class RenderingMode
 {
-    public const FRONTEND = 'frontend';
+    public const string FRONTEND = 'frontend';
 
     /**
      * @param array<string,mixed> $options
@@ -40,7 +40,6 @@ final readonly class RenderingMode
     /**
      * Creates a rendering mode from its configuration
      *
-     * @param string $modeName
      * @param array<string,mixed> $configuration
      */
     public static function createFromConfiguration(string $modeName, array $configuration): RenderingMode

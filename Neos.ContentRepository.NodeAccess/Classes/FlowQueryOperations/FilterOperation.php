@@ -62,7 +62,6 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     /**
      * {@inheritdoc}
      *
-     * @param FlowQuery $flowQuery
      * @param array<int, mixed> $arguments
      * @return void
      */

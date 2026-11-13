@@ -53,9 +53,9 @@ class FusionView extends AbstractView
     ];
 
     /**
-     * @Flow\Inject
      * @var Parser
      */
+    #[Flow\Inject]
     protected $fusionParser;
 
     /**
@@ -69,12 +69,12 @@ class FusionView extends AbstractView
      *
      * @var string
      */
-    protected $fusionPath = null;
+    protected $fusionPath;
 
     /**
-     * @Flow\Inject
      * @var RuntimeFactory
      */
+    #[Flow\Inject]
     protected $runtimeFactory;
 
     /**
@@ -82,7 +82,7 @@ class FusionView extends AbstractView
      *
      * @var Runtime
      */
-    protected $fusionRuntime = null;
+    protected $fusionRuntime;
 
     /**
      * Via {@see assign} request using the "request" key,
@@ -169,7 +169,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @param array $pathPatterns
      * @return void
      */
     public function setFusionPathPatterns(array $pathPatterns)
@@ -181,7 +180,6 @@ class FusionView extends AbstractView
      * Render the view to a full response in case a Neos.Fusion:Http.Message was used.
      * If the fusion path contains a simple string a stream will be rendered.
      *
-     * @return ResponseInterface|StreamInterface
      * @api
      */
     public function render(): ResponseInterface|StreamInterface
@@ -206,7 +204,7 @@ class FusionView extends AbstractView
             $this->loadFusion();
             $additionalGlobals = FusionGlobals::fromArray($this->options['fusionGlobals'] ?? []);
             if ($additionalGlobals->has('request')) {
-                throw new \RuntimeException(sprintf('The request cannot be set using the additional fusion globals. Please use $view->assign("request", ...) instead.'), 1708854895);
+                throw new \RuntimeException('The request cannot be set using the additional fusion globals. Please use $view->assign("request", ...) instead.', 1708854895);
             }
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $this->parsedFusion,
@@ -254,8 +252,6 @@ class FusionView extends AbstractView
     /**
      * Get the currently configured fusion path patterns
      * `@package` is replaced by the current package key
-     *
-     * @return array
      */
     public function getFusionPathPatterns(): array
     {
@@ -286,7 +282,7 @@ class FusionView extends AbstractView
             return $packageKey;
         } else {
             if (!$this->assignedActionRequest) {
-                throw new \RuntimeException(sprintf('To resolve the @package in all fusionPathPatterns, either packageKey has to be specified, or the current request be available.'), 1708267874);
+                throw new \RuntimeException('To resolve the @package in all fusionPathPatterns, either packageKey has to be specified, or the current request be available.', 1708267874);
             }
             return $this->assignedActionRequest->getControllerPackageKey();
         }
@@ -306,7 +302,7 @@ class FusionView extends AbstractView
             } else {
                 $request = $this->assignedActionRequest;
                 if (!$request) {
-                    throw new \RuntimeException(sprintf('The option `fusionPath` was not set. Could not fallback to the current request.'), 1708267857);
+                    throw new \RuntimeException('The option `fusionPath` was not set. Could not fallback to the current request.', 1708267857);
                 }
                 $fusionPathForCurrentRequest = $request->getControllerObjectName();
                 $fusionPathForCurrentRequest = str_replace('\\Controller\\', '\\', $fusionPathForCurrentRequest);

@@ -85,9 +85,9 @@ class FindOperation extends AbstractOperation
     protected static $priority = 100;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
@@ -126,9 +126,6 @@ class FindOperation extends AbstractOperation
         }
 
         $selectorAndFilter = $arguments[0];
-
-        $firstContextNode = reset($contextNodes);
-        assert($firstContextNode instanceof Node);
 
         $entryPoints = $this->getEntryPoints($contextNodes);
 
@@ -205,17 +202,14 @@ class FindOperation extends AbstractOperation
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
-            assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
             $subgraphIdentifier = md5($subgraph->getWorkspaceName()->value
                 . '@' . $subgraph->getDimensionSpacePoint()->toJson());
-            if (!isset($entryPoints[(string) $subgraphIdentifier])) {
-                $entryPoints[(string) $subgraphIdentifier] = [
-                    'subgraph' => $subgraph,
-                    'nodes' => []
-                ];
-            }
-            $entryPoints[(string) $subgraphIdentifier]['nodes'][] = $contextNode;
+            $entryPoints[$subgraphIdentifier] ??= [
+                'subgraph' => $subgraph,
+                'nodes' => []
+            ];
+            $entryPoints[$subgraphIdentifier]['nodes'][] = $contextNode;
         }
 
         return $entryPoints;

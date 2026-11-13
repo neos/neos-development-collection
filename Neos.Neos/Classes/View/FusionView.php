@@ -103,9 +103,9 @@ class FusionView extends AbstractView
     ];
 
     /**
-     * @Flow\Inject
      * @var FusionService
      */
+    #[Flow\Inject]
     protected $fusionService;
 
     /**
@@ -115,12 +115,12 @@ class FusionView extends AbstractView
      */
     protected $fusionPath = 'root';
 
-    protected ?Runtime $fusionRuntime;
+    protected ?Runtime $fusionRuntime = null;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -170,7 +170,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @return Node
      * @throws Exception
      */
     protected function getCurrentSiteNode(): Node
@@ -192,7 +191,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @return Node
      * @throws Exception
      */
     protected function getCurrentNode(): Node
@@ -205,7 +203,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @param Node $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
     protected function getFusionRuntime(Node $currentSiteNode)
@@ -225,7 +222,7 @@ class FusionView extends AbstractView
                 $fusionGlobals
             );
 
-            if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
+            if (isset($this->options['enableContentCache'])) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
             }
         }
@@ -234,9 +231,6 @@ class FusionView extends AbstractView
 
     /**
      * Clear the cached runtime instance on assignment of variables
-     *
-     * @param string $key
-     * @param mixed $value
      */
     public function assign(string $key, mixed $value): self
     {

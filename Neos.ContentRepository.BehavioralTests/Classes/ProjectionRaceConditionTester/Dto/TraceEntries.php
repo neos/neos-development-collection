@@ -97,7 +97,6 @@ final class TraceEntries implements \ArrayAccess, \Countable
 
         // FINDER for critical errors (fills $violationIndices)
         foreach ($this->traces as $i => $entry) {
-            assert($entry instanceof TraceEntry);
             if ($entry->type === TraceEntryType::InCriticalSection) {
                 $pidsInCriticalSection[$entry->pid] = true;
             } elseif ($entry->type === TraceEntryType::LockWillBeReleasedIfItWasAcquiredBefore) {
@@ -130,7 +129,6 @@ final class TraceEntries implements \ArrayAccess, \Countable
         $doubleProcessedEventIndices = [];
         $alreadySeenIds = [];
         foreach ($this->traces as $i => $entry) {
-            assert($entry instanceof TraceEntry);
             if (isset($entry->payload['id'])) {
                 if (isset($alreadySeenIds[$entry->payload['id']])) {
                     // ERROR CASE: we've already seen the same sequence number; so we create an error listing.
@@ -150,7 +148,6 @@ final class TraceEntries implements \ArrayAccess, \Countable
     {
         $lines = [];
         foreach ($this->traces as $i => $entry) {
-            assert($entry instanceof TraceEntry);
             $lines[] = json_encode([
                 'idx' => $i,
                 'id' => $entry->id,

@@ -34,7 +34,6 @@ class NodeTypesLoader implements LoaderInterface
 
     /**
      * @param FlowPackageInterface[] $packages
-     * @param ApplicationContext $context
      * @return array<int|string, mixed>
      * @throws ParseErrorException | ConfigurationException
      */
@@ -47,9 +46,7 @@ class NodeTypesLoader implements LoaderInterface
             $nodeTypesDirectory = Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes']);
             if (\is_dir($nodeTypesDirectory)) {
                 $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($nodeTypesDirectory));
-                $allYamlFilesIterator = new \CallbackFilterIterator($iterator, static function (\SplFileInfo $fileInfo) {
-                    return $fileInfo->isFile() && $fileInfo->getExtension() === 'yaml';
-                });
+                $allYamlFilesIterator = new \CallbackFilterIterator($iterator, static fn (\SplFileInfo $fileInfo) => $fileInfo->isFile() && $fileInfo->getExtension() === 'yaml');
                 /** @var \SplFileInfo $fileInfo */
                 foreach ($allYamlFilesIterator as $fileInfo) {
                     $path = Files::concatenatePaths([

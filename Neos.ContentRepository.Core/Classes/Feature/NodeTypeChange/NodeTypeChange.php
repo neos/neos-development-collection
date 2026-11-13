@@ -151,7 +151,6 @@ trait NodeTypeChange
             $nodeAggregate->nodeAggregateId
         );
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
-            assert($parentNodeAggregate instanceof NodeAggregate);
             $this->requireConstraintsImposedByAncestorsAreMet(
                 $contentGraph,
                 $newNodeType,

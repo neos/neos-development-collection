@@ -64,7 +64,7 @@ class DebugConsoleImplementation extends AbstractArrayFusionObject
             $arguments[] = $this->getTitle();
         }
 
-        $arguments = array_map('json_encode', $arguments);
+        $arguments = array_map(json_encode(...), $arguments);
 
         return sprintf('%s<script>console.%s(%s)</script>', $content, $method, implode(', ', $arguments));
     }

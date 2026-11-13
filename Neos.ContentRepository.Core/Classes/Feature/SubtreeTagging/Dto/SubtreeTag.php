@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
  *
  * @api
  */
-final class SubtreeTag implements \JsonSerializable
+final class SubtreeTag implements \JsonSerializable, \Stringable
 {
     /**
      * @var array<string,self>

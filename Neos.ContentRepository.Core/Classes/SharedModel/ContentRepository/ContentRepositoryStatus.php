@@ -27,9 +27,7 @@ use Neos\EventStore\Model\EventStore\Status as EventStoreStatus;
 final readonly class ContentRepositoryStatus
 {
     /**
-     * @param EventStoreStatus $eventStoreStatus
      * @param SequenceNumber|null $eventStorePosition The position of the event store. NULL if an error occurred in which case a setup must likely be done, see $eventStoreStatus
-     * @param SubscriptionStatusCollection $subscriptionStatus
      */
     private function __construct(
         public EventStoreStatus $eventStoreStatus,

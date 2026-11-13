@@ -20,9 +20,8 @@ use Neos\Utility\Arrays;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class BackendModuleRoutePartHandler extends DynamicRoutePart
 {
     public const MATCHRESULT_FOUND = true;
@@ -36,7 +35,6 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
     protected $settings;
 
     /**
-     * @param array $settings
      * @phpstan-param array<string,mixed> $settings
      * @return void
      */

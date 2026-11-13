@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\FileNode;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * @implements Rule<FileNode>
@@ -21,7 +22,6 @@ class DeclareStrictTypesRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        assert($node instanceof FileNode);
         $nodes = $node->getNodes();
         if (0 === \count($nodes)) {
             return [];
@@ -41,7 +41,7 @@ class DeclareStrictTypesRule implements Rule
         }
 
         return [
-            'File is missing a "declare(strict_types=1)" declaration.',
+            RuleErrorBuilder::message('File is missing a "declare(strict_types=1)" declaration.')->identifier('cr.missingStrictTypeDeclaration')->build(),
         ];
     }
 }

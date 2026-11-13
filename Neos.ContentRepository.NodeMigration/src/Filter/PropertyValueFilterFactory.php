@@ -27,16 +27,16 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
      */
     public function build(array $settings, ContentRepository $contentRepository): NodeAggregateBasedFilterInterface|NodeBasedFilterInterface
     {
-        return new class ($settings['propertyName'], $settings['serializedValue']) implements NodeBasedFilterInterface {
+        return new readonly class ($settings['propertyName'], $settings['serializedValue']) implements NodeBasedFilterInterface {
             public function __construct(
                 /**
                  * The property name to be checked
                  */
-                private readonly ?string $propertyName,
+                private ?string $propertyName,
                 /**
                  * The property value to be checked against
                  */
-                private readonly mixed $serializedValue,
+                private mixed $serializedValue,
             ) {
             }
 

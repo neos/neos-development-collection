@@ -48,9 +48,9 @@ class ParentsUntilOperation extends AbstractOperation
     protected static $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
@@ -88,15 +88,16 @@ class ParentsUntilOperation extends AbstractOperation
             if (isset($arguments[0]) && !empty($arguments[0] && !$parentNodes->isEmpty())) {
                 $filterQuery = new FlowQuery(iterator_to_array($parentNodes));
                 $filterQuery->pushOperation('filter', [$arguments[0]]);
-                $filteredParents = Nodes::fromArray(iterator_to_array($filterQuery));
+                /** @var array<int, Node> $filteredParentsArray */
+                $filteredParentsArray = iterator_to_array($filterQuery);
+                $filteredParents = Nodes::fromArray($filteredParentsArray);
             }
 
-            if (isset($filteredParents) && $filteredParents instanceof Nodes && !$filteredParents->isEmpty()) {
+            if (isset($filteredParents) && !$filteredParents->isEmpty()) {
                 $parentNodes = $parentNodes->previousAll($filteredParents->first());
             }
             foreach ($parentNodes as $parentNode) {
-                if ($parentNode !== null
-                    && !isset($outputNodeAggregateIds[$parentNode->aggregateId->value])) {
+                if (!isset($outputNodeAggregateIds[$parentNode->aggregateId->value])) {
                     $outputNodeAggregateIds[$parentNode->aggregateId->value] = true;
                     $output[] = $parentNode;
                 }

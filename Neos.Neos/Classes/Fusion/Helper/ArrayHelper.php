@@ -25,9 +25,8 @@ use Neos\Utility\PositionalArraySorter;
  * Some Functional Programming Array helpers for Eel contexts
  *
  * These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ArrayHelper implements ProtectedContextAwareInterface
 {
     use RenderAttributesTrait;
@@ -66,6 +65,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     protected function filterInternal($set, $filterProperty, $negate)
     {
+        /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
         if (is_object($set) && $set instanceof Collection) {
             $set = $set->toArray();
         }
@@ -105,13 +105,12 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function sortByPropertyPath(array $set, string $positionPropertyPath = 'position'): array
     {
-        return (new PositionalArraySorter($set, $positionPropertyPath))->toArray();
+        return new PositionalArraySorter($set, $positionPropertyPath)->toArray();
     }
 
     /**
      * Converts an array into an HTML attributes string like 'class="foo" id="bar"'
      * @param array<string> $attributes
-     * @return string
      */
     public function toHtmlAttributesString(array $attributes): string
     {

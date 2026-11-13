@@ -53,32 +53,25 @@ trait ProjectedNodeTrait
 
     /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
-     * @param string $serializedNodeAggregateId
      */
     public function iGoToTheParentNodeOfNode(string $serializedNodeAggregateId): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId) {
-            return $subgraph->findParentNode($nodeAggregateId);
-        });
+        $this->initializeCurrentNodeFromContentSubgraph(fn (ContentSubgraphInterface $subgraph) => $subgraph->findParentNode($nodeAggregateId));
     }
 
     /**
      * @Then /^I get the node at path "([^"]*)"$/
-     * @param string $serializedNodePath
      * @throws \Exception
      */
     public function iGetTheNodeAtPath(string $serializedNodePath): void
     {
         $nodePath = NodePath::fromString($serializedNodePath);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath) {
-            return $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-        });
+        $this->initializeCurrentNodeFromContentSubgraph(fn (ContentSubgraphInterface $subgraph) => $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId()));
     }
 
     /**
      * @Then /^I expect a node identified by (.*) to exist in the content graph$/
-     * @param string $serializedNodeDiscriminator
      * @throws \Exception
      */
     public function iExpectANodeIdentifiedByXToExistInTheContentGraph(string $serializedNodeDiscriminator): void
@@ -138,8 +131,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect path "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodePath
-     * @param string $serializedNodeDiscriminator
      * @throws \Exception
      */
     public function iExpectPathToLeadToNode(string $serializedNodePath, string $serializedNodeDiscriminator): void
@@ -160,7 +151,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodePath
      * @throws \Exception
      */
     public function iExpectPathToLeadToNoNode(string $serializedNodePath): void
@@ -179,9 +169,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to node (.*)$/
-     * @param string $serializedNodeAggregateId
-     * @param string $serializedNodePath
-     * @param string $serializedNodeDiscriminator
      * @throws \Exception
      */
     public function iExpectNodeAggregateIdAndNodePathToLeadToNode(string $serializedNodeAggregateId, string $serializedNodePath, string $serializedNodeDiscriminator): void
@@ -192,8 +179,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect node aggregate identifier "([^"]*)" and node path "([^"]*)" to lead to no node$/
-     * @param string $serializedNodeAggregateId
-     * @param string $serializedNodePath
      * @throws \Exception
      */
     public function iExpectNodeAggregateIdAndNodePathToLeadToNoNode(string $serializedNodeAggregateId, string $serializedNodePath): void
@@ -329,7 +314,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to be of type "([^"]*)"$/
-     * @param string $serializedExpectedNodeTypeName
      */
     public function iExpectThisNodeToBeOfType(string $serializedExpectedNodeTypeName): void
     {
@@ -342,7 +326,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to be named "([^"]*)"$/
-     * @param string $serializedExpectedNodeName
      */
     public function iExpectThisNodeToBeNamed(string $serializedExpectedNodeName): void
     {
@@ -365,7 +348,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to have the following serialized properties:$/
-     * @param TableNode $expectedPropertyTypes
      */
     public function iExpectThisNodeToHaveTheFollowingSerializedPropertyTypes(TableNode $expectedPropertyTypes): void
     {
@@ -382,7 +364,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to have the following properties:$/
-     * @param TableNode $expectedProperties
      */
     public function iExpectThisNodeToHaveTheFollowingProperties(TableNode $expectedProperties): void
     {
@@ -572,7 +553,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to be a child of node (.*)$/
-     * @param string $serializedParentNodeDiscriminator
      */
     public function iExpectThisNodeToBeTheChildOfNode(string $serializedParentNodeDiscriminator): void
     {
@@ -606,7 +586,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to have the following child nodes:$/
-     * @param TableNode $expectedChildNodesTable
      */
     public function iExpectThisNodeToHaveTheFollowingChildNodes(TableNode $expectedChildNodesTable): void
     {
@@ -650,7 +629,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to have the following preceding siblings:$/
-     * @param TableNode $expectedPrecedingSiblingsTable
      */
     public function iExpectThisNodeToHaveTheFollowingPrecedingSiblings(TableNode $expectedPrecedingSiblingsTable): void
     {
@@ -690,7 +668,6 @@ trait ProjectedNodeTrait
 
     /**
      * @Then /^I expect this node to have the following succeeding siblings:$/
-     * @param TableNode $expectedSucceedingSiblingsTable
      */
     public function iExpectThisNodeToHaveTheFollowingSucceedingSiblings(TableNode $expectedSucceedingSiblingsTable): void
     {
