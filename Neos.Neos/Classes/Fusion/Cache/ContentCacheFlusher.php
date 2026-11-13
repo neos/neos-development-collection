@@ -272,9 +272,9 @@ class ContentCacheFlusher
     /**
      * Signal that is triggered whenever cache tags get flushed
      *
-     * @Flow\Signal
      * @param array<string, string> $tagsToFlush
      */
+    #[Flow\Signal]
     protected function emitTagsFlushed(array $tagsToFlush): void
     {
     }

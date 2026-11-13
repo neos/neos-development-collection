@@ -24,9 +24,8 @@ use Neos\Flow\Annotations as Flow;
  * $result = (new HtmlAugmenter())->addAttributes($html, array('foo' => 'bar', 'bar' => 'baz'));
  *
  * // will return '<div foo="existing bar" bar="baz">Some HTML code</div'
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class HtmlAugmenter
 {
     use RenderAttributesTrait;

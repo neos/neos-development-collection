@@ -31,35 +31,34 @@ use Neos\Neos\View\Service\AssetJsonView;
 
 /**
  * Rudimentary REST service for assets
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AssetProxiesController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var AssetSourceService
      */
+    #[Flow\Inject]
     protected $assetSourceService;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Media", path="asyncThumbnails")
      * @var boolean
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Media', path: 'asyncThumbnails')]
     protected $asyncThumbnails;
 
     /**

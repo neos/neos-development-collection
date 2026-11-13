@@ -53,9 +53,9 @@ class FusionView extends AbstractView
     ];
 
     /**
-     * @Flow\Inject
      * @var Parser
      */
+    #[Flow\Inject]
     protected $fusionParser;
 
     /**
@@ -72,9 +72,9 @@ class FusionView extends AbstractView
     protected $fusionPath;
 
     /**
-     * @Flow\Inject
      * @var RuntimeFactory
      */
+    #[Flow\Inject]
     protected $runtimeFactory;
 
     /**

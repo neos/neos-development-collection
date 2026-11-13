@@ -43,9 +43,9 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 final class LegacyFusionControllerContext
 {
     /**
-     * @Flow\Inject
      * @var FlashMessageService
      */
+    #[Flow\Inject]
     protected $flashMessageService;
 
     public function __construct(

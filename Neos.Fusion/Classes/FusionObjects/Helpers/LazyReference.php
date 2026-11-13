@@ -18,8 +18,8 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @internal
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class LazyReference
 {
     private bool $isLocked = false;

@@ -27,15 +27,15 @@ use Neos\Neos\Service\ContentElementWrappingService;
 class ContentElementWrappingImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var ContentElementWrappingService
      */
+    #[Flow\Inject]
     protected $contentElementWrappingService;
 
     /**

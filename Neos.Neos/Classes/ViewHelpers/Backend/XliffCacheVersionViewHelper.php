@@ -25,9 +25,9 @@ use Neos\Neos\Service\XliffService;
 class XliffCacheVersionViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var XliffService
      */
+    #[Flow\Inject]
     protected $xliffService;
     /**
      * @return string The current cache version identifier

@@ -26,35 +26,34 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * Controller for tag handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AssetCollectionController extends ActionController
 {
     use AddTranslatedFlashMessageTrait;
 
     /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
+    #[Flow\Inject]
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
      * @var BrowserState
      */
+    #[Flow\Inject]
     protected $browserState;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     protected function initializeView(ViewInterface $view)
@@ -66,9 +65,9 @@ class AssetCollectionController extends ActionController
     /**
      * @param string $title
      * @return void
-     * @Flow\Validate(argumentName="title", type="NotEmpty")
-     * @Flow\Validate(argumentName="title", type="Label")
      */
+    #[Flow\Validate(argumentName: 'title', type: 'NotEmpty')]
+    #[Flow\Validate(argumentName: 'title', type: 'Label')]
     public function createAction($title)
     {
         $this->assetCollectionRepository->add(new AssetCollection($title));

@@ -22,9 +22,9 @@ use Neos\Flow\Annotations as Flow;
 class FusionRecursiveDirectoryRenderer
 {
     /**
-     * @Flow\Inject
      * @var SimpleTemplateRenderer
      */
+    #[Flow\Inject]
     protected $simpleTemplateRenderer;
 
     /**

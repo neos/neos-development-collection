@@ -16,9 +16,9 @@ use Psr\Http\Message\ServerRequestInterface;
  * The resolving happens inside {@see SiteDetectionMiddleware}, and for accessing the results, you should use
  * {@see SiteDetectionResult::fromRequest()}.
  *
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final readonly class SiteDetectionResult
 {
     private const string ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';

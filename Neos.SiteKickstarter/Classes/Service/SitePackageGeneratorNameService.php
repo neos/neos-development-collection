@@ -24,9 +24,9 @@ use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 class SitePackageGeneratorNameService
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**

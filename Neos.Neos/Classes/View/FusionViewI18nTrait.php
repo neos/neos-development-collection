@@ -22,9 +22,9 @@ use Neos\Flow\I18n\Locale;
 trait FusionViewI18nTrait
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**

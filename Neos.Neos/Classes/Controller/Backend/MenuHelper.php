@@ -29,9 +29,8 @@ use Neos\Utility\PositionalArraySorter;
 
 /**
  * A helper class for menu generation in backend controllers / view helpers
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class MenuHelper
 {
     /**
@@ -41,14 +40,14 @@ class MenuHelper
 
     /**
      * @var SiteRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
      * @var PrivilegeManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
@@ -57,9 +56,9 @@ class MenuHelper
     protected $settings;
 
     /**
-     * @Flow\Inject
      * @var IconNameMappingService
      */
+    #[Flow\Inject]
     protected $iconMapper;
 
     public function injectSettings(array $settings): void

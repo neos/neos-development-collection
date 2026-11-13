@@ -5,9 +5,7 @@ namespace Neos\Fusion\FusionObjects\Helpers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Runtime;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
 {
     /**

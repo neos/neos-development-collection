@@ -23,10 +23,10 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
      * @phpstan-var array<string,mixed>
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'security.authentication.providers')]
     protected $authenticationProviderSettings;
 
     /**

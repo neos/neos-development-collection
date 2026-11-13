@@ -43,29 +43,28 @@ use Neos\Neos\View\Service\NodeJsonView;
 
 /**
  * Rudimentary REST service for nodes
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodesController extends ActionController
 {
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var NodePropertyConverterService
      */
+    #[Flow\Inject]
     protected $nodePropertyConverterService;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
-     * @Flow\Inject()
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

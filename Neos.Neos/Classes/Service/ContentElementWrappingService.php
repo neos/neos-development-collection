@@ -24,21 +24,20 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  * The content element wrapping service adds the necessary markup around
  * a content element such that it can be edited using the Content Module
  * of the Neos Backend.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ContentElementWrappingService
 {
     /**
-     * @Flow\Inject
      * @var FusionHtmlAugmenter
      */
+    #[Flow\Inject]
     protected $htmlAugmenter;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

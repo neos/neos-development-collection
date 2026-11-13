@@ -31,21 +31,21 @@ class ConfigurationController extends AbstractModuleController
     use ModuleTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var ConfigurationManager
      */
+    #[Flow\Inject]
     protected $configurationManager;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var ConfigurationSchemaValidator
      */
+    #[Flow\Inject(lazy: false)]
     protected $configurationSchemaValidator;
 
     /**
-     * @Flow\Inject
      * @var SchemaGenerator
      */
+    #[Flow\Inject]
     protected $schemaGenerator;
 
     /**

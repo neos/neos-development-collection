@@ -23,9 +23,9 @@ use Neos\Neos\Controller\Module\AbstractModuleController;
 class PackagesController extends AbstractModuleController
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

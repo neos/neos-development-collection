@@ -33,9 +33,8 @@ use Psr\Http\Message\UriInterface;
  * Can resolve the target for a given shortcut.
  * Used for Neos Routing ({@see EventSourcedFrontendNodeRoutePartHandler}),
  * and redirects to a shortcut target when visiting the shortcut itself.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodeShortcutResolver
 {
     public function __construct(

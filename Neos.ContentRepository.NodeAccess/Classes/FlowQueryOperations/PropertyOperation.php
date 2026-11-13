@@ -51,9 +51,9 @@ class PropertyOperation extends AbstractOperation
     protected static $final = true;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

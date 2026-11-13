@@ -13,9 +13,9 @@ use Neos\Flow\Cli\CommandController;
 class ContentStreamCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

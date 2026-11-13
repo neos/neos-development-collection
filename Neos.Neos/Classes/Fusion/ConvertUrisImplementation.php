@@ -77,33 +77,33 @@ class ConvertUrisImplementation extends AbstractFusionObject
     private const string PATTERN_SUPPORTED_URIS = '/(node|asset):\/\/([a-z0-9\-]+)/';
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**

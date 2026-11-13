@@ -23,9 +23,9 @@ use Neos\Neos\Utility\BackendAssetsUtility;
 class CssBuiltVersionViewHelper extends \Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var BackendAssetsUtility
      */
+    #[Flow\Inject]
     protected $backendAssetsUtility;
 
     /**

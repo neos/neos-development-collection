@@ -39,9 +39,9 @@ use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 /**
  * Service to copy node recursively - as there is no equivalent content repository core command.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 final class NodeDuplicationService
 {
     public function __construct(

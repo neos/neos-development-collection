@@ -21,9 +21,9 @@ use Neos\Flow\Annotations as Flow;
 /**
  * The cache entry identifier data transfer object for nodes
  *
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final readonly class NodeCacheEntryIdentifier implements CacheAwareInterface
 {
     private function __construct(

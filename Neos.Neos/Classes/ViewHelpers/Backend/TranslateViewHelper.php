@@ -74,9 +74,9 @@ use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelpe
 class TranslateViewHelper extends FluidTranslateViewHelper
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**

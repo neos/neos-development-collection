@@ -6,9 +6,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\EelExpressionValue;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class EelExpressionPosition
 {
     /**

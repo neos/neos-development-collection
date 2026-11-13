@@ -20,9 +20,8 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * Converts a Date to a JavaScript compatible representation, meaning also to convert it to UTC timezone.
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DateStringConverter extends AbstractTypeConverter
 {
     /**

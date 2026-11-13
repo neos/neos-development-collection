@@ -23,15 +23,15 @@ use Neos\Flow\I18n\Locale;
 trait BackendUserTranslationTrait
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
+    #[Flow\Inject]
     protected $_localizationService;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
+    #[Flow\Inject]
     protected $_userService;
 
     /**

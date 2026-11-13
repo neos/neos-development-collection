@@ -7,9 +7,9 @@ namespace Neos\Fusion\Migrations\FusionPrototype;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class FusionPrototypeTransformer
 {
     private function __construct(private readonly string $fileContent, private readonly string $commentPrefix, private readonly \Closure $onWarning)

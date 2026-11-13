@@ -42,8 +42,8 @@ use Neos\Fusion\Exception\CacheException;
  *       TaggableBackendInterface.
  *
  * @internal
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ContentCache
 {
     public const CACHE_SEGMENT_START_TOKEN = "\x02";
@@ -69,14 +69,14 @@ class ContentCache
 
     /**
      * @var StringFrontend
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $cache;
 
     /**
      * @var Context
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**

@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 final class EelNeosDeprecationTracer implements EelInvocationTracerInterface
 {
-    /** @Flow\Inject */
+    #[Flow\Inject]
     protected LoggerInterface $logger;
 
     /**

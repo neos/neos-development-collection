@@ -7,9 +7,9 @@ namespace Neos\Fusion\Migrations\EelExpression;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class PrecedingFusionFileComment
 {
     public string $text = '';

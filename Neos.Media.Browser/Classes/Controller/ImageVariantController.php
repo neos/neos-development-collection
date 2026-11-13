@@ -16,9 +16,9 @@ use Neos\Media\Domain\Repository\AssetRepository;
 class ImageVariantController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     public function initializeUpdateAction()

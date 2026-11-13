@@ -25,9 +25,9 @@ use Neos\Flow\Cli\CommandController;
 final class StructureAdjustmentsCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
 

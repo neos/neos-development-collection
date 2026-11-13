@@ -64,9 +64,8 @@ use Neos\Utility\MediaTypes;
 
 /**
  * Controller for asset handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class AssetController extends ActionController
 {
     use BackendUserTranslationTrait;
@@ -91,69 +90,69 @@ class AssetController extends ActionController
     ];
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
+    #[Flow\Inject]
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var BrowserState
      */
+    #[Flow\Inject(lazy: false)]
     protected $browserState;
 
     /**
-     * @Flow\Inject
      * @var AssetService
      */
+    #[Flow\Inject]
     protected $assetService;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Media\Domain\Service\AssetSourceService
      */
+    #[Flow\Inject]
     protected $assetSourceService;
 
     /**
-     * @Flow\Inject
      * @var AssetVariantGenerator
      */
+    #[Flow\Inject]
     protected $assetVariantGenerator;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
@@ -162,9 +161,9 @@ class AssetController extends ActionController
     protected $assetSources = [];
 
     /**
-     * @Flow\InjectConfiguration(path="imageProfiles", package="Neos.Media")
      * @var array
      */
+    #[Flow\InjectConfiguration(path: 'imageProfiles', package: 'Neos.Media')]
     protected $imageProfilesConfiguration;
 
     /**
@@ -677,10 +676,10 @@ class AssetController extends ActionController
     }
 
     /**
-     * @Flow\Validate(argumentName="label", type="NotEmpty")
-     * @Flow\Validate(argumentName="label", type="Label")
      * @throws ForwardException
      */
+    #[Flow\Validate(argumentName: 'label', type: 'NotEmpty')]
+    #[Flow\Validate(argumentName: 'label', type: 'Label')]
     public function createTagAction(string $label): void
     {
         $this->forwardWithConstraints('create', 'Tag', ['label' => $label]);
@@ -712,10 +711,10 @@ class AssetController extends ActionController
 
     /**
      * @param string $title
-     * @Flow\Validate(argumentName="title", type="NotEmpty")
-     * @Flow\Validate(argumentName="title", type="Label")
      * @throws ForwardException
      */
+    #[Flow\Validate(argumentName: 'title', type: 'NotEmpty')]
+    #[Flow\Validate(argumentName: 'title', type: 'Label')]
     public function createAssetCollectionAction($title): void
     {
         $this->forwardWithConstraints('create', 'AssetCollection', ['title' => $title]);

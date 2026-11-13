@@ -35,9 +35,8 @@ use Psr\Http\Message\UriInterface;
  *
  * In case you need to cast the uri in {@see Link::$href} explicitly to a string
  * you can use: `String.toString(link.href)`
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class Link implements \JsonSerializable
 {
     /**

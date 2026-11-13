@@ -25,8 +25,8 @@ use Neos\Flow\Annotations as Flow;
  *
  * @implements ProjectionInterface<DebugEventProjectionState>
  * @internal
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class DebugEventProjection implements ProjectionInterface
 {
     private DebugEventProjectionState $state;

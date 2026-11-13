@@ -24,15 +24,15 @@ use Psr\Log\LoggerInterface;
 class AbsorbingHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**

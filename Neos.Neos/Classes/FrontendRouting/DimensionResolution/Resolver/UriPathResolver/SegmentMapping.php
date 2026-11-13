@@ -8,9 +8,9 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<int,SegmentMappingElement>
  */
+#[Flow\Proxy(false)]
 final class SegmentMapping implements \IteratorAggregate, \Countable
 {
     /**

@@ -31,15 +31,14 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * <output>
  * <link rel="some-module" href="neos/system/useradmin" />
  * </output>
- *
- * @Flow\Scope("prototype")
  */
+#[Flow\Scope('prototype')]
 class ModuleViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var UriBuilder
      */
+    #[Flow\Inject]
     protected $uriBuilder;
 
     /**

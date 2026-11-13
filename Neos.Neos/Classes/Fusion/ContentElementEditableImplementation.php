@@ -27,15 +27,15 @@ use Neos\Neos\Service\ContentElementEditableService;
 class ContentElementEditableImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var ContentElementEditableService
      */
+    #[Flow\Inject]
     protected $contentElementEditableService;
 
     /**

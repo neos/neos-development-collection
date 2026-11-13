@@ -42,63 +42,62 @@ use Neos\Neos\Service\UserService;
 
 /**
  * Controller for asset usage handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class UsageController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var AssetService
      */
+    #[Flow\Inject]
     protected $assetService;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceService
      */
+    #[Flow\Inject]
     protected $workspaceService;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryAuthorizationService
      */
+    #[Flow\Inject]
     protected $contentRepositoryAuthorizationService;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var DomainUserService
      */
+    #[Flow\Inject]
     protected $domainUserService;
 
     /**

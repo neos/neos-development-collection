@@ -30,15 +30,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class SiteDetectionMiddleware implements MiddlewareInterface
 {
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

@@ -25,9 +25,9 @@ use Neos\Neos\Domain\Service\UserService;
 class UserDoesNotExistValidator extends AbstractValidator
 {
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**

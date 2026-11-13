@@ -30,26 +30,26 @@ class ImpersonateService
 {
     /**
      * @var Context
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
      * @var SessionInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $session;
 
     /**
      * @var PersistenceManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
      * @var PolicyService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**

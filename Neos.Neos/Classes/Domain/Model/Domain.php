@@ -22,42 +22,41 @@ use Neos\Flow\Annotations as Flow;
  * Domain Model of a Domain.
  *
  * It is used to connect a site root node to a specific hostname.
- *
- * @Flow\Entity
- * @Flow\Scope("prototype")
  */
+#[Flow\Entity]
+#[Flow\Scope('prototype')]
 class Domain implements CacheAwareInterface, \Stringable
 {
     /**
      * @var string
-     * @Flow\Identity
-     * @Flow\Validate(type="NotEmpty")
-     * @Flow\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
-     * @Flow\Validate(type="\Neos\Neos\Validation\Validator\HostnameValidator", options={"ignoredHostnames"="localhost"})
      */
+    #[Flow\Identity]
+    #[Flow\Validate(type: 'NotEmpty')]
+    #[Flow\Validate(type: 'StringLength', options: ['minimum' => 1, 'maximum' => 255])]
+    #[Flow\Validate(type: \Neos\Neos\Validation\Validator\HostnameValidator::class, options: ['ignoredHostnames' => 'localhost'])]
     protected $hostname;
 
     /**
      * @var string
      * @phpstan-var ?string
-     * @Flow\Validate(type="RegularExpression", options={ "regularExpression"="/^(http|https)$/" })
-     * @ORM\Column(nullable=true)
      */
+    #[Flow\Validate(type: 'RegularExpression', options: ['regularExpression' => '/^(http|https)$/'])]
+    #[ORM\Column(nullable: true)]
     protected $scheme;
 
     /**
      * @var integer
      * @phpstan-var ?int
-     * @Flow\Validate(type="NumberRange", options={ "minimum"=0, "maximum"=49151 })
-     * @ORM\Column(nullable=true)
      */
+    #[Flow\Validate(type: 'NumberRange', options: ['minimum' => 0, 'maximum' => 49151])]
+    #[ORM\Column(nullable: true)]
     protected $port;
 
     /**
      * @var Site
-     * @ORM\ManyToOne(inversedBy="domains")
-     * @Flow\Validate(type="NotEmpty")
      */
+    #[ORM\ManyToOne(inversedBy: 'domains')]
+    #[Flow\Validate(type: 'NotEmpty')]
     protected $site;
 
     /**
@@ -185,11 +184,11 @@ class Domain implements CacheAwareInterface, \Stringable
     /**
      * Internal event handler to forward domain changes to the "siteChanged" signal
      *
-     * @ORM\PostPersist
-     * @ORM\PostUpdate
-     * @ORM\PostRemove
      * @return void
      */
+    #[ORM\PostPersist]
+    #[ORM\PostUpdate]
+    #[ORM\PostRemove]
     public function onPostFlush()
     {
         $this->site->emitSiteChanged();

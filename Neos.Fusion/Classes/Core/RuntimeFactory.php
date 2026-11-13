@@ -21,22 +21,22 @@ use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 
 /**
- * @Flow\Scope("singleton")
  * @internal The Fusion Runtime is considered internal.
  *           For interacting with Fusion from the outside a FusionView should be used.
  */
+#[Flow\Scope('singleton')]
 class RuntimeFactory
 {
     /**
      * @var Parser
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $fusionParser;
 
     /**
-     * @Flow\InjectConfiguration(path="defaultContext", package="Neos.Fusion")
      * @var array<string, string>
      */
+    #[Flow\InjectConfiguration(path: 'defaultContext', package: 'Neos.Fusion')]
     protected ?array $defaultContextConfiguration = null;
 
     /**

@@ -50,8 +50,8 @@ use Neos\Flow\Annotations as Flow;
  * It is a rather pragmatic way to speed up (uncached) rendering.
  *
  * @internal implementation detail of {@see ContentRepositoryRegistry::subgraphForNode()}
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 {
     private function __construct(

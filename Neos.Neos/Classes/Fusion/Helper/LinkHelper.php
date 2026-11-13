@@ -35,39 +35,39 @@ class LinkHelper implements ProtectedContextAwareInterface
     private const string ASSET_SCHEME = 'asset';
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**
-     * @Flow\Inject
      * @var LinkingService
      */
+    #[Flow\Inject]
     protected $linkingService;
 
     public function hasSupportedScheme(string|UriInterface|null $uri): bool

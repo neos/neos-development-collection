@@ -11,13 +11,11 @@ use Neos\Neos\Domain\Service\ResourceFusionAutoIncludeHandler;
 
 /**
  * @internal only for testing purposes of the Neos.Neos package
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TestingFusionAutoIncludeHandler implements FusionAutoIncludeHandler
 {
-    /**
-     * @Flow\Inject
-     */
+    #[Flow\Inject]
     protected ResourceFusionAutoIncludeHandler $defaultHandler;
 
     /**

@@ -25,9 +25,8 @@ use Neos\Flow\Annotations as Flow;
  * To create child transient nodes of the $parentNode use {@see self::forRegularChildNode()} and {@see self::forTetheredChildNode()}
  *
  * An initial transient node can be created with {@see self::forEntry}
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final readonly class TransientNodeCopy
 {
     private function __construct(

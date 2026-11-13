@@ -82,14 +82,14 @@ class Runtime
 
     /**
      * @var \Neos\Eel\CompilingEvaluator
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $eelEvaluator;
 
     /**
      * @var ObjectManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**

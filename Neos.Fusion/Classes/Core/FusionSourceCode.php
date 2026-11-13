@@ -23,9 +23,7 @@ use Neos\Fusion;
  */
 final class FusionSourceCode
 {
-    /**
-     * @Flow\Autowiring(false)
-     */
+    #[Flow\Autowiring(false)]
     private function __construct(
         private ?string $filePath,
         private string|\Closure $sourceCodeOrFactory,

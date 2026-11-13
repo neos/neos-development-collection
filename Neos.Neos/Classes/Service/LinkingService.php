@@ -61,46 +61,46 @@ use Psr\Log\LoggerInterface;
  * ``~`` results in ``/sites/acmecom``.
  *
  * @deprecated with Neos 9. Please use the new {@see NodeUriBuilder} instead and for resolving a relative node path {@see NodePathResolver::resolveNodeAddressByPath()} or utilize the {@see LinkHelper} from Fusion
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class LinkingService
 {
     protected ?Node $lastLinkedNode = null;
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**
-     * @Flow\Inject
      * @var NodePathResolver
      */
+    #[Flow\Inject]
     protected $nodePathResolver;
 
     /**
-     * @Flow\Inject
      * @var LegacyNodePathNormalizer
      */
+    #[Flow\Inject]
     protected $legacyNodePathNormalizer;
 
     /**
-     * @Flow\Inject
      * @var LinkHelper
      */
+    #[Flow\Inject]
     protected $newLinkHelper;
 
     #[Flow\Inject]

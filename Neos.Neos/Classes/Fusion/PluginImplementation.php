@@ -29,15 +29,15 @@ use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 class PluginImplementation extends AbstractArrayFusionObject implements \Stringable
 {
     /**
-     * @Flow\Inject
      * @var ObjectManagerInterface
      */
+    #[Flow\Inject]
     protected $objectManager;
 
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     protected ?Node $node = null;

@@ -20,15 +20,15 @@ use Neos\Fusion;
 /**
  * This dsl factory takes care of instantiating a Fusion dsl transpilers.
  *
- * @Flow\Scope("singleton")
  * @internal the factory is internal but implementing a DSL is api.
  */
+#[Flow\Scope('singleton')]
 class DslFactory
 {
     /**
-     * @Flow\InjectConfiguration("dsl")
      * @var array<string, class-string<DslInterface>>|null
      */
+    #[Flow\InjectConfiguration('dsl')]
     protected $dslSettings;
 
     /**

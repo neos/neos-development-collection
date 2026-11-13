@@ -100,33 +100,33 @@ class NodeViewHelper extends AbstractViewHelper
     use FusionContextTrait;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var ThrowableStorageInterface
      */
+    #[Flow\Inject]
     protected $throwableStorage;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**
-     * @Flow\Inject
      * @var NodePathResolver
      */
+    #[Flow\Inject]
     protected $nodePathResolver;
 
     /**
-     * @Flow\Inject
      * @var LegacyNodePathNormalizer
      */
+    #[Flow\Inject]
     protected $legacyNodePathNormalizer;
 
     /**

@@ -106,9 +106,9 @@ class Token
     }
 
     /**
-     * @Flow\CompileStatic
      * @return array<string, int>
      */
+    #[Flow\CompileStatic]
     protected static function getConstants(): array
     {
         $reflection = new \ReflectionClass(self::class);

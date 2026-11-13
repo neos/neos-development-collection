@@ -55,8 +55,8 @@ use Neos\Neos\TypeConverter\NodeAddressToNodeConverter;
  *     public function indexAction(Node $node);
  *
  * @internal
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NeosRouteValueNormalizer implements RouteValuesNormalizerInterface
 {
     public function __construct(

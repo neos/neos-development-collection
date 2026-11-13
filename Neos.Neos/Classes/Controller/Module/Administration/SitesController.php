@@ -50,39 +50,39 @@ class SitesController extends AbstractModuleController
     use ModuleTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
+    #[Flow\Inject]
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var SiteService
      */
+    #[Flow\Inject]
     protected $siteService;
 
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $session;
 
     /**
@@ -92,9 +92,9 @@ class SitesController extends AbstractModuleController
      * As proposed here https://github.com/neos/neos-development-collection/issues/4470#issuecomment-2432140074
      * the site must have a field to define the contentRepositoryId to correctly create sites dynamically.
      *
-     * @Flow\InjectConfiguration("sitePresets.default.contentRepository")
      * @var string|null
      */
+    #[Flow\InjectConfiguration('sitePresets.default.contentRepository')]
     protected $defaultContentRepositoryForNewSites;
 
     #[Flow\Inject]
@@ -138,9 +138,9 @@ class SitesController extends AbstractModuleController
      * A edit view for a site and its settings.
      *
      * @param Site $site Site to view
-     * @Flow\IgnoreValidation("$site")
      * @return void
      */
+    #[Flow\IgnoreValidation('$site')]
     public function editAction(Site $site)
     {
         try {
@@ -170,11 +170,11 @@ class SitesController extends AbstractModuleController
      * @param Site $site A site to update
      * @param string $newSiteNodeName A new site node name
      * @return void
-     * @Flow\Validate(argumentName="$site", type="UniqueEntity")
-     * @Flow\Validate(argumentName="$newSiteNodeName", type="NotEmpty")
-     * @Flow\Validate(argumentName="$newSiteNodeName", type="StringLength", options={ "minimum"=1, "maximum"=250 })
-     * @Flow\Validate(argumentName="$newSiteNodeName", type="Neos.Neos:NodeName")
      */
+    #[Flow\Validate(argumentName: '$site', type: 'UniqueEntity')]
+    #[Flow\Validate(argumentName: '$newSiteNodeName', type: 'NotEmpty')]
+    #[Flow\Validate(argumentName: '$newSiteNodeName', type: 'StringLength', options: ['minimum' => 1, 'maximum' => 250])]
+    #[Flow\Validate(argumentName: '$newSiteNodeName', type: 'Neos.Neos:NodeName')]
     public function updateSiteAction(Site $site, $newSiteNodeName)
     {
         if ($site->getNodeName()->value !== $newSiteNodeName) {
@@ -269,9 +269,9 @@ class SitesController extends AbstractModuleController
      * @param string $packageKey Package Name to create
      * @param string $siteName Site Name to create
      * @param string $nodeType NodeType name for the root node to create
-     * @Flow\Validate(argumentName="$packageKey", type="\Neos\Neos\Validation\Validator\PackageKeyValidator")
      * @return void
      */
+    #[Flow\Validate(argumentName: '$packageKey', type: \Neos\Neos\Validation\Validator\PackageKeyValidator::class)]
     public function createSiteNodeAction($packageKey, $siteName, $nodeType)
     {
         try {
@@ -325,9 +325,9 @@ class SitesController extends AbstractModuleController
      * Delete a site.
      *
      * @param Site $site Site to delete
-     * @Flow\IgnoreValidation("$site")
      * @return void
      */
+    #[Flow\IgnoreValidation('$site')]
     public function deleteSiteAction(Site $site)
     {
         $this->siteService->pruneSite($site);
@@ -385,9 +385,9 @@ class SitesController extends AbstractModuleController
      * Edit a domain
      *
      * @param Domain $domain Domain to edit
-     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
+    #[Flow\IgnoreValidation('$domain')]
     public function editDomainAction(Domain $domain)
     {
         $this->view?->assignMultiple([
@@ -400,9 +400,9 @@ class SitesController extends AbstractModuleController
      * Update a domain
      *
      * @param Domain $domain Domain to update
-     * @Flow\Validate(argumentName="$domain", type="UniqueEntity")
      * @return void
      */
+    #[Flow\Validate(argumentName: '$domain', type: 'UniqueEntity')]
     public function updateDomainAction(Domain $domain)
     {
         $this->domainRepository->update($domain);
@@ -421,9 +421,9 @@ class SitesController extends AbstractModuleController
      *
      * @param Domain $domain
      * @param Site $site
-     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
+    #[Flow\IgnoreValidation('$domain')]
     public function newDomainAction(?Domain $domain = null, ?Site $site = null)
     {
         $this->view?->assignMultiple([
@@ -437,9 +437,9 @@ class SitesController extends AbstractModuleController
      * Create a domain
      *
      * @param Domain $domain Domain to create
-     * @Flow\Validate(argumentName="$domain", type="UniqueEntity")
      * @return void
      */
+    #[Flow\Validate(argumentName: '$domain', type: 'UniqueEntity')]
     public function createDomainAction(Domain $domain)
     {
         $this->domainRepository->add($domain);
@@ -457,9 +457,9 @@ class SitesController extends AbstractModuleController
      * Deletes a domain attached to a site
      *
      * @param Domain $domain A domain to delete
-     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
+    #[Flow\IgnoreValidation('$domain')]
     public function deleteDomainAction(Domain $domain)
     {
         $site = $domain->getSite();
@@ -482,9 +482,9 @@ class SitesController extends AbstractModuleController
      * Activates a domain
      *
      * @param Domain $domain Domain to activate
-     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
+    #[Flow\IgnoreValidation('$domain')]
     public function activateDomainAction(Domain $domain)
     {
         $domain->setActive(true);
@@ -503,9 +503,9 @@ class SitesController extends AbstractModuleController
      * Deactivates a domain
      *
      * @param Domain $domain Domain to deactivate
-     * @Flow\IgnoreValidation("$domain")
      * @return void
      */
+    #[Flow\IgnoreValidation('$domain')]
     public function deactivateDomainAction(Domain $domain)
     {
         $domain->setActive(false);

@@ -26,9 +26,9 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 class SiteHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     public function findBySiteNode(Node $siteNode): ?Site

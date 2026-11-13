@@ -30,9 +30,9 @@ use Symfony\Component\Console\Helper\Table;
 final class RaceConditionTrackerCommandController extends CommandController
 {
     /**
-     * @Flow\InjectConfiguration("raceConditionTracker")
      * @var array<mixed>
      */
+    #[Flow\InjectConfiguration('raceConditionTracker')]
     protected $configuration;
 
     /**

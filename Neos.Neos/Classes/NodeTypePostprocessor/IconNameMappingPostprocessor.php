@@ -27,9 +27,9 @@ use Neos\Utility\Arrays;
 class IconNameMappingPostprocessor implements NodeTypePostprocessorInterface
 {
     /**
-     * @Flow\Inject
      * @var IconNameMappingService
      */
+    #[Flow\Inject]
     protected $iconNameMappingService;
 
     /**

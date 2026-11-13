@@ -23,16 +23,15 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 
 /**
  * Aspect to memoize values from SiteRepository without the overhead of a query cache
- *
- * @Flow\Scope("singleton")
- * @Flow\Aspect
  */
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class SiteRepositoryCachingAspect
 {
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
@@ -51,10 +50,10 @@ class SiteRepositoryCachingAspect
     private array $byNodeNameCache = [];
 
     /**
-     * @Flow\Around("method(Neos\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
+    #[Flow\Around('method(Neos\Neos\Domain\Repository\SiteRepository->findFirstOnline())')]
     public function cacheFirstOnlineSite(JoinPointInterface $joinPoint)
     {
         if ($this->firstOnlineSite === false || $this->environment->getContext()->isTesting()) {
@@ -65,10 +64,10 @@ class SiteRepositoryCachingAspect
     }
 
     /**
-     * @Flow\Around("method(Neos\Neos\Domain\Repository\SiteRepository->findOneByNodeName())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
+    #[Flow\Around('method(Neos\Neos\Domain\Repository\SiteRepository->findOneByNodeName())')]
     public function cacheFindOneByNodeName(JoinPointInterface $joinPoint)
     {
         $nodeName = $joinPoint->getMethodArgument('nodeName');
@@ -85,10 +84,10 @@ class SiteRepositoryCachingAspect
     }
 
     /**
-     * @Flow\Around("method(Neos\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
      */
+    #[Flow\Around('method(Neos\Neos\Domain\Repository\DomainRepository->findOneByActiveRequest())')]
     public function cacheDomainForActiveRequest(JoinPointInterface $joinPoint)
     {
         if ($this->domainForActiveRequest === false || $this->environment->getContext()->isTesting()) {

@@ -42,21 +42,21 @@ use Neos\Party\Domain\Model\ElectronicAddress;
 class UsersController extends AbstractModuleController
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
@@ -65,21 +65,21 @@ class UsersController extends AbstractModuleController
     protected $currentUser;
 
     /**
-     * @Flow\Inject
      * @var TokenAndProviderFactoryInterface
      */
+    #[Flow\Inject]
     protected $tokenAndProviderFactory;
 
     /**
-     * @Flow\Inject
      * @var Translator
      */
+    #[Flow\Inject]
     protected $translator;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'security.authentication.providers')]
     protected $authenticationProviderSettings;
 
     /**
@@ -189,11 +189,10 @@ class UsersController extends AbstractModuleController
      * @throws NoSuchRoleException
      * @throws StopActionException
      * @throws \Neos\Flow\Security\Exception
-     *
-     * @Flow\Validate(argumentName="username", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
-     * @Flow\Validate(argumentName="username", type="\Neos\Neos\Validation\Validator\UserDoesNotExistValidator")
-     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=0, "minimum"=1, "maximum"=255 })
      */
+    #[Flow\Validate(argumentName: 'username', type: \Neos\Flow\Validation\Validator\NotEmptyValidator::class)]
+    #[Flow\Validate(argumentName: 'username', type: \Neos\Neos\Validation\Validator\UserDoesNotExistValidator::class)]
+    #[Flow\Validate(argumentName: 'password', type: \Neos\Neos\Validation\Validator\PasswordValidator::class, options: ['allowEmpty' => 0, 'minimum' => 1, 'maximum' => 255])]
     public function createAction(string $username, array $password, User $user, array $roleIdentifiers, ?string $authenticationProviderName = null): void
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
@@ -360,8 +359,8 @@ class UsersController extends AbstractModuleController
      * @throws ForwardException
      * @throws NoSuchRoleException
      * @throws Exception
-     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      */
+    #[Flow\Validate(argumentName: 'password', type: \Neos\Neos\Validation\Validator\PasswordValidator::class, options: ['allowEmpty' => 1, 'minimum' => 1, 'maximum' => 255])]
     public function updateAccountAction(Account $account, array $roleIdentifiers, array $password = []): void
     {
         $user = $this->userService->getUser($account->getAccountIdentifier(), $account->getAuthenticationProviderName());
@@ -419,9 +418,8 @@ class UsersController extends AbstractModuleController
 
     /**
      * The add new electronic address action
-     *
-     * @Flow\IgnoreValidation("$user")
      */
+    #[Flow\IgnoreValidation('$user')]
     public function newElectronicAddressAction(User $user): void
     {
         $this->assignElectronicAddressOptions();

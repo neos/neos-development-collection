@@ -13,9 +13,9 @@ use Psr\Http\Message\StreamFactoryInterface;
 class HttpResponseImplementation extends AbstractArrayFusionObject
 {
     /**
-     * @Flow\Inject
      * @var StreamFactoryInterface
      */
+    #[Flow\Inject]
     protected $contentStreamFactory;
 
     /**

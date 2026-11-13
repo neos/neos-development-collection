@@ -32,27 +32,27 @@ use Neos\Neos\Service\ContentElementWrappingService;
 class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
      * @var ContentElementWrappingService
      */
+    #[Flow\Inject]
     protected $contentElementWrappingService;
 
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

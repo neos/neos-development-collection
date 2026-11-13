@@ -32,57 +32,57 @@ use Neos\Utility\Arrays;
 class BackendRedirectionService
 {
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $session;
 
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var PropertyMapper
      */
+    #[Flow\Inject]
     protected $propertyMapper;
 
     /**
-     * @Flow\Inject
      * @var MenuHelper
      */
+    #[Flow\Inject]
     protected $menuHelper;
 
     /**
      * @var PrivilegeManagerInterface
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="moduleConfiguration.preferredStartModules")
      * @var string[]
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Neos', path: 'moduleConfiguration.preferredStartModules')]
     protected $preferedStartModules;
 
     #[Flow\Inject]

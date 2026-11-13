@@ -26,35 +26,34 @@ use Neos\Media\Domain\Repository\TagRepository;
 
 /**
  * Controller for tag handling
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class TagController extends ActionController
 {
     use AddTranslatedFlashMessageTrait;
 
     /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
+    #[Flow\Inject]
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject
      * @var TagRepository
      */
+    #[Flow\Inject]
     protected $tagRepository;
 
     /**
-     * @Flow\Inject
      * @var BrowserState
      */
+    #[Flow\Inject]
     protected $browserState;
 
     /**
-     * @Flow\Inject
      * @var AssetRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     protected function initializeView(ViewInterface $view)
@@ -66,9 +65,9 @@ class TagController extends ActionController
     /**
      * @param string $label
      * @return void
-     * @Flow\Validate(argumentName="label", type="NotEmpty")
-     * @Flow\Validate(argumentName="label", type="Label")
      */
+    #[Flow\Validate(argumentName: 'label', type: 'NotEmpty')]
+    #[Flow\Validate(argumentName: 'label', type: 'Label')]
     public function createAction($label)
     {
         $existingTag = $this->tagRepository->findOneByLabel($label);

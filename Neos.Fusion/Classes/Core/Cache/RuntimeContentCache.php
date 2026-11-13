@@ -56,9 +56,9 @@ class RuntimeContentCache
     protected $cacheMetadata = [];
 
     /**
-     * @Flow\Inject
      * @var ContentCache
      */
+    #[Flow\Inject]
     protected $contentCache;
 
     /**

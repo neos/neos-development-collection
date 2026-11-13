@@ -22,9 +22,9 @@ use Neos\Flow\Annotations as Flow;
  *
  * We herby prevent the disabling of tethered nodes and soft removal of tethered or root nodes
  *
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final readonly class NeosSubtreeTaggingConstraintChecks implements CommandHookInterface
 {
     public function __construct(

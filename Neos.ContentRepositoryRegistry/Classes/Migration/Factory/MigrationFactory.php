@@ -25,9 +25,9 @@ use Neos\Flow\Annotations as Flow;
 class MigrationFactory
 {
     /**
-     * @Flow\Inject
      * @var ConfigurationInterface
      */
+    #[Flow\Inject]
     protected $migrationConfiguration;
 
     /**

@@ -46,9 +46,9 @@ class ParentsOperation extends AbstractOperation
     protected static $priority = 0;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

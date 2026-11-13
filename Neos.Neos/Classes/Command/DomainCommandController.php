@@ -25,27 +25,26 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * Domain command controller for the Neos.Neos package
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class DomainCommandController extends CommandController
 {
     /**
      * @var DomainRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
      * @var SiteRepository
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
      * @var ValidatorResolver
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $validatorResolver;
 
     /**

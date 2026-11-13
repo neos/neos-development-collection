@@ -32,33 +32,33 @@ class ModuleController extends ActionController
     use BackendUserTranslationTrait;
 
     /**
-     * @Flow\Inject
      * @var Dispatcher
      */
+    #[Flow\Inject]
     protected $dispatcher;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var MenuHelper
      */
+    #[Flow\Inject]
     protected $menuHelper;
 
     /**
-     * @Flow\Inject
      * @var PartyService
      */
+    #[Flow\Inject]
     protected $partyService;
 
     /**
-     * @Flow\Inject
      * @var BackendRedirectionService
      */
+    #[Flow\Inject]
     protected $backendRedirectionService;
 
     /**

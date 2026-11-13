@@ -32,15 +32,15 @@ class ImageUriImplementation extends AbstractFusionObject
     /**
      * Resource publisher
      *
-     * @Flow\Inject
      * @var AssetService
      */
+    #[Flow\Inject]
     protected $assetService;
 
     /**
-     * @Flow\Inject
      * @var ThumbnailService
      */
+    #[Flow\Inject]
     protected $thumbnailService;
 
     /**

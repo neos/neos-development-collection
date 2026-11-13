@@ -9,9 +9,9 @@ use Neos\Fusion\Exception;
 use Neos\Utility\Arrays;
 
 /**
- * @Flow\Proxy(false)
  * @internal helper for the Fusion Runtime to calculate fusion path configurations
  */
+#[Flow\Proxy(false)]
 final class RuntimeConfiguration
 {
     /**

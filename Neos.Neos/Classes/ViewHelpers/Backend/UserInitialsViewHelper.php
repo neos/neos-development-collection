@@ -30,21 +30,21 @@ use Neos\Party\Domain\Model\Person;
 class UserInitialsViewHelper extends AbstractViewHelper
 {
     /**
-     * @Flow\Inject
      * @var AccountRepository
      */
+    #[Flow\Inject]
     protected $accountRepository;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
-     * @Flow\Inject
      * @var DomainUserService
      */
+    #[Flow\Inject]
     protected $domainUserService;
 
     /**

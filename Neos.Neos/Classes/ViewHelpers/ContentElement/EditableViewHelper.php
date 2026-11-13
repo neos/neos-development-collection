@@ -40,15 +40,15 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     use FusionContextTrait;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var ContentElementEditableService
      */
+    #[Flow\Inject]
     protected $contentElementEditableService;
 
     /**

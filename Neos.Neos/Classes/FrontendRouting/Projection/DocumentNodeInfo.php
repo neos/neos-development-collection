@@ -25,9 +25,9 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @Flow\Proxy(false)
  * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
+#[Flow\Proxy(false)]
 final class DocumentNodeInfo implements \Stringable
 {
     /**

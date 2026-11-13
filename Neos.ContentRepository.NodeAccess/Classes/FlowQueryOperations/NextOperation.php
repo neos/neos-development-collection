@@ -44,9 +44,9 @@ class NextOperation extends AbstractOperation
     protected static $priority = 100;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

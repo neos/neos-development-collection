@@ -29,21 +29,20 @@ use Neos\Party\Domain\Model\ElectronicAddress;
 
 /**
  * The Neos User Settings module controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class UserSettingsController extends AbstractModuleController
 {
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var UserService
      */
+    #[Flow\Inject]
     protected $userService;
 
     /**
@@ -52,9 +51,9 @@ class UserSettingsController extends AbstractModuleController
     protected $currentUser;
 
     /**
-     * @Flow\Inject
      * @var Translator
      */
+    #[Flow\Inject]
     protected $translator;
 
 
@@ -137,9 +136,9 @@ class UserSettingsController extends AbstractModuleController
      * Update a given account, ie. the password
      *
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-     * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @return void
      */
+    #[Flow\Validate(argumentName: 'password', type: \Neos\Neos\Validation\Validator\PasswordValidator::class, options: ['allowEmpty' => 1, 'minimum' => 1, 'maximum' => 255])]
     public function updateAccountAction(array $password = [])
     {
         $user = $this->currentUser;
@@ -170,9 +169,9 @@ class UserSettingsController extends AbstractModuleController
     /**
      * The add new electronic address action
      *
-     * @Flow\IgnoreValidation("$user")
      * @return void
      */
+    #[Flow\IgnoreValidation('$user')]
     public function newElectronicAddressAction(User $user)
     {
         $this->assignElectronicAddressOptions();

@@ -33,21 +33,21 @@ class ParserCache
     use ParserCacheIdentifierTrait;
 
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $parsePartialsCache;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\InjectConfiguration(path="enableParsePartialsCache")
      * @var boolean
      */
+    #[Flow\InjectConfiguration(path: 'enableParsePartialsCache')]
     protected $enableCache;
 
     public function cacheForFusionFile(?string $contextPathAndFilename, \Closure $generateValueToCache): FusionFile

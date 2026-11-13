@@ -103,9 +103,9 @@ class FusionView extends AbstractView
     ];
 
     /**
-     * @Flow\Inject
      * @var FusionService
      */
+    #[Flow\Inject]
     protected $fusionService;
 
     /**
@@ -118,9 +118,9 @@ class FusionView extends AbstractView
     protected ?Runtime $fusionRuntime = null;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**

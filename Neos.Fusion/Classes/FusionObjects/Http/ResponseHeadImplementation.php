@@ -25,9 +25,9 @@ use Psr\Http\Message\ResponseInterface;
 class ResponseHeadImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var ResponseFactoryInterface
      */
+    #[Flow\Inject]
     protected $responseFactory;
 
     /**

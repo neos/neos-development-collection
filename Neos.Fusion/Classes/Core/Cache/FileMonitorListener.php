@@ -21,9 +21,8 @@ use Neos\Flow\Cache\CacheManager;
  * Listener to clear Fusion caches if important files have changed
  *
  * It's used in the Package bootstrap as an early instance, so no full dependency injection is available.
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class FileMonitorListener
 {
     /**

@@ -21,9 +21,9 @@ use Neos\Media\Exception\AssetSourceServiceException;
 class AssetProxyController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var AssetSourceService
      */
+    #[Flow\Inject]
     protected $assetSourceService;
 
     /**

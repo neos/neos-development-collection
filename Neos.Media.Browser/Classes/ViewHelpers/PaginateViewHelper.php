@@ -34,9 +34,9 @@ use Neos\Media\Domain\Model\AssetSource\AssetProxyQueryResultInterface;
 class PaginateViewHelper extends AbstractWidgetViewHelper
 {
     /**
-     * @Flow\Inject
      * @var PaginateController
      */
+    #[Flow\Inject]
     protected $controller;
 
     /**

@@ -49,9 +49,9 @@ use Neos\Party\Domain\Service\PartyService;
 /**
  * A service for managing users
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class UserService
 {
     /**
@@ -62,99 +62,99 @@ class UserService
     protected $defaultAuthenticationProviderName = 'Neos.Neos:Backend';
 
     /**
-     * @Flow\Inject
      * @var PartyRepository
      */
+    #[Flow\Inject]
     protected $partyRepository;
 
     /**
-     * @Flow\Inject
      * @var UserRepository
      */
+    #[Flow\Inject]
     protected $userRepository;
 
     /**
-     * @Flow\Inject
      * @var PartyService
      */
+    #[Flow\Inject]
     protected $partyService;
 
     /**
-     * @Flow\Inject
      * @var AccountFactory
      */
+    #[Flow\Inject]
     protected $accountFactory;
 
     /**
-     * @Flow\Inject
      * @var AccountRepository
      */
+    #[Flow\Inject]
     protected $accountRepository;
 
     /**
-     * @Flow\Inject
      * @var PolicyService
      */
+    #[Flow\Inject]
     protected $policyService;
 
     /**
-     * @Flow\Inject
      * @var AuthenticationManagerInterface
      */
+    #[Flow\Inject]
     protected $authenticationManager;
 
     /**
-     * @Flow\Inject
      * @var PrivilegeManagerInterface
      */
+    #[Flow\Inject]
     protected $privilegeManager;
 
     /**
-     * @Flow\Inject
      * @var Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
-     * @Flow\Inject
      * @var TokenAndProviderFactoryInterface
      */
+    #[Flow\Inject]
     protected $tokenAndProviderFactory;
 
     /**
-     * @Flow\Inject
      * @var HashService
      */
+    #[Flow\Inject]
     protected $hashService;
 
     /**
-     * @Flow\Inject
      * @var SessionManager
      */
+    #[Flow\Inject]
     protected $sessionManager;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var Now
      */
+    #[Flow\Inject(lazy: false)]
     protected $now;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceService
      */
+    #[Flow\Inject]
     protected $workspaceService;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceMetadataAndRoleRepository
      */
+    #[Flow\Inject]
     protected $workspaceMetadataAndRoleRepository;
 
     /**
@@ -352,9 +352,9 @@ class UserService
      *
      * @param User $user The created user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserCreated(User $user)
     {
     }
@@ -390,9 +390,9 @@ class UserService
      *
      * @param User $user The created user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserDeleted(User $user)
     {
     }
@@ -498,9 +498,9 @@ class UserService
      *
      * @param User $user The created user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserUpdated(User $user)
     {
     }
@@ -565,9 +565,9 @@ class UserService
      * @param Account $account The account
      * @param array<Role> $roles An array of Role objects which have been added for that account
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitRolesAdded(Account $account, array $roles)
     {
     }
@@ -605,9 +605,9 @@ class UserService
      * @param Account $account The account
      * @param array<Role> $roles An array of Role objects which have been removed
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitRolesRemoved(Account $account, array $roles)
     {
     }
@@ -634,9 +634,9 @@ class UserService
      *
      * @param User $user The user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserActivated(User $user)
     {
     }
@@ -691,9 +691,9 @@ class UserService
      *
      * @param User $user The user
      * @return void
-     * @Flow\Signal
      * @api
      */
+    #[Flow\Signal]
     public function emitUserDeactivated(User $user)
     {
     }

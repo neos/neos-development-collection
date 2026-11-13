@@ -30,51 +30,50 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
  * A service for manipulating sites
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SiteService
 {
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
+    #[Flow\Inject]
     protected $assetCollectionRepository;
 
     /**
-     * @Flow\Inject(lazy=false)
      * @var WorkspaceService
      */
+    #[Flow\Inject(lazy: false)]
     protected $workspaceService;
 
     /**
-     * @Flow\Inject
      * @var SecurityContext
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**
@@ -157,10 +156,10 @@ class SiteService
     /**
      * Signal that is triggered whenever a site has been pruned
      *
-     * @Flow\Signal
      * @param Site $site The site that was pruned
      * @return void
      */
+    #[Flow\Signal]
     protected function emitSitePruned(Site $site)
     {
     }

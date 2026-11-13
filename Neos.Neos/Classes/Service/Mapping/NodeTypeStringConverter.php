@@ -22,8 +22,8 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 /**
  * @internal
  * @deprecated todo still used?
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class NodeTypeStringConverter extends AbstractTypeConverter
 {
     /**

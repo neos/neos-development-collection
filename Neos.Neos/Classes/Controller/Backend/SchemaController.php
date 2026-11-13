@@ -25,15 +25,15 @@ use Neos\Neos\Service\NodeTypeSchemaBuilder;
 class SchemaController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var VariableFrontend
      */
+    #[Flow\Inject]
     protected $nodeTypeSchemaCache;
 
     /**
      * @var ContentRepositoryRegistry
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

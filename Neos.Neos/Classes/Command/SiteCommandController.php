@@ -39,69 +39,68 @@ use Neos\Utility\Files;
 
 /**
  * The Site Command Controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class SiteCommandController extends CommandController
 {
     /**
-     * @Flow\Inject
      * @var SiteRepository
      */
+    #[Flow\Inject]
     protected $siteRepository;
 
     /**
-     * @Flow\Inject
      * @var DomainRepository
      */
+    #[Flow\Inject]
     protected $domainRepository;
 
     /**
-     * @Flow\Inject
      * @var SiteService
      */
+    #[Flow\Inject]
     protected $siteService;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var PersistenceManagerInterface
      */
+    #[Flow\Inject]
     protected $persistenceManager;
 
     /**
-     * @Flow\Inject
      * @var SiteImportService
      */
+    #[Flow\Inject]
     protected $siteImportService;
 
     /**
-     * @Flow\Inject
      * @var SiteExportService
      */
+    #[Flow\Inject]
     protected $siteExportService;
 
     /**
-     * @Flow\Inject
      * @var SitePruningService
      */
+    #[Flow\Inject]
     protected $sitePruningService;
 
     /**
-     * @Flow\Inject
      * @var WorkspaceService
      */
+    #[Flow\Inject]
     protected $workspaceService;
 
     /**

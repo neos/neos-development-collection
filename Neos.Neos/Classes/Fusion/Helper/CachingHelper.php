@@ -32,9 +32,9 @@ use Neos\Neos\Fusion\Cache\NodeCacheEntryIdentifier;
 class CachingHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**

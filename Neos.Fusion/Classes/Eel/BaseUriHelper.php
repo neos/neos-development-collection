@@ -19,9 +19,9 @@ use Psr\Http\Message\UriInterface;
 class BaseUriHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
      * @var BaseUriProvider
      */
+    #[Flow\Inject]
     protected $baseUriProvider;
 
     /**

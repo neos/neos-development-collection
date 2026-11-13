@@ -10,9 +10,9 @@ use Neos\Fusion\Afx\Parser\Parser as AfxParser;
 use Neos\Fusion\Core\ObjectTreeParser\Exception\ParserException;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 final class EelExpressionTransformer
 {
     private function __construct(private readonly string $fileContent, private readonly string $commentPrefix, private readonly \Closure $onWarning)

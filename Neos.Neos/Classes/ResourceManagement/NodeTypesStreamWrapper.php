@@ -49,9 +49,9 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     protected $uri;
 
     /**
-     * @Flow\Inject(lazy = false)
      * @var PackageManager
      */
+    #[Flow\Inject(lazy: false)]
     protected $packageManager;
 
     /**

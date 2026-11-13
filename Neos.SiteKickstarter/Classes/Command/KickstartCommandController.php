@@ -27,20 +27,20 @@ class KickstartCommandController extends CommandController
 {
     /**
      * @var PackageManager
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
      * @var SiteGeneratorCollectingService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $siteGeneratorCollectingService;
 
     /**
      * @var SitePackageGeneratorNameService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $sitePackageGeneratorNameService;
 
     /**

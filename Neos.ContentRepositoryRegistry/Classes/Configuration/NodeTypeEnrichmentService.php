@@ -24,15 +24,15 @@ use Neos\Utility\Arrays;
  * This happens BEFORE the node types are merged with the super types (in the node type management); but
  * this is implemented as the last step of the {@see NodeTypesLoader}.
  *
- * @Flow\Scope("singleton")
  * @internal
  */
+#[Flow\Scope('singleton')]
 class NodeTypeEnrichmentService
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**

@@ -27,21 +27,20 @@ use Neos\Party\Domain\Service\PartyService;
 
 /**
  * The Impersonate controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ImpersonateController extends ActionController
 {
     /**
      * @var ImpersonateService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $impersonateService;
 
     /**
      * @var PartyService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $partyService;
 
     /**

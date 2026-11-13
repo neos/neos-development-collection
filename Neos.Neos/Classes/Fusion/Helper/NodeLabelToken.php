@@ -34,15 +34,15 @@ class NodeLabelToken implements ProtectedContextAwareInterface, \Stringable
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var TranslationHelper
      */
+    #[Flow\Inject]
     protected $translationHelper;
 
     /**
-     * @Flow\Inject
      * @var StringHelper
      */
+    #[Flow\Inject]
     protected $stringHelper;
 
     /**

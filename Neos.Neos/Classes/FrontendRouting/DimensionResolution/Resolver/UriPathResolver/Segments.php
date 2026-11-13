@@ -8,9 +8,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Utility\PositionalArraySorter;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final readonly class Segments
 {
     /**

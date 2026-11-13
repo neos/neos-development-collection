@@ -27,15 +27,15 @@ use Neos\Utility\Files as Files;
 class YamlConfiguration extends Configuration
 {
     /**
-     * @Flow\Inject
      * @var YamlSource
      */
+    #[Flow\Inject]
     protected $yamlSourceImporter;
 
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**

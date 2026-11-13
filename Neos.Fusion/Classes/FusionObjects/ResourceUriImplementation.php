@@ -33,15 +33,15 @@ use Neos\Fusion\Exception as FusionException;
 class ResourceUriImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var ResourceManager
      */
+    #[Flow\Inject]
     protected $resourceManager;
 
     /**
-     * @Flow\Inject
      * @var Service
      */
+    #[Flow\Inject]
     protected $i18nService;
 
     /**

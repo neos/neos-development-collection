@@ -325,12 +325,12 @@ class WorkspaceController extends AbstractModuleController
     /**
      * Update a workspace
      *
-     * @Flow\Validate(argumentName="title", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @param WorkspaceName $workspaceName The name of the workspace that is being updated
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
      * @param WorkspaceName|null $baseWorkspace The base workspace to rebase this workspace onto if modified
      */
+    #[Flow\Validate(argumentName: 'title', type: \Neos\Flow\Validation\Validator\NotEmptyValidator::class)]
     public function updateAction(
         WorkspaceName $workspaceName,
         WorkspaceTitle $title,

@@ -22,24 +22,21 @@ use Neos\Neos\Service\ImpersonateService;
 
 /**
  * An aspect which centralizes the logging of security relevant actions.
- *
- * @Flow\Scope("singleton")
- * @Flow\Aspect
  */
+#[Flow\Scope('singleton')]
+#[Flow\Aspect]
 class ImpersonateAspect
 {
     protected bool $alreadyLoggedAuthenticateCall = false;
 
-    /**
-     * @Flow\Inject
-     */
+    #[Flow\Inject]
     protected ImpersonateService $impersonateService;
 
     /**
-     * @Flow\After("within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
      * @param JoinPointInterface $joinPoint The current joinpoint
      * @throws \Exception
      */
+    #[Flow\After('within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())')]
     public function logManagerAuthenticate(JoinPointInterface $joinPoint): void
     {
         /** @var AuthenticationManagerInterface $proxy */

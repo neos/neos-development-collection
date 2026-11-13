@@ -23,9 +23,9 @@ use Neos\Flow\Annotations as Flow;
  * We'll need a better one which understands which options are available and contains some
  * information about possible help texts etc.
  *
- * @Flow\Entity
  * @todo Provide a more capable implementation
  */
+#[Flow\Entity]
 class UserPreferences
 {
     /**

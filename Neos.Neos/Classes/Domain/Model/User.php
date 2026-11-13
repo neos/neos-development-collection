@@ -22,18 +22,18 @@ use Neos\Party\Domain\Model\Person;
 /**
  * Domain Model of a User
  *
- * @Flow\Entity
- * @Flow\Scope("prototype")
  * @api
  */
+#[Flow\Entity]
+#[Flow\Scope('prototype')]
 class User extends Person
 {
     /**
      * Preferences of this user
      *
      * @var UserPreferences
-     * @ORM\OneToOne
      */
+    #[ORM\OneToOne]
     protected $preferences;
 
     /**

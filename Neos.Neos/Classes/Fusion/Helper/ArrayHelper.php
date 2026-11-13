@@ -25,9 +25,8 @@ use Neos\Utility\PositionalArraySorter;
  * Some Functional Programming Array helpers for Eel contexts
  *
  * These helpers are *WORK IN PROGRESS* and *NOT STABLE YET*
- *
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 class ArrayHelper implements ProtectedContextAwareInterface
 {
     use RenderAttributesTrait;

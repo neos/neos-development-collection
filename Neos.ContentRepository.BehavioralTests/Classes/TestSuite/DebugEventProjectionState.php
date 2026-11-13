@@ -9,9 +9,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Proxy(false)
- */
+#[Flow\Proxy(false)]
 final class DebugEventProjectionState implements ProjectionStateInterface
 {
     public function __construct(

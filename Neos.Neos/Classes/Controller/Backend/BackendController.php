@@ -34,39 +34,38 @@ use Neos\Neos\Service\XliffService;
 
 /**
  * The Neos Backend controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class BackendController extends ActionController
 {
     /**
-     * @Flow\Inject
      * @var BackendRedirectionService
      */
+    #[Flow\Inject]
     protected $backendRedirectionService;
 
     /**
-     * @Flow\Inject
      * @var XliffService
      */
+    #[Flow\Inject]
     protected $xliffService;
 
     /**
-     * @Flow\Inject
      * @var LinkingService
      */
+    #[Flow\Inject]
     protected $linkingService;
 
     /**
-     * @Flow\Inject
      * @var StringFrontend
      */
+    #[Flow\Inject]
     protected $loginTokenCache;
 
     /**
-     * @Flow\Inject
      * @var SessionInterface
      */
+    #[Flow\Inject]
     protected $currentSession;
 
     /**

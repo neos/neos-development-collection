@@ -24,9 +24,9 @@ use Neos\Flow\Utility\Environment;
 class ContextDependentHandler extends AbstractRenderingExceptionHandler
 {
     /**
-     * @Flow\Inject
      * @var Environment
      */
+    #[Flow\Inject]
     protected $environment;
 
     /**

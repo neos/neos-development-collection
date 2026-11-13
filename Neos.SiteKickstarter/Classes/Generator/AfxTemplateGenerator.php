@@ -30,15 +30,15 @@ use Neos\Utility\Files;
 class AfxTemplateGenerator extends GeneratorService implements SitePackageGeneratorInterface
 {
     /**
-     * @Flow\Inject
      * @var PackageManager
      */
+    #[Flow\Inject]
     protected $packageManager;
 
     /**
-     * @Flow\Inject
      * @var SimpleTemplateRenderer
      */
+    #[Flow\Inject]
     protected $simpleTemplateRenderer;
 
     /**

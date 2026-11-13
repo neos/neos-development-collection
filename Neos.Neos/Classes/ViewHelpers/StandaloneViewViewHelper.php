@@ -34,9 +34,8 @@ use Neos\FluidAdaptor\View\StandaloneView;
  * <some><fancy/></html
  * (depending on template and arguments given)
  * </output>
- *
- * @Flow\Scope("prototype")
  */
+#[Flow\Scope('prototype')]
 class StandaloneViewViewHelper extends AbstractViewHelper
 {
     /**

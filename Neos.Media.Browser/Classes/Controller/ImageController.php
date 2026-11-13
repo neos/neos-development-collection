@@ -26,15 +26,15 @@ use Neos\Media\Domain\Repository\ImageRepository;
 class ImageController extends AssetController
 {
     /**
-     * @Flow\Inject
      * @var ImageRepository
      */
+    #[Flow\Inject]
     protected $assetRepository;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Media\Domain\Repository\ImportedAssetRepository
      */
+    #[Flow\Inject]
     protected $importedAssetRepository;
 
     /**

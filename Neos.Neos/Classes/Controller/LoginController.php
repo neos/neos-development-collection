@@ -75,15 +75,15 @@ class LoginController extends AbstractAuthenticationController
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var StringFrontend
      */
+    #[Flow\Inject]
     protected $loginTokenCache;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="session.name")
      * @var string
      */
+    #[Flow\InjectConfiguration(package: 'Neos.Flow', path: 'session.name')]
     protected $sessionName;
 
     /**
@@ -275,9 +275,8 @@ class LoginController extends AbstractAuthenticationController
      * Logs out a - possibly - currently logged in account.
      * The possible redirection URI is queried from the redirection service
      * at first, before the actual logout takes place, and the session gets destroyed.
-     *
-     * @Flow\SkipCsrfProtection
      */
+    #[Flow\SkipCsrfProtection]
     public function logoutAction(): void
     {
         parent::logoutAction();

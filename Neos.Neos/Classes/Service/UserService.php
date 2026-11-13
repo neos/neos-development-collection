@@ -25,27 +25,27 @@ use Neos\Neos\Domain\Model\User;
  * and thus are implicitly considered to be part of the public API. This UserService should be replaced by
  * \Neos\Neos\Domain\Service\UserService in the long run.
  *
- * @Flow\Scope("singleton")
  * @api
  */
+#[Flow\Scope('singleton')]
 class UserService
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Neos\Domain\Service\UserService
      */
+    #[Flow\Inject]
     protected $userDomainService;
 
     /**
-     * @Flow\InjectConfiguration("userInterface.defaultLanguage")
      * @var string
      */
+    #[Flow\InjectConfiguration('userInterface.defaultLanguage')]
     protected $defaultLanguageIdentifier;
 
     /**
-     * @Flow\Inject
      * @var \Neos\Flow\Security\Context
      */
+    #[Flow\Inject]
     protected $securityContext;
 
     /**

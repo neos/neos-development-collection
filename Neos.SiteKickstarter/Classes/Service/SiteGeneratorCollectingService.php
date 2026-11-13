@@ -25,8 +25,8 @@ class SiteGeneratorCollectingService
 {
     /**
      * @var ReflectionService
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $reflectionService;
 
     /**

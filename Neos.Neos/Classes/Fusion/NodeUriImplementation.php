@@ -53,33 +53,33 @@ use Psr\Log\LoggerInterface;
 class NodeUriImplementation extends AbstractFusionObject
 {
     /**
-     * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
+    #[Flow\Inject]
     protected $contentRepositoryRegistry;
 
     /**
-     * @Flow\Inject
      * @var LoggerInterface
      */
+    #[Flow\Inject]
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
      * @var NodeUriBuilderFactory
      */
+    #[Flow\Inject]
     protected $nodeUriBuilderFactory;
 
     /**
-     * @Flow\Inject
      * @var NodePathResolver
      */
+    #[Flow\Inject]
     protected $nodeAddressNormalizer;
 
     /**
-     * @Flow\Inject
      * @var LegacyNodePathNormalizer
      */
+    #[Flow\Inject]
     protected $legacyNodePathNormalizer;
 
     /**

@@ -12,9 +12,9 @@ use Neos\Neos\Domain\Model\Site;
 /**
  * See {@see DimensionResolverInterface} for documentation.
  *
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final readonly class RequestToDimensionSpacePointContext
 {
     private function __construct(

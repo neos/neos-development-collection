@@ -23,8 +23,8 @@ use Neos\Flow\Annotations as Flow;
  * Finder for changes
  *
  * @internal Only for consumption inside Neos. Not public api because the implementation will be refactored sooner or later: https://github.com/neos/neos-development-collection/issues/5493
- * @Flow\Proxy(false)
  */
+#[Flow\Proxy(false)]
 final class ChangeFinder implements ProjectionStateInterface
 {
     public function __construct(

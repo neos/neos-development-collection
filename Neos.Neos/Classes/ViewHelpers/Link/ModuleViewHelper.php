@@ -32,9 +32,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 class ModuleViewHelper extends AbstractTagBasedViewHelper
 {
     /**
-     * @Flow\Inject
      * @var \Neos\Neos\ViewHelpers\Uri\ModuleViewHelper
      */
+    #[Flow\Inject]
     protected $uriModuleViewHelper;
 
     /**

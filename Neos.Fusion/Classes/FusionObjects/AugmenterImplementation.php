@@ -26,8 +26,8 @@ class AugmenterImplementation extends AbstractArrayFusionObject
 {
     /**
      * @var HtmlAugmenter
-     * @Flow\Inject
      */
+    #[Flow\Inject]
     protected $htmlAugmenter;
 
     /**
