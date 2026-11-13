@@ -104,7 +104,6 @@ class UsageController extends ActionController
     /**
      * Get Related Nodes for an asset
      *
-     * @param AssetInterface $asset
      * @return void
      */
     public function relatedNodesAction(AssetInterface $asset)

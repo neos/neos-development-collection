@@ -34,7 +34,6 @@ trait SubtreeTagging
 
     /**
      * @Given /^the event SubtreeWasTagged was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventSubtreeWasTaggedWasPublishedWithPayload(TableNode $payloadTable)
@@ -50,7 +49,6 @@ trait SubtreeTagging
 
     /**
      * @Given /^the event SubtreeWasUntagged was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventSubtreeWasUntaggedWasPublishedWithPayload(TableNode $payloadTable)

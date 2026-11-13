@@ -62,7 +62,6 @@ class ModuleController extends ActionController
     protected $backendRedirectionService;
 
     /**
-     * @param array $module
      * @phpstan-param array<string,mixed> $module
      * @return mixed
      * @throws DisabledModuleException

@@ -26,9 +26,6 @@ interface NodeBasedFilterInterface
 {
     /**
      * If the given node satisfies the filter constraints, true is returned.
-     *
-     * @param Node $node
-     * @return boolean
      */
     public function matches(Node $node): bool;
 }

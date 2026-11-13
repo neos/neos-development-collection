@@ -41,13 +41,12 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
      * @param NodeType $nodeType (uninitialized) The node type to process
      * @param array<string,mixed> $configuration input configuration
      * @param array<string,mixed> $options The processor options
-     * @return void
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {
         $nodeTypeName = $nodeType->name->value;
 
-        foreach ($configuration['references'] as $referenceName => &$referenceConfiguration) {
+        foreach ($configuration['references'] as &$referenceConfiguration) {
             if (!isset($referenceConfiguration['ui']['inspector'])) {
                 // we presume that these are properties wich are not shown
                 continue;

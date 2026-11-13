@@ -27,7 +27,6 @@ class BubblingHandler extends AbstractRenderingExceptionHandler
      * Handle an Exception thrown while rendering Fusion
      *
      * @param string $fusionPath
-     * @param \Exception $exception
      * @return string
      * @throws StopActionException
      * @throws InvalidConfigurationException

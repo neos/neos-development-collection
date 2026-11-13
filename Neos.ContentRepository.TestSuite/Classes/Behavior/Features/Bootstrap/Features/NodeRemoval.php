@@ -33,7 +33,6 @@ trait NodeRemoval
 
     /**
      * @Given /^the event NodeAggregateWasRemoved was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodeAggregateWasRemovedWasPublishedWithPayload(TableNode $payloadTable)

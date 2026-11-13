@@ -30,7 +30,6 @@ class FormDefinitionDataSource extends AbstractDataSource
     protected YamlPersistenceManager $yamlPersistenceManager;
 
     /**
-     * @param Node|null $node
      * @param array<mixed> $arguments
      * @return array<int|string, array{label: mixed}>
      */

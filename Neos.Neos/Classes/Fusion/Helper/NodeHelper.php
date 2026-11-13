@@ -51,8 +51,6 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param Node $node
-     * @return int
      * @deprecated do not rely on this, as it is rather expensive to calculate
      */
     public function depth(Node $node): int
@@ -79,9 +77,6 @@ class NodeHelper implements ProtectedContextAwareInterface
      * Retrieving the NodeType of the given Node.
      *
      * If the NodeType schema changed and the NodeType does not exist anymore, NULL is returned.
-     *
-     * @param Node $node
-     * @return NodeType|null
      */
     public function nodeType(Node $node): ?NodeType
     {

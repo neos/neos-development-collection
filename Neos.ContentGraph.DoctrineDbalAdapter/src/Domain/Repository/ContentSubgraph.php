@@ -762,8 +762,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @return Result
      * @throws DBALException
      */
     private function executeQuery(QueryBuilder $queryBuilder): Result

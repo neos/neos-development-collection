@@ -66,7 +66,6 @@ trait ConstraintChecks
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
      * @throws DimensionSpacePointNotFound
      */
     protected function requireDimensionSpacePointToExist(DimensionSpacePoint $dimensionSpacePoint): void
@@ -84,7 +83,6 @@ trait ConstraintChecks
     }
 
     /**
-     * @param NodeType $nodeType
      * @throws NodeTypeIsNotOfTypeRoot
      */
     protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void
@@ -95,7 +93,6 @@ trait ConstraintChecks
     }
 
     /**
-     * @param NodeType $nodeType
      * @throws NodeTypeIsOfTypeRoot
      */
     protected function requireNodeTypeToNotBeOfTypeRoot(NodeType $nodeType): void
@@ -119,7 +116,6 @@ trait ConstraintChecks
     }
 
     /**
-     * @param NodeType $nodeType
      * @throws NodeTypeNotFound the configured child nodeType doesnt exist
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
@@ -131,7 +127,6 @@ trait ConstraintChecks
     }
 
     /**
-     * @param NodeType $nodeType
      * @throws NodeTypeIsOfTypeRoot
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void

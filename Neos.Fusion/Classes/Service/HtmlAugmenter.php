@@ -74,7 +74,7 @@ class HtmlAugmenter
         $domDocument->loadHTML((str_starts_with($html, '<?xml')) ? $html : '<?xml encoding="UTF-8"?>' . $html);
         $xPath = new \DOMXPath($domDocument);
         $rootElement = $xPath->query('//html/body/*|//html/head/*');
-        if ($useInternalErrorsBackup !== true) {
+        if (!$useInternalErrorsBackup) {
             libxml_use_internal_errors($useInternalErrorsBackup);
         }
         if ($rootElement === false || $rootElement->length !== 1) {
@@ -91,8 +91,6 @@ class HtmlAugmenter
      * Merges the attributes of $element with the given $newAttributes
      * If an attribute exists in both collections, it is merged to "<new attribute> <old attribute>" (if both values differ)
      *
-     * @param \DOMNode $element
-     * @param array $newAttributes
      * @return void
      */
     protected function mergeAttributes(\DOMNode $element, array &$newAttributes)
@@ -126,7 +124,6 @@ class HtmlAugmenter
     /**
      * Checks whether the given $element contains at least one of the specified $attributes (case insensitive)
      *
-     * @param \DOMNode $element
      * @param array $attributes array of attribute names to check (lowercase)
      * @return boolean true if at least one of the $attributes is contained in the given $element, otherwise false
      */

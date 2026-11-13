@@ -102,9 +102,6 @@ class LoginController extends AbstractAuthenticationController
         'application/json',
     ];
 
-    /**
-     * @return void
-     */
     public function initializeIndexAction(): void
     {
         /** @var array<string,mixed>|string|object|null $authenticationArgument */
@@ -127,8 +124,6 @@ class LoginController extends AbstractAuthenticationController
      * Default action, displays the login screen
      *
      * @param string|null $username Optional: A username to pre-fill into the username field
-     * @param bool $unauthorized
-     * @return void
      * @throws InvalidFlashMessageConfigurationException
      * @throws InvalidRequestPatternException
      * @throws NoRequestPatternFoundException
@@ -194,8 +189,6 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Logs a user in if a session identifier is available under the given token in the token cache.
      *
-     * @param string $token
-     * @return void
      * @throws StopActionException
      * @throws SessionNotStartedException
      */
@@ -232,7 +225,6 @@ class LoginController extends AbstractAuthenticationController
      * Is called if authentication failed.
      *
      * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
-     * @return void
      */
     protected function onAuthenticationFailure(?AuthenticationRequiredException $exception = null): void
     {
@@ -285,8 +277,6 @@ class LoginController extends AbstractAuthenticationController
      * at first, before the actual logout takes place, and the session gets destroyed.
      *
      * @Flow\SkipCsrfProtection
-     *
-     * @return void
      */
     public function logoutAction(): void
     {
@@ -318,9 +308,6 @@ class LoginController extends AbstractAuthenticationController
 
     /**
      * Sets the session cookie to the given identifier, overriding an existing cookie.
-     *
-     * @param string $sessionIdentifier
-     * @return void
      */
     protected function replaceSessionCookie(string $sessionIdentifier): void
     {

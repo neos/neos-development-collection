@@ -170,7 +170,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @return Node
      * @throws Exception
      */
     protected function getCurrentSiteNode(): Node
@@ -192,7 +191,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @return Node
      * @throws Exception
      */
     protected function getCurrentNode(): Node
@@ -205,7 +203,6 @@ class FusionView extends AbstractView
     }
 
     /**
-     * @param Node $currentSiteNode
      * @return \Neos\Fusion\Core\Runtime
      */
     protected function getFusionRuntime(Node $currentSiteNode)
@@ -234,9 +231,6 @@ class FusionView extends AbstractView
 
     /**
      * Clear the cached runtime instance on assignment of variables
-     *
-     * @param string $key
-     * @param mixed $value
      */
     public function assign(string $key, mixed $value): self
     {

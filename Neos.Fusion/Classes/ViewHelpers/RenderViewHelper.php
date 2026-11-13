@@ -124,7 +124,6 @@ class RenderViewHelper extends AbstractViewHelper
     /**
      * Initialize the Fusion View
      *
-     * @return void
      * @throws \Neos\Flow\Mvc\Exception
      */
     protected function initializeFusionView(): void

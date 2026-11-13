@@ -62,9 +62,6 @@ enum NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy: string im
         return self::from($value);
     }
 
-    /**
-     * @return string
-     */
     public function jsonSerialize(): string
     {
         return $this->value;

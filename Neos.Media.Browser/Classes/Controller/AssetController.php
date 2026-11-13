@@ -172,9 +172,6 @@ class AssetController extends ActionController
      */
     private $assetConstraints;
 
-    /**
-     * @return void
-     */
     public function initializeObject(): void
     {
         $this->backendUserTranslationTraitInitializeObject();
@@ -207,9 +204,6 @@ class AssetController extends ActionController
 
     /**
      * Set common variables on the view
-     *
-     * @param ViewInterface $view
-     * @return void
      */
     protected function initializeView(ViewInterface $view): void
     {
@@ -240,7 +234,6 @@ class AssetController extends ActionController
      * @param int $collectionMode
      * @param AssetCollection $assetCollection
      * @param string $assetSourceIdentifier
-     * @return void
      * @throws FilesException
      */
     public function indexAction($view = null, $sortBy = null, $sortDirection = null, $filter = null, $tagMode = self::TAG_GIVEN, ?Tag $tag = null, $searchTerm = null, $collectionMode = self::COLLECTION_GIVEN, ?AssetCollection $assetCollection = null, $assetSourceIdentifier = null): void
@@ -323,8 +316,6 @@ class AssetController extends ActionController
 
     /**
      * New asset form
-     *
-     * @return void
      */
     public function newAction(): void
     {
@@ -342,10 +333,6 @@ class AssetController extends ActionController
         ]);
     }
 
-    /**
-     * @param Asset $asset
-     * @return void
-     */
     public function replaceAssetResourceAction(Asset $asset): void
     {
         try {
@@ -365,9 +352,6 @@ class AssetController extends ActionController
     /**
      * Show an asset
      *
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @return void
      * @throws StopActionException
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
@@ -393,9 +377,6 @@ class AssetController extends ActionController
     /**
      * Edit an asset
      *
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @return void
      * @throws StopActionException
      */
     public function editAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
@@ -446,9 +427,6 @@ class AssetController extends ActionController
     /**
      * Display variants of an asset
      *
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @param string $overviewAction
      * @throws StopActionException
      */
     public function variantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
@@ -487,9 +465,6 @@ class AssetController extends ActionController
     /**
      * Create missing variants for the given image
      *
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @param string $overviewAction
      * @throws StopActionException
      */
     public function createVariantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
@@ -510,7 +485,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @return void
      * @throws NoSuchArgumentException
      */
     protected function initializeUpdateAction(): void
@@ -523,8 +497,6 @@ class AssetController extends ActionController
     /**
      * Update an asset
      *
-     * @param Asset $asset
-     * @return void
      * @throws StopActionException
      * @throws IllegalObjectTypeException
      */
@@ -538,7 +510,6 @@ class AssetController extends ActionController
     /**
      * Initialization for createAction
      *
-     * @return void
      * @throws NoSuchArgumentException
      */
     protected function initializeCreateAction(): void
@@ -552,8 +523,6 @@ class AssetController extends ActionController
     /**
      * Create a new asset
      *
-     * @param Asset $asset
-     * @return void
      * @throws StopActionException
      * @throws IllegalObjectTypeException
      */
@@ -569,7 +538,6 @@ class AssetController extends ActionController
     /**
      * Initialization for uploadAction
      *
-     * @return void
      * @throws NoSuchArgumentException
      */
     protected function initializeUploadAction(): void
@@ -583,8 +551,6 @@ class AssetController extends ActionController
     /**
      * Upload a new asset. No redirection and no response body, for use by plupload (or similar).
      *
-     * @param Asset $asset
-     * @return string
      * @throws IllegalObjectTypeException
      */
     public function uploadAction(Asset $asset): string
@@ -613,9 +579,6 @@ class AssetController extends ActionController
      *
      * No redirection and no response body, no flash message, for use by plupload (or similar).
      *
-     * @param Asset $asset
-     * @param Tag $tag
-     * @return void
      * @throws IllegalObjectTypeException
      */
     public function tagAssetAction(Asset $asset, Tag $tag): void
@@ -631,9 +594,6 @@ class AssetController extends ActionController
     /**
      * Adds an asset to an asset collection
      *
-     * @param Asset $asset
-     * @param AssetCollection $assetCollection
-     * @return void
      * @throws IllegalObjectTypeException
      */
     public function addAssetToCollectionAction(Asset $asset, AssetCollection $assetCollection): void
@@ -649,8 +609,6 @@ class AssetController extends ActionController
     /**
      * Delete an asset
      *
-     * @param Asset $asset
-     * @return void
      * @throws IllegalObjectTypeException
      * @throws StopActionException
      * @throws AssetServiceException
@@ -676,10 +634,6 @@ class AssetController extends ActionController
     /**
      * Update the resource on an asset.
      *
-     * @param AssetInterface $asset
-     * @param PersistentResource $resource
-     * @param array $options
-     * @return void
      * @throws StopActionException
      * @throws ForwardException
      */
@@ -715,8 +669,6 @@ class AssetController extends ActionController
     /**
      * Get Related Nodes for an asset (proxy action)
      *
-     * @param AssetInterface $asset
-     * @return void
      * @throws ForwardException
      */
     public function relatedNodesAction(AssetInterface $asset): void
@@ -725,8 +677,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param string $label
-     * @return void
      * @Flow\Validate(argumentName="label", type="NotEmpty")
      * @Flow\Validate(argumentName="label", type="Label")
      * @throws ForwardException
@@ -737,8 +687,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param Tag $tag
-     * @return void
      * @throws ForwardException
      */
     public function editTagAction(Tag $tag): void
@@ -747,8 +695,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param Tag $tag
-     * @return void
      * @throws ForwardException
      */
     public function updateTagAction(Tag $tag): void
@@ -757,8 +703,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param Tag $tag
-     * @return void
      * @throws ForwardException
      */
     public function deleteTagAction(Tag $tag): void
@@ -768,7 +712,6 @@ class AssetController extends ActionController
 
     /**
      * @param string $title
-     * @return void
      * @Flow\Validate(argumentName="title", type="NotEmpty")
      * @Flow\Validate(argumentName="title", type="Label")
      * @throws ForwardException
@@ -779,8 +722,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
-     * @return void
      * @throws ForwardException
      */
     public function editAssetCollectionAction(AssetCollection $assetCollection): void
@@ -789,8 +730,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
-     * @return void
      * @throws ForwardException
      */
     public function updateAssetCollectionAction(AssetCollection $assetCollection): void
@@ -799,8 +738,6 @@ class AssetController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
-     * @return void
      * @throws ForwardException
      */
     public function deleteAssetCollectionAction(AssetCollection $assetCollection): void
@@ -810,12 +747,10 @@ class AssetController extends ActionController
 
     /**
      * This custom errorAction adds FlashMessages for validation results to give more information in the
-     *
-     * @return string
      */
     protected function errorAction(): string
     {
-        foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
+        foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $errors) {
             foreach ($errors as $error) {
                 $this->controllerContext->getFlashMessageContainer()->addMessage($error);
             }
@@ -845,7 +780,6 @@ class AssetController extends ActionController
     /**
      * Returns the lowest configured maximum upload file size
      *
-     * @return int
      * @throws FilesException
      */
     private function getMaximumFileUploadSize(): int
@@ -893,7 +827,6 @@ class AssetController extends ActionController
     /**
      * @param int $tagMode
      * @param Tag $tag
-     * @param AssetCollection|null $activeAssetCollection
      */
     private function applyTagToBrowserState(?int $tagMode = null, ?Tag $tag = null, ?AssetCollection $activeAssetCollection = null): void
     {
@@ -917,9 +850,6 @@ class AssetController extends ActionController
         }
     }
 
-    /**
-     * @return AssetSourceInterface
-     */
     private function getAssetSourceFromBrowserState(): AssetSourceInterface
     {
         $assetSourceIdentifier = $this->browserState->getActiveAssetSourceIdentifier();
@@ -946,9 +876,6 @@ class AssetController extends ActionController
         $this->browserState->set('collectionMode', $collectionMode);
     }
 
-    /**
-     * @return AssetCollection|null
-     */
     private function getActiveAssetCollectionFromBrowserState(): ?AssetCollection
     {
         try {
@@ -966,9 +893,6 @@ class AssetController extends ActionController
         return $activeAssetCollection;
     }
 
-    /**
-     * @param AssetProxyRepositoryInterface $assetProxyRepository
-     */
     private function applySortingFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         if ($assetProxyRepository instanceof SupportsSortingInterface) {
@@ -979,17 +903,11 @@ class AssetController extends ActionController
         }
     }
 
-    /**
-     * @param AssetProxyRepositoryInterface $assetProxyRepository
-     */
     private function applyAssetTypeFilterFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         $assetProxyRepository->filterByType($this->assetConstraints->applyToAssetTypeFilter($this->browserState->get('filter')));
     }
 
-    /**
-     * @param AssetProxyRepositoryInterface $assetProxyRepository
-     */
     private function applyAssetCollectionFilterFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         if ($assetProxyRepository instanceof SupportsCollectionsInterface) {
@@ -1000,7 +918,6 @@ class AssetController extends ActionController
     /**
      * Custom redirect method that adds "constraints" arguments from the current request
      *
-     * @param array $arguments
      * @throws StopActionException | NoSuchArgumentException
      */
     private function redirectToIndex(array $arguments = []): void
@@ -1014,9 +931,6 @@ class AssetController extends ActionController
     /**
      * Custom forward method that adds "constraints" arguments from the current request
      *
-     * @param string $actionName
-     * @param string $controllerName
-     * @param array $arguments
      * @throws ForwardException | NoSuchArgumentException
      */
     private function forwardWithConstraints(string $actionName, string $controllerName, array $arguments = []): void

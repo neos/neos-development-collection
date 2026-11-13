@@ -40,7 +40,6 @@ final readonly class SiteDetectionResult
     /**
      * Helper to retrieve the previously resolved Site and ContentRepository instance.
      *
-     * @param ServerRequestInterface $request
      * @throws SiteDetectionFailedException This error will be thrown if a request is passed
      *                                      where the site detection middleware did not store a site in.
      *                                      This is likely the case if the request is a mock or

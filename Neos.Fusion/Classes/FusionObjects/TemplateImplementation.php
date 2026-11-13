@@ -149,7 +149,6 @@ class TemplateImplementation extends AbstractArrayFusionObject
      * This is a template method which can be overridden in subclasses to add new variables which should
      * be available inside the Fluid template. It is needed e.g. for Expose.
      *
-     * @param Helpers\FluidView $view
      * @return void
      */
     protected function initializeView(Helpers\FluidView $view)

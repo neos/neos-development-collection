@@ -123,7 +123,6 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Edit the given account
      *
-     * @param Account $account
      * @return void
      */
     public function editAccountAction(Account $account)
@@ -171,7 +170,6 @@ class UserSettingsController extends AbstractModuleController
     /**
      * The add new electronic address action
      *
-     * @param User $user
      * @Flow\IgnoreValidation("$user")
      * @return void
      */
@@ -184,8 +182,6 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Create an new electronic address
      *
-     * @param User $user
-     * @param ElectronicAddress $electronicAddress
      * @return void
      */
     public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)
@@ -207,8 +203,6 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Delete an electronic address action
      *
-     * @param User $user
-     * @param ElectronicAddress $electronicAddress
      * @return void
      */
     public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress)

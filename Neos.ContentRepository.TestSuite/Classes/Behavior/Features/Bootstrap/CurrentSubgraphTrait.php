@@ -25,7 +25,6 @@ trait CurrentSubgraphTrait
 
     /**
      * @Then /^I expect the subgraph projection to consist of exactly (\d+) node(?:s)?$/
-     * @param int $expectedNumberOfNodes
      */
     public function iExpectTheSubgraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {

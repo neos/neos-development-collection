@@ -92,7 +92,6 @@ class TranslateViewHelper extends FluidTranslateViewHelper
     public function render()
     {
         $id = $this->arguments['id'];
-        $value = $this->arguments['value'];
         $locale = $this->arguments['locale'];
 
         if (is_string($id) && preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {

@@ -117,10 +117,6 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         return $menuItems;
     }
 
-    /**
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return bool
-     */
     protected function isDimensionSpacePointRelevant(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return !$this->getContentDimensionIdentifierToLimitTo() // no limit to one dimension, so all DSPs are relevant
@@ -229,16 +225,12 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * In some cases generalization of the other dimension values is feasible
      * to find a dimension space point in which a variant can be resolved
-     * @return bool
      */
     protected function includeGeneralizations(): bool
     {
         return $this->getContentDimensionIdentifierToLimitTo() && $this->fusionValue('includeAllPresets');
     }
 
-    /**
-     * @return ContentDimensionId|null
-     */
     protected function getContentDimensionIdentifierToLimitTo(): ?ContentDimensionId
     {
         return $this->fusionValue('dimension')

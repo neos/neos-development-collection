@@ -30,7 +30,6 @@ final readonly class Segments
 
     /**
      * @param array<string,mixed> $arr
-     * @return static
      */
     public static function fromArray(array $arr): self
     {

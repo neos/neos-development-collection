@@ -52,7 +52,7 @@ class ContentElementWrappingService
         string $fusionPath,
         array $additionalAttributes = []
     ): ?string {
-        $contentRepository = $this->contentRepositoryRegistry->get(
+        $this->contentRepositoryRegistry->get(
             $node->contentRepositoryId
         );
 

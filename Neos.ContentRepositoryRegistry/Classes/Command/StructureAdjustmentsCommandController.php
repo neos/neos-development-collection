@@ -58,7 +58,6 @@ final class StructureAdjustmentsCommandController extends CommandController
      *
      * @param string|null $nodeType The node type to apply structure adjustments for. If not provided, all found adjustments will be applied. (Default: null)
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
-     * @return void
      */
     public function fixCommand(?string $nodeType = null, string $contentRepository = 'default'): void
     {

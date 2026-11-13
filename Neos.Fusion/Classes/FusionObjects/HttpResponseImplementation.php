@@ -28,9 +28,6 @@ class HttpResponseImplementation extends AbstractArrayFusionObject
         return $this->fusionValue($this->getResponseHeadName()) ?? null;
     }
 
-    /**
-     * @return string
-     */
     public function getResponseHeadName(): string
     {
         return $this->fusionValue('_getHttpResponseHead') ?? 'httpResponseHead';

@@ -133,7 +133,6 @@ final class ContentRepositoryFactory
     /**
      * Builds and returns the content repository. If it is already built, returns the same instance.
      *
-     * @return ContentRepository
      * @api
      */
     public function getOrBuild(): ContentRepository

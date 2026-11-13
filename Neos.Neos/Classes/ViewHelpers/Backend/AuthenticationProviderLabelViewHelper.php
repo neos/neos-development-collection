@@ -42,7 +42,6 @@ class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
     /**
      * Outputs a human friendly label for the authentication provider specified by $identifier
      *
-     * @return string
      * @throws \Exception
      */
     public function render(): string

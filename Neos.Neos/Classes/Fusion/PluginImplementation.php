@@ -107,9 +107,6 @@ class PluginImplementation extends AbstractArrayFusionObject implements \Stringa
     }
 
     /**
-     * @param ActionRequest $pluginRequest
-     * @param Node|null $node
-     * @return ActionRequest
      * @throws InvalidActionNameException
      * @throws InvalidControllerNameException
      */
@@ -191,8 +188,6 @@ class PluginImplementation extends AbstractArrayFusionObject implements \Stringa
     /**
      * Returns the plugin namespace that will be prefixed to plugin parameters in URIs.
      * By default this is <plugin_class_name>
-     *
-     * @return string
      */
     protected function getPluginNamespace(): string
     {
@@ -238,9 +233,6 @@ class PluginImplementation extends AbstractArrayFusionObject implements \Stringa
         }
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->evaluate();

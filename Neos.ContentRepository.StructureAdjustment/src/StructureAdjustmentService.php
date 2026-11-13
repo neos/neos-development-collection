@@ -115,7 +115,6 @@ final class StructureAdjustmentService implements ContentRepositoryServiceInterf
     }
 
     /**
-     * @param NodeTypeName $nodeTypeName
      * @return \Generator<int,StructureAdjustment>
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator

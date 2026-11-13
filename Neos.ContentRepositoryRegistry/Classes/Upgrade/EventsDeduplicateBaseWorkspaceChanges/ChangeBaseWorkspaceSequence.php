@@ -25,6 +25,6 @@ enum ChangeBaseWorkspaceSequence: string
                 return self::cases()[$index + 1] ?? throw new \RuntimeException('Reached end');
             }
         }
-        throw new \RuntimeException(sprintf('Fatal cannot happen'), 1781725195);
+        throw new \RuntimeException('Fatal cannot happen', 1781725195);
     }
 }

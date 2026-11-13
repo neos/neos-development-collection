@@ -346,7 +346,7 @@ final class NodeTypeManager
         }
 
         $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
-        if ($superType->isFinal() === true) {
+        if ($superType->isFinal()) {
             throw new NodeTypeIsFinalException($superType->name->value, 1444944148);
         }
 

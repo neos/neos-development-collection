@@ -30,7 +30,7 @@ abstract class AbstractDataSource implements DataSourceInterface
      * @var string
      * @api
      */
-    protected static $identifier = null;
+    protected static $identifier;
 
     /**
      * @var ControllerContext
@@ -53,7 +53,6 @@ abstract class AbstractDataSource implements DataSourceInterface
     }
 
     /**
-     * @param ControllerContext $controllerContext
      * @return void
      */
     public function setControllerContext(ControllerContext $controllerContext)

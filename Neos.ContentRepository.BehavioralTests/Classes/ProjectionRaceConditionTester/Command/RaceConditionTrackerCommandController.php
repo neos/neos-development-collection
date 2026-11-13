@@ -119,7 +119,6 @@ final class RaceConditionTrackerCommandController extends CommandController
     /**
      * @param array<int> $projectionConcurrencyViolationIndices
      * @param array<int,bool> $doubleProcessedEventIndices
-     * @return void
      */
     private function printViolations(
         TraceEntries $traces,

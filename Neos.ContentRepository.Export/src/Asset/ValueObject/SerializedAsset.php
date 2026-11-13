@@ -64,7 +64,6 @@ final readonly class SerializedAsset implements \JsonSerializable
 
     /**
      * @param array{identifier: string, type: string, title: string, copyrightNotice: string, caption: string, assetSourceIdentifier: string, resource: array{filename: string, collectionName: string, mediaType: string, sha1: string}} $array
-     * @return static
      */
     public static function fromArray(array $array): self
     {

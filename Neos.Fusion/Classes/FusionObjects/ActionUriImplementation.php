@@ -36,9 +36,6 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
  */
 class ActionUriImplementation extends AbstractFusionObject
 {
-    /**
-     * @return ActionRequest
-     */
     public function getRequest(): ActionRequest
     {
         return $this->fusionValue('request');
@@ -46,8 +43,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * Key of the target package
-     *
-     * @return string|null
      */
     public function getPackage(): ?string
     {
@@ -56,8 +51,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * Key of the target sub package
-     *
-     * @return string|null
      */
     public function getSubpackage(): ?string
     {
@@ -66,8 +59,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * Target controller name
-     *
-     * @return string|null
      */
     public function getController(): ?string
     {
@@ -76,8 +67,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * Target controller action name
-     *
-     * @return string|null
      */
     public function getAction(): ?string
     {
@@ -86,8 +75,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * Controller arguments
-     *
-     * @return array|null
      */
     public function getArguments(): ?array
     {
@@ -97,8 +84,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * The requested format, for example "html"
-     *
-     * @return string|null
      */
     public function getFormat(): ?string
     {
@@ -107,8 +92,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * The anchor to be appended to the URL
-     *
-     * @return string|null
      */
     public function getSection(): ?string
     {
@@ -117,8 +100,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * Additional query parameters that won't be prefixed like $arguments (overrule $arguments)
-     *
-     * @return array|null
      */
     public function getAdditionalParams(): ?array
     {
@@ -127,8 +108,6 @@ class ActionUriImplementation extends AbstractFusionObject
 
     /**
      * If true, an absolute URI is rendered
-     *
-     * @return boolean
      */
     public function isAbsolute(): bool
     {
@@ -154,7 +133,7 @@ class ActionUriImplementation extends AbstractFusionObject
         }
 
         $absolute = $this->isAbsolute();
-        if ($absolute === true) {
+        if ($absolute) {
             $uriBuilder->setCreateAbsoluteUri(true);
         }
 

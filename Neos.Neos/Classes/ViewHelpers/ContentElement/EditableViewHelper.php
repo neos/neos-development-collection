@@ -120,7 +120,6 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @return Node
      * @throws ViewHelperException
      */
     protected function getNodeFromFusionContext(): Node

@@ -220,7 +220,6 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect this node aggregate to have the child node aggregates (.*)$/
-     * @param string $serializedExpectedNodeAggregateIds
      */
     public function iExpectThisNodeAggregateToHaveTheChildNodeAggregates(string $serializedExpectedNodeAggregateIds): void
     {

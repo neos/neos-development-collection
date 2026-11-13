@@ -181,7 +181,6 @@ trait CRTestSuiteTrait
 
     /**
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
-     * @param int $expectedNumberOfNodes
      */
     public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {

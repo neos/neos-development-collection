@@ -34,7 +34,6 @@ class BrowserState
     /**
      * Set a $value for $key
      *
-     * @param string $key
      * @param mixed $value
      * @return void
      * @Flow\Session(autoStart = true)
@@ -50,7 +49,6 @@ class BrowserState
     /**
      * Return a value for $key.
      *
-     * @param string $key
      * @return mixed
      */
     public function get(string $key)
@@ -61,25 +59,16 @@ class BrowserState
         return $this->data[$this->activeAssetSourceIdentifier][$key] ?? null;
     }
 
-    /**
-     * @return string
-     */
     public function getActiveAssetSourceIdentifier(): string
     {
         return $this->activeAssetSourceIdentifier;
     }
 
-    /**
-     * @param string $activeAssetSourceIdentifier
-     */
     public function setActiveAssetSourceIdentifier(string $activeAssetSourceIdentifier)
     {
         $this->activeAssetSourceIdentifier = $activeAssetSourceIdentifier;
     }
 
-    /**
-     * @param string $assetSourceIdentifier
-     */
     private function initializeData(string $assetSourceIdentifier)
     {
         $this->data[$assetSourceIdentifier] = [

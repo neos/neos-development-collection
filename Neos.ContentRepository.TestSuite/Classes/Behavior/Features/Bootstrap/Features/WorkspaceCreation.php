@@ -36,7 +36,6 @@ trait WorkspaceCreation
 
     /**
      * @Given /^the event WorkspaceWasRemoved was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventWorkspaceWasRemovedWasPublishedToStreamWithPayload(TableNode $payloadTable)

@@ -67,7 +67,6 @@ class StandaloneViewViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return string
      * @throws \Neos\FluidAdaptor\Exception
      */
     public function render(): string

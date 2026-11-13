@@ -169,7 +169,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * Incoming URLs
      *
      * @param mixed $requestPath
-     * @param RouteParameters $parameters
      * @return bool|MatchResult
      */
     public function matchWithParameters(&$requestPath, RouteParameters $parameters)
@@ -234,8 +233,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
     /**
-     * @param string $uriPath
-     * @param DimensionSpacePoint $dimensionSpacePoint
      * @return MatchResult|false returns the MatchResult that represents the node that matched the given $uriPath – or false if the found node does not match the constraints
      * @throws NodeNotFoundException
      */

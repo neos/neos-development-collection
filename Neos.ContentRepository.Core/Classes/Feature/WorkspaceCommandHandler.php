@@ -150,7 +150,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @param CreateRootWorkspace $command
      * @throws WorkspaceAlreadyExists
      * @throws ContentStreamAlreadyExists
      */

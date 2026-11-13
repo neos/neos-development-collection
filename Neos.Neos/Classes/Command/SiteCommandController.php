@@ -170,7 +170,6 @@ class SiteCommandController extends CommandController
      *
      * @param string|null $packageKey Package key specifying the package containing the sites content
      * @param string|null $path relative or absolute path and filename to the export files
-     * @return void
      */
     public function importAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
@@ -210,7 +209,6 @@ class SiteCommandController extends CommandController
      *
      * @param string|null $packageKey Package key specifying the package containing the sites content
      * @param string|null $path relative or absolute path and filename to the export files
-     * @return void
      */
     public function exportAllCommand(?string $packageKey = null, ?string $path = null, string $contentRepository = 'default', bool $verbose = false): void
     {
@@ -229,7 +227,6 @@ class SiteCommandController extends CommandController
      * This will completely prune the data of the specified content repository and remove all site-records.
      *
      * @param bool $force Prune the cr without confirmation. This cannot be reverted!
-     * @return void
      */
     public function pruneAllCommand(string $contentRepository = 'default', bool $force = false, bool $verbose = false): void
     {
@@ -249,7 +246,6 @@ class SiteCommandController extends CommandController
     /**
      * List available sites
      *
-     * @return void
      * @throws StopCommandException
      */
     public function listCommand(): void

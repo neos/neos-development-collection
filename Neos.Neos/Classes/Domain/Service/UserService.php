@@ -165,7 +165,6 @@ class UserService
     /**
      * Retrieves a list of all existing users
      *
-     * @param string $sortBy
      * @param 'ASC'|'DESC' $sortDirection
      * @return QueryResultInterface<User> The users
      * @api
@@ -178,8 +177,6 @@ class UserService
     }
 
     /**
-     * @param string $searchTerm
-     * @param string $sortBy
      * @param 'ASC'|'DESC' $sortDirection
      * @return QueryResultInterface<User>
      */
@@ -232,7 +229,6 @@ class UserService
      * (or, if authenticationProviderName is specified, for the account matching the given authentication provider)
      * and return the account's identifier.
      *
-     * @param User $user
      * @param string $authenticationProviderName
      * @return ?string The username or null if the given user does not have a backend account
      */
@@ -627,7 +623,7 @@ class UserService
     {
         foreach ($user->getAccounts() as $account) {
             /** @var Account $account */
-            $account->setExpirationDate(null);
+            $account->setExpirationDate();
             $this->accountRepository->update($account);
         }
         $this->emitUserActivated($user);
@@ -649,7 +645,6 @@ class UserService
      * Deactivates the given user
      *
      * @param User $user The user to deactivate
-     * @return void
      * @throws IllegalObjectTypeException
      * @throws SessionNotStartedException
      * @api
@@ -672,7 +667,6 @@ class UserService
     }
 
     /**
-     * @return bool
      * @throws NoSuchRoleException
      * @throws \Neos\Flow\Security\Exception
      */
@@ -773,10 +767,6 @@ class UserService
         return $roles;
     }
 
-    /**
-     * @param User $user
-     * @param bool $keepCurrentSession
-     */
     private function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
     {
         $sessionToKeep = $keepCurrentSession ? $this->sessionManager->getCurrentSession() : null;
@@ -836,10 +826,6 @@ class UserService
         return $user;
     }
 
-    /**
-     * @param Account $account
-     * @return User|null
-     */
     private function getNeosUserForAccount(Account $account): ?User
     {
         $user = $this->partyService->getAssignedPartyOfAccount($account);

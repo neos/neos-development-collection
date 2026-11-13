@@ -36,8 +36,6 @@ trait NodeTypeConstraintChecks
     abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     /**
-     * @param NodeTypeName $nodeTypeName
-     * @return NodeType
      * @throws NodeTypeNotFound
      */
     protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType

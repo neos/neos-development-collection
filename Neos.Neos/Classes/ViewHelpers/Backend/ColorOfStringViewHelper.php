@@ -39,7 +39,6 @@ class ColorOfStringViewHelper extends AbstractViewHelper
     /**
      * Outputs a hex color code (#000000) based on $text
      *
-     * @return string
      * @throws \InvalidArgumentException
      */
     public function render(): string

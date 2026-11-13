@@ -136,12 +136,11 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
-     * @param Node $node
      * @return boolean
      */
     protected function isNodeHidden(Node $node)
     {
-        if ($this->getRenderHiddenInMenu() === true) {
+        if ($this->getRenderHiddenInMenu()) {
             // Please show hiddenInMenu nodes
             // -> node is *never* hidden!
             return false;

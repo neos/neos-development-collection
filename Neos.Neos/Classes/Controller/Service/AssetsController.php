@@ -71,7 +71,6 @@ class AssetsController extends ActionController
     ];
 
     /**
-     * @param ViewInterface $view
      * @return void
      */
     protected function initializeView(ViewInterface $view)

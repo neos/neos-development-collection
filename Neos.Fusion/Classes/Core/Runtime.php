@@ -205,7 +205,6 @@ class Runtime
      * Relying on this behaviour is highly discouraged but leveraged by Neos.Fusion.Form {@see FusionGlobals}.
      *
      * @internal purely internal method, should not be called outside Neos.Fusion.
-     * @param array $contextArray
      * @return void
      */
     public function pushContextArray(array $contextArray)
@@ -360,9 +359,6 @@ class Runtime
      * Handle an Exception thrown while rendering Fusion according to
      * settings specified in Neos.Fusion.rendering.exceptionHandler or {@exceptionHandler}
      *
-     * @param string $fusionPath
-     * @param \Exception $exception
-     * @param boolean $useInnerExceptionHandler
      * @return string
      * @throws Exception
      * @throws InvalidConfigurationException
@@ -440,7 +436,6 @@ class Runtime
     /**
      * Evaluate an absolute Fusion path and return the result
      *
-     * @param string $fusionPath
      * @param mixed $contextObject The object which will be "this" in Eel expressions. ONLY FOR INTERNAL USE!
      * @param (Runtime::BEHAVIOR_EXCEPTION|Runtime::BEHAVIOR_RETURNNULL) $behaviorIfPathNotFound
      * @return mixed
@@ -629,7 +624,6 @@ class Runtime
      * Possibly prepares a new context for the current FusionObject and cache context and pushes it to the stack.
      * Returns if a new context was pushed to the stack or not.
      *
-     * @param AbstractFusionObject $fusionObject
      * @param string $fusionPath
      * @param array $fusionConfiguration
      * @param array $cacheContext
@@ -731,34 +725,32 @@ class Runtime
             ObjectAccess::setProperty($fusionObject, $key, $value);
         }
 
-        if ($applyValuePaths !== []) {
-            foreach ($applyValuePaths as $path) {
-                $entry = $this->currentApplyValues[$path];
-                $key = $entry['key'];
-                if (isset($entry['lazy'])) {
-                    $valueAst = [
-                        '__eelExpression' => null,
-                        // Mark this property as not having a simple value in the AST -
-                        // the object implementation has to evaluate the key through the Runtime
-                        '__objectType' => 'Neos.Fusion:Lazy',
-                        '__value' => null
-                    ];
-                } else {
-                    $valueAst = [
-                        '__eelExpression' => null,
-                        '__objectType' => null,
-                        '__value' => $entry['value']
-                    ];
-                }
-
-                // merge existing meta-configuration to valueAst
-                // to preserve @if, @process and @position informations
-                if ($meta = Arrays::getValueByPath($fusionConfiguration, [$key, '__meta'])) {
-                    $valueAst['__meta'] = $meta;
-                }
-
-                ObjectAccess::setProperty($fusionObject, $entry['key'], $valueAst);
+        foreach ($applyValuePaths as $path) {
+            $entry = $this->currentApplyValues[$path];
+            $key = $entry['key'];
+            if (isset($entry['lazy'])) {
+                $valueAst = [
+                    '__eelExpression' => null,
+                    // Mark this property as not having a simple value in the AST -
+                    // the object implementation has to evaluate the key through the Runtime
+                    '__objectType' => 'Neos.Fusion:Lazy',
+                    '__value' => null
+                ];
+            } else {
+                $valueAst = [
+                    '__eelExpression' => null,
+                    '__objectType' => null,
+                    '__value' => $entry['value']
+                ];
             }
+
+            // merge existing meta-configuration to valueAst
+            // to preserve @if, @process and @position informations
+            if ($meta = Arrays::getValueByPath($fusionConfiguration, [$key, '__meta'])) {
+                $valueAst['__meta'] = $meta;
+            }
+
+            ObjectAccess::setProperty($fusionObject, $entry['key'], $valueAst);
         }
     }
 
@@ -813,7 +805,6 @@ class Runtime
      *
      * @param array $configurationWithEventualProperties
      * @param string $fusionPath
-     * @return array|null
      */
     protected function evaluateApplyValues($configurationWithEventualProperties, $fusionPath): ?array
     {
@@ -1026,7 +1017,7 @@ class Runtime
         // legacy controller context layer
         $actionRequest = $this->fusionGlobals->get('request');
         if ($this->legacyActionResponseForCurrentRendering === null || !$actionRequest instanceof ActionRequest) {
-            throw new Exception(sprintf('Fusions simulated legacy controller context is only available inside `Runtime::renderEntryPathWithContext` and when the Fusion global "request" is an ActionRequest.'), 1706458355);
+            throw new Exception('Fusions simulated legacy controller context is only available inside `Runtime::renderEntryPathWithContext` and when the Fusion global "request" is an ActionRequest.', 1706458355);
         }
 
         return new LegacyFusionControllerContext(

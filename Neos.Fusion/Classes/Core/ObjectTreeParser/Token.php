@@ -67,7 +67,6 @@ class Token
 
     /**
      * @param int<1, 31> $type
-     * @param string $value
      */
     public function __construct(
         protected int $type,

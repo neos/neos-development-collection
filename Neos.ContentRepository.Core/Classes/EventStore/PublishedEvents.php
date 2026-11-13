@@ -25,7 +25,6 @@ final readonly class PublishedEvents implements \IteratorAggregate, \Countable
 
     /**
      * @param non-empty-array<EventInterface> $events
-     * @return static
      */
     public static function fromArray(array $events): self
     {

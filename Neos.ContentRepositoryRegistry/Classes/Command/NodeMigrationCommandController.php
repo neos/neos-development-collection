@@ -69,7 +69,6 @@ class NodeMigrationCommandController extends CommandController
      * @param bool $publishOnSuccess If true, the changes get published automatically after successful apply (default: true).
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @param string $contentRepository Identifier of the content repository. (Default: 'default')
-     * @return void
      * @throws StopCommandException
      * @see neos.contentrepositoryregistry:nodemigration:execute
      */
@@ -104,7 +103,7 @@ class NodeMigrationCommandController extends CommandController
             if ($publishOnSuccess === false) {
                 $command = $command->withoutPublishOnSuccess();
             }
-            if ($force === true) {
+            if ($force) {
                 $command = $command->withoutRequiringConfirmation();
             }
             $nodeMigrationService->executeMigration($command);
@@ -135,7 +134,6 @@ class NodeMigrationCommandController extends CommandController
      * Creates a node migration for the given package Key.
      *
      * @param string $packageKey The packageKey for the given package
-     * @return void
      * @throws UnknownPackageException
      * @throws FilesException
      * @throws StopCommandException
@@ -188,9 +186,6 @@ class NodeMigrationCommandController extends CommandController
 
     /**
      * Helper to output comments and warnings for the given configuration.
-     *
-     * @param MigrationConfiguration $migrationConfiguration
-     * @return void
      */
     protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration): void
     {

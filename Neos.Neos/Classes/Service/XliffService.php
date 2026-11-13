@@ -88,7 +88,6 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @return string
      * @throws \Neos\Cache\Exception
      * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
@@ -174,7 +173,6 @@ class XliffService
      * If sourcesToBeIncluded is an array, only those sources are returned what match the wildcard-patterns in the
      * array-values
      *
-     * @param PackageInterface $package
      * @param array<int,string> $sourcesToBeIncluded optional array of wildcard-patterns to filter the sources
      * @return array<string>
      */

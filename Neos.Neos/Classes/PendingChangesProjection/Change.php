@@ -43,9 +43,6 @@ final class Change
     ) {
     }
 
-    /**
-     * @param Connection $databaseConnection
-     */
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         try {

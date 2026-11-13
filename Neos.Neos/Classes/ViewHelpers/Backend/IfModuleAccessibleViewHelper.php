@@ -53,8 +53,6 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param \Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
     public static function renderStatic(
@@ -71,7 +69,6 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
 
     /**
      * @param array<string,mixed> $arguments
-     * @param RenderingContextInterface $renderingContext
      * @return boolean
      */
     protected static function evaluateCondition($arguments, RenderingContextInterface $renderingContext)

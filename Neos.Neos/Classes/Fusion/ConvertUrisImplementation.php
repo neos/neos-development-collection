@@ -289,7 +289,6 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * @param string $attribute The attribute, ('target' or 'rel')
      * @param string $value The value of the attribute to add
      * @param string $content The content to parse
-     * @return string
      */
     private static function setAttribute(string $attribute, string $value, string $content): string
     {

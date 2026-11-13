@@ -131,8 +131,6 @@ final class DocumentNodeInfo implements \Stringable
 
     /**
      * This is NOT the node path; but the "nodeAggregateIds on the hierarchy; separated by /"
-     *
-     * @return string
      */
     public function getNodeAggregateIdPath(): string
     {
@@ -201,8 +199,6 @@ final class DocumentNodeInfo implements \Stringable
     /**
      * As the route tags are based on the node aggregate ids of the node and its parents up to the site,
      * we can extract this from the "nodeAggregateIdPath", which contains these ids.
-     *
-     * @return RouteTags
      */
     public function getRouteTags(): RouteTags
     {

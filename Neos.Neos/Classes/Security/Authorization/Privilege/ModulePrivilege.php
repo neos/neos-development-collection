@@ -105,8 +105,6 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     /**
      * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
      * related to this object.
-     *
-     * @return string
      */
     public function getCacheEntryIdentifier(): string
     {
@@ -117,7 +115,6 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
     /**
      * Returns true, if this privilege covers the given subject
      *
-     * @param PrivilegeSubjectInterface $subject
      * @return boolean
      * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
      */

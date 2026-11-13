@@ -35,7 +35,7 @@ final readonly class NodeAggregateTypeChangeChildConstraintConflictResolutionMar
     /** @internal used by {@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString()} */
     public const string SERIALIZATION_PREFIX = 'mark_with_tag:';
 
-    public function __construct(public readonly SubtreeTag $subtreeTag)
+    public function __construct(public SubtreeTag $subtreeTag)
     {
     }
 

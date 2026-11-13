@@ -84,9 +84,6 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper
      */
     private $throwableStorage;
 
-    /**
-     * @param ThrowableStorageInterface $throwableStorage
-     */
     public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage): void
     {
         $this->throwableStorage = $throwableStorage;

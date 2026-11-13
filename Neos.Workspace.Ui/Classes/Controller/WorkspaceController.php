@@ -948,8 +948,6 @@ class WorkspaceController extends AbstractModuleController
 
     /**
      * Discards content of the whole workspace
-     *
-     * @param WorkspaceName $workspace
      */
     public function discardWorkspaceAction(WorkspaceName $workspace): void
     {

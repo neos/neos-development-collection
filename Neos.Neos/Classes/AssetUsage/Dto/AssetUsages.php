@@ -38,7 +38,6 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param \Closure $callback
      * @return \Traversable<mixed>
      */
     public function map(\Closure $callback): \Traversable

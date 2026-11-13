@@ -71,7 +71,6 @@ class TransformationsFactory
      * The name can be a fully qualified class name or a name relative to the
      * Neos\ContentRepository\NodeMigration\Transformation namespace.
      *
-     * @param string $transformationName
      * @throws MigrationException
      */
     protected function resolveTransformationFactory(string $transformationName): TransformationFactoryInterface|PropertyConverterAwareTransformationFactoryInterface

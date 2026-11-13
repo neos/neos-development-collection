@@ -34,7 +34,6 @@ class NodeMigrationGeneratorService
      * Creates a node migration for the given $packageKey
      *
      * @param string $packageKey the package key
-     * @return string
      * @throws UnknownPackageException
      * @throws FilesException
      */

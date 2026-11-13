@@ -34,7 +34,6 @@ abstract class AbstractRenderingExceptionHandler
     /**
      * Sets the current Fusion runtime
      *
-     * @param Runtime $runtime
      * @return void
      */
     public function setRuntime(Runtime $runtime)
@@ -56,7 +55,6 @@ abstract class AbstractRenderingExceptionHandler
      * Handle an Exception thrown while rendering Fusion
      *
      * @param string $fusionPath
-     * @param \Exception $exception
      * @return string
      * @throws StopActionException|SecurityException
      */
@@ -120,7 +118,6 @@ abstract class AbstractRenderingExceptionHandler
      * Can be used to determine if handling the exception should disable the cache or not.
      *
      * @param string $fusionPath The Fusion-Path that triggered the Exception
-     * @param \Exception $exception
      * @return boolean Should caching be disabled?
      */
     protected function exceptionDisablesCache($fusionPath, \Exception $exception)

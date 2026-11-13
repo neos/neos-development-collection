@@ -22,7 +22,6 @@ final class ContentRepositorySubscriberFactories implements \IteratorAggregate
 
     /**
      * @param array<ProjectionSubscriberFactory> $subscriberFactories
-     * @return self
      */
     public static function fromArray(array $subscriberFactories): self
     {

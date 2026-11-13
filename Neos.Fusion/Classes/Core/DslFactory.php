@@ -32,8 +32,6 @@ class DslFactory
     protected $dslSettings;
 
     /**
-     * @param string $identifier
-     * @return DslInterface
      * @throws Fusion\Exception
      */
     public function create(string $identifier): DslInterface

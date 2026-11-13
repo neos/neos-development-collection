@@ -69,7 +69,7 @@ final class DebugEventProjection implements ProjectionInterface
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schemaManager = $this->dbal->createSchemaManager();
+        $this->dbal->createSchemaManager();
 
         $table = new Table($this->tableNamePrefix, [
             (new Column('sequencenumber', Type::getType(Types::INTEGER))),

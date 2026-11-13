@@ -598,8 +598,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream "([^"]*)"$/
-     * @param int $numberOfEvents
-     * @param string $streamName
      */
     public function iExpectExactlyEventToBePublishedOnStream(int $numberOfEvents, string $streamName)
     {
@@ -611,8 +609,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^I expect exactly (\d+) events? to be published on stream with prefix "([^"]*)"$/
-     * @param int $numberOfEvents
-     * @param string $streamName
      */
     public function iExpectExactlyEventToBePublishedOnStreamWithPrefix(int $numberOfEvents, string $streamName)
     {
@@ -625,9 +621,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^event at index (\d+) is of type "([^"]*)" with payload:/
-     * @param int $eventNumber
-     * @param string $eventType
-     * @param TableNode $payloadTable
      */
     public function eventNumberIs(int $eventNumber, string $eventType, TableNode $payloadTable)
     {
@@ -661,8 +654,6 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^event data at index (\d+) is:/
-     * @param int $eventNumber
-     * @param TableNode $eventData
      */
     public function eventDataAtNumberIs(int $eventNumber, TableNode $eventData)
     {

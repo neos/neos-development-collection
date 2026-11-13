@@ -215,7 +215,7 @@ final class InterDimensionalVariationGraph
             $this->indexedSpecializations[$generalizationHash] = new DimensionSpacePointSet($specializations);
         }
 
-        foreach ($this->weightedGeneralizations as $specializationHash => &$generalizationsByWeight) {
+        foreach ($this->weightedGeneralizations as &$generalizationsByWeight) {
             ksort($generalizationsByWeight);
         }
     }

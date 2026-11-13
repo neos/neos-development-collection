@@ -171,7 +171,6 @@ class NodeLabelToken implements ProtectedContextAwareInterface, \Stringable
      * All methods are considered safe
      *
      * @param string $methodName
-     * @return boolean
      */
     public function allowsCallOfMethod($methodName): bool
     {

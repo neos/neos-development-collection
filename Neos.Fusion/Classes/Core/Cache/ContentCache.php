@@ -146,7 +146,6 @@ class ContentCache
      * @param string $content The content rendered by the Fusion Runtime
      * @param string $fusionPath The Fusion path that rendered the content, for example "page<Acme.Com:Page>/body<Acme.Demo:DefaultPageTemplate>/parts/breadcrumbMenu"
      * @param array<string, array{type: string, value: mixed}> $serializedContext Serialized Fusion context variables which are needed to correctly render the specified Fusion object
-     * @param array $cacheIdentifierValues
      * @param array $tags Tags to add to the cache entry
      * @param integer|null $lifetime Lifetime of the cache segment in seconds. NULL for the default lifetime and 0 for unlimited lifetime.
      * @param string $cacheDiscriminator The evaluated cache discriminator value
@@ -173,7 +172,6 @@ class ContentCache
      * Renders an identifier for a content cache entry
      *
      * @param string $fusionPath
-     * @param array $cacheIdentifierValues
      * @return string An MD5 hash built from the fusionPath and certain elements of the given identifier values
      * @throws CacheException If an invalid entry identifier value is given
      */
@@ -311,7 +309,6 @@ class ContentCache
     /**
      * Replace segments which are marked as not-cacheable by their actual content by invoking the Fusion Runtime.
      *
-     * @param \Closure $uncachedCommandCallback
      * @param string $content The content potentially containing not cacheable segments marked by the respective tokens
      * @return integer Number of replaced placeholders
      * @param-out string $content

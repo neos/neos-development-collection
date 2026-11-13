@@ -82,7 +82,6 @@ class AssetProxiesController extends ActionController
     ];
 
     /**
-     * @param ViewInterface $view
      * @return void
      */
     protected function initializeView(ViewInterface $view)
@@ -95,7 +94,6 @@ class AssetProxiesController extends ActionController
      *
      * @param string $searchTerm An optional search term used for filtering the list of assets
      * @param int $limit The maximum number of results shown in total
-     * @return void
      */
     public function indexAction(string $searchTerm = '', int $limit = 10): void
     {
@@ -138,9 +136,6 @@ class AssetProxiesController extends ActionController
     /**
      * Shows a specific asset proxy
      *
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @return void
      * @throws StopActionException
      */
     public function showAction(string $assetSourceIdentifier, string $assetProxyIdentifier): void
@@ -161,9 +156,6 @@ class AssetProxiesController extends ActionController
     }
 
     /**
-     * @param string $assetSourceIdentifier
-     * @param string $assetProxyIdentifier
-     * @return void
      * @throws AssetSourceServiceException
      * @throws StopActionException
      */

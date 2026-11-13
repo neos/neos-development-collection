@@ -126,7 +126,6 @@ final readonly class Node
      * That means that {@see self::getProperty()} will not be null, except for the rare case the property deserializing returns null.
      *
      * @param PropertyName|string $propertyName Name of the property
-     * @return boolean
      * @api
      */
     public function hasProperty(PropertyName|string $propertyName): bool

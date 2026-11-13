@@ -117,8 +117,6 @@ class ModuleViewHelper extends AbstractViewHelper
 
     /**
      * Extracted out to this method in order to be better unit-testable.
-     *
-     * @return void
      */
     protected function setMainRequestToUriBuilder(): void
     {

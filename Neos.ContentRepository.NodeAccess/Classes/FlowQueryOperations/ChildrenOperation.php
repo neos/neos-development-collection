@@ -133,7 +133,7 @@ class ChildrenOperation extends AbstractOperation
             // Only apply optimization if there's a property name filter or an instanceof filter
             // or another filter already did optimization
             if ((isset($filter['PropertyNameFilter']) || isset($filter['PathFilter']))
-                || count($instanceOfFilters) > 0 || $optimized === true) {
+                || count($instanceOfFilters) > 0 || $optimized) {
                 $optimized = true;
                 $filteredOutput = [];
                 $filteredOutputNodeIdentifiers = [];
@@ -201,7 +201,7 @@ class ChildrenOperation extends AbstractOperation
             }
         }
 
-        if ($optimized === true) {
+        if ($optimized) {
             $flowQuery->setContext($output);
         }
 

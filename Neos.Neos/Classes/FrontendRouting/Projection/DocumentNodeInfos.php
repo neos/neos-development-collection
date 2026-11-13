@@ -30,7 +30,6 @@ final readonly class DocumentNodeInfos implements \IteratorAggregate
 
     /**
      * @param array<DocumentNodeInfo> $documentNodeInfos
-     * @return self
      */
     public static function create(array $documentNodeInfos): self
     {

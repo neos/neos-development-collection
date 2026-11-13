@@ -21,7 +21,6 @@ final readonly class SerializedImageAdjustments implements \IteratorAggregate, \
 
     /**
      * @param \Traversable<ImageAdjustmentInterface> $adjustments
-     * @return static
      */
     public static function fromAdjustments(\Traversable $adjustments): self
     {
@@ -30,7 +29,6 @@ final readonly class SerializedImageAdjustments implements \IteratorAggregate, \
 
     /**
      * @param array<array{type: string, properties: array<mixed>}> $array
-     * @return static
      */
     public static function fromArray(array $array): self
     {

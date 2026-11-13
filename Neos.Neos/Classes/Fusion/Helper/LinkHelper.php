@@ -88,10 +88,6 @@ class LinkHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param string|UriInterface $uri
-     * @param Node $contextNode
-     * @param ControllerContext $controllerContext
-     * @return string|null
      * @deprecated with Neos 9 as the linking service is deprecated and this helper cannot be invoked from Fusion either way as the $controllerContext is not available.
      */
     public function resolveNodeUri(string|UriInterface $uri, Node $contextNode, ControllerContext $controllerContext): ?string
@@ -151,7 +147,6 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return boolean
      */
     public function allowsCallOfMethod($methodName): bool
     {

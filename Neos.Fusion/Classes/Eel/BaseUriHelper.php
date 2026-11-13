@@ -25,8 +25,6 @@ class BaseUriHelper implements ProtectedContextAwareInterface
     protected $baseUriProvider;
 
     /**
-     * @param ServerRequestInterface|null $fallbackRequest
-     * @return UriInterface
      * @throws \Exception
      */
     public function getConfiguredBaseUriOrFallbackToCurrentRequest(?ServerRequestInterface $fallbackRequest = null): UriInterface
@@ -50,7 +48,6 @@ class BaseUriHelper implements ProtectedContextAwareInterface
 
     /**
      * @param string $methodName
-     * @return bool
      */
     public function allowsCallOfMethod($methodName): bool
     {

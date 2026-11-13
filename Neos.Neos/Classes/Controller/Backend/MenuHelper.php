@@ -37,7 +37,7 @@ class MenuHelper
     /**
      * @var array|null
      */
-    protected $moduleListFirstLevelCache = null;
+    protected $moduleListFirstLevelCache;
 
     /**
      * @var SiteRepository
@@ -62,9 +62,6 @@ class MenuHelper
      */
     protected $iconMapper;
 
-    /**
-     * @param array $settings
-     */
     public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
@@ -73,8 +70,6 @@ class MenuHelper
     /**
      * Build a list of sites
      *
-     * @param ControllerContext $controllerContext
-     * @return array
      * @throws MissingActionNameException|Exception
      */
     public function buildSiteList(ControllerContext $controllerContext): array
@@ -131,8 +126,6 @@ class MenuHelper
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @return array
      * @throws Exception|MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
@@ -208,11 +201,6 @@ class MenuHelper
     }
 
     /**
-     * @param ControllerContext $controllerContext
-     * @param string $module
-     * @param array $moduleConfiguration
-     * @param string $modulePath
-     * @return array
      * @throws Exception
      * @throws MissingActionNameException
      */

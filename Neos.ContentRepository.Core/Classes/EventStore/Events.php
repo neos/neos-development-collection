@@ -45,7 +45,6 @@ final readonly class Events implements \IteratorAggregate, \Countable
 
     /**
      * @param non-empty-array<EventInterface|DecoratedEvent> $events
-     * @return static
      */
     public static function fromArray(array $events): self
     {

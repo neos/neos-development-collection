@@ -27,8 +27,6 @@ trait NodeRenaming
 
     /**
      * @Then /^I expect the node "([^"]*)" to have the name "([^"]*)"$/
-     * @param string $nodeAggregateId
-     * @param string $nodeName
      */
     public function iExpectTheNodeToHaveTheName(string $nodeAggregateId, string $nodeName)
     {

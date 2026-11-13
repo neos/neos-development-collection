@@ -1053,34 +1053,31 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // reconnect parent relations
         $missingParentRelations = $coverageSucceedingSiblings->toDimensionSpacePointSet()->points;
 
-        if (!empty($missingParentRelations)) {
-            // add yet missing parent relations
+        // add yet missing parent relations
+        foreach ($missingParentRelations as $dimensionSpacePoint) {
+            $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+                $contentStreamLayers,
+                $parentNodeAggregateId,
+                $dimensionSpacePoint
+            );
 
-            foreach ($missingParentRelations as $dimensionSpacePoint) {
-                $parentNode = $this->projectionContentGraph->findNodeInAggregate(
+            $succeedingSiblingNodeAggregateId = $coverageSucceedingSiblings->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
+            $succeedingSibling = $succeedingSiblingNodeAggregateId
+                ? $this->projectionContentGraph->findNodeInAggregate(
                     $contentStreamLayers,
-                    $parentNodeAggregateId,
+                    $succeedingSiblingNodeAggregateId,
                     $dimensionSpacePoint
+                )
+                : null;
+
+            if ($parentNode) {
+                $this->connectHierarchy(
+                    $contentStreamLayers,
+                    $parentNode->relationAnchorPoint,
+                    $node->relationAnchorPoint,
+                    new DimensionSpacePointSet([$dimensionSpacePoint]),
+                    $succeedingSibling?->relationAnchorPoint,
                 );
-
-                $succeedingSiblingNodeAggregateId = $coverageSucceedingSiblings->getSucceedingSiblingIdForDimensionSpacePoint($dimensionSpacePoint);
-                $succeedingSibling = $succeedingSiblingNodeAggregateId
-                    ? $this->projectionContentGraph->findNodeInAggregate(
-                        $contentStreamLayers,
-                        $succeedingSiblingNodeAggregateId,
-                        $dimensionSpacePoint
-                    )
-                    : null;
-
-                if ($parentNode) {
-                    $this->connectHierarchy(
-                        $contentStreamLayers,
-                        $parentNode->relationAnchorPoint,
-                        $node->relationAnchorPoint,
-                        new DimensionSpacePointSet([$dimensionSpacePoint]),
-                        $succeedingSibling?->relationAnchorPoint,
-                    );
-                }
             }
         }
 

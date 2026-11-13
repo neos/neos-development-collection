@@ -49,9 +49,7 @@ class NodeTypeEnrichmentService
     }
 
     /**
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
-     * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
     protected function addLabelsToNodeTypeConfiguration(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver)
@@ -75,7 +73,6 @@ class NodeTypeEnrichmentService
 
 
     /**
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
      * @return void
      */
@@ -91,7 +88,6 @@ class NodeTypeEnrichmentService
 
     /**
      * @param array<string,mixed> $configuration
-     * @param SuperTypeConfigResolver $superTypeConfigResolver
      * @return void
      */
     protected function setLabels(string $nodeTypeName, array &$configuration, SuperTypeConfigResolver $superTypeConfigResolver, string $configurationType)
@@ -117,7 +113,7 @@ class NodeTypeEnrichmentService
                     }
                     $superTypeConfiguration = $superTypeConfigResolver->getLocalConfiguration($superTypeName);
                     return $superTypeConfiguration['properties'][$propertyName]['ui']['inspector']['editor'] ?? null;
-                }, null);
+                });
             $hasEditor = !is_null($editorName);
             $hasEditorOptions = isset($propertyConfiguration['ui']['inspector']['editorOptions']);
 
@@ -252,9 +248,7 @@ class NodeTypeEnrichmentService
     /**
      * Sets labels for global NodeType elements like tabs and groups and the general label.
      *
-     * @param string $nodeTypeName
      * @param array<string,mixed> $configuration
-     * @return void
      */
     protected function setGlobalUiElementLabels(string $nodeTypeName, array &$configuration): void
     {
@@ -344,7 +338,6 @@ class NodeTypeEnrichmentService
      *
      * @param array<string,mixed> $parentConfiguration
      * @param string $fieldName Name of the possibly existing subfield
-     * @return boolean
      */
     protected function shouldFetchTranslation(array $parentConfiguration, string $fieldName = 'label'): bool
     {
@@ -355,11 +348,6 @@ class NodeTypeEnrichmentService
 
     /**
      * Generates a generic inspector element label with the given $nodeTypeSpecificPrefix.
-     *
-     * @param string $nodeTypeSpecificPrefix
-     * @param string $elementType
-     * @param string $elementName
-     * @return string
      */
     protected function getInspectorElementTranslationId(string $nodeTypeSpecificPrefix, string $elementType, string $elementName): string
     {
@@ -368,10 +356,6 @@ class NodeTypeEnrichmentService
 
     /**
      * Generates a property label with the given $nodeTypeSpecificPrefix.
-     *
-     * @param string $nodeTypeSpecificPrefix
-     * @param string $propertyName
-     * @return string
      */
     protected function getLabelTranslationId(string $nodeTypeSpecificPrefix, string $propertyName, string $configurationType): string
     {
@@ -380,11 +364,6 @@ class NodeTypeEnrichmentService
 
     /**
      * Generates a property configuration-label with the given $nodeTypeSpecificPrefix.
-     *
-     * @param string $nodeTypeSpecificPrefix
-     * @param string $propertyName
-     * @param string $labelPath
-     * @return string
      */
     protected function getConfigurationTranslationId(string $nodeTypeSpecificPrefix, string $propertyName, string $labelPath, string $configurationType): string
     {

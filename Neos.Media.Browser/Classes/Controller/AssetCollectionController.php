@@ -77,7 +77,6 @@ class AssetCollectionController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
      * @return void
      */
     public function editAction(AssetCollection $assetCollection)
@@ -89,7 +88,6 @@ class AssetCollectionController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
      * @return void
      */
     public function updateAction(AssetCollection $assetCollection)
@@ -100,7 +98,6 @@ class AssetCollectionController extends ActionController
     }
 
     /**
-     * @param AssetCollection $assetCollection
      * @return void
      */
     public function deleteAction(AssetCollection $assetCollection)
@@ -121,7 +118,6 @@ class AssetCollectionController extends ActionController
     /**
      * Overridden redirect method that points to the "index" action of the "Asset" controller and adds constraints arguments from the current request
      *
-     * @param array $arguments
      * @throws StopActionException
      */
     private function redirectToAssetIndex(array $arguments = []): void

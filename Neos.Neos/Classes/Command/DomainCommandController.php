@@ -146,7 +146,7 @@ class DomainCommandController extends CommandController
         foreach ($domains as $domain) {
             $site = $domain->getSite();
             if ($site->getPrimaryDomain() === $domain) {
-                $site->setPrimaryDomain(null);
+                $site->setPrimaryDomain();
                 $this->siteRepository->update($site);
             }
             $this->domainRepository->remove($domain);

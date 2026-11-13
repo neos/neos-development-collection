@@ -48,9 +48,6 @@ class GetTypeViewHelper extends AbstractViewHelper
         $this->registerArgument('value', 'mixed', 'The value to get the type of');
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         return gettype($this->arguments['value'] ?: $this->renderChildren());

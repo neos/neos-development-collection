@@ -55,7 +55,6 @@ class AbsorbingHandler extends AbstractRenderingExceptionHandler
      * therefor caching is desired.
      *
      * @param string $fusionPath
-     * @param \Exception $exception
      * @return boolean
      */
     protected function exceptionDisablesCache($fusionPath, \Exception $exception)

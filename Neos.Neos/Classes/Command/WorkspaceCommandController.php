@@ -414,7 +414,6 @@ class WorkspaceCommandController extends CommandController
      * Rebase all outdated content streams
      *
      * @param string $contentRepository The name of the content repository. (Default: 'default')
-     * @param boolean $force
      */
     public function rebaseOutdatedCommand(string $contentRepository = 'default', bool $force = false): void
     {

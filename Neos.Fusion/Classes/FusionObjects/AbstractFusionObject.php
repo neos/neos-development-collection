@@ -46,7 +46,6 @@ abstract class AbstractFusionObject implements \ArrayAccess
     /**
      * Constructor
      *
-     * @param Runtime $runtime
      * @param string $path
      * @param string $fusionObjectName
      */
@@ -94,7 +93,6 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
      *
      * @param mixed $offset
-     * @return boolean
      */
     public function offsetExists($offset): bool
     {
@@ -105,7 +103,6 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
      *
      * @param mixed $offset
-     * @return mixed
      */
     public function offsetGet($offset): mixed
     {
@@ -117,7 +114,6 @@ abstract class AbstractFusionObject implements \ArrayAccess
      *
      * @param mixed $offset
      * @param mixed $value
-     * @return void
      */
     public function offsetSet($offset, $value): void
     {
@@ -128,7 +124,6 @@ abstract class AbstractFusionObject implements \ArrayAccess
      * Dummy implementation of ArrayAccess to allow this.XXX access in processors.
      *
      * @param mixed $offset
-     * @return void
      */
     public function offsetUnset($offset): void
     {

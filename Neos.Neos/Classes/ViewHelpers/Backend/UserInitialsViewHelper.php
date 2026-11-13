@@ -67,7 +67,6 @@ class UserInitialsViewHelper extends AbstractViewHelper
      * Render user initials or an abbreviated name for a given username.
      * If the account was deleted, use the username as fallback.
      *
-     * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
     public function render(): string

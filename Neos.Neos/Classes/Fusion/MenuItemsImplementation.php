@@ -254,7 +254,6 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      *
      * If entryLevel is configured this will be taken into account as well.
      *
-     * @return NodeAggregateId|null
      * @throws FusionException
      */
     protected function findMenuStartingPointAggregateId(): ?NodeAggregateId

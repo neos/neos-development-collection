@@ -151,8 +151,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
      *
      * You can disable this because many old sites have this constraint violated more or less;
      * and it's easy to fix later on; as it does not touch the fundamental integrity of the CR.
-     *
-     * @param \Closure $callback
      */
     public function withoutAncestorNodeTypeConstraintChecks(\Closure $callback): void
     {

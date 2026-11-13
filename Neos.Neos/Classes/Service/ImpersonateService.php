@@ -53,8 +53,6 @@ class ImpersonateService
     protected $policyService;
 
     /**
-     * @param Account $account
-     * @return void
      * @throws SessionNotStartedException
      */
     public function impersonate(Account $account): void
@@ -70,7 +68,6 @@ class ImpersonateService
     }
 
     /**
-     * @return void
      * @throws SessionNotStartedException
      */
     public function restoreOriginalIdentity(): void
@@ -81,7 +78,6 @@ class ImpersonateService
     }
 
     /**
-     * @return Account|null
      * @throws SessionNotStartedException
      */
     public function getImpersonation(): ?Account
@@ -97,7 +93,6 @@ class ImpersonateService
     }
 
     /**
-     * @return bool
      * @throws SessionNotStartedException
      */
     public function isActive(): bool
@@ -105,16 +100,12 @@ class ImpersonateService
         return $this->getImpersonation() instanceof Account;
     }
 
-    /**
-     * @return Account|null
-     */
     public function getCurrentUser(): ?Account
     {
         return $this->securityContext->getAccount();
     }
 
     /**
-     * @return Account|null
      * @throws SessionNotStartedException
      */
     public function getOriginalIdentity(): ?Account
@@ -147,10 +138,6 @@ class ImpersonateService
         return $roles;
     }
 
-    /**
-     * @param Account|null $account
-     * @return void
-     */
     protected function refreshTokens(?Account $account = null): void
     {
         if ($account === null) {
@@ -164,9 +151,6 @@ class ImpersonateService
     }
 
     /**
-     * @param string $key
-     * @param string|null $value
-     * @return void
      * @throws SessionNotStartedException
      */
     protected function writeSession(string $key, ?string $value): void
@@ -177,7 +161,6 @@ class ImpersonateService
     }
 
     /**
-     * @param string $key
      * @throws SessionNotStartedException
      */
     protected function getSessionData(string $key): mixed

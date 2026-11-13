@@ -71,8 +71,6 @@ class ObjectTreeParser
     /**
      * Consume the current token.
      * Can only consume if accept was called before.
-     *
-     * @return Token
      */
     protected function consume(): Token
     {
@@ -85,7 +83,6 @@ class ObjectTreeParser
      * First match wins.
      *
      * @param int<1, 31> $tokenType
-     * @return bool
      */
     protected function accept(int $tokenType): bool
     {
@@ -102,7 +99,6 @@ class ObjectTreeParser
      * First match wins.
      *
      * @param int<1, 31> $tokenType
-     * @return Token
      * @throws ParserUnexpectedCharException
      */
     protected function expect(int $tokenType): Token
@@ -118,7 +114,6 @@ class ObjectTreeParser
     /**
      * Checks, if the token type matches the current, if so consume it and return true.
      * @param int<1,31> $tokenType
-     * @return bool
      */
     protected function lazyExpect(int $tokenType): bool
     {

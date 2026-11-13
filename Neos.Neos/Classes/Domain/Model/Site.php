@@ -124,9 +124,6 @@ class Site implements \Stringable
         $this->domains = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         return $this->getNodeName()->value;

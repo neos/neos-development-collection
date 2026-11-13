@@ -44,9 +44,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
     }
 
     /**
-     * @param ReferenceName $referenceName
      * @param SerializedNodeReference[] $references
-     * @return self
      */
     public static function fromSerializedReferences(ReferenceName $referenceName, array $references): self
     {

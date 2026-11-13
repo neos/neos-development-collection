@@ -47,7 +47,6 @@ final readonly class SerializedImageVariant implements \JsonSerializable
 
     /**
      * @param array{identifier: string, originalAssetIdentifier: string, name: string, width: int, height: int, presetIdentifier: ?string, presetVariantName: ?string, imageAdjustments: array<array{type: string, properties: array<mixed>}>} $array
-     * @return static
      */
     public static function fromArray(array $array): self
     {

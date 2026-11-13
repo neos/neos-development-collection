@@ -18,7 +18,6 @@ class RootNodeTypeMapping
 
     /**
      * @param array<string, string> $mapping
-     * @return self
      */
     public static function fromArray(array $mapping): self
     {

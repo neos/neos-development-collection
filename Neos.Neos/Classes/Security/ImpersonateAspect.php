@@ -28,9 +28,6 @@ use Neos\Neos\Service\ImpersonateService;
  */
 class ImpersonateAspect
 {
-    /**
-     * @var bool
-     */
     protected bool $alreadyLoggedAuthenticateCall = false;
 
     /**
@@ -41,7 +38,6 @@ class ImpersonateAspect
     /**
      * @Flow\After("within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
      * @param JoinPointInterface $joinPoint The current joinpoint
-     * @return void
      * @throws \Exception
      */
     public function logManagerAuthenticate(JoinPointInterface $joinPoint): void
@@ -49,7 +45,7 @@ class ImpersonateAspect
         /** @var AuthenticationManagerInterface $proxy */
         $proxy = $joinPoint->getProxy();
 
-        if ($this->alreadyLoggedAuthenticateCall === true) {
+        if ($this->alreadyLoggedAuthenticateCall) {
             $this->alreadyLoggedAuthenticateCall = true;
             return;
         }

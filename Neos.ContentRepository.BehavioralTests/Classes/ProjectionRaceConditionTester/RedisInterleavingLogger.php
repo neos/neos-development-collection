@@ -54,9 +54,6 @@ final class RedisInterleavingLogger
         ]);
     }
 
-    /**
-     * @return TraceEntries
-     */
     public static function getTraces(): TraceEntries
     {
         $traces = [];

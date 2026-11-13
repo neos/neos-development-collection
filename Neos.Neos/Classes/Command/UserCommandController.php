@@ -51,8 +51,6 @@ class UserCommandController extends CommandController
      * List all users
      *
      * This command lists all existing Neos users.
-     *
-     * @return void
      */
     public function listCommand(): void
     {
@@ -81,7 +79,6 @@ class UserCommandController extends CommandController
      * @param string $username The username of the user to show.
      *                         Usually refers to the account identifier of the user's Neos backend account.
      * @param string|null $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
-     * @return void
      * @throws Exception|StopCommandException
      */
     public function showCommand(string $username, ?string $authenticationProvider = null): void

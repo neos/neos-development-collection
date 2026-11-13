@@ -50,7 +50,7 @@ class ContentElementEditableService
 
     public function wrapContentProperty(Node $node, string $property, string $content): string
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(
+        $this->contentRepositoryRegistry->get(
             $node->contentRepositoryId
         );
 

@@ -38,7 +38,7 @@ final class AssetUsageRepository
         $queryBuilder->andWhere('contentrepositoryid = :contentRepositoryId');
         $queryBuilder->setParameter('contentRepositoryId', $contentRepositoryId->value);
         if ($filter->hasAssetId()) {
-            if ($filter->includeVariantsOfAsset === true) {
+            if ($filter->includeVariantsOfAsset) {
                 $queryBuilder->andWhere(
                     $queryBuilder->expr()->or(
                         $queryBuilder->expr()->eq('assetid', ':assetId'),

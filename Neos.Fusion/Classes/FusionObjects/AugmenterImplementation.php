@@ -63,7 +63,7 @@ class AugmenterImplementation extends AbstractArrayFusionObject
 
         $attributes = $this->evaluateNestedProperties();
 
-        if ($attributes && is_array($attributes) && count($attributes) > 0) {
+        if ($attributes && count($attributes) > 0) {
             return $this->htmlAugmenter->addAttributes($content, $attributes, $fallbackTagName, null, $allowEmptyAttributes);
         } else {
             return $content;

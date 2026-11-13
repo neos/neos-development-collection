@@ -84,8 +84,6 @@ class NodeUriImplementation extends AbstractFusionObject
 
     /**
      * The requested format, for example "html"
-     *
-     * @return string
      */
     public function getFormat(): string
     {
@@ -124,8 +122,6 @@ class NodeUriImplementation extends AbstractFusionObject
 
     /**
      * The name of the base node inside the Fusion context to use for resolving relative paths.
-     *
-     * @return string
      */
     public function getBaseNodeName(): string
     {

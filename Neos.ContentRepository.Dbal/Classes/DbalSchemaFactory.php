@@ -190,9 +190,7 @@ final class DbalSchemaFactory
     }
 
     /**
-     * @param Connection $dbal
      * @param Table[] $tables
-     * @return Schema
      * @throws Exception
      * @throws SchemaException
      */

@@ -31,9 +31,6 @@ class ParserCacheFlusher
      */
     protected $flowCacheManager;
 
-    /**
-     * @param CacheManager $flowCacheManager
-     */
     public function __construct(CacheManager $flowCacheManager)
     {
         $this->flowCacheManager = $flowCacheManager;

@@ -52,8 +52,6 @@ final class RuntimeConfiguration
     /**
      * Get the expanded Fusion configuration for the given path
      *
-     * @param string $fusionPath
-     * @return array
      * @throws Exception
      */
     public function forPath(string $fusionPath): array
@@ -119,10 +117,6 @@ final class RuntimeConfiguration
     /**
      * Matches the current path segment and prepares the configuration.
      *
-     * @param string $pathPart
-     * @param array $previousConfiguration
-     * @param array $currentPrototypeDefinitions
-     * @return array
      * @throws Exception
      */
     private function matchCurrentPathPart(string $pathPart, array $previousConfiguration, array &$currentPrototypeDefinitions): array
@@ -173,9 +167,6 @@ final class RuntimeConfiguration
     /**
      * Merges the prototype chain into the configuration.
      *
-     * @param array $configuration
-     * @param array $currentPrototypeDefinitions
-     * @return array
      * @throws Exception
      */
     private function mergePrototypesWithConfigurationForPathSegment(array $configuration, array &$currentPrototypeDefinitions): array
@@ -237,8 +228,6 @@ final class RuntimeConfiguration
     /**
      * No API, internal use for testing
      *
-     * @param string $fusionPath
-     * @return bool
      * @internal
      */
     public function isPathCached(string $fusionPath): bool

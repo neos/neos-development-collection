@@ -63,8 +63,6 @@ trait RootNodeHandling
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
     /**
-     * @param CreateRootNodeAggregateWithNode $command
-     * @return EventsToPublish
      * @throws NodeAggregateCurrentlyExists
      * @throws NodeTypeNotFound
      * @throws NodeTypeIsNotOfTypeRoot
@@ -148,10 +146,6 @@ trait RootNodeHandling
         );
     }
 
-    /**
-     * @param UpdateRootNodeAggregateDimensions $command
-     * @return EventsToPublish
-     */
     private function handleUpdateRootNodeAggregateDimensions(
         UpdateRootNodeAggregateDimensions $command,
     ): EventsToPublish {

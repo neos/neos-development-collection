@@ -91,7 +91,6 @@ class ContentDimensionsController extends ActionController
      * @param string $dimensionName Name of the dimension to return presets for
      * @param array $chosenDimensionPresets An optional array of dimension names and a single preset per dimension
      * @phpstan-param array<string,string> $chosenDimensionPresets
-     * @return void
      */
     public function showAction($dimensionName, $chosenDimensionPresets = []): void
     {

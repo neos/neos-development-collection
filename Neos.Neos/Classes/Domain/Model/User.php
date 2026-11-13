@@ -76,7 +76,6 @@ class User extends Person
     }
 
     /**
-     * @param UserPreferences $preferences
      * @return void
      * @api
      */

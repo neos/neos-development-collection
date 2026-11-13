@@ -135,8 +135,6 @@ class ImageUriImplementation extends AbstractFusionObject
 
     /**
      * Async
-     *
-     * @return string|null
      */
     public function getFormat(): ?string
     {

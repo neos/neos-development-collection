@@ -129,7 +129,7 @@ final class NodeType
      */
     protected function initialize(): void
     {
-        if ($this->initialized === true) {
+        if ($this->initialized) {
             return;
         }
         $this->initialized = true;
@@ -145,7 +145,7 @@ final class NodeType
     {
         $mergedConfiguration = [];
         $applicableSuperTypes = static::getFlattenedSuperTypes($this);
-        foreach ($applicableSuperTypes as $key => $superType) {
+        foreach ($applicableSuperTypes as $superType) {
             $mergedConfiguration = Arrays::arrayMergeRecursiveOverrule(
                 $mergedConfiguration,
                 $superType->getLocalConfiguration()

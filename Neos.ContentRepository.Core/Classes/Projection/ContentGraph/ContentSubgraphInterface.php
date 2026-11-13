@@ -207,7 +207,6 @@ interface ContentSubgraphInterface
     /**
      * Count all nodes in this subgraph, including inaccessible ones!
      *
-     * @return int
      * @internal this method might change without further notice.
      */
     public function countNodes(): int;

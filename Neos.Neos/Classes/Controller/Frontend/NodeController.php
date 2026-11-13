@@ -112,7 +112,6 @@ class NodeController extends ActionController
     protected ContentSubgraphCacheWarmup|null $contentSubgraphCacheWarmup = null;
 
     /**
-     * @param string $node
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException

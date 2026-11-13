@@ -40,7 +40,6 @@ final readonly class RenderingMode
     /**
      * Creates a rendering mode from its configuration
      *
-     * @param string $modeName
      * @param array<string,mixed> $configuration
      */
     public static function createFromConfiguration(string $modeName, array $configuration): RenderingMode

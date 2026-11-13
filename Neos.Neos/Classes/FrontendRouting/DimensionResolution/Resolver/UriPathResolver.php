@@ -45,7 +45,6 @@ final class UriPathResolver implements DimensionResolverInterface
     /**
      * @param array<string,DimensionSpacePoint> $uriPathToDimensionSpacePoint
      * @param array<string,string> $dimensionSpacePointHashToUriPath
-     * @param Segments $segments
      */
     private function __construct(
         private readonly array $uriPathToDimensionSpacePoint,
@@ -118,8 +117,6 @@ final class UriPathResolver implements DimensionResolverInterface
 
 
     /**
-     * @param Segments $segments
-     * @param Separator $separator
      * @return array<mixed>
      */
     private static function calculateUriPaths(Segments $segments, Separator $separator): array
@@ -154,7 +151,6 @@ final class UriPathResolver implements DimensionResolverInterface
     }
 
     /**
-     * @param Segments $segments
      * @return array<int,array<string,SegmentMappingElement>>
      */
     private static function cartesian(Segments $segments): array

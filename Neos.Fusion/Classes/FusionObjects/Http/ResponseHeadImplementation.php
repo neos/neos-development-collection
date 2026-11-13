@@ -55,9 +55,6 @@ class ResponseHeadImplementation extends AbstractFusionObject
         return (int)$statusCode;
     }
 
-    /**
-     * @return array
-     */
     public function getHeaders(): array
     {
         $headers = $this->fusionValue('headers');
@@ -69,8 +66,6 @@ class ResponseHeadImplementation extends AbstractFusionObject
 
     /**
      * Just return the processed value
-     *
-     * @return ResponseInterface
      */
     public function evaluate(): ResponseInterface
     {

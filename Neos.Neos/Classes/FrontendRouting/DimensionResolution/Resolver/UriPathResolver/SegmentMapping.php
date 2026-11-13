@@ -30,7 +30,6 @@ final class SegmentMapping implements \IteratorAggregate, \Countable
 
     /**
      * @param array<string,string> $dimensionValueMapping
-     * @return static
      */
     public static function fromArray(array $dimensionValueMapping): self
     {

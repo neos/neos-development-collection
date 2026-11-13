@@ -73,7 +73,6 @@ trait ContentStreamHandling
     }
 
     /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamAlreadyExists
      */
     private function requireContentStreamToNotExistYet(

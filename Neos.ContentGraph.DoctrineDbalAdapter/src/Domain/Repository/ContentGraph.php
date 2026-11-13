@@ -328,10 +328,6 @@ final class ContentGraph implements ContentGraphInterface
         );
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @return NodeAggregates
-     */
     private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): NodeAggregates
     {
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(

@@ -62,7 +62,6 @@ class PropertyOperation extends AbstractOperation
      * We can only handle ContentRepository Nodes.
      *
      * @param array<int, mixed> $context $context onto which this operation should be applied (array or array-like object)
-     * @return boolean
      */
     public function canEvaluate($context): bool
     {
@@ -74,7 +73,6 @@ class PropertyOperation extends AbstractOperation
      *
      * @param FlowQuery<int,mixed> $flowQuery the FlowQuery object
      * @param array<int,mixed> $arguments the arguments for this operation
-     * @return mixed
      * @throws FlowQueryException
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments): mixed

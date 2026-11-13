@@ -24,7 +24,6 @@ final class AssetUsageCommandController extends CommandController
      * @param string $contentRepository The content repository identifier. (Default: 'default')
      * @param string $nodeTypeName Name of the root nodetype (Default: 'Neos.Neos:Sites')
      * @param bool $force Flag to enforce the index creation also with outdated workspaces with unpublished changes
-     * @return void
      */
     public function indexCommand(string $contentRepository = 'default', string $nodeTypeName = NodeTypeNameFactory::NAME_SITES, bool $force = false): void
     {

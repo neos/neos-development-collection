@@ -256,12 +256,10 @@ class NodesController extends ActionController
      *   - $identifier, $workspaceName and $sourceDimensions specify the source node
      *   - $identifier, $workspaceName and $dimensions specify the target node
      *
-     * @param string $mode
      * @param string $identifier Specifies the identifier of the node to be created; if source
      * @param string $workspaceName Name of the workspace where to create the node in
      * @param array $dimensions Optional list of dimensions and their values in which the node should be created
      * @phpstan-param array<string,array<string>> $dimensions
-     * @param array $sourceDimensions
      * @phpstan-param array<string,array<string>> $sourceDimensions
      */
     public function createAction(
@@ -355,14 +353,7 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
-     * @param WorkspaceName $workspaceName
-     * @param NodeAggregateId $nodeAggregateId
-     * @param ContentSubgraphInterface $sourceSubgraph
-     * @param ContentSubgraphInterface $targetSubgraph
-     * @param DimensionSpacePoint $targetDimensionSpacePoint
-     * @param ContentRepository $contentRepository
      * @param boolean $copyContent true if the content from the nodes that are translated should be copied
-     * @return void
      */
     protected function adoptNodeAndParents(
         WorkspaceName $workspaceName,
@@ -404,7 +395,7 @@ class NodesController extends ActionController
                 )
             );
 
-            if ($copyContent === true) {
+            if ($copyContent) {
                 $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
                     $workspaceName,

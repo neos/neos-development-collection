@@ -65,7 +65,7 @@ final readonly class ConstraintCheck
 
         if (
             array_key_exists($nodeType->name->value, $this->constraints)
-            && $this->constraints[$nodeType->name->value] === true
+            && $this->constraints[$nodeType->name->value]
         ) {
             return true;
         }

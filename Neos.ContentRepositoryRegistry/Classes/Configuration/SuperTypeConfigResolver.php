@@ -34,7 +34,6 @@ class SuperTypeConfigResolver
     }
 
     /**
-     * @param string $nodeTypeName
      * @return list<string>
      */
     public function getSuperTypesFor(string $nodeTypeName): array

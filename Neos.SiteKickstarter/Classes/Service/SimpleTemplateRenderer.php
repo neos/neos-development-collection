@@ -23,9 +23,7 @@ class SimpleTemplateRenderer
      * Renders simple templates by replacing {key} variables in the template, by the value of the key in the
      * contextVariables array
      *
-     * @param string $templatePathAndFilename
      * @param array<string, string> $contextVariables
-     * @return string
      */
     public function render(string $templatePathAndFilename, array $contextVariables): string
     {

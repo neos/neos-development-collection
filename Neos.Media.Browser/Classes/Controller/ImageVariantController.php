@@ -31,9 +31,6 @@ class ImageVariantController extends ActionController
         $mappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
     }
 
-    /**
-     * @param ImageVariant $imageVariant
-     */
     public function updateAction(ImageVariant $imageVariant)
     {
         $this->assetRepository->update($imageVariant);

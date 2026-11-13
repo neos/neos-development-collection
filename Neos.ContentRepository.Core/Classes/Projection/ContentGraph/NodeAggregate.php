@@ -58,9 +58,7 @@ final readonly class NodeAggregate
      * @param NodeName|null $nodeName optional name of this node aggregate
      * @param OriginDimensionSpacePointSet $occupiedDimensionSpacePoints dimension space points this node aggregate occupies (Unordered)
      * @param non-empty-array<string,Node> $nodesByOccupiedDimensionSpacePoint At least one node will be occupied.
-     * @param CoverageByOrigin $coverageByOccupant
      * @param DimensionSpacePointSet $coveredDimensionSpacePoints This node aggregate will cover at least one dimension space. (Unordered)
-     * @param OriginByCoverage $occupationByCovered
      * @param non-empty-array<string,NodeTags> $nodeTagsByCoveredDimensionSpacePoint node tags by every covered dimension space point
      */
     private function __construct(

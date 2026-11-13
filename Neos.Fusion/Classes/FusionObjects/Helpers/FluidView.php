@@ -32,7 +32,6 @@ class FluidView extends StandaloneView implements FusionAwareViewInterface
     protected $fusionObject;
 
     /**
-     * @param AbstractFusionObject $fusionObject
      * @param ActionRequest $request The current action request. If none is specified it will be created from the environment.
      * @throws \Neos\FluidAdaptor\Exception
      */

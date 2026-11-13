@@ -35,7 +35,6 @@ trait NodeModification
 
     /**
      * @Given /^the event NodePropertiesWereSet was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)

@@ -77,8 +77,6 @@ class CachingHelper implements ProtectedContextAwareInterface
     /**
      * Generate a `@cache` entry tag for a single node identifier.
      *
-     * @param string $identifier
-     * @param Node $contextNode
      * @return string[]
      */
     public function nodeTagForIdentifier(string $identifier, Node $contextNode): array

@@ -108,10 +108,7 @@ class UsersController extends AbstractModuleController
     /**
      * Shows a list of all users
      *
-     * @param string $searchTerm
-     * @param string $sortBy
      * @param QueryInterface::ORDER_ASCENDING|QueryInterface::ORDER_DESCENDING $sortDirection
-     * @return void
      */
     public function indexAction(
         string $searchTerm = '',
@@ -157,9 +154,6 @@ class UsersController extends AbstractModuleController
 
     /**
      * Shows details for the specified user
-     *
-     * @param User $user
-     * @return void
      */
     public function showAction(User $user): void
     {
@@ -173,7 +167,6 @@ class UsersController extends AbstractModuleController
      * Renders a form for creating a new user
      *
      * @param User $user
-     * @return void
      */
     public function newAction(?User $user = null): void
     {
@@ -193,7 +186,6 @@ class UsersController extends AbstractModuleController
      * @param User $user The user to create
      * @param array $roleIdentifiers A list of roles (role identifiers) to assign to the new user
      * @param string $authenticationProviderName Optional name of the authentication provider. If not provided the user server uses the default authentication provider
-     * @return void
      * @throws NoSuchRoleException
      * @throws StopActionException
      * @throws \Neos\Flow\Security\Exception
@@ -241,9 +233,6 @@ class UsersController extends AbstractModuleController
 
     /**
      * Edit an existing user
-     *
-     * @param User $user
-     * @return void
      */
     public function editAction(User $user): void
     {
@@ -271,7 +260,6 @@ class UsersController extends AbstractModuleController
      * Update a given user
      *
      * @param User $user The user to update, including updated data already (name, email address etc)
-     * @return void
      * @throws StopActionException
      */
     public function updateAction(User $user): void
@@ -300,8 +288,6 @@ class UsersController extends AbstractModuleController
     /**
      * Delete the given user
      *
-     * @param User $user
-     * @return void
      * @throws Exception
      * @throws StopActionException
      */
@@ -341,8 +327,6 @@ class UsersController extends AbstractModuleController
     /**
      * Edit the given account
      *
-     * @param Account $account
-     * @return void
      * @throws Exception
      */
     public function editAccountAction(Account $account): void
@@ -372,7 +356,6 @@ class UsersController extends AbstractModuleController
      * @param Account $account The account to update
      * @param array $roleIdentifiers A possibly updated list of roles for the user's primary account
      * @param array $password Expects an array in the format array('<password>', '<password confirmation>')
-     * @return void
      * @throws StopActionException
      * @throws ForwardException
      * @throws NoSuchRoleException
@@ -437,9 +420,7 @@ class UsersController extends AbstractModuleController
     /**
      * The add new electronic address action
      *
-     * @param User $user
      * @Flow\IgnoreValidation("$user")
-     * @return void
      */
     public function newElectronicAddressAction(User $user): void
     {
@@ -450,9 +431,6 @@ class UsersController extends AbstractModuleController
     /**
      * Create an new electronic address
      *
-     * @param User $user
-     * @param ElectronicAddress $electronicAddress
-     * @return void
      * @throws StopActionException
      */
     public function createElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
@@ -484,9 +462,6 @@ class UsersController extends AbstractModuleController
     /**
      * Delete an electronic address action
      *
-     * @param User $user
-     * @param ElectronicAddress $electronicAddress
-     * @return void
      * @throws StopActionException
      */
     public function deleteElectronicAddressAction(User $user, ElectronicAddress $electronicAddress): void
@@ -516,9 +491,6 @@ class UsersController extends AbstractModuleController
         $this->redirect('edit', null, null, ['user' => $user]);
     }
 
-    /**
-     * @return void
-     */
     protected function assignElectronicAddressOptions(): void
     {
         $electronicAddress = new ElectronicAddress();
@@ -563,14 +535,13 @@ class UsersController extends AbstractModuleController
      * Returns the roles that the current editor is able to assign
      * Administrator can assign any roles, other users can only assign their own roles
      *
-     * @return array
      * @throws NoSuchRoleException
      * @throws \Neos\Flow\Security\Exception
      */
     protected function getAllowedRoles(): array
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        $currentUserRoles = array_filter($currentUserRoles, static fn (Role $role) => $role->isAbstract() !== true);
+        $currentUserRoles = array_filter($currentUserRoles, static fn (Role $role) => !$role->isAbstract());
 
         $roles = $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
 
@@ -582,8 +553,6 @@ class UsersController extends AbstractModuleController
     /**
      * Returns whether the current user is allowed to edit the given user.
      * Administrators can edit anybody.
-     *
-     * @param User $user
      */
     protected function isEditingAllowed(User $user): bool
     {

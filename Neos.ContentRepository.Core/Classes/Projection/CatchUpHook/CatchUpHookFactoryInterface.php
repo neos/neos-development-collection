@@ -17,7 +17,6 @@ interface CatchUpHookFactoryInterface
      * state is not safe as the other projection might not be behind - the order is undefined.
      *
      * @param CatchUpHookFactoryDependencies<T> $dependencies available dependencies to intialise the catchup hook
-     * @return CatchUpHookInterface
      */
     public function build(CatchUpHookFactoryDependencies $dependencies): CatchUpHookInterface;
 }

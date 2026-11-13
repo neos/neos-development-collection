@@ -71,7 +71,6 @@ final readonly class DelegatingCatchUpHook implements CatchUpHookInterface
 
     /**
      * @param \Closure(CatchUpHookInterface): void $closure
-     * @return void
      */
     private function delegateHooks(\Closure $closure, string $hookName): void
     {

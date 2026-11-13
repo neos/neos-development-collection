@@ -48,8 +48,6 @@ abstract class AbstractSubtreeTagBasedPrivilege extends AbstractPrivilege
     /**
      * Returns true, if this privilege covers the given subject
      *
-     * @param PrivilegeSubjectInterface $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject): bool

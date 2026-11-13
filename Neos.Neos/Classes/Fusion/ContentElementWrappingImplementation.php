@@ -40,8 +40,6 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
 
     /**
      * The string to be processed
-     *
-     * @return string
      */
     public function getValue(): string
     {

@@ -38,8 +38,6 @@ class SchemaController extends ActionController
 
     /**
      * Get the node type configuration schema for the Neos UI
-     *
-     * @return string
      */
     public function nodeTypeSchemaAction(): string
     {

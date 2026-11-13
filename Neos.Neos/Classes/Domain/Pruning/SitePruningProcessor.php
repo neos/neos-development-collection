@@ -53,7 +53,7 @@ final readonly class SitePruningProcessor implements ProcessorInterface
         foreach ($sites as $site) {
             $domains = $site->getDomains();
             if ($site->getPrimaryDomain() !== null) {
-                $site->setPrimaryDomain(null);
+                $site->setPrimaryDomain();
                 $this->siteRepository->update($site);
             }
             foreach ($domains as $domain) {

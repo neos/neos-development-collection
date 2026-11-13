@@ -173,7 +173,7 @@ class EventsDeduplicateBaseWorkspaceChangesUpgrade
             }
 
             if (!$winningChangeBaseWorkspaceCorrelationId) {
-                throw new \RuntimeException(sprintf('Fatal error in upgrade. No winning ChangeBaseWorkspaceCorrelationId found'), 1781783151);
+                throw new \RuntimeException('Fatal error in upgrade. No winning ChangeBaseWorkspaceCorrelationId found', 1781783151);
             }
 
             //

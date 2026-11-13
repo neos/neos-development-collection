@@ -77,17 +77,14 @@ final class AssetExportProcessor implements ProcessorInterface
     }
 
     /** ----------------------------- */
-
     /**
-     * @param string $type
-     * @param mixed $value
      * @return array<string>
      * @throws InvalidTypeException
      */
     private function extractAssetIdentifiers(string $type, mixed $value): array
     {
         if (($type === 'string' || is_subclass_of($type, \Stringable::class, true)) && is_string($value)) {
-            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
+            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
             return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {

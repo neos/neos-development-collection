@@ -241,7 +241,6 @@ class ContentCacheFlusher
     }
 
     /**
-     * @param NodeType $nodeType
      * @return array<string>
      */
     protected function getAllImplementedNodeTypeNames(NodeType $nodeType): array
@@ -275,7 +274,6 @@ class ContentCacheFlusher
      *
      * @Flow\Signal
      * @param array<string, string> $tagsToFlush
-     * @return void
      */
     protected function emitTagsFlushed(array $tagsToFlush): void
     {

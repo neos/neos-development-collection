@@ -65,9 +65,9 @@ final class PropertyValueCriteriaMatcher
     {
         $propertyValue = $serializedPropertyValues->getProperty($propertyValueCriteria->propertyName->value)?->value;
         if ($propertyValueCriteria->caseSensitive) {
-            return is_string($propertyValue) ? str_contains($propertyValue, $propertyValueCriteria->value) : false;
+            return is_string($propertyValue) && str_contains($propertyValue, $propertyValueCriteria->value);
         } else {
-            return is_string($propertyValue) ? str_contains(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value)) : false;
+            return is_string($propertyValue) && str_contains(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value));
         }
     }
 
@@ -75,9 +75,9 @@ final class PropertyValueCriteriaMatcher
     {
         $propertyValue = $serializedPropertyValues->getProperty($propertyValueCriteria->propertyName->value)?->value;
         if ($propertyValueCriteria->caseSensitive) {
-            return is_string($propertyValue) ? str_starts_with($propertyValue, $propertyValueCriteria->value) : false;
+            return is_string($propertyValue) && str_starts_with($propertyValue, $propertyValueCriteria->value);
         } else {
-            return is_string($propertyValue) ? str_starts_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value)) : false;
+            return is_string($propertyValue) && str_starts_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value));
         }
     }
 
@@ -85,9 +85,9 @@ final class PropertyValueCriteriaMatcher
     {
         $propertyValue = $serializedPropertyValues->getProperty($propertyValueCriteria->propertyName->value)?->value;
         if ($propertyValueCriteria->caseSensitive) {
-            return is_string($propertyValue) ? str_ends_with($propertyValue, $propertyValueCriteria->value) : false;
+            return is_string($propertyValue) && str_ends_with($propertyValue, $propertyValueCriteria->value);
         } else {
-            return is_string($propertyValue) ? str_ends_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value)) : false;
+            return is_string($propertyValue) && str_ends_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value));
         }
     }
 

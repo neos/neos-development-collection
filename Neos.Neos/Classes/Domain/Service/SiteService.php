@@ -97,7 +97,7 @@ class SiteService
             ), 1707302419, $exception);
         }
 
-        $site->setPrimaryDomain(null);
+        $site->setPrimaryDomain();
         $this->siteRepository->update($site);
 
         $domainsForSite = $this->domainRepository->findBySite($site);
@@ -129,9 +129,6 @@ class SiteService
      * Adds an asset to the asset collection of the site it has been uploaded to
      * Note: This is usually triggered by the ContentController::assetUploaded signal
      *
-     * @param Asset $asset
-     * @param Node $node
-     * @param string $propertyName
      * @return void
      */
     public function assignUploadedAssetToSiteAssetCollection(Asset $asset, Node $node, string $propertyName)

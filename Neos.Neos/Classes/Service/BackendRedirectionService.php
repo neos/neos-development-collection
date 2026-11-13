@@ -91,7 +91,6 @@ class BackendRedirectionService
     /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
      *
-     * @param ControllerContext $controllerContext
      * @return string
      * @throws IllegalObjectTypeException
      * @throws MissingActionNameException

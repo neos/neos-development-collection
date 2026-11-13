@@ -180,7 +180,6 @@ class CacheSegmentParser
 
     /**
      * @param integer $currentPosition
-     * @param array $segmentData
      * @return array
      */
     protected function extractContentAndSubSegments($currentPosition, array $segmentData)
@@ -224,7 +223,6 @@ class CacheSegmentParser
     /**
      * Make sure that we keep only necessary information for caching and strip all internal segment data.
      *
-     * @param array $segmentData
      * @return array
      */
     protected function reduceSegmentDataToCacheRelevantInformation(array $segmentData)

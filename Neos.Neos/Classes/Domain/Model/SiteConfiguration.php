@@ -14,10 +14,7 @@ use Neos\Flow\Annotations as Flow;
 final readonly class SiteConfiguration
 {
     /**
-     * @param ContentRepositoryId $contentRepositoryId
-     * @param string $contentDimensionResolverFactoryClassName
      * @param array<string,mixed> $contentDimensionResolverOptions
-     * @param DimensionSpacePoint $defaultDimensionSpacePoint
      */
     private function __construct(
         public ContentRepositoryId $contentRepositoryId,
@@ -30,7 +27,6 @@ final readonly class SiteConfiguration
 
     /**
      * @param array<string,mixed> $configuration
-     * @return static
      */
     public static function fromArray(array $configuration): self
     {

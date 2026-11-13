@@ -61,7 +61,6 @@ class ChangeProjection implements ProjectionInterface
     }
 
     /**
-     * @return void
      * @throws DBALException
      */
     public function setUp(): void

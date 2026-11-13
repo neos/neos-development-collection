@@ -556,7 +556,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
         $path = Files::getUnixStylePath($path);
         $pathSegments = explode('/', $path);
         $resultingPathSegments = [];
-        foreach ($pathSegments as $index => $pathSegment) {
+        foreach ($pathSegments as $pathSegment) {
             if ($pathSegment === '..') {
                 if (count($resultingPathSegments) > 0) {
                     array_pop($resultingPathSegments);

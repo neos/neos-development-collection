@@ -133,7 +133,6 @@ class ContentController extends ActionController
      * Note: This action triggers the AssetUploaded signal that can be used to adjust the asset based on the
      * (site) node it was attached to.
      *
-     * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
      * @param string $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
@@ -191,7 +190,6 @@ class ContentController extends ActionController
     /**
      * Generate a new image variant from given data.
      *
-     * @param ImageVariant $asset
      * @return string
      * @throws IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
@@ -216,7 +214,6 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for a given image
      *
-     * @param ImageInterface $image
      *
      * @return string JSON encoded response
      * @throws ThumbnailServiceException
@@ -259,7 +256,6 @@ class ContentController extends ActionController
     }
 
     /**
-     * @param Image $image
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
@@ -289,7 +285,6 @@ class ContentController extends ActionController
     }
 
     /**
-     * @param ImageVariant $imageVariant
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */

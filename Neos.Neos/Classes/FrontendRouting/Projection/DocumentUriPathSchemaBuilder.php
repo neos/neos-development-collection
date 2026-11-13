@@ -27,8 +27,6 @@ final class DocumentUriPathSchemaBuilder
     }
 
     /**
-     * @param Connection $connection
-     * @return Schema
      * @throws DBALException
      * @throws SchemaException
      */

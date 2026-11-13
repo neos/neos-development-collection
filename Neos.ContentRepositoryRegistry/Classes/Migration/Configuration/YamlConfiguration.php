@@ -55,8 +55,6 @@ class YamlConfiguration extends Configuration
     }
 
     /**
-     * @param PackageInterface $package
-     * @param string $directoryName
      * @return void
      * @throws MigrationException
      */

@@ -72,7 +72,6 @@ class BackendController extends ActionController
     /**
      * Default action of the backend controller.
      *
-     * @return void
      * @throws MissingActionNameException
      * @throws StopActionException
      * @throws \Neos\Flow\Http\Exception
@@ -89,7 +88,6 @@ class BackendController extends ActionController
      * Redirects to the Neos backend on the given site, passing a one-time login token
      *
      * @param Site $site
-     * @return void
      * @throws \Neos\Cache\Exception
      * @throws InvalidDataException
      * @throws StopActionException
@@ -113,8 +111,6 @@ class BackendController extends ActionController
     /**
      * Returns the cached json array with the xliff labels
      *
-     * @param string $locale
-     * @return string
      * @throws InvalidLocaleIdentifierException
      * @throws \Neos\Cache\Exception
      * @throws UnknownPackageException

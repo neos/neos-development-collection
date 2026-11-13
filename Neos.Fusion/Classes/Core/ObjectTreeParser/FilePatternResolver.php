@@ -53,9 +53,6 @@ class FilePatternResolver
     REGEX;
 
     /**
-     * @param string $filePattern
-     * @param string|null $filePathForRelativeResolves
-     * @param string $defaultFileEndForUnspecificGlobbing
      * @return list<string>
      * @throws Fusion\Exception
      */

@@ -37,7 +37,6 @@ trait NodeCreation
 
     /**
      * @Given /^the event RootNodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
@@ -53,7 +52,6 @@ trait NodeCreation
 
     /**
      * @Given /^the event NodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
     public function theEventNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)

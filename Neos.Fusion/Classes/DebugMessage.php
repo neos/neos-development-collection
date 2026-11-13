@@ -51,17 +51,11 @@ class DebugMessage
         $this->level = $level;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
@@ -75,17 +69,11 @@ class DebugMessage
         return $this->data;
     }
 
-    /**
-     * @return bool
-     */
     public function isPlaintext(): bool
     {
         return $this->plaintext;
     }
 
-    /**
-     * @return int
-     */
     public function getLevel(): int
     {
         return $this->level;

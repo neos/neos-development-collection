@@ -34,7 +34,6 @@ class NodeTypesLoader implements LoaderInterface
 
     /**
      * @param FlowPackageInterface[] $packages
-     * @param ApplicationContext $context
      * @return array<int|string, mixed>
      * @throws ParseErrorException | ConfigurationException
      */

@@ -89,7 +89,6 @@ class TagController extends ActionController
     }
 
     /**
-     * @param Tag $tag
      * @return void
      */
     public function editAction(Tag $tag)
@@ -101,7 +100,6 @@ class TagController extends ActionController
     }
 
     /**
-     * @param Tag $tag
      * @return void
      */
     public function updateAction(Tag $tag)
@@ -112,7 +110,6 @@ class TagController extends ActionController
     }
 
     /**
-     * @param Tag $tag
      * @return void
      */
     public function deleteAction(Tag $tag)
@@ -130,7 +127,6 @@ class TagController extends ActionController
     /**
      * Overridden redirect method that points to the "index" action of the "Asset" controller and adds "constraints" arguments from the current request
      *
-     * @param array $arguments
      * @throws StopActionException
      */
     private function redirectToAssetIndex(array $arguments = []): void

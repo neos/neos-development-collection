@@ -75,7 +75,6 @@ final class ContentRepository
     /**
      * The only API to send commands (mutation intentions) to the system.
      *
-     * @param CommandInterface $command
      * @throws AccessDenied
      */
     public function handle(CommandInterface $command): void

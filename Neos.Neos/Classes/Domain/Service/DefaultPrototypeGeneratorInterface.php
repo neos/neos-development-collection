@@ -30,7 +30,6 @@ interface DefaultPrototypeGeneratorInterface
      * resource://PACKAGE_KEY/Private/Templates/NodeTypes/NAME.html and forwards all public
      * node properties to the template Fusion object.
      *
-     * @param NodeType $nodeType
      * @return string
      */
     public function generate(NodeType $nodeType);

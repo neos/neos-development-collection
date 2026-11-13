@@ -44,7 +44,6 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     /**
      * Generate a site package and fill it with boilerplate data.
      *
-     * @param string $packageKey
      * @return array<int, string>
      * @throws \Neos\Flow\Composer\Exception\InvalidConfigurationException
      * @throws \Neos\Flow\Package\Exception

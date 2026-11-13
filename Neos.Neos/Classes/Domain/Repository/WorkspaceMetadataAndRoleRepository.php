@@ -389,7 +389,6 @@ final readonly class WorkspaceMetadataAndRoleRepository
 
     /**
      * @param \Closure(): void $fn
-     * @return void
      */
     public function transactional(\Closure $fn): void
     {

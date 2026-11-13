@@ -36,7 +36,6 @@ class BackendModuleRoutePartHandler extends DynamicRoutePart
     protected $settings;
 
     /**
-     * @param array $settings
      * @phpstan-param array<string,mixed> $settings
      * @return void
      */

@@ -61,7 +61,6 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
      * @param string $fusionPath - path causing the exception
      * @param \Exception $exception - exception to handle
      * @param string|null $referenceCode - might be unset
-     * @return string
      */
     protected function handle($fusionPath, \Exception $exception, $referenceCode): string
     {
