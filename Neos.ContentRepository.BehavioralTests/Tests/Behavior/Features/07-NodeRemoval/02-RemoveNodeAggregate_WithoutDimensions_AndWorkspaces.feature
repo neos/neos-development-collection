@@ -1,0 +1,346 @@
+Feature: Remove NodeAggregate
+
+  As a user of the CR I want to be able to remove a NodeAggregate or parts of it.
+
+  These are the test cases without dimensions being involved (so no partial removal)
+
+  Background:
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
+    'Neos.ContentRepository.Testing:Document':
+      properties:
+        text: string
+      references:
+        references: {}
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {}
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName      |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document      |
+      | nody-mc-nodeface       | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child         |
+      | younger-mc-nodeface    | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | younger-child |
+      | nodingers-cat          | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet           |
+      | nodingers-kitten       | Neos.ContentRepository.Testing:Document | nodingers-cat          | kitten        |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                                                                   |
+      | sourceNodeAggregateId | "nodingers-cat"                                                                         |
+      | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                                                          |
+      | sourceNodeAggregateId | "nody-mc-nodeface"                                                             |
+      | references            | [{"referenceName": "references", "references": [{"target": "nodingers-cat"}]}] |
+    And the command CreateWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "user"          |
+      | baseWorkspaceName  | "live"          |
+      | newContentStreamId | "cs-user-first" |
+
+  Scenario: Remove a node aggregate
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | workspaceName                | "user"          |
+      | nodeAggregateId              | "nodingers-cat" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
+
+    Then I expect exactly 10 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 9 is of type "NodeAggregateWasRemoved" with payload:
+      | Key                                 | Expected        |
+      | contentStreamId                     | "cs-identifier" |
+      | nodeAggregateId                     | "nodingers-cat" |
+      | affectedCoveredDimensionSpacePoints | [[]]            |
+    Then I expect the graph projection to consist of exactly 4 nodes
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                       |
+      | document | cs-identifier;sir-david-nodenborough;{} |
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 1 levels deep should be:
+      | Level | nodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+    And I expect the node aggregate "nodingers-cat" to not exist
+    And I expect the node aggregate "nodingers-kitten" to not exist
+
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    And I expect this node to have no references
+
+  Scenario: Disable a node aggregate, remove it, recreate it and expect it to be enabled
+    When the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | workspaceName                | "user"          |
+      | nodeAggregateId              | "nodingers-cat" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | workspaceName                | "user"          |
+      | nodeAggregateId              | "nodingers-cat" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                     |
+      | workspaceName         | "user"                                    |
+      | nodeAggregateId       | "nodingers-cat"                           |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
+      | nodeName              | "pet"                                     |
+
+    When I am in workspace "user"
+    Then I expect the node aggregate "nodingers-cat" to exist
+    And I expect this node aggregate to disable dimension space points []
+    And I expect a node identified by cs-user-first;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-user-first;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-user-first;nodingers-cat;{} to exist in the content graph
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-user-first;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                       |
+      | document | cs-user-first;sir-david-nodenborough;{} |
+      | pet      | cs-user-first;nodingers-cat;{}          |
+    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-user-first;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-user-first;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-user-first;nodingers-cat;{}
+    And I expect the node aggregate "nodingers-kitten" to not exist
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
+
+    When I am in workspace "live"
+    Then I expect the node aggregate "nodingers-cat" to exist
+    And I expect this node aggregate to disable dimension space points []
+    And I expect the graph projection to consist of exactly 5 nodes
+    And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-identifier;nodingers-cat;{} to exist in the content graph
+    And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                       |
+      | document | cs-identifier;sir-david-nodenborough;{} |
+      | pet      | cs-identifier;nodingers-cat;{}          |
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 1 levels deep should be:
+      | Level | nodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+      | 1     | nodingers-cat          |
+    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
+    And I expect the node aggregate "nodingers-kitten" to not exist
+
+  Scenario: Remove a node aggregate, recreate it and expect it to have no references
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | workspaceName                | "user"          |
+      | nodeAggregateId              | "nodingers-cat" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                   | Value                                     |
+      | workspaceName         | "user"                                    |
+      | nodeAggregateId       | "nodingers-cat"                           |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
+      | nodeName              | "pet"                                     |
+
+    When I am in workspace "user"
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-user-first;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-user-first;lady-eleonode-rootford;{}
+    And I expect this node to not be referenced
+    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-user-first;nodingers-cat;{}
+    And I expect this node to have no references
+    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
+
+    When I am in workspace "live"
+    Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to not be referenced
+    And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
+    And I expect this node to have no references
+    And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
+
+    # Neos 9.0 intentionally treats references like symlinks, which means that when recreating the destination node the reference still exists.
+    # See https://github.com/neos/neos-development-collection/issues/5809
+    # And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
+    # And I expect this node to have no references
+
+  Scenario: Remove a node aggregate in root workspace and expect to be still existing with references and backreferences in another workspace
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value           |
+      | workspaceName                | "live"          |
+      | nodeAggregateId              | "nodingers-cat" |
+      | nodeVariantSelectionStrategy | "allVariants"   |
+
+    When I am in workspace "live"
+    And I expect node aggregate identifier "nodingers-cat" to lead to no node
+
+    When I am in workspace "user"
+    And I expect node aggregate identifier "nodingers-cat" to lead to node cs-user-first;nodingers-cat;{}
+    And I expect this node to have the following references:
+      | Name       | Node                                    | Properties |
+      | references | cs-user-first;sir-david-nodenborough;{} | null       |
+
+    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-user-first;nody-mc-nodeface;{}
+    And I expect this node to have the following references:
+      | Name       | Node                           | Properties |
+      | references | cs-user-first;nodingers-cat;{} | null       |
+
+  Scenario: Remove a node aggregate with descendants and expect all of them to be gone
+    When the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "user"                   |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
+    When I am in workspace "user"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 error
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
+
+    When I am in workspace "live"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+  Scenario: Remove node aggregate in user workspace which was already modified
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | workspaceName             | "user"                   |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"text": "Other text"}   |
+
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "user"                   |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
+    When I am in workspace "user"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
+
+    When I am in workspace "live"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+  Scenario: Remove node aggregate in live workspace which was already modified
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | workspaceName             | "live"                   |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"text": "Other text"}   |
+
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "live"                   |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
+    When I am in workspace "live"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+    # user is unchanged
+
+    When I am in workspace "user"
+    And I expect a node identified by cs-user-first;lady-eleonode-rootford;{} to exist in the content graph
+    And I expect a node identified by cs-user-first;sir-david-nodenborough;{} to exist in the content graph
+    And I expect a node identified by cs-user-first;nody-mc-nodeface;{} to exist in the content graph
+    And I expect a node identified by cs-user-first;younger-mc-nodeface;{} to exist in the content graph
+
+    # rebase user
+
+    When the command RebaseWorkspace is executed with payload:
+      | Key                    | Value            |
+      | workspaceName          | "user"           |
+      | rebasedContentStreamId | "cs-user-second" |
+
+    When I am in workspace "user"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+  Scenario: Remove node aggregate in user workspace with child node which was already modified
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                  |
+      | workspaceName             | "user"                 |
+      | nodeAggregateId           | "nody-mc-nodeface"     |
+      | originDimensionSpacePoint | {}                     |
+      | propertyValues            | {"text": "Other text"} |
+
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | workspaceName                | "user"                   |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I run integrity violation detection
+    Then I expect the integrity violation detection result to contain exactly 0 errors
+
+    When I am in workspace "user"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user"           |
+      | newContentStreamId | "cs-user-second" |
+
+    When I am in workspace "live"
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
