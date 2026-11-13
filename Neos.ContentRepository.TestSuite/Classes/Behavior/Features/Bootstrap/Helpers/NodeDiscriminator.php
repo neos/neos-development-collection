@@ -28,7 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * * the node's aggregate's external id
  * * the dimension space point the node originates in within its aggregate
  */
-final readonly class NodeDiscriminator implements \JsonSerializable
+final readonly class NodeDiscriminator implements \JsonSerializable, \Stringable
 {
     private function __construct(
         public ContentStreamId $contentStreamId,
@@ -39,7 +39,7 @@ final readonly class NodeDiscriminator implements \JsonSerializable
 
     public static function fromShorthand(string $shorthand): self
     {
-        list($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint) = explode(';', $shorthand);
+        [$contentStreamId, $nodeAggregateId, $originDimensionSpacePoint] = explode(';', $shorthand);
 
         return new self(
             ContentStreamId::fromString($contentStreamId),

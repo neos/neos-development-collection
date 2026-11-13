@@ -18,7 +18,7 @@ final class EelNeosDeprecationTracer implements EelInvocationTracerInterface
      * These are the lowercase names of the Neos 8 Node fields that were removed in 9.0.
      * Only the fields name, nodeTypeName and properties will continue to exist.
      */
-    private const LEGACY_NODE_FIELDS = [
+    private const array LEGACY_NODE_FIELDS = [
         'accessrestrictions' => true,
         'accessroles' => true,
         'accessible' => true,

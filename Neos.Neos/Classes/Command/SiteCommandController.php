@@ -135,16 +135,16 @@ class SiteCommandController extends CommandController
 
         try {
             $this->siteService->createSite($packageKey, $name, $nodeType, $nodeName, $inactive);
-        } catch (NodeTypeNotFound $exception) {
+        } catch (NodeTypeNotFound) {
             $this->outputLine('<error>The given node type "%s" was not found</error>', [$nodeType]);
             $this->quit(1);
-        } catch (SiteNodeTypeIsInvalid $exception) {
+        } catch (SiteNodeTypeIsInvalid) {
             $this->outputLine(
                 '<error>The given node type "%s" is not based on the superType "%s"</error>',
                 [$nodeType, NodeTypeNameFactory::NAME_SITE]
             );
             $this->quit(1);
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered) {
             $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName ?: $name]);
             $this->quit(1);
         }
@@ -323,9 +323,7 @@ class SiteCommandController extends CommandController
     {
         return array_filter(
             $this->siteRepository->findAll()->toArray(),
-            function (Site $site) use ($siteNodePattern) {
-                return fnmatch($siteNodePattern, $site->getNodeName()->value);
-            }
+            fn (Site $site) => fnmatch($siteNodePattern, $site->getNodeName()->value)
         );
     }
 

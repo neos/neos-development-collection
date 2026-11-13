@@ -54,8 +54,8 @@ final readonly class Pagination
         if ($array !== []) {
             throw new \InvalidArgumentException(sprintf('Unsupported pagination array key%s: "%s"', count($array) === 1 ? '' : 's', implode('", "', array_keys($array))), 1680259558);
         }
-        $limit = $limit ?? PHP_INT_MAX;
-        $offset = $offset ?? 0;
+        $limit ??= PHP_INT_MAX;
+        $offset ??= 0;
         return new self($limit, $offset);
     }
 }

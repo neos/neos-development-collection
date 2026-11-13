@@ -58,9 +58,7 @@ trait ProjectedNodeTrait
     public function iGoToTheParentNodeOfNode(string $serializedNodeAggregateId): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId) {
-            return $subgraph->findParentNode($nodeAggregateId);
-        });
+        $this->initializeCurrentNodeFromContentSubgraph(fn (ContentSubgraphInterface $subgraph) => $subgraph->findParentNode($nodeAggregateId));
     }
 
     /**
@@ -71,9 +69,7 @@ trait ProjectedNodeTrait
     public function iGetTheNodeAtPath(string $serializedNodePath): void
     {
         $nodePath = NodePath::fromString($serializedNodePath);
-        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodePath) {
-            return $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-        });
+        $this->initializeCurrentNodeFromContentSubgraph(fn (ContentSubgraphInterface $subgraph) => $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId()));
     }
 
     /**

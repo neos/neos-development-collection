@@ -24,7 +24,7 @@ use Neos\Neos\AssetUsage\Dto\AssetUsages;
 #[Scope("singleton")]
 final class AssetUsageRepository
 {
-    public const TABLE = 'neos_asset_usage';
+    public const string TABLE = 'neos_asset_usage';
 
     public function __construct(
         private readonly Connection $dbal,
@@ -176,7 +176,7 @@ final class AssetUsageRepository
                 'origindimensionspacepointhash' => $node->dimensionSpacePoint->hash,
                 'propertyname' => $propertyName,
             ]);
-        } catch (UniqueConstraintViolationException $e) {
+        } catch (UniqueConstraintViolationException) {
             // A usage already exists for this node and property -> can be ignored
         }
     }

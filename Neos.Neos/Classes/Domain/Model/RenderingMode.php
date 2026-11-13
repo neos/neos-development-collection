@@ -22,7 +22,7 @@ use Neos\Neos\Domain\Exception;
  */
 final readonly class RenderingMode
 {
-    public const FRONTEND = 'frontend';
+    public const string FRONTEND = 'frontend';
 
     /**
      * @param array<string,mixed> $options

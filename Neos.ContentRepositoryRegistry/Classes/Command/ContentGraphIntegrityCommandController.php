@@ -23,8 +23,8 @@ use Neos\Flow\Cli\CommandController;
 
 final class ContentGraphIntegrityCommandController extends CommandController
 {
-    private const OUTPUT_MODE_CONSOLE = 'console';
-    private const OUTPUT_MODE_LOG = 'log';
+    private const string OUTPUT_MODE_CONSOLE = 'console';
+    private const string OUTPUT_MODE_LOG = 'log';
 
     #[Flow\Inject()]
     protected ProjectionIntegrityViolationDetectionRunnerFactoryInterface $projectionIntegrityViolationDetectionRunnerFactory;

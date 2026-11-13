@@ -55,7 +55,7 @@ class RendererImplementation extends AbstractFusionObject
         if ($canRenderWithRenderer) {
             $renderedElement = $this->runtime->evaluate($rendererPath, $this);
         } elseif ($renderPath !== null) {
-            if (substr($renderPath, 0, 1) === '/') {
+            if (str_starts_with($renderPath, '/')) {
                 $renderedElement = $this->runtime->render(substr($renderPath, 1));
             } else {
                 $renderedElement = $this->runtime->render($this->path . '/' . str_replace('.', '/', $renderPath));

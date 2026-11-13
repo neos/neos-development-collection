@@ -21,12 +21,12 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
  *
  * @api
  */
-final readonly class NodeAggregateId implements \JsonSerializable
+final readonly class NodeAggregateId implements \JsonSerializable, \Stringable
 {
     /**
      * A preg pattern to match against node aggregate identifiers
      */
-    private const PATTERN = '/^([a-z0-9\-]{1,64})$/';
+    private const string PATTERN = '/^([a-z0-9\-]{1,64})$/';
 
     private function __construct(
         public string $value

@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\SharedModel\ContentRepository;
  *
  * @api
  */
-final readonly class ContentRepositoryId implements \JsonSerializable
+final readonly class ContentRepositoryId implements \JsonSerializable, \Stringable
 {
     private function __construct(
         public string $value

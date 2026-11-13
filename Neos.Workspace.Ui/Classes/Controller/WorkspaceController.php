@@ -446,7 +446,7 @@ class WorkspaceController extends AbstractModuleController
                 ->countByContentStreamId(
                     $workspace->currentContentStreamId
                 );
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $message = $this->getModuleLabel(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
                 [$workspaceMetadata->title->value],
@@ -991,7 +991,7 @@ class WorkspaceController extends AbstractModuleController
             $conflictInformation = array_map(fn (ConflictingEvent $conflictingEvent) => [
                 'error' => $conflictingEvent->getException()->getMessage(),
                 'affectedNode' => $conflictingEvent->getAffectedNodeAggregateId(),
-                'event' => (new \ReflectionClass($conflictingEvent->getEvent()))->getShortName() . ' ' . $conflictingEvent->getSequenceNumber()->value,
+                'event' => new \ReflectionClass($conflictingEvent->getEvent())->getShortName() . ' ' . $conflictingEvent->getSequenceNumber()->value,
                 'eventPayload' => htmlentities(json_encode($conflictingEvent->getEvent(), JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT), ENT_NOQUOTES),
             ], iterator_to_array($e->conflictingEvents));
         }
@@ -1123,9 +1123,7 @@ class WorkspaceController extends AbstractModuleController
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                         $documentPathSegments[] = $pathSegment;
                         $documentPathSegmentsNames[] = $this->nodeLabelGenerator->getLabel($ancestor);
-                        if (is_null($documentNode)) {
-                            $documentNode = $ancestor;
-                        }
+                        $documentNode ??= $ancestor;
                     }
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
                         $siteNode = $ancestor;
@@ -1407,7 +1405,7 @@ class WorkspaceController extends AbstractModuleController
         }
 
         // hack, we use the eel helper here to support the shorthand syntax: PackageKey:Source:trans-unit-id
-        return (new TranslationHelper())->translate($label) ?: $label;
+        return new TranslationHelper()->translate($label) ?: $label;
     }
 
     /**

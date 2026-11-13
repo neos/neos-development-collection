@@ -74,7 +74,7 @@ trait CRTestSuiteTrait
      */
     public static function initPhpunit(): void
     {
-        (new \PHPUnit\TextUI\Configuration\Builder())->build([]);
+        new \PHPUnit\TextUI\Configuration\Builder()->build([]);
     }
 
     /**

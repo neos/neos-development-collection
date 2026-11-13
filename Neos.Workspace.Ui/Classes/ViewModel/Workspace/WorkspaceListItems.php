@@ -47,9 +47,7 @@ final readonly class WorkspaceListItems implements \IteratorAggregate, \Countabl
     public function sortByTitle(bool $ascending = true): self
     {
         $items = $this->items;
-        usort($items, static function (WorkspaceListItem $a, WorkspaceListItem $b) {
-            return strcasecmp($a->title, $b->title);
-        });
+        usort($items, static fn (WorkspaceListItem $a, WorkspaceListItem $b) => strcasecmp($a->title, $b->title));
         return new self($ascending ? $items : array_reverse($items));
     }
 

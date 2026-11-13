@@ -149,7 +149,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         }
 
         return array_map(
-            fn (array $propertyValues): self => self::fromArray($propertyValues),
+            self::fromArray(...),
             $propertyValuesByScope
         );
     }

@@ -63,7 +63,7 @@ final class UriPathResolver implements DimensionResolverInterface
         DimensionSpacePoint $defaultDimensionSpacePoint,
     ): self {
         self::validate($segments, $separator, $contentDimensionSource);
-        list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths(
+        [$uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath] = self::calculateUriPaths(
             $segments,
             $separator
         );

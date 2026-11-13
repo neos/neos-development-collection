@@ -87,7 +87,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
     use SubtreeTagging;
     use Workspace;
 
-    public const RELATION_DEFAULT_OFFSET = 128;
+    public const int RELATION_DEFAULT_OFFSET = 128;
 
     private SqlTableSubqueryFactory $subqueries;
 
@@ -661,7 +661,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
 
             if (is_null($nodeAnchorPoint)) {
                 throw new \InvalidArgumentException(
-                    'Could not apply event of type "' . get_class($event)
+                    'Could not apply event of type "' . $event::class
                     . '" since no anchor point could be resolved for node '
                     . $event->getNodeAggregateId()->value . ' in content stream '
                     . $event->getContentStreamId()->value,
@@ -870,7 +870,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
      */
     private function determineRequiredSqlStatements(): array
     {
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNames))->buildSchema($this->dbal);
+        $schema = new DoctrineDbalContentGraphSchemaBuilder($this->tableNames)->buildSchema($this->dbal);
         return DbalSchemaDiff::determineRequiredSqlStatements($this->dbal, $schema);
     }
 

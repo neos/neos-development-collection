@@ -104,12 +104,10 @@ final class DisallowedChildNodeAdjustment
                         $node,
                         StructureAdjustment::DISALLOWED_CHILD_NODE,
                         $message,
-                        function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
-                            return $this->removeNodeInSingleDimensionSpacePoint(
-                                $nodeAggregate,
-                                $coveredDimensionSpacePoint
-                            );
-                        }
+                        fn () => $this->removeNodeInSingleDimensionSpacePoint(
+                            $nodeAggregate,
+                            $coveredDimensionSpacePoint
+                        )
                     );
                 }
             }

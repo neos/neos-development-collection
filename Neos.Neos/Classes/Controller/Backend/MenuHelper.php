@@ -102,9 +102,7 @@ class MenuHelper
             $active = false;
             /** @var Site $site */
             if ($site->hasActiveDomains()) {
-                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
-                    return $domain->getHostname();
-                })->toArray();
+                $activeHostPatterns = $site->getActiveDomains()->map(static fn ($domain) => $domain->getHostname())->toArray();
 
                 $active = in_array($requestUriHost, $activeHostPatterns, true);
 
@@ -143,7 +141,7 @@ class MenuHelper
             return $this->moduleListFirstLevelCache;
         }
 
-        $moduleSettings = (new PositionalArraySorter($this->settings['modules']))->toArray();
+        $moduleSettings = new PositionalArraySorter($this->settings['modules'])->toArray();
         $this->moduleListFirstLevelCache = [];
 
         foreach ($moduleSettings as $moduleName => $moduleConfiguration) {
@@ -159,7 +157,7 @@ class MenuHelper
             }
             $submodules = [];
             if (isset($moduleConfiguration['submodules']) && is_array($moduleConfiguration['submodules'])) {
-                $submoduleSettings = (new PositionalArraySorter($moduleConfiguration['submodules']))->toArray();
+                $submoduleSettings = new PositionalArraySorter($moduleConfiguration['submodules'])->toArray();
                 foreach ($submoduleSettings as $submoduleName => $submoduleConfiguration) {
                     $modulePath = $moduleName . '/' . $submoduleName;
                     if (!$this->isModuleEnabled($modulePath)) {
@@ -179,7 +177,7 @@ class MenuHelper
                 $this->collectModuleData($controllerContext, $moduleName, $moduleConfiguration, $moduleName),
                 [
                     'group' => $moduleName,
-                    'submodules' => (new PositionalArraySorter($submodules))->toArray(),
+                    'submodules' => new PositionalArraySorter($submodules)->toArray(),
                 ]
             );
         }

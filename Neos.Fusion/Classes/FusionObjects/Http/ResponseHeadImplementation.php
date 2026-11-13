@@ -38,9 +38,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     public function getHttpVersion()
     {
         $httpVersion = $this->fusionValue('httpVersion');
-        if ($httpVersion === null) {
-            $httpVersion = 'HTTP/1.1';
-        }
+        $httpVersion ??= 'HTTP/1.1';
         return trim($httpVersion);
     }
 
@@ -50,9 +48,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     public function getStatusCode()
     {
         $statusCode = $this->fusionValue('statusCode');
-        if ($statusCode === null) {
-            $statusCode = 200;
-        }
+        $statusCode ??= 200;
         if (ResponseInformationHelper::getStatusMessageByCode($statusCode) === 'Unknown Status') {
             throw new \InvalidArgumentException('Unknown HTTP status code', 1412085703);
         }
@@ -79,7 +75,7 @@ class ResponseHeadImplementation extends AbstractFusionObject
     public function evaluate(): ResponseInterface
     {
         $httpVersion = $this->getHttpVersion();
-        if (strpos($httpVersion, 'HTTP/') === 0) {
+        if (str_starts_with($httpVersion, 'HTTP/')) {
             $httpVersion = substr($httpVersion, 5);
         }
 

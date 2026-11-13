@@ -320,9 +320,7 @@ final class NodeDuplicationService
     {
         $serializedReferencesByName = [];
         foreach ($references as $reference) {
-            if (!isset($serializedReferencesByName[$reference->name->value])) {
-                $serializedReferencesByName[$reference->name->value] = [];
-            }
+            $serializedReferencesByName[$reference->name->value] ??= [];
             $serializedReferencesByName[$reference->name->value][] = NodeReferenceToWrite::fromTargetAndProperties($reference->node->aggregateId, $reference->properties?->count() > 0 ? PropertyValuesToWrite::fromArray(iterator_to_array($reference->properties)) : PropertyValuesToWrite::createEmpty());
         }
 

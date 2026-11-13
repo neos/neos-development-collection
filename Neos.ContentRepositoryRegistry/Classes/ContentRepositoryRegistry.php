@@ -261,7 +261,7 @@ final class ContentRepositoryRegistry
     private function buildPropertySerializer(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): Serializer
     {
         (isset($contentRepositorySettings['propertyConverters']) && is_array($contentRepositorySettings['propertyConverters'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have propertyConverters configured, or the value is no array.', $contentRepositoryId->value);
-        $propertyConvertersConfiguration = (new PositionalArraySorter($contentRepositorySettings['propertyConverters']))->toArray();
+        $propertyConvertersConfiguration = new PositionalArraySorter($contentRepositorySettings['propertyConverters'])->toArray();
 
         $normalizers = [];
         foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
@@ -323,7 +323,7 @@ final class ContentRepositoryRegistry
             throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have the "commandHooks" configured properly. Expected array, got %s.', $contentRepositoryId->value, get_debug_type($commandHooksSettings));
         }
         $commandHookFactories = [];
-        foreach ((new PositionalArraySorter($commandHooksSettings))->toArray() as $name => $commandHookSettings) {
+        foreach (new PositionalArraySorter($commandHooksSettings)->toArray() as $name => $commandHookSettings) {
             // Allow to unset/disable command hooks
             if ($commandHookSettings === null) {
                 continue;

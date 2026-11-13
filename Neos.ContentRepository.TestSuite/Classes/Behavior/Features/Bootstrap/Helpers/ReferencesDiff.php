@@ -52,7 +52,7 @@ final readonly class ReferencesDiff implements \JsonSerializable
             references: $references->references === []
                 ? null
                 : array_map(
-                    fn (Reference $reference): ReferenceDiff => ReferenceDiff::forAnAdditionalNode($reference),
+                    ReferenceDiff::forAnAdditionalNode(...),
                     $references->references,
                 ),
         );

@@ -62,9 +62,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
                 WorkspaceName $workspaceNameForWriting
             ): TransformationStep {
-                if ($this->strategy === null) {
-                    $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS;
-                }
+                $this->strategy ??= NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS;
 
                 if ($this->strategy === NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS) {
                     throw new InvalidMigrationConfiguration(

@@ -114,12 +114,7 @@ final readonly class WorkspaceRoleAssignments implements \IteratorAggregate, \Co
 
     public function contains(WorkspaceRoleAssignment $assignment): bool
     {
-        foreach ($this->assignments as $existingAssignment) {
-            if ($existingAssignment->equals($assignment)) {
-                return true;
-            }
-        }
-        return false;
+        return array_any($this->assignments, fn ($existingAssignment) => $existingAssignment->equals($assignment));
     }
 
     public function withAssignment(WorkspaceRoleAssignment $assignment): self

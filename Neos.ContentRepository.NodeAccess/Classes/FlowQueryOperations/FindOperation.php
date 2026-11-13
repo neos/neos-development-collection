@@ -205,12 +205,10 @@ class FindOperation extends AbstractOperation
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
             $subgraphIdentifier = md5($subgraph->getWorkspaceName()->value
                 . '@' . $subgraph->getDimensionSpacePoint()->toJson());
-            if (!isset($entryPoints[(string) $subgraphIdentifier])) {
-                $entryPoints[(string) $subgraphIdentifier] = [
-                    'subgraph' => $subgraph,
-                    'nodes' => []
-                ];
-            }
+            $entryPoints[(string) $subgraphIdentifier] ??= [
+                'subgraph' => $subgraph,
+                'nodes' => []
+            ];
             $entryPoints[(string) $subgraphIdentifier]['nodes'][] = $contextNode;
         }
 

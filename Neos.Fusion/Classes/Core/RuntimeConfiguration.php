@@ -40,17 +40,13 @@ final class RuntimeConfiguration
     {
         $this->fusionConfiguration = $fusionConfiguration;
 
-        $this->simpleTypeToArrayClosure = function ($simpleType) {
-            return $simpleType === null ? null : [
-                '__eelExpression' => null,
-                '__value' => $simpleType,
-                '__objectType' => null
-            ];
-        };
+        $this->simpleTypeToArrayClosure = (fn ($simpleType) => $simpleType === null ? null : [
+            '__eelExpression' => null,
+            '__value' => $simpleType,
+            '__objectType' => null
+        ]);
 
-        $this->shouldOverrideFirstClosure = function ($key, $firstValue, $secondValue): bool {
-            return is_array($secondValue) && isset($secondValue['__stopInheritanceChain']);
-        };
+        $this->shouldOverrideFirstClosure = (fn ($key, $firstValue, $secondValue): bool => is_array($secondValue) && isset($secondValue['__stopInheritanceChain']));
     }
 
     /**

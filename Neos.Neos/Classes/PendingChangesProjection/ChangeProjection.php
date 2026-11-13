@@ -101,13 +101,13 @@ class ChangeProjection implements ProjectionInterface
 
         $changeTable = new Table($this->tableNamePrefix, [
             DbalSchemaFactory::columnForContentStreamId($connection->quoteIdentifier('contentStreamId'), $platform)->setNotNull(true),
-            (new Column('created', Type::getType(Types::BOOLEAN)))->setNotnull(true),
-            (new Column('changed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
-            (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            new Column('created', Type::getType(Types::BOOLEAN))->setNotnull(true),
+            new Column('changed', Type::getType(Types::BOOLEAN))->setNotnull(true),
+            new Column('moved', Type::getType(Types::BOOLEAN))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAggregateId($connection->quoteIdentifier('nodeAggregateId'), $platform)->setNotnull(true),
             DbalSchemaFactory::columnForDimensionSpacePoint($connection->quoteIdentifier('originDimensionSpacePoint'), $platform)->setNotnull(false),
             DbalSchemaFactory::columnForDimensionSpacePointHash($connection->quoteIdentifier('originDimensionSpacePointHash'), $platform)->setNotnull(true),
-            (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            new Column('deleted', Type::getType(Types::BOOLEAN))->setNotnull(true),
         ]);
 
         $changeTable->setPrimaryKey([

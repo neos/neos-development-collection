@@ -81,7 +81,7 @@ final readonly class DelegatingCatchUpHook implements CatchUpHookInterface
         foreach ($this->catchUpHooks as $catchUpHook) {
             try {
                 $closure($catchUpHook);
-                $this->performanceTracer?->mark('CatchUpHook::' . $hookName, ['hook' => get_class($catchUpHook)]);
+                $this->performanceTracer?->mark('CatchUpHook::' . $hookName, ['hook' => $catchUpHook::class]);
             } catch (\Throwable $e) {
                 $firstError ??= $e;
                 $failedCatchupHookName = substr(strrchr($catchUpHook::class, '\\') ?: '', 1);

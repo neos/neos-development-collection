@@ -37,7 +37,7 @@ class ParserException extends Exception
     protected \Closure $fluentMessageCreator;
     protected ?\Throwable $fluentPrevious = null;
 
-    protected ?string $fluentFile;
+    protected ?string $fluentFile = null;
     protected string $fluentFusion;
     protected int $fluentCursor;
     protected bool $fluentShowColumn = true;
@@ -115,9 +115,7 @@ class ParserException extends Exception
 
     public function setMessage(string $message): self
     {
-        return $this->setMessageCreator(static function () use ($message) {
-            return $message;
-        });
+        return $this->setMessageCreator(static fn () => $message);
     }
 
     public function build(): self
@@ -129,11 +127,7 @@ class ParserException extends Exception
 
     protected function renderAndInitializeFullMessage(): string
     {
-        list(
-            $lineNumberCursor,
-            $linePartAfterCursor,
-            $linePartBeforeCursor
-        ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
+        [$lineNumberCursor, $linePartAfterCursor, $linePartBeforeCursor] = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
 
         $isEof = strlen($this->fluentFusion) === $this->fluentCursor;
         $nextLine = new MessageLinePart($linePartAfterCursor, $isEof);

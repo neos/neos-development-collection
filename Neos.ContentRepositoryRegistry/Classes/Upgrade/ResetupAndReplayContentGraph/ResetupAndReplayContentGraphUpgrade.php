@@ -47,7 +47,7 @@ final readonly class ResetupAndReplayContentGraphUpgrade
     private SubscriptionId $contentGraphSubscriptionId;
 
     /** Same setting as {@see ContentRepositoryMaintainer::REPLAY_BATCH_SIZE} */
-    private const REPLAY_BATCH_SIZE = 500;
+    private const int REPLAY_BATCH_SIZE = 500;
 
     public function __construct(
         private CRUpgradeContext $context,
@@ -55,8 +55,8 @@ final readonly class ResetupAndReplayContentGraphUpgrade
         private \Closure $replayProgressCallback,
         private ContentRepositoryMaintainer $contentRepositoryMaintainer,
     ) {
-        $subscriptionEngine = (new \ReflectionClass(ContentRepositoryMaintainer::class))->getProperty('subscriptionEngine')->getValue($this->contentRepositoryMaintainer);
-        $subscriptionStore = (new \ReflectionClass(SubscriptionEngine::class))->getProperty('subscriptionStore')->getValue($subscriptionEngine);
+        $subscriptionEngine = new \ReflectionClass(ContentRepositoryMaintainer::class)->getProperty('subscriptionEngine')->getValue($this->contentRepositoryMaintainer);
+        $subscriptionStore = new \ReflectionClass(SubscriptionEngine::class)->getProperty('subscriptionStore')->getValue($subscriptionEngine);
 
         $this->contentGraphSubscriptionId = SubscriptionId::fromString('contentGraph');
         $this->subscriptionEngine = $subscriptionEngine;

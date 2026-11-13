@@ -28,7 +28,7 @@ final class CRUpgradeContextFactory implements ContentRepositoryServiceFactoryIn
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
     {
         if (!($serviceFactoryDependencies->eventStore instanceof DoctrineEventStore)) {
-            throw new \RuntimeException('CR Upgrade only works with DoctrineEventStore, ' . get_class($serviceFactoryDependencies->eventStore) . ' given');
+            throw new \RuntimeException('CR Upgrade only works with DoctrineEventStore, ' . $serviceFactoryDependencies->eventStore::class . ' given');
         }
 
         return new CRUpgradeContext(

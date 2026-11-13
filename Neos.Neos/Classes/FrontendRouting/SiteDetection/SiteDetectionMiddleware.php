@@ -51,10 +51,8 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
                 $activeDomain = $this->domainRepository->findOneByHost($requestUriHost, true);
                 $site = $activeDomain?->getSite();
             }
-            if ($site === null) {
-                // try to get any site
-                $site = $this->siteRepository->findFirstOnline();
-            }
+            // try to get any site
+            $site ??= $this->siteRepository->findFirstOnline();
         } catch (DatabaseException) {
             // doctrine might have not been migrated yet or no database is connected.
         }

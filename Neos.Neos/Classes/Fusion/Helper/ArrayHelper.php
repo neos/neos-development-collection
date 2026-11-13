@@ -106,7 +106,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
      */
     public function sortByPropertyPath(array $set, string $positionPropertyPath = 'position'): array
     {
-        return (new PositionalArraySorter($set, $positionPropertyPath))->toArray();
+        return new PositionalArraySorter($set, $positionPropertyPath)->toArray();
     }
 
     /**

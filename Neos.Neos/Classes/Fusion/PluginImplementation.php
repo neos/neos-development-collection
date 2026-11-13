@@ -26,7 +26,7 @@ use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 /**
  * A Fusion Plugin object.
  */
-class PluginImplementation extends AbstractArrayFusionObject
+class PluginImplementation extends AbstractArrayFusionObject implements \Stringable
 {
     /**
      * @Flow\Inject
@@ -40,9 +40,9 @@ class PluginImplementation extends AbstractArrayFusionObject
      */
     protected $dispatcher;
 
-    protected ?Node $node;
+    protected ?Node $node = null;
 
-    protected ?Node $documentNode;
+    protected ?Node $documentNode = null;
 
     /**
      * @return string
@@ -241,7 +241,7 @@ class PluginImplementation extends AbstractArrayFusionObject
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->evaluate();
     }

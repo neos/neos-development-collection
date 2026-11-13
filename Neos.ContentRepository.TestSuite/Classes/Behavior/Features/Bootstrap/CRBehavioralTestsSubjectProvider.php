@@ -198,9 +198,9 @@ trait CRBehavioralTestsSubjectProvider
         // refers to $currentCr->id which does not exist yet: https://github.com/neos/neos-development-collection/pull/5341
         // $contentRepositoryMaintainer = $this->getContentRepositoryService($contentRepositoryId, new ContentRepositoryMaintainerFactory());
         /** @var EventStoreInterface $eventStore */
-        $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
+        $eventStore = new \ReflectionClass($contentRepository)->getProperty('eventStore')->getValue($contentRepository);
         /** @var SubscriptionEngine $subscriptionEngine */
-        $subscriptionEngine = (new \ReflectionClass($contentRepository))->getProperty('subscriptionEngine')->getValue($contentRepository);
+        $subscriptionEngine = new \ReflectionClass($contentRepository)->getProperty('subscriptionEngine')->getValue($contentRepository);
         $contentRepositoryMaintainer = new ContentRepositoryMaintainer(
             $eventStore,
             $subscriptionEngine

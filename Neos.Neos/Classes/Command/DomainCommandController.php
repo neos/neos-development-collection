@@ -204,9 +204,7 @@ class DomainCommandController extends CommandController
     {
         return array_filter(
             $this->domainRepository->findAll()->toArray(),
-            function ($domain) use ($hostnamePattern) {
-                return fnmatch($hostnamePattern, $domain->getHostname());
-            }
+            fn ($domain) => fnmatch($hostnamePattern, $domain->getHostname())
         );
     }
 }

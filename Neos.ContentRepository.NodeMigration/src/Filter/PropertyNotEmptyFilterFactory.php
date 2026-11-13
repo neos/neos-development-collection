@@ -29,12 +29,12 @@ class PropertyNotEmptyFilterFactory implements FilterFactoryInterface
     {
         $propertyName = $settings['propertyName'];
 
-        return new class ($propertyName) implements NodeBasedFilterInterface {
+        return new readonly class ($propertyName) implements NodeBasedFilterInterface {
             public function __construct(
                 /**
                  * The property name to be checked for non-empty value
                  */
-                private readonly string $propertyName
+                private string $propertyName
             ) {
             }
 

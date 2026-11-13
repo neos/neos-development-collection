@@ -31,7 +31,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     /**
      * @const string
      */
-    private const SCHEME = 'nodetypes';
+    private const string SCHEME = 'nodetypes';
 
     /**
      * @var resource
@@ -165,7 +165,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      */
     public function removeDirectory($path, $options)
     {
-        throw new \BadMethodCallException(__CLASS__ . ' does not support removeDirectory().', 1256827649);
+        throw new \BadMethodCallException(self::class . ' does not support removeDirectory().', 1256827649);
     }
 
     /**
@@ -300,7 +300,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     {
         // w, a or x should try to create the file
         // x should fail if file exists - fopen handles that below!
-        if (strpos($mode, 'w') !== false || strpos($mode, 'a') !== false || strpos($mode, 'x') !== false) {
+        if (str_contains($mode, 'w') || str_contains($mode, 'a') || str_contains($mode, 'x')) {
             $resourceUriOrStream = $this->evaluateNodeTypesPath($path, false);
         } else {
             $resourceUriOrStream = $this->evaluateNodeTypesPath($path);
@@ -501,7 +501,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
         $requestPathParts = explode('://', $requestedPath, 2);
         if ($requestPathParts[0] !== self::SCHEME) {
             throw new \InvalidArgumentException(
-                'The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.',
+                'The ' . self::class . ' only supports the \'' . self::SCHEME . '\' scheme.',
                 1256052544
             );
         }
@@ -532,7 +532,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
 
         if (!$this->pathRespectsTraversalBoundaries($path)) {
             throw new \InvalidArgumentException(
-                'The ' . __CLASS__ . ' in the \'' . self::SCHEME . '\' scheme.'
+                'The ' . self::class . ' in the \'' . self::SCHEME . '\' scheme.'
                     . 'Does not allow to traverse out of the package.',
                 1665317583
             );
@@ -549,7 +549,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
 
     private function pathRespectsTraversalBoundaries(string $path): bool
     {
-        if (strpos($path, '..') === false) {
+        if (!str_contains($path, '..')) {
             return true;
         }
 

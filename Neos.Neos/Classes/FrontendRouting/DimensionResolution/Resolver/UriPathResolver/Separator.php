@@ -9,7 +9,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  */
-final readonly class Separator
+final readonly class Separator implements \Stringable
 {
     private function __construct(
         public string $value

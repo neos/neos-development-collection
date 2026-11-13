@@ -266,13 +266,9 @@ final class NodeFactory
                     );
                 $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][]
                     = $occupiedDimensionSpacePoint;
-                $nodeTypeNames[$rawNodeAggregateId] = $nodeTypeNames[$rawNodeAggregateId]
-                    ?? NodeTypeName::fromString($nodeRow['nodetypename']);
-                $nodeNames[$rawNodeAggregateId] = $nodeNames[$rawNodeAggregateId]
-                    ?? ($nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null);
-                $classificationByNodeAggregate[$rawNodeAggregateId]
-                    = $classificationByNodeAggregate[$rawNodeAggregateId]
-                    ?? NodeAggregateClassification::from($nodeRow['classification']);
+                $nodeTypeNames[$rawNodeAggregateId] ??= NodeTypeName::fromString($nodeRow['nodetypename']);
+                $nodeNames[$rawNodeAggregateId] ??= $nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null;
+                $classificationByNodeAggregate[$rawNodeAggregateId] ??= NodeAggregateClassification::from($nodeRow['classification']);
             }
             // ... and coverage always ...
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(

@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class DbalSchemaFactory
 {
-    public const DEFAULT_MYSQL_COLLATION = 'utf8mb4_unicode_520_ci';
+    public const string DEFAULT_MYSQL_COLLATION = 'utf8mb4_unicode_520_ci';
 
     // This class only contains static members and should not be constructed
     private function __construct()
@@ -43,7 +43,7 @@ final class DbalSchemaFactory
      */
     public static function columnForNodeAggregateId(string $columnName, AbstractPlatform $platform): Column
     {
-        $column = (new Column($columnName, Type::getType(Types::STRING)))
+        $column = new Column($columnName, Type::getType(Types::STRING))
             ->setLength(64);
 
         if ($platform instanceof AbstractMySQLPlatform) {
@@ -67,7 +67,7 @@ final class DbalSchemaFactory
      */
     public static function columnForContentStreamId(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::BINARY)))
+        return new Column($columnName, Type::getType(Types::BINARY))
             ->setLength(36);
     }
 
@@ -81,7 +81,7 @@ final class DbalSchemaFactory
      */
     public static function columnForNodeAnchorPoint(string $columnName, AbstractPlatform $platform): Column
     {
-        return (new Column($columnName, Type::getType(Types::BIGINT)))
+        return new Column($columnName, Type::getType(Types::BIGINT))
             ->setNotnull(true);
     }
 
@@ -109,11 +109,11 @@ final class DbalSchemaFactory
         if ($platform instanceof PostgreSQLPlatform) {
             # FIXME PostgreSQL understands BYTEA (a binary stream), but this requires special read handling. Since the hash is
             # plain ASCII hex, STRING is used on PostgreSQL to keep read/write handling uniform across platforms.
-            return (new Column($columnName, Type::getType(Types::STRING)))
+            return new Column($columnName, Type::getType(Types::STRING))
                 ->setLength(32)
                 ->setDefault('');
         }
-        return (new Column($columnName, Type::getType(Types::BINARY)))
+        return new Column($columnName, Type::getType(Types::BINARY))
             ->setLength(32)
             ->setDefault('');
     }
@@ -125,7 +125,7 @@ final class DbalSchemaFactory
      */
     public static function columnForNodeTypeName(string $columnName, AbstractPlatform $platform): Column
     {
-        $column = (new Column($columnName, Type::getType(Types::STRING)))
+        $column = new Column($columnName, Type::getType(Types::STRING))
             ->setLength(255)
             ->setNotnull(true);
 
@@ -143,7 +143,7 @@ final class DbalSchemaFactory
      */
     public static function columnForWorkspaceName(string $columnName, AbstractPlatform $platform): Column
     {
-        $column = (new Column($columnName, Type::getType(Types::STRING)))
+        $column = new Column($columnName, Type::getType(Types::STRING))
             ->setLength(WorkspaceName::MAX_LENGTH)
             ->setNotnull(true);
 
@@ -161,7 +161,7 @@ final class DbalSchemaFactory
         $column = (new Column($columnName, Type::getType(Types::JSON)));
 
         if ($platform instanceof AbstractMySQLPlatform) {
-            $column = (new Column($columnName, Type::getType(Types::TEXT)))
+            $column = new Column($columnName, Type::getType(Types::TEXT))
                 ->setPlatformOption('collation', self::DEFAULT_MYSQL_COLLATION);
         }
 

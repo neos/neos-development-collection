@@ -249,9 +249,7 @@ class ContentCacheFlusher
         $self = $this;
         $types = array_reduce(
             $nodeType->getDeclaredSuperTypes(),
-            function (array $types, NodeType $superType) use ($self) {
-                return array_merge($types, $self->getAllImplementedNodeTypeNames($superType));
-            },
+            fn (array $types, NodeType $superType) => array_merge($types, $self->getAllImplementedNodeTypeNames($superType)),
             [$nodeType->name->value]
         );
 

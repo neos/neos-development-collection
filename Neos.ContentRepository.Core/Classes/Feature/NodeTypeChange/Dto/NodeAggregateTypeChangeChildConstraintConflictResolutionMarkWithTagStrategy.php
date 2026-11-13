@@ -33,7 +33,7 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 final readonly class NodeAggregateTypeChangeChildConstraintConflictResolutionMarkWithTagStrategy implements \JsonSerializable
 {
     /** @internal used by {@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::fromString()} */
-    public const SERIALIZATION_PREFIX = 'mark_with_tag:';
+    public const string SERIALIZATION_PREFIX = 'mark_with_tag:';
 
     public function __construct(public readonly SubtreeTag $subtreeTag)
     {

@@ -120,9 +120,7 @@ final class TetheredNodeAdjustments
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "'
                             . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
-                        function () use ($tetheredNodeAggregate) {
-                            return $this->removeNodeAggregate($this->contentGraph, $tetheredNodeAggregate);
-                        }
+                        fn () => $this->removeNodeAggregate($this->contentGraph, $tetheredNodeAggregate)
                     );
                 }
             }

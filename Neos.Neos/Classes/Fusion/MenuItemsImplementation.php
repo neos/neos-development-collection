@@ -89,9 +89,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function getFilter(): string
     {
         $filter = $this->fusionValue('filter');
-        if ($filter === null) {
-            $filter = NodeTypeNameFactory::NAME_DOCUMENT;
-        }
+        $filter ??= NodeTypeNameFactory::NAME_DOCUMENT;
 
         return $filter;
     }
@@ -128,9 +126,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
     protected function getStartingPoint(): ?Node
     {
-        if ($this->startingPoint === null) {
-            $this->startingPoint = $this->fusionValue('startingPoint');
-        }
+        $this->startingPoint ??= $this->fusionValue('startingPoint');
 
         return $this->startingPoint;
     }

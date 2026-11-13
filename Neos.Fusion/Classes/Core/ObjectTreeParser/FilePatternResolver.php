@@ -118,9 +118,7 @@ class FilePatternResolver
             },
 
             // Match simple wildcard globbing '<base>/*<end>?'
-            preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                return new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS);
-            },
+            preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches) => static fn (string $dir): \Iterator => new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::UNIX_PATHS),
 
             default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),
         };

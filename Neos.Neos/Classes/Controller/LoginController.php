@@ -144,7 +144,7 @@ class LoginController extends AbstractAuthenticationController
             $this->redirect('index', 'Backend\Backend');
         }
         $currentDomain = $this->domainRepository->findOneByActiveRequest();
-        $currentSite = $currentDomain !== null ? $currentDomain->getSite() : $this->siteRepository->findDefault();
+        $currentSite = $currentDomain?->getSite() ?? $this->siteRepository->findDefault();
 
         /*
          * Checks whether there is any error in any subscription status for any ContentRepository to

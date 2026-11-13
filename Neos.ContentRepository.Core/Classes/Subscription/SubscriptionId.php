@@ -9,7 +9,7 @@ namespace Neos\ContentRepository\Core\Subscription;
  */
 final class SubscriptionId
 {
-    public const MAX_LENGTH = 250;
+    public const int MAX_LENGTH = 250;
 
     private function __construct(public readonly string $value)
     {

@@ -25,7 +25,7 @@ use Neos\Flow\Annotations\Scope;
 #[Scope("singleton")]
 final readonly class ImpendingHardRemovalConflictRepository
 {
-    private const CONFLICT_TABLE_NAME = 'neos_neos_impending_hard_removal_conflict';
+    private const string CONFLICT_TABLE_NAME = 'neos_neos_impending_hard_removal_conflict';
 
     public function __construct(
         private Connection $dbal

@@ -26,7 +26,7 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  * Provides a chainable interface to build a label for a nodetype
  * with a fallback mechanism.
  */
-class NodeLabelToken implements ProtectedContextAwareInterface
+class NodeLabelToken implements ProtectedContextAwareInterface, \Stringable
 {
     use NodeTypeWithFallbackProvider;
 

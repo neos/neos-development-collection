@@ -33,7 +33,7 @@ class BaseUriHelper implements ProtectedContextAwareInterface
     {
         try {
             $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest();
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // We are avoiding an exception here in favor of trying more fallback variants.
         }
 

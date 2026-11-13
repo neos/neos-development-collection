@@ -33,13 +33,13 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
     ): GlobalTransformationInterface|NodeAggregateBasedTransformationInterface|NodeBasedTransformationInterface {
         $from = DimensionSpacePoint::fromArray($settings['from']);
         $to = DimensionSpacePoint::fromArray($settings['to']);
-        return new class (
+        return new readonly class (
             $from,
             $to,
         ) implements GlobalTransformationInterface {
             public function __construct(
-                private readonly DimensionSpacePoint $from,
-                private readonly DimensionSpacePoint $to,
+                private DimensionSpacePoint $from,
+                private DimensionSpacePoint $to,
             ) {
             }
 

@@ -50,7 +50,7 @@ final class NodeTypeNames implements \IteratorAggregate
     public static function fromStringArray(array $array): self
     {
         return new self(...array_map(
-            fn (string $serializedNodeTypeName): NodeTypeName => NodeTypeName::fromString($serializedNodeTypeName),
+            NodeTypeName::fromString(...),
             $array
         ));
     }

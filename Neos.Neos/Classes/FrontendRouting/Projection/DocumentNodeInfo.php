@@ -28,7 +28,7 @@ use Psr\Http\Message\UriInterface;
  * @Flow\Proxy(false)
  * @internal implementation detail to manage document node uris. For resolving please use the NodeUriBuilder and for matching the Router.
  */
-final class DocumentNodeInfo
+final class DocumentNodeInfo implements \Stringable
 {
     /**
      * @var array<string,mixed>
@@ -231,9 +231,7 @@ final class DocumentNodeInfo
                     $e->getMessage()
                 ), 1599036735, $e);
             }
-            if ($this->shortcutTarget === null) {
-                $this->shortcutTarget = ['mode' => 'none', 'target' => null];
-            }
+            $this->shortcutTarget ??= ['mode' => 'none', 'target' => null];
         }
         return $this->shortcutTarget;
     }

@@ -114,8 +114,8 @@ class ImpersonateController extends ActionController
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
 
-        if ($packageKey !== null && strpos($packageKey, '\\') !== false) {
-            list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+        if ($packageKey !== null && str_contains($packageKey, '\\')) {
+            [$packageKey, $subpackageKey] = explode('\\', $packageKey, 2);
         } else {
             $subpackageKey = null;
         }

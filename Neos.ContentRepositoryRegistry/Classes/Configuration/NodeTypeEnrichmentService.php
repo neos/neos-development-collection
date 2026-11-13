@@ -122,9 +122,7 @@ class NodeTypeEnrichmentService
             $hasEditorOptions = isset($propertyConfiguration['ui']['inspector']['editorOptions']);
 
             if ($hasEditor && $hasEditorOptions) {
-                $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $propertyName, $configurationType) {
-                    return $this->getConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path, $configurationType);
-                };
+                $translationIdGenerator = (fn ($path) => $this->getConfigurationTranslationId($nodeTypeLabelIdPrefix, $propertyName, $path, $configurationType));
                 $this->applyEditorLabels(
                     $nodeTypeLabelIdPrefix,
                     $propertyName,
@@ -181,7 +179,7 @@ class NodeTypeEnrichmentService
         if ($nodeTypeName !== null) {
             if (isset($configurationThumbnail)) {
                 $thumbnailUrl = $configurationThumbnail;
-                if (strpos($thumbnailUrl, 'resource://') === 0) {
+                if (str_starts_with($thumbnailUrl, 'resource://')) {
                     $thumbnailUrl = $this->resourceManager->getPublicPackageResourceUriByPath($thumbnailUrl);
                 }
             } else {
@@ -316,13 +314,11 @@ class NodeTypeEnrichmentService
                     isset($elementConfiguration['ui']['editor'])
                     && isset($elementConfiguration['ui']['editorOptions'])
                 ) {
-                    $translationIdGenerator = function ($path) use ($nodeTypeLabelIdPrefix, $elementName) {
-                        return $this->getInspectorElementTranslationId(
-                            $nodeTypeLabelIdPrefix,
-                            'creationDialog',
-                            $elementName . '.' . $path
-                        );
-                    };
+                    $translationIdGenerator = (fn ($path) => $this->getInspectorElementTranslationId(
+                        $nodeTypeLabelIdPrefix,
+                        'creationDialog',
+                        $elementName . '.' . $path
+                    ));
                     $this->applyEditorLabels(
                         $nodeTypeLabelIdPrefix,
                         $elementName,
@@ -407,7 +403,7 @@ class NodeTypeEnrichmentService
         // in case the NodeType has just one section we default to 'Neos.Neos' as package
         // as we don't have any further information.
         $packageKey = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[0] : 'Neos.Neos';
-        $nodeTypeName = isset($nodeTypeNameParts[1]) ? $nodeTypeNameParts[1] : $nodeTypeNameParts[0];
+        $nodeTypeName = $nodeTypeNameParts[1] ?? $nodeTypeNameParts[0];
 
         return sprintf('%s:%s:', $packageKey, 'NodeTypes.' . $nodeTypeName);
     }

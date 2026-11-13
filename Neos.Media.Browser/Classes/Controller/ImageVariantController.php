@@ -37,6 +37,6 @@ class ImageVariantController extends ActionController
     public function updateAction(ImageVariant $imageVariant)
     {
         $this->assetRepository->update($imageVariant);
-        return json_encode((new ImageMapper($imageVariant))->getMappingResult());
+        return json_encode(new ImageMapper($imageVariant)->getMappingResult());
     }
 }

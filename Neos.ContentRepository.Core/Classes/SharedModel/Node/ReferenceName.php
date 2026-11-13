@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 /**
  * @api
  */
-final readonly class ReferenceName implements \JsonSerializable
+final readonly class ReferenceName implements \JsonSerializable, \Stringable
 {
     private function __construct(
         public string $value

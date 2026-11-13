@@ -27,7 +27,7 @@ use Neos\Utility\Arrays;
  * @Flow\Entity
  * @api
  */
-class Site
+class Site implements \Stringable
 {
     /**
      * Site states
@@ -127,7 +127,7 @@ class Site
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getNodeName()->value;
     }
@@ -276,9 +276,7 @@ class Site
      */
     public function hasActiveDomains()
     {
-        return $this->domains->exists(function (int $index, Domain $domain) {
-            return $domain->getActive();
-        });
+        return $this->domains->exists(fn (int $index, Domain $domain) => $domain->getActive());
     }
 
     /**
@@ -288,9 +286,7 @@ class Site
     public function getActiveDomains()
     {
         /** @var Collection<int, Domain> $activeDomains */
-        $activeDomains = $this->domains->filter(function (Domain $domain) {
-            return $domain->getActive();
-        });
+        $activeDomains = $this->domains->filter(fn (Domain $domain) => $domain->getActive());
         return $activeDomains;
     }
 

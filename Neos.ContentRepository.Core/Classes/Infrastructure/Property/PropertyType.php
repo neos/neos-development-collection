@@ -29,14 +29,14 @@ use Psr\Http\Message\UriInterface;
  */
 final readonly class PropertyType
 {
-    public const TYPE_BOOL = 'boolean';
-    public const TYPE_INT = 'integer';
-    public const TYPE_FLOAT = 'float';
-    public const TYPE_STRING = 'string';
-    public const TYPE_ARRAY = 'array';
-    public const TYPE_DATE = 'DateTimeImmutable';
+    public const string TYPE_BOOL = 'boolean';
+    public const string TYPE_INT = 'integer';
+    public const string TYPE_FLOAT = 'float';
+    public const string TYPE_STRING = 'string';
+    public const string TYPE_ARRAY = 'array';
+    public const string TYPE_DATE = 'DateTimeImmutable';
 
-    public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
+    public const string PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
     /** only set if {@see sef:: isArrayOf()} */
     private ?self $arrayOfType;
@@ -213,12 +213,7 @@ final readonly class PropertyType
             if (!is_array($propertyValue)) {
                 return false;
             }
-            foreach ($propertyValue as $value) {
-                if ($this->arrayOfType?->isMatchedBy($value) !== true) {
-                    return false;
-                }
-            }
-            return true;
+            return array_all($propertyValue, fn ($value) => !($this->arrayOfType?->isMatchedBy($value) !== true));
         }
 
         $className = $this->value[0] != '\\'

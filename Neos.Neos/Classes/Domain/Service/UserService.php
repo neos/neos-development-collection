@@ -333,9 +333,7 @@ class UserService
         ?array $roleIdentifiers = null,
         $authenticationProviderName = null
     ) {
-        if ($roleIdentifiers === null) {
-            $roleIdentifiers = ['Neos.Neos:Editor'];
-        }
+        $roleIdentifiers ??= ['Neos.Neos:Editor'];
         $roleIdentifiers = $this->normalizeRoleIdentifiers($roleIdentifiers);
         $account = $this->accountFactory->createAccountWithPassword(
             $username,
@@ -732,7 +730,7 @@ class UserService
      */
     protected function normalizeRoleIdentifier($roleIdentifier)
     {
-        if (strpos($roleIdentifier, ':') === false) {
+        if (!str_contains($roleIdentifier, ':')) {
             $roleIdentifier = 'Neos.Neos:' . $roleIdentifier;
         }
         if (!$this->policyService->hasRole($roleIdentifier)) {
@@ -828,7 +826,7 @@ class UserService
                 sprintf(
                     'Unexpected user type "%s". An account with the identifier "%s" exists,'
                     . ' but the corresponding party is not a Neos User.',
-                    get_class($user),
+                    $user::class,
                     $username
                 ),
                 1422270948

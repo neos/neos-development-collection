@@ -22,12 +22,12 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
  *
  * @api
  */
-final class ContentStreamId implements \JsonSerializable
+final class ContentStreamId implements \JsonSerializable, \Stringable
 {
     /**
      * A preg pattern to match against content stream identifiers
      */
-    public const PATTERN = '/^([a-z0-9\-]{1,40})$/';
+    public const string PATTERN = '/^([a-z0-9\-]{1,40})$/';
 
     /**
      * @var array<string,self>

@@ -153,7 +153,7 @@ class AssetProxiesController extends ActionController
         $assetProxyRepository = $assetSources[$assetSourceIdentifier]->getAssetProxyRepository();
         try {
             $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
-        } catch (NeosAssetNotFoundException $exception) {
+        } catch (NeosAssetNotFoundException) {
             $this->throwStatus(404, 'Asset not found');
         }
 

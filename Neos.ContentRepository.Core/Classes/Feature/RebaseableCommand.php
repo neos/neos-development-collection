@@ -77,13 +77,13 @@ final readonly class RebaseableCommand
                 if (!$undecoratedEvent instanceof PublishableToWorkspaceInterface) {
                     throw new \RuntimeException(sprintf(
                         'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
-                        get_class($event)
+                        $event::class
                     ));
                 }
             } elseif (!$event instanceof PublishableToWorkspaceInterface) {
                 throw new \RuntimeException(sprintf(
                     'TODO: Event %s has to implement PublishableToOtherContentStreamsInterface',
-                    get_class($event)
+                    $event::class
                 ));
             }
 
@@ -93,11 +93,11 @@ final readonly class RebaseableCommand
                 if (!isset($commandPayload['contentStreamId']) && !isset($commandPayload['workspaceName'])) {
                     throw new \RuntimeException(sprintf(
                         'TODO: Command %s does not have a property "contentStreamId" or "workspaceName" (which is required).',
-                        get_class($command)
+                        $command::class
                     ));
                 }
                 $metadata = EventMetadata::fromArray([
-                    'commandClass' => get_class($command),
+                    'commandClass' => $command::class,
                     'commandPayload' => $commandPayload
                 ]);
                 $event = DecoratedEvent::create($event, eventId: EventId::create(), metadata: $metadata);

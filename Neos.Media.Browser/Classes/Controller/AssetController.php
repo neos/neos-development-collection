@@ -279,7 +279,7 @@ class AssetController extends ActionController
                 $assetCollections[] = ['object' => $retrievedAssetCollection, 'count' => $this->assetRepository->countByAssetCollection($retrievedAssetCollection)];
             }
 
-            foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $retrievedTag) {
+            foreach ($activeAssetCollection?->getTags() ?? $this->tagRepository->findAll() as $retrievedTag) {
                 assert($retrievedTag instanceof Tag);
                 $tagCount = ($assetProxyRepository instanceof SupportsTaggingInterface ? $assetProxyRepository->countByTag($retrievedTag) : $this->assetRepository->countByTag($retrievedTag, $activeAssetCollection));
                 $tags[] = ['object' => $retrievedTag, 'count' => $tagCount];
@@ -330,7 +330,7 @@ class AssetController extends ActionController
     {
         try {
             $maximumFileUploadSize = $this->getMaximumFileUploadSize();
-        } catch (FilesException $e) {
+        } catch (FilesException) {
             $maximumFileUploadSize = null;
         }
 
@@ -350,7 +350,7 @@ class AssetController extends ActionController
     {
         try {
             $maximumFileUploadSize = $this->getMaximumFileUploadSize();
-        } catch (FilesException $e) {
+        } catch (FilesException) {
             $maximumFileUploadSize = null;
         }
 
@@ -467,9 +467,7 @@ class AssetController extends ActionController
             /** @var VariantSupportInterface $originalAsset */
             $originalAsset = ($asset instanceof AssetVariantInterface ? $asset->getOriginalAsset() : $asset);
 
-            $variantInformation = array_map(static function (AssetVariantInterface $imageVariant) {
-                return (new ImageMapper($imageVariant))->getMappingResult();
-            }, $originalAsset->getVariants());
+            $variantInformation = array_map(static fn (AssetVariantInterface $imageVariant) => new ImageMapper($imageVariant)->getMappingResult(), $originalAsset->getVariants());
 
             $this->view?->assignMultiple([
                 'assetProxy' => $assetProxy,
@@ -477,7 +475,7 @@ class AssetController extends ActionController
                 'assetSource' => $assetSource,
                 'imageProfiles' => $this->imageProfilesConfiguration,
                 'overviewAction' => $overviewAction,
-                'originalInformation' => (new ImageMapper($asset))->getMappingResult(),
+                'originalInformation' => new ImageMapper($asset)->getMappingResult(),
                 'variantsInformation' => $variantInformation,
                 'isSubRequest' => !$this->request->isMainRequest()
             ]);
@@ -703,7 +701,7 @@ class AssetController extends ActionController
 
         try {
             $this->assetService->replaceAssetResource($asset, $resource, $options);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             $this->addTranslatedFlashMessage('couldNotReplaceAsset', Message::SEVERITY_OK, [], 1463472606);
             $this->forwardToReferringRequest();
             return;
@@ -841,7 +839,7 @@ class AssetController extends ActionController
             $errorMessage .= ' while trying to call %1$s->%2$s()';
         }
 
-        return new Error($errorMessage, null, [get_class($this), $this->actionMethodName]);
+        return new Error($errorMessage, null, [static::class, $this->actionMethodName]);
     }
 
     /**
@@ -960,7 +958,7 @@ class AssetController extends ActionController
                 // To trigger a possible EntityNotFound have to load the entity
                 $activeAssetCollection->__load();
             }
-        } catch (EntityNotFoundException $exception) {
+        } catch (EntityNotFoundException) {
             // If a removed asset collection is still in the browser state it can not be fetched
             $this->browserState->set('activeAssetCollection', null);
             $activeAssetCollection = null;
@@ -974,15 +972,10 @@ class AssetController extends ActionController
     private function applySortingFromBrowserState(AssetProxyRepositoryInterface $assetProxyRepository): void
     {
         if ($assetProxyRepository instanceof SupportsSortingInterface) {
-            switch ($this->browserState->get('sortBy')) {
-                case 'Name':
-                    $assetProxyRepository->orderBy(['resource.filename' => $this->browserState->get('sortDirection')]);
-                    break;
-                case 'Modified':
-                default:
-                    $assetProxyRepository->orderBy(['lastModified' => $this->browserState->get('sortDirection')]);
-                    break;
-            }
+            match ($this->browserState->get('sortBy')) {
+                'Name' => $assetProxyRepository->orderBy(['resource.filename' => $this->browserState->get('sortDirection')]),
+                default => $assetProxyRepository->orderBy(['lastModified' => $this->browserState->get('sortDirection')]),
+            };
         }
     }
 

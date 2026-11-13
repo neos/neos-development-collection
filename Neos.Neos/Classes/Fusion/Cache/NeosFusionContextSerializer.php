@@ -73,7 +73,7 @@ final class NeosFusionContextSerializer implements NormalizerInterface, Denormal
 
         try {
             $subgraph = $contentRepository->getContentSubgraph($nodeAddress->workspaceName, $nodeAddress->dimensionSpacePoint);
-        } catch (WorkspaceDoesNotExist $exception) {
+        } catch (WorkspaceDoesNotExist) {
             // in case the workspace was deleted the rendering should probably not come to this very point
             // still if it does we fail silently
             // this is also the behaviour for when the property mapper is used

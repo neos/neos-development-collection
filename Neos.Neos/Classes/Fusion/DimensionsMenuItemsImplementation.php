@@ -107,19 +107,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         $valuesToRestrictTo = $this->getValuesToRestrictTo();
         if ($contentDimensionIdentifierToLimitTo && $valuesToRestrictTo) {
             $order = array_flip($valuesToRestrictTo);
-            usort($menuItems, function (
-                DimensionMenuItem $menuItemA,
-                DimensionMenuItem $menuItemB
-            ) use (
-                $order,
+            usort($menuItems, fn (DimensionMenuItem $menuItemA, DimensionMenuItem $menuItemB) => (int)$order[$menuItemA->node?->dimensionSpacePoint->getCoordinate(
                 $contentDimensionIdentifierToLimitTo
-            ) {
-                return (int)$order[$menuItemA->node?->dimensionSpacePoint->getCoordinate(
-                    $contentDimensionIdentifierToLimitTo
-                )] <=> (int)$order[$menuItemB->node?->dimensionSpacePoint->getCoordinate(
-                    $contentDimensionIdentifierToLimitTo
-                )];
-            });
+            )] <=> (int)$order[$menuItemB->node?->dimensionSpacePoint->getCoordinate(
+                $contentDimensionIdentifierToLimitTo
+            )]);
         }
 
         return $menuItems;
@@ -217,9 +209,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         } elseif ($variant) {
             return $this->nodeLabelGenerator->getLabel($variant) ?: '';
         } else {
-            return array_reduce($metadata, function ($carry, $item) {
-                return $carry . (empty($carry) ? '' : '-') . $item['label'];
-            }, '');
+            return array_reduce($metadata, fn ($carry, $item) => $carry . (empty($carry) ? '' : '-') . $item['label'], '');
         }
     }
 

@@ -43,14 +43,14 @@ final readonly class Link implements \JsonSerializable
     /**
      * A selection of frequently used target attribute values
      */
-    public const TARGET_SELF = '_self';
-    public const TARGET_BLANK = '_blank';
+    public const string TARGET_SELF = '_self';
+    public const string TARGET_BLANK = '_blank';
 
     /**
      * A selection of frequently used rel attribute values
      */
-    public const REL_NOOPENER = 'noopener';
-    public const REL_NOFOLLOW = 'nofollow';
+    public const string REL_NOOPENER = 'noopener';
+    public const string REL_NOFOLLOW = 'nofollow';
 
     /**
      * @param array<int, string> $rel

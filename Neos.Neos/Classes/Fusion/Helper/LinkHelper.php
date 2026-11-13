@@ -31,8 +31,8 @@ use Psr\Log\LoggerInterface;
 
 class LinkHelper implements ProtectedContextAwareInterface
 {
-    private const NODE_SCHEME = 'node';
-    private const ASSET_SCHEME = 'asset';
+    private const string NODE_SCHEME = 'node';
+    private const string ASSET_SCHEME = 'asset';
 
     /**
      * @Flow\Inject

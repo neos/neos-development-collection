@@ -29,7 +29,7 @@ use Neos\Flow\Annotations as Flow;
  */
 final class Change
 {
-    public const AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER = 'AGGREGATE';
+    public const string AGGREGATE_DIMENSIONSPACEPOINT_HASH_PLACEHOLDER = 'AGGREGATE';
 
     public function __construct(
         public ContentStreamId $contentStreamId,

@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Core\Subscription\Engine;
  */
 final readonly class Errors implements \IteratorAggregate, \Countable
 {
-    private const CLAMP_ERRORS = 5;
+    private const int CLAMP_ERRORS = 5;
 
     /**
      * @var non-empty-array<Error>

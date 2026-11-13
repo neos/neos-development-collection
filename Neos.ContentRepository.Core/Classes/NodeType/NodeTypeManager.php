@@ -104,9 +104,7 @@ final class NodeTypeManager
             return $this->cachedNodeTypes;
         }
 
-        return array_filter($this->cachedNodeTypes, function ($nodeType) {
-            return !$nodeType->isAbstract();
-        });
+        return array_filter($this->cachedNodeTypes, fn ($nodeType) => !$nodeType->isAbstract());
     }
 
     /**
@@ -136,9 +134,7 @@ final class NodeTypeManager
         }
 
         if ($includeAbstractNodeTypes === false) {
-            return array_filter($this->cachedSubNodeTypes[$superTypeName], function (NodeType $nodeType) {
-                return !$nodeType->isAbstract();
-            });
+            return array_filter($this->cachedSubNodeTypes[$superTypeName], fn (NodeType $nodeType) => !$nodeType->isAbstract());
         }
 
         return $this->cachedSubNodeTypes[$superTypeName];
@@ -155,10 +151,7 @@ final class NodeTypeManager
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
-        if (isset($this->cachedNodeTypes[$nodeTypeName])) {
-            return $this->cachedNodeTypes[$nodeTypeName];
-        }
-        return null;
+        return $this->cachedNodeTypes[$nodeTypeName] ?? null;
     }
 
     /**
@@ -229,7 +222,7 @@ final class NodeTypeManager
         // Constraints configured at the childNode configuration of the parent.
         try {
             $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $tetheredNodeName->value . '.constraints.nodeTypes') ?? [];
-        } catch (PropertyNotAccessibleException $exception) {
+        } catch (PropertyNotAccessibleException) {
             // We ignore this because the configuration might just not have any constraints, if the childNode was not configured null would have been returned.
             $childNodeConstraintConfiguration = [];
         }
@@ -272,7 +265,7 @@ final class NodeTypeManager
                     $completeNodeTypeConfiguration
                 )
                 : [];
-        } catch (NodeConfigurationException $exception) {
+        } catch (NodeConfigurationException) {
             throw new NodeConfigurationException(
                 'Node type "' . $nodeTypeName . '" sets super type with a non-string key to NULL.',
                 1416578395
@@ -290,9 +283,7 @@ final class NodeTypeManager
             $properties = $nodeTypeConfiguration['properties'];
         }
 
-        $nodeTypeConfiguration['properties'] = array_filter($properties, function ($propertyConfiguration) {
-            return $propertyConfiguration !== null;
-        });
+        $nodeTypeConfiguration['properties'] = array_filter($properties, fn ($propertyConfiguration) => $propertyConfiguration !== null);
 
         if ($nodeTypeConfiguration['properties'] === []) {
             unset($nodeTypeConfiguration['properties']);

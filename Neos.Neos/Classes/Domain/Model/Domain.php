@@ -26,7 +26,7 @@ use Neos\Flow\Annotations as Flow;
  * @Flow\Entity
  * @Flow\Scope("prototype")
  */
-class Domain implements CacheAwareInterface
+class Domain implements CacheAwareInterface, \Stringable
 {
     /**
      * @var string
@@ -208,7 +208,7 @@ class Domain implements CacheAwareInterface
      *
      * @return string This domain as a URI string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $domain = $this->scheme ? $this->scheme . '://' : '';
         $domain .= $this->hostname;

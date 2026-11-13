@@ -375,7 +375,7 @@ class UserCommandController extends CommandController
                 } else {
                     $this->outputLine('User "%s" already had the role "%s" assigned.', [$username, $role]);
                 }
-            } catch (NoSuchRoleException $exception) {
+            } catch (NoSuchRoleException) {
                 $this->outputLine('The role "%s" does not exist.', [$role]);
                 $this->quit(2);
             }
@@ -413,7 +413,7 @@ class UserCommandController extends CommandController
                 } else {
                     $this->outputLine('User "%s" did not have the role "%s" assigned.', [$username, $role]);
                 }
-            } catch (NoSuchRoleException $exception) {
+            } catch (NoSuchRoleException) {
                 $this->outputLine('The role "%s" does not exist.', [$role]);
                 $this->quit(2);
             }
@@ -432,12 +432,10 @@ class UserCommandController extends CommandController
         if (preg_match('/[\\?\\*\\{\\[]/u', $usernamePattern)) {
             return array_filter(
                 $this->userService->getUsers()->toArray(),
-                function ($user) use ($usernamePattern, $authenticationProviderName) {
-                    return fnmatch(
-                        $usernamePattern,
-                        $this->userService->getUsername($user, $authenticationProviderName) ?: ''
-                    );
-                }
+                fn ($user) => fnmatch(
+                    $usernamePattern,
+                    $this->userService->getUsername($user, $authenticationProviderName) ?: ''
+                )
             );
         } else {
             $user = $this->userService->getUser($usernamePattern, $authenticationProviderName);

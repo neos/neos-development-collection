@@ -110,7 +110,7 @@ class TemplateImplementation extends AbstractArrayFusionObject
         }
 
         // Template resources need to be evaluated from the templates package not the requests package.
-        if (strpos($templatePath, 'resource://') === 0) {
+        if (str_starts_with($templatePath, 'resource://')) {
             $templateResourcePathParts = parse_url($templatePath);
             foreach ($fluidTemplate->getRenderingContext()->buildParserConfiguration()->getInterceptors(InterceptorInterface::INTERCEPT_TEXT) as $interceptor) {
                 if ($interceptor instanceof ResourceInterceptor) {

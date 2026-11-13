@@ -219,13 +219,7 @@ class XliffService
                         return;
                     }
                     if (is_array($sourcesToBeIncluded)) {
-                        $addSource = false;
-                        foreach ($sourcesToBeIncluded as $sourcePattern) {
-                            if (fnmatch($sourcePattern, $source)) {
-                                $addSource = true;
-                                break;
-                            }
-                        }
+                        $addSource = array_any($sourcesToBeIncluded, fn ($sourcePattern) => fnmatch($sourcePattern, $source));
                         if (!$addSource) {
                             return;
                         }

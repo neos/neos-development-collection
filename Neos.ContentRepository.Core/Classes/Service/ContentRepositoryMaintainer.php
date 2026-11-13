@@ -65,7 +65,7 @@ use Neos\EventStore\WithResetInterface;
  */
 final readonly class ContentRepositoryMaintainer implements ContentRepositoryServiceInterface
 {
-    private const REPLAY_BATCH_SIZE = 500;
+    private const int REPLAY_BATCH_SIZE = 500;
 
     /**
      * @internal please use the {@see ContentRepositoryMaintainerFactory} instead!

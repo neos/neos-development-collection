@@ -23,9 +23,9 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final readonly class TrashBinPagination implements \JsonSerializable, ProtectedContextAwareInterface
 {
-    public const DEFAULT_LIMIT = 20;
+    public const int DEFAULT_LIMIT = 20;
 
-    public const MAXIMUM_NUMBER_OF_LINKS = 99;
+    public const int MAXIMUM_NUMBER_OF_LINKS = 99;
 
     public function __construct(
         public int $offset,

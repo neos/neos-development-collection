@@ -23,7 +23,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Proxy(false)
  */
-final readonly class SiteNodeName
+final readonly class SiteNodeName implements \Stringable
 {
     private function __construct(
         public string $value

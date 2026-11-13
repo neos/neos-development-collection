@@ -45,9 +45,7 @@ final class Transformations
                     GlobalTransformationInterface::class,
                     NodeAggregateBasedTransformationInterface::class,
                     NodeBasedTransformationInterface::class,
-                    is_object($transformationObject)
-                        ? get_class($transformationObject)
-                        : gettype($transformationObject)
+                    get_debug_type($transformationObject)
                 ), 1611735528);
             }
         }

@@ -857,9 +857,7 @@ class Runtime
                         for ($singleApplyValues->rewind(); ($key = $singleApplyValues->key()) !== null; $singleApplyValues->next()) {
                             $combinedApplyValues[$fusionPath . '/' . $key] = [
                                 'key' => $key,
-                                'value' => function () use ($singleApplyValues, $key) {
-                                    return $singleApplyValues[$key];
-                                },
+                                'value' => fn () => $singleApplyValues[$key],
                                 'lazy' => true
                             ];
                         }

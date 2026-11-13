@@ -222,7 +222,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             if ($matchResult === false) {
                 return false;
             }
-        } catch (NodeNotFoundException $exception) {
+        } catch (NodeNotFoundException) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
             // (and other routes could still handle this).
             return false;
@@ -298,7 +298,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             if ($resolveResult === false) {
                 return false;
             }
-        } catch (NodeNotFoundException | TargetSiteNotFoundException | InvalidShortcutException $exception) {
+        } catch (NodeNotFoundException | TargetSiteNotFoundException | InvalidShortcutException) {
             // TODO log exception ... yes todo
             return false;
         }

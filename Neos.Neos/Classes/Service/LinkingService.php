@@ -65,7 +65,7 @@ use Psr\Log\LoggerInterface;
  */
 class LinkingService
 {
-    protected ?Node $lastLinkedNode;
+    protected ?Node $lastLinkedNode = null;
 
     /**
      * @Flow\Inject

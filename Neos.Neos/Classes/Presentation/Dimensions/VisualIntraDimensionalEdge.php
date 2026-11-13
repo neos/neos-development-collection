@@ -19,7 +19,7 @@ use Neos\Flow\Annotations as Flow;
 #[Flow\Proxy(false)]
 final readonly class VisualIntraDimensionalEdge
 {
-    private const VERTICAL_OFFSET = 40;
+    private const int VERTICAL_OFFSET = 40;
 
     public function __construct(
         public int $x1,

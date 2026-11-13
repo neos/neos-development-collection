@@ -47,7 +47,7 @@ final readonly class InterdimensionalSiblings implements \JsonSerializable, \Ite
     public static function fromArray(array $values): self
     {
         return new self(...array_map(
-            fn (array $itemValues): InterdimensionalSibling => InterdimensionalSibling::fromArray($itemValues),
+            InterdimensionalSibling::fromArray(...),
             $values
         ));
     }

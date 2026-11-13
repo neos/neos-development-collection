@@ -21,8 +21,8 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 final readonly class SiteDetectionResult
 {
-    private const ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';
-    private const ROUTINGPARAMETER_CONTENTREPOSITORYID = 'contentRepositoryId';
+    private const string ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';
+    private const string ROUTINGPARAMETER_CONTENTREPOSITORYID = 'contentRepositoryId';
 
     private function __construct(
         public SiteNodeName $siteNodeName,

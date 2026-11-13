@@ -70,7 +70,7 @@ class YamlConfiguration extends Configuration
         $directoryIterator = new \DirectoryIterator($possibleMigrationsPath);
         foreach ($directoryIterator as $fileInfo) {
             $filename = $fileInfo->getFilename();
-            if ($fileInfo->isFile() && $filename[0] !== '.' && (substr($filename, -5) === '.yaml')) {
+            if ($fileInfo->isFile() && $filename[0] !== '.' && (str_ends_with($filename, '.yaml'))) {
                 if (preg_match('/^Version[0-9]{14}.yaml$/', $filename) !== 1) {
                     throw new MigrationException('The migration file ' . $filename . ' is named wrong, expected format is "VersionYYYYMMDDHHmmss.yaml".', 1515752616);
                 }

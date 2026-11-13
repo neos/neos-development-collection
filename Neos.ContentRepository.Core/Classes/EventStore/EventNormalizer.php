@@ -190,10 +190,10 @@ final readonly class EventNormalizer
 
     private function getEventType(EventInterface $event): EventType
     {
-        $className = get_class($event);
+        $className = $event::class;
 
         return $this->fullClassNameToShortEventType[$className] ?? throw new \RuntimeException(
-            'Event type ' . get_class($event) . ' not registered'
+            'Event type ' . $event::class . ' not registered'
         );
     }
 }

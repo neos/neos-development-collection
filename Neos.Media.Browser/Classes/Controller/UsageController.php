@@ -123,7 +123,7 @@ class UsageController extends ActionController
 
         foreach ($usageReferences as $usage) {
             $inaccessibleRelation = [
-                'type' => get_class($usage),
+                'type' => $usage::class,
                 'usage' => $usage
             ];
 
@@ -140,7 +140,7 @@ class UsageController extends ActionController
                         return $contentRepository->getContentGraph($usage->getWorkspaceName())->findNodeAggregateById(
                             $usage->getNodeAggregateId()
                         );
-                    } catch (WorkspaceDoesNotExist $e) {
+                    } catch (WorkspaceDoesNotExist) {
                         return null;
                     }
                 }

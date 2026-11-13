@@ -60,7 +60,7 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
             'Neos.Neos.modules'
         );
         $targetModulePath = $this->getParsedMatcher();
-        list($moduleName, $subModuleName) = array_pad(explode('/', $targetModulePath, 2), 2, null);
+        [$moduleName, $subModuleName] = array_pad(explode('/', $targetModulePath, 2), 2, null);
         if (!isset($moduleSettings[$moduleName])) {
             throw new InvalidPolicyException(sprintf(
                 'The module "%s" specified in privilege target "%s" is not configured',
@@ -131,7 +131,7 @@ class ModulePrivilege extends AbstractPrivilege implements MethodPrivilegeInterf
                     self::class,
                     ModulePrivilegeSubject::class,
                     MethodPrivilegeSubject::class,
-                    get_class($subject)
+                    $subject::class
                 ),
                 1493130646
             );

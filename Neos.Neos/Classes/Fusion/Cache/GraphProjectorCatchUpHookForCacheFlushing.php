@@ -217,12 +217,10 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
     private function scheduleCacheFlushJobForWorkspaceName(
         WorkspaceName $workspaceName
     ): void {
-        if (!isset($this->flushWorkspaceRequestsOnAfterCatchUp[$workspaceName->value])) {
-            $this->flushWorkspaceRequestsOnAfterCatchUp[$workspaceName->value] = FlushWorkspaceRequest::create(
-                $this->contentRepositoryId,
-                $workspaceName,
-            );
-        }
+        $this->flushWorkspaceRequestsOnAfterCatchUp[$workspaceName->value] ??= FlushWorkspaceRequest::create(
+            $this->contentRepositoryId,
+            $workspaceName,
+        );
     }
 
     public function onAfterBatchCompleted(): void

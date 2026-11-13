@@ -77,9 +77,7 @@ final readonly class ContentDimensionValues implements \IteratorAggregate
     {
         return array_filter(
             $this->values,
-            function (ContentDimensionValue $value): bool {
-                return $value->specializationDepth->isZero();
-            }
+            fn (ContentDimensionValue $value): bool => $value->specializationDepth->isZero()
         );
     }
 }

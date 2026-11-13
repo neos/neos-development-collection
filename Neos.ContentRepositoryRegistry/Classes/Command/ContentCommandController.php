@@ -116,7 +116,7 @@ final class ContentCommandController extends CommandController
                         $childNode->originDimensionSpacePoint,
                         $target
                     ));
-                } catch (DimensionSpacePointIsAlreadyOccupied $e) {
+                } catch (DimensionSpacePointIsAlreadyOccupied) {
                     if ($childNodeType?->isOfType('Neos.Neos:Document')) {
                         $this->output("%s  (already exists)\n", [
                             str_repeat('  ', $level)

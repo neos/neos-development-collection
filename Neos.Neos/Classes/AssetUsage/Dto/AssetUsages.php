@@ -50,9 +50,7 @@ final class AssetUsages implements \IteratorAggregate, \Countable
 
     public function count(): int
     {
-        if ($this->countRuntimeCache === null) {
-            $this->countRuntimeCache = ($this->counter)();
-        }
+        $this->countRuntimeCache ??= ($this->counter)();
         return $this->countRuntimeCache;
     }
 
@@ -62,16 +60,14 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     public static function fromArrayOfAssetUsages(array $assetUsages): self
     {
         return new self(
-            function () use ($assetUsages) {
-                return array_reduce(
-                    $assetUsages,
-                    static function (\AppendIterator $globalAssetUsages, AssetUsages $assetUsage) {
-                        $globalAssetUsages->append($assetUsage->getIterator());
-                        return $globalAssetUsages;
-                    },
-                    new \AppendIterator()
-                );
-            },
+            fn () => array_reduce(
+                $assetUsages,
+                static function (\AppendIterator $globalAssetUsages, AssetUsages $assetUsage) {
+                    $globalAssetUsages->append($assetUsage->getIterator());
+                    return $globalAssetUsages;
+                },
+                new \AppendIterator()
+            ),
             function () use ($assetUsages) {
                 $count = 0;
                 foreach ($assetUsages as $assetUsage) {

@@ -70,9 +70,7 @@ class RenderingModeService
         }
 
         $modeName = $this->userService->getUserPreference('contentEditing.editPreviewMode');
-        if ($modeName === null) {
-            $modeName = $this->defaultEditPreviewMode;
-        }
+        $modeName ??= $this->defaultEditPreviewMode;
 
         return $this->findByName($modeName);
     }

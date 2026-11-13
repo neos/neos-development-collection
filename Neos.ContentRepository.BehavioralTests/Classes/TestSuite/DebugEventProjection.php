@@ -126,7 +126,7 @@ final class DebugEventProjection implements ProjectionInterface
 
     public function schemaNeedsAdditionalColumn(string $name): void
     {
-        $this->additionalColumnsForSchema[$name] = (new Column($name, Type::getType(Types::STRING)))->setNotnull(false);
+        $this->additionalColumnsForSchema[$name] = new Column($name, Type::getType(Types::STRING))->setNotnull(false);
     }
 
     public function dropTables(): void

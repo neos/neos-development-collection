@@ -163,14 +163,14 @@ class RuntimeContentCache
             }
             if ($evaluateContext['cacheForPathEnabled']) {
                 $evaluateContext['cacheIdentifierValues'] = $this->buildCacheIdentifierValues($evaluateContext['configuration'], $evaluateContext['fusionPath'], $fusionObject);
-                $cacheDiscriminator = isset($evaluateContext['cacheDiscriminator']) ? $evaluateContext['cacheDiscriminator'] : null;
+                $cacheDiscriminator = $evaluateContext['cacheDiscriminator'] ?? null;
                 $segment = $this->contentCache->getCachedSegment(function ($command, $additionalData, $cache) {
-                    if (strpos($command, 'eval=') === 0) {
+                    if (str_starts_with($command, 'eval=')) {
                         $unserializedContext = $this->unserializeContext($additionalData['context']);
                         $path = substr($command, 5);
                         $result = $this->evaluateUncached($path, $unserializedContext);
                         return $result;
-                    } elseif (strpos($command, 'evalCached=') === 0) {
+                    } elseif (str_starts_with($command, 'evalCached=')) {
                         /*
                          * Why do we need the following line:
                          * - in "enter" the cache context is decided upon which contains "currentPathIsEntryPoint".

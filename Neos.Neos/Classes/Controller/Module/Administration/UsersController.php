@@ -128,13 +128,7 @@ class UsersController extends AbstractModuleController
         }
 
         if ($role) {
-            $roleExists = false;
-            foreach ($allowedRoles as $allowedRole) {
-                if ($allowedRole->getIdentifier() === $role) {
-                    $roleExists = true;
-                    break;
-                }
-            }
+            $roleExists = array_any($allowedRoles, fn ($allowedRole) => $allowedRole->getIdentifier() === $role);
             if (!$roleExists) {
                 throw new NoSuchRoleException(sprintf('The role "%s" does not exist.', $role), 1723796893);
             }
@@ -576,15 +570,11 @@ class UsersController extends AbstractModuleController
     protected function getAllowedRoles(): array
     {
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
-        $currentUserRoles = array_filter($currentUserRoles, static function (Role $role) {
-            return $role->isAbstract() !== true;
-        });
+        $currentUserRoles = array_filter($currentUserRoles, static fn (Role $role) => $role->isAbstract() !== true);
 
         $roles = $this->userService->currentUserIsAdministrator() ? $this->policyService->getRoles() : $currentUserRoles;
 
-        usort($roles, static function (Role $a, Role $b) {
-            return strcmp($a->getLabel(), $b->getLabel());
-        });
+        usort($roles, static fn (Role $a, Role $b) => strcmp($a->getLabel(), $b->getLabel()));
 
         return $roles;
     }

@@ -185,7 +185,7 @@ final class RouterCacheHook implements CatchUpHookInterface
                 $nodeAggregateId,
                 $dimensionSpacePoint->hash
             );
-        } catch (NodeNotFoundException $_) {
+        } catch (NodeNotFoundException) {
             /** @noinspection BadExceptionsProcessingInspection */
             return null;
         }

@@ -82,10 +82,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
         /** @var ?Node $siteNode */
         $siteNode = $currentContext['site'] ?? null;
 
-        if ($documentNode === null) {
-            // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
-            $documentNode = $siteNode ?: $node;
-        }
+        // Actually we cannot be sure that $node is a document. But for fallback purposes this should be safe.
+        $documentNode ??= $siteNode ?: $node;
 
         if (!is_null($documentNode)) {
             $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');

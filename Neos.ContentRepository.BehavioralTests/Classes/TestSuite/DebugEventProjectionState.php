@@ -26,7 +26,7 @@ final class DebugEventProjectionState implements ProjectionStateInterface
     public function findAppliedSequenceNumbers(): array
     {
         return array_map(
-            fn (int $value) => SequenceNumber::fromInteger($value),
+            SequenceNumber::fromInteger(...),
             $this->findAppliedSequenceNumberValues()
         );
     }

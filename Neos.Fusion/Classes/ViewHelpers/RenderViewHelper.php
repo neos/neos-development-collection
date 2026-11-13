@@ -81,7 +81,7 @@ class RenderViewHelper extends AbstractViewHelper
     public function render()
     {
         $path = $this->arguments['path'];
-        if (strpos($path, '/') === 0 || strpos($path, '.') === 0) {
+        if (str_starts_with($path, '/') || str_starts_with($path, '.')) {
             throw new \InvalidArgumentException('When calling the Fusion render view helper only relative paths are allowed.', 1368740480);
         }
         if (preg_match('/^[a-z0-9.]+$/i', $path) !== 1) {

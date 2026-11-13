@@ -186,9 +186,7 @@ class ObjectTreeParser
         } catch (ParserUnexpectedCharException $e) {
             throw $this->prepareParserException(new ParserException())
                 ->setCode($e->getCode())
-                ->setMessageCreator(function (MessageLinePart $nextLine) use ($e) {
-                    return "Unexpected char {$nextLine->charPrint()}. {$e->getMessage()}";
-                })
+                ->setMessageCreator(fn (MessageLinePart $nextLine) => "Unexpected char {$nextLine->charPrint()}. {$e->getMessage()}")
                 ->setPrevious($e)
                 ->build();
         } catch (Fusion\Exception $e) {
@@ -226,22 +224,14 @@ class ObjectTreeParser
     protected function parseStatement(): AbstractStatement
     {
         // watch out for the order, its regex matching and first one wins.
-        switch (true) {
-            case $this->accept(Token::INCLUDE):
-                return $this->parseIncludeStatement();
-
-            case $this->accept(Token::PROTOTYPE_START):
-            case $this->accept(Token::OBJECT_PATH_PART):
-            case $this->accept(Token::META_PATH_START):
-            case $this->accept(Token::STRING_SINGLE_QUOTED):
-            case $this->accept(Token::STRING_DOUBLE_QUOTED):
-                return $this->parseObjectStatement();
-        }
-
-        throw $this->prepareParserException(new ParserException())
-            ->setCode(1646988828)
-            ->setMessageCreator([MessageCreator::class, 'forParseStatement'])
-            ->build();
+        return match (true) {
+            $this->accept(Token::INCLUDE) => $this->parseIncludeStatement(),
+            $this->accept(Token::PROTOTYPE_START), $this->accept(Token::OBJECT_PATH_PART), $this->accept(Token::META_PATH_START), $this->accept(Token::STRING_SINGLE_QUOTED), $this->accept(Token::STRING_DOUBLE_QUOTED) => $this->parseObjectStatement(),
+            default => throw $this->prepareParserException(new ParserException())
+                ->setCode(1646988828)
+                ->setMessageCreator([MessageCreator::class, 'forParseStatement'])
+                ->build(),
+        };
     }
 
     /**

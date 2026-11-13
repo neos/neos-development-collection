@@ -190,7 +190,7 @@ trait ConstraintChecks
                 try {
                     $parentsNodeType = $this->requireNodeType($parentAggregate->nodeTypeName);
                     $this->requireNodeTypeConstraintsImposedByParentToBeMet($parentsNodeType, $nodeType);
-                } catch (NodeTypeNotFound $e) {
+                } catch (NodeTypeNotFound) {
                     // skip constraint check; Once the parent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
                 }
@@ -209,7 +209,7 @@ trait ConstraintChecks
                         $parentAggregate->nodeName,
                         $nodeType
                     );
-                } catch (NodeTypeNotFound $e) {
+                } catch (NodeTypeNotFound) {
                     // skip constraint check; Once the grandparent is changed to be of an available type,
                     // the constraint checks are executed again. See handleChangeNodeAggregateType
                 }
@@ -517,7 +517,7 @@ trait ConstraintChecks
                     $referenceName,
                     $nodeTypeName,
                     PropertyName::fromString($propertyName),
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
+                    get_debug_type($propertyValue),
                     $propertyType->value
                 );
             }

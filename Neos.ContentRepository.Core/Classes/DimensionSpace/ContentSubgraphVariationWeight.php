@@ -79,7 +79,7 @@ final readonly class ContentSubgraphVariationWeight implements \JsonSerializable
         $exponent = count($this->value) - 1;
         /** @var Dimension\ContentDimensionValueSpecializationDepth $specializationDepth */
         foreach ($this->value as $dimensionId => $specializationDepth) {
-            $normalizedWeight += pow($normalizationBase, $exponent) * $specializationDepth->value;
+            $normalizedWeight += $normalizationBase ** $exponent * $specializationDepth->value;
             $exponent--;
         }
 

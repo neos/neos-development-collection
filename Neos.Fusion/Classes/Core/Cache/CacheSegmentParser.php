@@ -154,13 +154,13 @@ class CacheSegmentParser
         $segmentData['metadata'] = $contextOrMetadata;
         $segmentData['context'] = $contextOrMetadata;
 
-        if (strpos($identifier, 'eval=') === 0) {
+        if (str_starts_with($identifier, 'eval=')) {
             $segmentData['type'] = ContentCache::SEGMENT_TYPE_UNCACHED;
             unset($segmentData['metadata']);
             $this->uncachedPartCount++;
         }
 
-        if (strpos($identifier, 'evalCached=') === 0) {
+        if (str_starts_with($identifier, 'evalCached=')) {
             $segmentData['type'] = ContentCache::SEGMENT_TYPE_DYNAMICCACHED;
             $segmentData['identifier'] = substr($identifier, 11);
             $additionalData = json_decode($contextOrMetadata, true);

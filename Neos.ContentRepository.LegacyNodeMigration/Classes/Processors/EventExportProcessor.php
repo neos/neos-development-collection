@@ -309,7 +309,7 @@ final class EventExportProcessor implements ProcessorInterface
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
         try {
-            $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
+            $decodedProperties = new JsonArrayType()->convertToPHPValue($nodeDataRow['properties'], new PostgreSQLPlatform());
         } catch (ConversionException $exception) {
             throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value, $exception->getMessage()), 1695391558, $exception);
         }
@@ -562,6 +562,6 @@ final class EventExportProcessor implements ProcessorInterface
 
     private function isRootNodePath(string $path): bool
     {
-        return strpos($path, '/') === 0 && strpos($path, '/', 1) === false;
+        return str_starts_with($path, '/') && strpos($path, '/', 1) === false;
     }
 }

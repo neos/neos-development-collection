@@ -48,15 +48,15 @@ class DimensionSpacePointsFilterFactory implements FilterFactoryInterface
             $includeSpecializations = (bool)$settings['includeSpecializations'];
         }
 
-        return new class (
+        return new readonly class (
             $points,
             $includeSpecializations,
             $contentRepository->getVariationGraph()
         ) implements NodeBasedFilterInterface {
             public function __construct(
-                private readonly OriginDimensionSpacePointSet $points,
-                private readonly bool $includeSpecializations,
-                private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph
+                private OriginDimensionSpacePointSet $points,
+                private bool $includeSpecializations,
+                private InterDimensionalVariationGraph $interDimensionalVariationGraph
             ) {
             }
 

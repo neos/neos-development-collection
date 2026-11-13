@@ -65,7 +65,7 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
         ]);
 
         if (!$package instanceof FlowPackageInterface) {
-            throw new \RuntimeException('Expected to generate flow site package for "' . $packageKey . '" but got ' . get_class($package));
+            throw new \RuntimeException('Expected to generate flow site package for "' . $packageKey . '" but got ' . $package::class);
         }
 
         $this->generateSitesFusionDirectory($package);

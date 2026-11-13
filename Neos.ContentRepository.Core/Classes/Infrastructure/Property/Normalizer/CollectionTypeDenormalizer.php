@@ -82,7 +82,7 @@ final class CollectionTypeDenormalizer implements
         }
         try {
             $parsedType = TypeHandling::parseType($type);
-        } catch (InvalidTypeException $e) {
+        } catch (InvalidTypeException) {
             return false;
         }
         if (empty($parsedType['elementType'])) {

@@ -124,12 +124,8 @@ class SitesController extends AbstractModuleController
         $sites = $this->siteRepository->findAll();
         foreach ($sites as $site) {
             $siteResourcePackageKey = strtolower(str_replace('.', '_', $site->getSiteResourcesPackageKey()));
-            if (!isset($sitePackagesAndSites[$siteResourcePackageKey])) {
-                $sitePackagesAndSites[$siteResourcePackageKey] = ['packageKey' => $site->getSiteResourcesPackageKey()];
-            }
-            if (!isset($sitePackagesAndSites[$siteResourcePackageKey]['sites'])) {
-                $sitePackagesAndSites[$siteResourcePackageKey]['sites'] = [];
-            }
+            $sitePackagesAndSites[$siteResourcePackageKey] ??= ['packageKey' => $site->getSiteResourcesPackageKey()];
+            $sitePackagesAndSites[$siteResourcePackageKey]['sites'] ??= [];
             $sitePackagesAndSites[$siteResourcePackageKey]['sites'][] = $site;
         }
         $this->view?->assignMultiple([
@@ -149,7 +145,7 @@ class SitesController extends AbstractModuleController
     {
         try {
             $sitePackage = $this->packageManager->getPackage($site->getSiteResourcesPackageKey());
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel(
                     'sites.sitePackageNotFound.body',
@@ -252,7 +248,7 @@ class SitesController extends AbstractModuleController
 
         try {
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        } catch (ContentRepositoryNotFoundException $e) {
+        } catch (ContentRepositoryNotFoundException) {
             throw new \RuntimeException(sprintf('The default content repository for new sites "%s" could not be instantiated.', $contentRepositoryId->value), 1736946907);
         }
 
@@ -280,7 +276,7 @@ class SitesController extends AbstractModuleController
     {
         try {
             $site = $this->siteService->createSite($packageKey, $siteName, $nodeType);
-        } catch (NodeTypeNotFound $exception) {
+        } catch (NodeTypeNotFound) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.body', [$nodeType]),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotFound.title'),
@@ -289,7 +285,7 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        } catch (SiteNodeTypeIsInvalid $exception) {
+        } catch (SiteNodeTypeIsInvalid) {
             $this->addFlashMessage(
                 $this->getModuleLabel(
                     'sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body',
@@ -301,7 +297,7 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered $exception) {
+        } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyCovered) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.title'),

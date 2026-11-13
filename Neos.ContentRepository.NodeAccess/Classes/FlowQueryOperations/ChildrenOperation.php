@@ -157,9 +157,7 @@ class ChildrenOperation extends AbstractOperation
                     }
                 } elseif (count($instanceOfFilters) > 0) {
                     // Optimize node type filter if present
-                    $allowedNodeTypes = array_map(function ($instanceOfFilter) {
-                        return $instanceOfFilter['Operand'];
-                    }, $instanceOfFilters);
+                    $allowedNodeTypes = array_map(fn ($instanceOfFilter) => $instanceOfFilter['Operand'], $instanceOfFilters);
                     /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
@@ -186,12 +184,7 @@ class ChildrenOperation extends AbstractOperation
 
                 // Apply attribute filters if present
                 if (isset($filter['AttributeFilters'])) {
-                    $attributeFilters = array_reduce($filter['AttributeFilters'], function (
-                        $filters,
-                        $attributeFilter
-                    ) {
-                        return $filters . $attributeFilter['text'];
-                    });
+                    $attributeFilters = array_reduce($filter['AttributeFilters'], fn ($filters, $attributeFilter) => $filters . $attributeFilter['text']);
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
                     $filteredOutput = iterator_to_array($filteredFlowQuery);

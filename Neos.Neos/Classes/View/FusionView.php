@@ -115,7 +115,7 @@ class FusionView extends AbstractView
      */
     protected $fusionPath = 'root';
 
-    protected ?Runtime $fusionRuntime;
+    protected ?Runtime $fusionRuntime = null;
 
     /**
      * @Flow\Inject

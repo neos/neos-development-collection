@@ -44,8 +44,8 @@ use Neos\Neos\Security\Authorization\ContentRepositoryAuthorizationService;
 #[Flow\Scope('singleton')]
 final readonly class WorkspaceMetadataAndRoleRepository
 {
-    private const TABLE_NAME_WORKSPACE_METADATA = 'neos_neos_workspace_metadata';
-    private const TABLE_NAME_WORKSPACE_ROLE = 'neos_neos_workspace_role';
+    private const string TABLE_NAME_WORKSPACE_METADATA = 'neos_neos_workspace_metadata';
+    private const string TABLE_NAME_WORKSPACE_ROLE = 'neos_neos_workspace_role';
 
     public function __construct(
         private Connection $dbal
