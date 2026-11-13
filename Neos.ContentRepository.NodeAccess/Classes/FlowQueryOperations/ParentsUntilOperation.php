@@ -88,7 +88,9 @@ class ParentsUntilOperation extends AbstractOperation
             if (isset($arguments[0]) && !empty($arguments[0] && !$parentNodes->isEmpty())) {
                 $filterQuery = new FlowQuery(iterator_to_array($parentNodes));
                 $filterQuery->pushOperation('filter', [$arguments[0]]);
-                $filteredParents = Nodes::fromArray(iterator_to_array($filterQuery));
+                /** @var array<int, Node> $filteredParentsArray */
+                $filteredParentsArray = iterator_to_array($filterQuery);
+                $filteredParents = Nodes::fromArray($filteredParentsArray);
             }
 
             if (isset($filteredParents) && !$filteredParents->isEmpty()) {

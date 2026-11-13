@@ -83,7 +83,9 @@ class PrevUntilOperation extends AbstractOperation
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($prevNodes);
                 $untilQuery->pushOperation('filter', [$arguments[0]]);
-                $untilNodes = Nodes::fromArray(iterator_to_array($untilQuery));
+                /** @var array<int,Node> $untilNodesArray */
+                $untilNodesArray = iterator_to_array($untilQuery);
+                $untilNodes = Nodes::fromArray($untilNodesArray);
             }
             if (isset($untilNodes) && !$untilNodes->isEmpty()) {
                 $prevNodes = $prevNodes->previousAll($untilNodes->first())->reverse();
