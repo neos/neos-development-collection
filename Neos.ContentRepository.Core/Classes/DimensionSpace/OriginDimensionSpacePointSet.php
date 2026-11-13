@@ -42,6 +42,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
                 $point = OriginDimensionSpacePoint::fromArray($point);
             }
 
+            /** @phpstan-ignore instanceof.alwaysTrue (part of the API and thus cannot be trusted) */
             if (!$point instanceof OriginDimensionSpacePoint) {
                 throw new \InvalidArgumentException(sprintf(
                     'Point %s was not of type OriginDimensionSpacePoint',

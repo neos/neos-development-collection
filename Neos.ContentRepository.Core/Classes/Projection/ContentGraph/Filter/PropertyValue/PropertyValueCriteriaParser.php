@@ -315,6 +315,6 @@ final class PropertyValueCriteriaParser
     private static function throwParserException(string $message, int $tokenIndex): void
     {
         $token = self::$tokens[$tokenIndex] ?? null;
-        throw new ParserException($message, self::$query, $token?->offsetEnd ?? 0);
+        throw new ParserException($message, self::$query, $token?->offsetEnd ?: 0);
     }
 }

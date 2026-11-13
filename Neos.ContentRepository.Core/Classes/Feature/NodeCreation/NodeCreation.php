@@ -247,7 +247,7 @@ trait NodeCreation
             $command->nodeName,
             $initialPropertyValues,
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
-            $command->references ?? SerializedNodeReferences::createEmpty()
+            $command->references,
         );
     }
 

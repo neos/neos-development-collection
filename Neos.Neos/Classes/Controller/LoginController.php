@@ -181,7 +181,7 @@ class LoginController extends AbstractAuthenticationController
             }
         }
 
-        $this->view->assignMultiple([
+        $this->view?->assignMultiple([
             'styles' => array_filter($this->settings['userInterface']['backendLoginForm']['stylesheets']),
             'username' => $username,
             'site' => $currentSite,
@@ -293,7 +293,7 @@ class LoginController extends AbstractAuthenticationController
         parent::logoutAction();
         switch ($this->request->getFormat()) {
             case 'json':
-                $this->view->assign('value', ['success' => true]);
+                $this->view?->assign('value', ['success' => true]);
                 break;
             default:
                 $this->addFlashMessage(

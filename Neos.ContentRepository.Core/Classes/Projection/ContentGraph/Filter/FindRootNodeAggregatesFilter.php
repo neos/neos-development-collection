@@ -19,7 +19,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 final readonly class FindRootNodeAggregatesFilter
 {
     /**
-     * @internal (the properties themselves are readonly; only the write-methods are API)
+     * @internal
+     * the properties themselves are readonly; only the write-methods are API
      */
     private function __construct(
         public ?NodeTypeName $nodeTypeName,

@@ -30,19 +30,10 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
      */
     private array $nodeAggregates;
 
-    /**
-     * @param array<NodeAggregate> $items
-     */
-    private function __construct(array $items)
+    private function __construct(NodeAggregate ...$items)
     {
         $indexedItems = [];
         foreach ($items as $item) {
-            if (!$item instanceof NodeAggregate) {
-                throw new \InvalidArgumentException(
-                    'Nodes Aggregates can only consist of ' . NodeAggregate::class . ' objects.',
-                    1618044512
-                );
-            }
             $indexedItems[$item->nodeAggregateId->value] = $item;
         }
 
@@ -54,12 +45,12 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
      */
     public static function fromArray(array $nodeAggregates): self
     {
-        return new self($nodeAggregates);
+        return new self(...$nodeAggregates);
     }
 
     public static function createEmpty(): self
     {
-        return new self([]);
+        return new self();
     }
 
     public function get(NodeAggregateId $nodeAggregateId): ?NodeAggregate

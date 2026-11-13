@@ -84,14 +84,15 @@ class NextUntilOperation extends AbstractOperation
             if (isset($arguments[0]) && !empty($arguments[0])) {
                 $untilQuery = new FlowQuery($nextNodes);
                 $untilQuery->pushOperation('filter', [$arguments[0]]);
-                $untilNodes = Nodes::fromArray(iterator_to_array($untilQuery));
+                /** @var array<int, Node> $untilNodesArray */
+                $untilNodesArray = iterator_to_array($untilQuery);
+                $untilNodes = Nodes::fromArray($untilNodesArray);
             }
             if (isset($untilNodes) && !$untilNodes->isEmpty()) {
                 $nextNodes = $nextNodes->previousAll($untilNodes->first());
             }
             foreach ($nextNodes as $nextNode) {
-                if ($nextNode !== null
-                    && !isset($outputNodeIdentifiers[$nextNode->aggregateId->value])) {
+                if (!isset($outputNodeIdentifiers[$nextNode->aggregateId->value])) {
                     $outputNodeIdentifiers[$nextNode->aggregateId->value] = true;
                     $output[] = $nextNode;
                 }

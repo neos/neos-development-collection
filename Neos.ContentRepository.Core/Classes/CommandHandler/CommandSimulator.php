@@ -113,12 +113,12 @@ final class CommandSimulator
         $isFirstEvent = true;
         $normalizedEvents = Events::fromArray(
             $eventsForSingleStream->events->map(function (EventInterface|DecoratedEvent $event) use ($rebaseableCommand, &$isFirstEvent) {
-                $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata?->value ?? [] : [];
+                $metadata = $event instanceof DecoratedEvent ? ($event->eventMetadata?->value ?: []) : [];
                 if ($isFirstEvent) {
                     $metadata['debug_reason'] = sprintf('Rebased from %s', $rebaseableCommand->originalSequenceNumber->value);
                     $isFirstEvent = false;
                 }
-                $decoratedEvent = DecoratedEvent::create($event, metadata: array_merge($metadata, $rebaseableCommand->initiatingMetaData->value ?? []));
+                $decoratedEvent = DecoratedEvent::create($event, metadata: array_merge($metadata, $rebaseableCommand->initiatingMetaData->value));
                 return $this->eventNormalizer->normalize($decoratedEvent);
             })
         );

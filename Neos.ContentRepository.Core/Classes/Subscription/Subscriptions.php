@@ -27,9 +27,6 @@ final class Subscriptions implements \IteratorAggregate, \Countable, \JsonSerial
     {
         $subscriptionsById = [];
         foreach ($subscriptions as $subscription) {
-            if (!$subscription instanceof Subscription) {
-                throw new \InvalidArgumentException(sprintf('Expected instance of %s, got: %s', Subscription::class, get_debug_type($subscription)), 1729679774);
-            }
             if (array_key_exists($subscription->id->value, $subscriptionsById)) {
                 throw new \InvalidArgumentException(sprintf('Subscription with id "%s" is contained multiple times in this set', $subscription->id->value), 1731580354);
             }

@@ -39,6 +39,7 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     {
         foreach ($nodeAggregateIds as $oldNodeAggregateId => $newNodeAggregateId) {
             $oldNodeAggregateId = NodeAggregateId::fromString((string)$oldNodeAggregateId);
+            /** @phpstan-ignore instanceof.alwaysTrue (Annotations can be wrong) */
             if (!$newNodeAggregateId instanceof NodeAggregateId) {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIdMapping objects can only be composed of NodeAggregateId.',

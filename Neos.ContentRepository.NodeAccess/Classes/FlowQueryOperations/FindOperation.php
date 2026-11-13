@@ -127,9 +127,6 @@ class FindOperation extends AbstractOperation
 
         $selectorAndFilter = $arguments[0];
 
-        $firstContextNode = reset($contextNodes);
-        assert($firstContextNode instanceof Node);
-
         $entryPoints = $this->getEntryPoints($contextNodes);
 
         /** @var Node[] $result */
@@ -205,7 +202,6 @@ class FindOperation extends AbstractOperation
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
-            assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
             $subgraphIdentifier = md5($subgraph->getWorkspaceName()->value
                 . '@' . $subgraph->getDimensionSpacePoint()->toJson());

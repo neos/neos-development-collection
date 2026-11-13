@@ -80,7 +80,6 @@ final class NodeType
      * @param NodeTypeName $name Name of the node type
      * @param array<string,NodeType|null> $declaredSuperTypes Parent types instances of this node type, if null it should be unset
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
-     * @throws \InvalidArgumentException
      *
      * @internal
      */

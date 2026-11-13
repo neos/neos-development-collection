@@ -42,7 +42,7 @@ final readonly class NodeAggregateIdCondition implements SqlWhereConditionInterf
         return Parameters::create(
             $this->nodeAggregateIds->count() === 1
                 ? Parameter::string('nodeAggregateId', $this->nodeAggregateIds->toStringArray()[0])
-                : Parameter::stringArray('nodeAggregateIds', $this->nodeAggregateIds->toStringArray())
+                : Parameter::stringArray('nodeAggregateIds', array_values($this->nodeAggregateIds->toStringArray()))
         );
     }
 

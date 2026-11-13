@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * This is relevant e.g. for content cache flushing as a result of an event.
  *
- * @internal
+ * @api
  */
 interface EmbedsWorkspaceName
 {

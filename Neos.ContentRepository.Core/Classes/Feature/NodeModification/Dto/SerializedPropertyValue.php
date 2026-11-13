@@ -52,9 +52,11 @@ final readonly class SerializedPropertyValue implements \JsonSerializable
      */
     public static function fromArray(array $valueAndType): self
     {
+        /** @phpstan-ignore function.alreadyNarrowedType (part of the API and thus cannot be trusted) */
         if (!array_key_exists('value', $valueAndType)) {
             throw new \InvalidArgumentException('Missing array key "value"', 1546524597);
         }
+        /** @phpstan-ignore function.alreadyNarrowedType (part of the API and thus cannot be trusted) */
         if (!array_key_exists('type', $valueAndType)) {
             throw new \InvalidArgumentException('Missing array key "type"', 1546524609);
         }

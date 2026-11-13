@@ -7,7 +7,6 @@ namespace Neos\ContentRepository\Dbal\SubscriptionStore;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
-use Doctrine\DBAL\Result;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
@@ -91,7 +90,6 @@ final class DoctrineSubscriptionStore implements SubscriptionStoreInterface
                 );
         }
         $result = $queryBuilder->executeQuery();
-        assert($result instanceof Result);
         $rows = $result->fetchAllAssociative();
         if ($rows === []) {
             return Subscriptions::createEmpty();

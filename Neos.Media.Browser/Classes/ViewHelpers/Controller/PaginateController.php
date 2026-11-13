@@ -100,11 +100,11 @@ class PaginateController extends AbstractWidgetController
             }
             $modifiedObjects = $query->execute();
 
-            $this->view->assign('contentArguments', [$this->widgetConfiguration['as'] => $modifiedObjects]);
-            $this->view->assign('configuration', $this->configuration);
-            $this->view->assign('pagination', $this->buildPagination());
+            $this->view?->assign('contentArguments', [$this->widgetConfiguration['as'] => $modifiedObjects]);
+            $this->view?->assign('configuration', $this->configuration);
+            $this->view?->assign('pagination', $this->buildPagination());
         } catch (AssetSourceConnectionExceptionInterface $exception) {
-            $this->view->assign('connectionError', $exception);
+            $this->view?->assign('connectionError', $exception);
         }
     }
 

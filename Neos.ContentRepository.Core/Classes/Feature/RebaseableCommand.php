@@ -33,7 +33,12 @@ final readonly class RebaseableCommand
         $commandToRebaseClass = $eventEnvelope->event->metadata?->value['commandClass'] ?? null;
         $commandToRebasePayload = $eventEnvelope->event->metadata?->value['commandPayload'] ?? null;
 
-        if ($commandToRebaseClass === null || $commandToRebasePayload === null || $eventEnvelope->event->metadata === null) {
+        if (
+            $commandToRebaseClass === null
+            || $commandToRebasePayload === null
+            /** @phpstan-ignore identical.alwaysFalse (can be null) */
+            || $eventEnvelope->event->metadata === null
+        ) {
             throw new \RuntimeException('Command cannot be extracted from metadata, missing commandClass or commandPayload.', 1729847804);
         }
 
@@ -83,12 +88,6 @@ final readonly class RebaseableCommand
             }
 
             if ($i === 0) {
-                if (!$command instanceof \JsonSerializable) {
-                    throw new \RuntimeException(sprintf(
-                        'Command %s must be JSON Serializable to be rebase able.',
-                        get_class($command)
-                    ));
-                }
                 $commandPayload = $command->jsonSerialize();
 
                 if (!isset($commandPayload['contentStreamId']) && !isset($commandPayload['workspaceName'])) {

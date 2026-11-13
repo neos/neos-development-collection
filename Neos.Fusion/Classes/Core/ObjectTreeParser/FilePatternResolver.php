@@ -125,7 +125,6 @@ class FilePatternResolver
             default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),
         };
 
-        /** @var array{base: string, end: string} $matches */
         $basePath = $matches['base'];
         $fileNameEnd = $matches['end'] === '' ? $defaultFileNameEnd : $matches['end'];
 

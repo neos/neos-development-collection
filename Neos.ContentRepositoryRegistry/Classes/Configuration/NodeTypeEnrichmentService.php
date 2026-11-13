@@ -171,7 +171,7 @@ class NodeTypeEnrichmentService
     /**
      * Resolve help message thumbnail url
      *
-     * @param string $nodeTypeName
+     * @param string|null $nodeTypeName @todo non-nullable string in 10.0
      * @param string|null $configurationThumbnail
      * @return string $thumbnailUrl
      */

@@ -88,7 +88,7 @@ class IfModuleAccessibleViewHelper extends AbstractConditionViewHelper
         $objectManager = $renderingContext->getObjectManager();
         /** @var Context $securityContext */
         $securityContext = $objectManager->get(Context::class);
-        if ($securityContext !== null && !$securityContext->canBeInitialized()) {
+        if (!$securityContext->canBeInitialized()) {
             return false;
         }
         /** @var PrivilegeManagerInterface $privilegeManager */

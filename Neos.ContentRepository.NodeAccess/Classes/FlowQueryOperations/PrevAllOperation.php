@@ -78,9 +78,7 @@ class PrevAllOperation extends AbstractOperation
                     FindPrecedingSiblingNodesFilter::create()
                 )->reverse();
             foreach ($prevNodes as $prevNode) {
-                if ($prevNode !== null
-                    && !isset($outputNodeAggregateIds[$prevNode->aggregateId->value])
-                ) {
+                if (!isset($outputNodeAggregateIds[$prevNode->aggregateId->value])) {
                     $outputNodeAggregateIds[$prevNode->aggregateId->value] = true;
                     $output[] = $prevNode;
                 }

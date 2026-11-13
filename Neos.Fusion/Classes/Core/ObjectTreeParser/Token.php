@@ -65,12 +65,19 @@ class Token
     public const LBRACE = 30;
     public const RBRACE = 31;
 
+    /**
+     * @param int<1, 31> $type
+     * @param string $value
+     */
     public function __construct(
         protected int $type,
         protected string $value,
     ) {
     }
 
+    /**
+     * @return int<1, 31>
+     */
     public function getType(): int
     {
         return $this->type;

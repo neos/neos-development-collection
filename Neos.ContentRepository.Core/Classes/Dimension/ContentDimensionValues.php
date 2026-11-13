@@ -43,6 +43,7 @@ final readonly class ContentDimensionValues implements \IteratorAggregate
         $maximumDepth = ContentDimensionValueSpecializationDepth::zero();
         $indexedValues = [];
         foreach ($values as $dimensionValue) {
+            /** @phpstan-ignore instanceof.alwaysTrue (part of the API and thus cannot be trusted) */
             if (!$dimensionValue instanceof ContentDimensionValue) {
                 throw new \InvalidArgumentException(
                     'ContentDimensionValues may only contain ContentDimensionValue objects',

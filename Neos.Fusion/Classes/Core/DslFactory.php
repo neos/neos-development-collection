@@ -44,6 +44,7 @@ class DslFactory
                 throw new Fusion\Exception(sprintf('The fusion dsl-object %s was not found.', $dslObjectName), 1490776462);
             }
             $dslObject = new $dslObjectName();
+            /** @phpstan-ignore instanceof.alwaysTrue (Settings may reference the wrong class) */
             if (!$dslObject instanceof DslInterface) {
                 throw new Fusion\Exception(sprintf('The fusion dsl-object was of type %s but was supposed to be of type %s', get_class($dslObject), DslInterface::class), 1490776470);
             }

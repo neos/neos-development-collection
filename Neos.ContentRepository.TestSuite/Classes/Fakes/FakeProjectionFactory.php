@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 
 /**
- * @implements ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>>>
+ * @implements ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>>
  * @internal helper to configure custom projection mocks for testing
  */
 final class FakeProjectionFactory implements ProjectionFactoryInterface

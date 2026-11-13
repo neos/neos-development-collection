@@ -29,9 +29,9 @@ use Neos\Neos\Domain\Service\DomainMatchingStrategy;
  *
  * @Flow\Scope("singleton")
  * @api
- * @method QueryResultInterface<Domain>|Domain[] findByActive(bool $active)
- * @method QueryResultInterface<Domain>|Domain[] findBySite(Site $site)
- * @method QueryResultInterface<Domain>|Domain[] findByHostname(string $hostname)
+ * @method QueryResultInterface<Domain> findByActive(bool $active)
+ * @method QueryResultInterface<Domain> findBySite(Site $site)
+ * @method QueryResultInterface<Domain> findByHostname(string $hostname)
  * @extends Repository<Domain>
  */
 class DomainRepository extends Repository

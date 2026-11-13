@@ -64,7 +64,7 @@ final readonly class Events implements \IteratorAggregate, \Countable
      */
     public function map(\Closure $callback): array
     {
-        return array_map($callback, $this->items);
+        return array_values(array_map($callback, $this->items));
     }
 
     public function toInnerEvents(): PublishedEvents

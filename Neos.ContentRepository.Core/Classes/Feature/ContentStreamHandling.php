@@ -22,7 +22,6 @@ trait ContentStreamHandling
     /**
      * @param ContentStreamId $newContentStreamId The id of the new content stream
      * @param ContentStreamId $sourceContentStreamId The id of the content stream to fork
-     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function forkContentStream(
         ContentStreamId $newContentStreamId,
@@ -57,7 +56,6 @@ trait ContentStreamHandling
 
     /**
      * @param ContentStreamId $contentStreamId The id of the content stream to remove
-     * @phpstan-pure this method is pure, to persist the events they must be handled outside
      */
     private function removeContentStream(
         ContentStreamId $contentStreamId,

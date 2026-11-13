@@ -30,7 +30,7 @@ final readonly class ExportedEvent implements \JsonSerializable
         // unset content stream id as this is overwritten during import
         unset($payload['contentStreamId'], $payload['workspaceName']);
 
-        $metaData = $event->metadata?->value ?? [];
+        $metaData = $event->metadata?->value ?: [];
         unset($metaData['commandClass'], $metaData['commandPayload']);
 
         return new self(

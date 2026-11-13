@@ -50,7 +50,7 @@ final readonly class IllegalContentStreamForks
         return new self(
             sourceContentStreamId: $sourceContentStreamId,
             removalSequenceNumber: $removalSequenceNumber,
-            illegalForks: $illegalContentStreamForks,
+            illegalForks: array_values($illegalContentStreamForks),
         );
     }
 }

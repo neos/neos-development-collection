@@ -259,10 +259,10 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 $target = null;
                 $isExternalLink = \is_string($uriHost) && $uriHost !== $host;
 
-                if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
+                if ($externalLinkTarget && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget && $resourceLinkTarget !== '' && str_contains($linkHref, '_Resources')) {
+                if ($resourceLinkTarget && str_contains($linkHref, '_Resources')) {
                     $target = $resourceLinkTarget;
                 }
                 if ($isExternalLink && $setNoOpener) {
@@ -271,7 +271,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if ($isExternalLink && $setExternal) {
                     $linkText = self::setAttribute('rel', 'external', $linkText);
                 }
-                if (is_string($target) && $target !== '') {
+                if (is_string($target)) {
                     return self::setAttribute('target', $target, $linkText);
                 }
                 return $linkText;

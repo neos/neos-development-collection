@@ -103,10 +103,10 @@ final readonly class NodeTags implements \IteratorAggregate, \Countable, \JsonSe
      */
     public function map(\Closure $callback): array
     {
-        return [
+        return array_values([
             ...array_map(static fn (SubtreeTag $tag) => $callback($tag, false), iterator_to_array($this->tags)),
             ...array_map(static fn (SubtreeTag $tag) => $callback($tag, true), iterator_to_array($this->inheritedTags)),
-        ];
+        ]);
     }
 
     /**

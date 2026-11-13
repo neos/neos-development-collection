@@ -301,7 +301,7 @@ final readonly class HierarchyRelationSubquery implements SqlTableSubqueryInterf
         $dimensionSpacePointsParameter = match (true) {
             $this->dimensionSpacePoints->isEmpty() => null,
             $this->dimensionSpacePoints->count() === 1 => Parameter::string('dimensionSpacePointHash', $this->dimensionSpacePoints->getPointHashes()[0]),
-            default => Parameter::stringArray('dimensionSpacePointHashes', $this->dimensionSpacePoints->getPointHashes()),
+            default => Parameter::stringArray('dimensionSpacePointHashes', array_values($this->dimensionSpacePoints->getPointHashes())),
         };
 
         if ($dimensionSpacePointsParameter !== null) {

@@ -14,8 +14,15 @@ use Neos\Neos\AssetUsage\Domain\AssetUsage;
 #[Flow\Proxy(false)]
 final class AssetUsages implements \IteratorAggregate, \Countable
 {
+    /**
+     * @var int<0, max>|null
+     */
     private ?int $countRuntimeCache = null;
 
+    /**
+     * @param \Closure():\Iterator<AssetUsage> $generator
+     * @param \Closure():int<0, max> $counter
+     */
     public function __construct(
         private readonly \Closure $generator,
         private readonly \Closure $counter,
@@ -23,7 +30,7 @@ final class AssetUsages implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \Iterator<AssetUsage>|AssetUsage[]
+     * @return \Iterator<AssetUsage>
      */
     public function getIterator(): \Iterator
     {
@@ -66,11 +73,11 @@ final class AssetUsages implements \IteratorAggregate, \Countable
                 );
             },
             function () use ($assetUsages) {
-                return array_reduce(
-                    $assetUsages,
-                    static fn ($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
-                    0
-                );
+                $count = 0;
+                foreach ($assetUsages as $assetUsage) {
+                    $count += $assetUsage->count();
+                }
+                return $count;
             }
         );
     }

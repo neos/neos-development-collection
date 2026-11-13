@@ -95,13 +95,6 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 
         $node = $this->arguments['node'] ?? $this->getNodeFromFusionContext();
 
-        if ($node === null) {
-            throw new ViewHelperException(
-                'A node is required, but one was not supplied and could not be found in the Fusion context.',
-                1408521638
-            );
-        }
-
         $propertyName = $this->arguments['property'];
         if ($content === null) {
             if (!$this->templateVariableContainer->exists($propertyName)) {
