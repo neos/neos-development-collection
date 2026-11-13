@@ -129,8 +129,10 @@
             "@test:behavioral",
             "@test:parallel"
         ],
+        "fix:rector": "../../bin/rector",
         "fix:php-cs-fixer": "../../bin/php-cs-fixer fix",
         "fix": [
+            "@fix:rector",
             "@fix:php-cs-fixer"
         ],
         "build:composer-json": "php ../../Build/BuildEssentials/ComposerManifestMerger.php"
@@ -246,6 +248,8 @@
         "brianium/paratest": "^7.6.2",
         "roave/security-advisories": "dev-latest",
         "phpstan/phpstan": "^2.3",
+        "rector/rector": "^2.8.4",
+        "neos/rector": "dev-main",
         "squizlabs/php_codesniffer": "^3.6",
         "neos/behat": "*",
         "league/flysystem-memory": "^3"
