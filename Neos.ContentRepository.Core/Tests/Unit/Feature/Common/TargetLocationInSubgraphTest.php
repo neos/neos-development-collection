@@ -51,7 +51,7 @@ use Symfony\Component\Serializer\Serializer;
  */
 class TargetLocationInSubgraphTest extends TestCase
 {
-    private const string SUBJECT_ID = 'nody-mc-nodeface';
+    private const SUBJECT_ID = 'nody-mc-nodeface';
 
     #[DataProvider('parameterProvider')]
     public function testCreate(
@@ -326,10 +326,10 @@ class TargetLocationInSubgraphTest extends TestCase
             fn (Node $node): NodeAggregate => self::createNodeAggregate($node),
             $nodes,
         );
-        return new readonly class ($nodeAggregates, $subgraph) implements ContentGraphInterface {
+        return new class ($nodeAggregates, $subgraph) implements ContentGraphInterface {
             public function __construct(
-                private array $nodeAggregates,
-                private ContentSubgraphInterface $subgraph,
+                private readonly array $nodeAggregates,
+                private readonly ContentSubgraphInterface $subgraph,
             ) {
             }
 
