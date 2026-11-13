@@ -20,6 +20,7 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
+        "symfony/serializer": "^6.3",
         "ext-dom": "*"
     },
     "replace": {
