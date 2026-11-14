@@ -38,7 +38,10 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
@@ -158,12 +161,27 @@ trait NodeCreation
             $contentGraph,
             $command->parentNodeAggregateId
         );
+        $subgraph = $contentGraph->getSubgraph(
+            $command->originDimensionSpacePoint->toDimensionSpacePoint(),
+            VisibilityConstraints::createEmpty()
+        );
+        if ($command->succeedingSiblingNodeAggregateId) {
+            $precedingSiblingNodeAggregateId = $subgraph->findPrecedingSiblingNodes(
+                siblingNodeAggregateId: $command->succeedingSiblingNodeAggregateId,
+                filter: FindPrecedingSiblingNodesFilter::create(
+                    pagination: Pagination::fromLimitAndOffset(1, 0),
+                )
+            )->first()?->aggregateId;
+        } else {
+            // in this case, the node is to be created as the last child with no predefined preceding sibling
+            $precedingSiblingNodeAggregateId = null;
+        }
         $targetLocation = TargetLocationInSubgraph::create(
             nodeAggregateId: $command->nodeAggregateId,
             dimensionSpacePoint: $command->originDimensionSpacePoint->toDimensionSpacePoint(),
             parentNodeAggregateId: $command->parentNodeAggregateId,
             succeedingSiblingNodeAggregateId: $command->succeedingSiblingNodeAggregateId,
-            precedingSiblingNodeAggregateId: null,
+            precedingSiblingNodeAggregateId: $precedingSiblingNodeAggregateId,
             contentGraph: $contentGraph,
         );
         $specializations = $this->getInterDimensionalVariationGraph()->getSpecializationSet(

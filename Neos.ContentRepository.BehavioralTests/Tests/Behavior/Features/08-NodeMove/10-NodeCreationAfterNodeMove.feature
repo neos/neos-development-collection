@@ -43,7 +43,19 @@ Feature: Create a node aggregate underneath or next to a (partially) moved node
       | relationDistributionStrategy | "scatter"                |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                  |
+      | nodeAggregateId              | "elder-mc-nodeface"    |
+      | dimensionSpacePoint          | {"example": "general"} |
+      | newParentNodeAggregateId     | "bustling-mc-nodeface" |
+      | relationDistributionStrategy | "scatter"              |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                  |
       | nodeAggregateId              | "younger-mc-nodeface"  |
+      | dimensionSpacePoint          | {"example": "general"} |
+      | newParentNodeAggregateId     | "bustling-mc-nodeface" |
+      | relationDistributionStrategy | "scatter"              |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                  |
+      | nodeAggregateId              | "youngest-mc-nodeface" |
       | dimensionSpacePoint          | {"example": "general"} |
       | newParentNodeAggregateId     | "bustling-mc-nodeface" |
       | relationDistributionStrategy | "scatter"              |
@@ -55,10 +67,24 @@ Feature: Create a node aggregate underneath or next to a (partially) moved node
       | relationDistributionStrategy | "scatter"                |
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                  |
-      | nodeAggregateId              | "younger-mc-nodeface"  |
+      | nodeAggregateId              | "youngest-mc-nodeface" |
       | dimensionSpacePoint          | {"example": "peer"}    |
       | newParentNodeAggregateId     | "bustling-mc-nodeface" |
       | relationDistributionStrategy | "scatter"              |
+    # Preceding sibling case: we provide the same preceding sibling as in the origin DSP, but with an additional, unrelated succeeding sibling
+    # In this case, the created node should appear between the preceding and additional sibling.
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                  |
+      | nodeAggregateId              | "elder-mc-nodeface"    |
+      | dimensionSpacePoint          | {"example": "source"}  |
+      | newParentNodeAggregateId     | "bustling-mc-nodeface" |
+      | relationDistributionStrategy | "scatter"              |
+    When the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                     |
+      | nodeAggregateId           | "additional-mc-nodeface"                  |
+      | originDimensionSpacePoint | {"example": "source"}                     |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | parentNodeAggregateId     | "bustling-mc-nodeface"                    |
 
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                     |
@@ -68,30 +94,55 @@ Feature: Create a node aggregate underneath or next to a (partially) moved node
       | parentNodeAggregateId            | "bustling-mc-nodeface"                    |
       | succeedingSiblingNodeAggregateId | "younger-mc-nodeface"                     |
 
-    Then I expect exactly 13 events to be published on stream "ContentStream:cs-identifier"
-    And event at index 12 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                           | Expected                                                                                                                                                                                                                                                                                                                            |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                                                                                                                                                                                     |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                                                                                                                                                                                                           |
-      | originDimensionSpacePoint     | {"example": "general"}                                                                                                                                                                                                                                                                                                              |
-      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": {"example": "general"}, "nodeAggregateId": "younger-mc-nodeface"}, {"dimensionSpacePoint": {"example": "source"}, "nodeAggregateId": null}, {"dimensionSpacePoint": {"example": "peer"}, "nodeAggregateId": "younger-mc-nodeface"}, {"dimensionSpacePoint": {"example": "spec"}, "nodeAggregateId": null}] |
-      | parentNodeAggregateId         | "bustling-mc-nodeface"                                                                                                                                                                                                                                                                                                              |
-      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                                                                                                                                           |
+    Then I expect exactly 17 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 16 is of type "NodeAggregateWithNodeWasCreated" with payload:
+      | Key                           | Expected                                                                                                                                                                                                                                                                                                                                                 |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                                                                                                                                                                                                          |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                                       |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                                                                                                                                                                                                                                |
+      | originDimensionSpacePoint     | {"example": "general"}                                                                                                                                                                                                                                                                                                                                   |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": {"example": "general"}, "nodeAggregateId": "younger-mc-nodeface"}, {"dimensionSpacePoint": {"example": "source"}, "nodeAggregateId": "additional-mc-nodeface"}, {"dimensionSpacePoint": {"example": "peer"}, "nodeAggregateId": "youngest-mc-nodeface"}, {"dimensionSpacePoint": {"example": "spec"}, "nodeAggregateId": null}] |
+      | parentNodeAggregateId         | "bustling-mc-nodeface"                                                                                                                                                                                                                                                                                                                                   |
+      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                                                                                                                                                                |
 
   Scenario: Move a node aggregate partially to a new parent and create a new node next to it
     When the command MoveNodeAggregate is executed with payload:
-      | Key                          | Value                    |
-      | nodeAggregateId              | "bustling-mc-nodeface"   |
-      | dimensionSpacePoint          | {"example": "general"}   |
-      | newParentNodeAggregateId     | "sir-david-nodenborough" |
-      | relationDistributionStrategy | "scatter"                |
+      | Key                                 | Value                    |
+      | nodeAggregateId                     | "bustling-mc-nodeface"   |
+      | dimensionSpacePoint                 | {"example": "general"}   |
+      | newParentNodeAggregateId            | "sir-david-nodenborough" |
+      | newSucceedingSiblingNodeAggregateId | "younger-mc-nodeface"    |
+      | relationDistributionStrategy        | "scatter"                |
+    # the regular case: the succeeding sibling is a sibling and can be used as such
     And the command MoveNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "bustling-mc-nodeface"   |
       | dimensionSpacePoint          | {"example": "peer"}      |
       | newParentNodeAggregateId     | "sir-david-nodenborough" |
       | relationDistributionStrategy | "scatter"                |
+    # the further succeeding sibling case (nothing to do): the succeeding sibling is no sibling in {"example": "source"},
+    # but its further succeeding sibling is and can be used as such
+
+    # the preceding sibling case: we replace the further succeeding siblings with a different one, so the closest preceding sibling is evaluated
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "younger-mc-nodeface"    |
+      | dimensionSpacePoint          | {"example": "spec"}      |
+      | newParentNodeAggregateId     | "lady-eleonode-rootford" |
+      | relationDistributionStrategy | "scatter"                |
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "youngest-mc-nodeface"   |
+      | dimensionSpacePoint          | {"example": "spec"}      |
+      | newParentNodeAggregateId     | "lady-eleonode-rootford" |
+      | relationDistributionStrategy | "scatter"                |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                              | Value                                     |
+      | nodeAggregateId                  | "another-mc-nodeface"                     |
+      | originDimensionSpacePoint        | {"example": "spec"}                       |
+      | nodeTypeName                     | "Neos.ContentRepository.Testing:Document" |
+      | parentNodeAggregateId            | "sir-david-nodenborough"                  |
+      | succeedingSiblingNodeAggregateId | null                                      |
 
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                     |
@@ -101,13 +152,13 @@ Feature: Create a node aggregate underneath or next to a (partially) moved node
       | parentNodeAggregateId            | "sir-david-nodenborough"                  |
       | succeedingSiblingNodeAggregateId | "bustling-mc-nodeface"                    |
 
-    Then I expect exactly 11 events to be published on stream "ContentStream:cs-identifier"
-    And event at index 10 is of type "NodeAggregateWithNodeWasCreated" with payload:
-      | Key                           | Expected                                                                                                                                                                                                                                                                                                                              |
-      | contentStreamId               | "cs-identifier"                                                                                                                                                                                                                                                                                                                       |
-      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                    |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                                                                                                                                                                                                             |
-      | originDimensionSpacePoint     | {"example": "general"}                                                                                                                                                                                                                                                                                                                |
-      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": {"example": "general"}, "nodeAggregateId": "bustling-mc-nodeface"}, {"dimensionSpacePoint": {"example": "source"}, "nodeAggregateId": null}, {"dimensionSpacePoint": {"example": "peer"}, "nodeAggregateId": "bustling-mc-nodeface"}, {"dimensionSpacePoint": {"example": "spec"}, "nodeAggregateId": null}] |
-      | parentNodeAggregateId         | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                              |
-      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                                                                                                                                             |
+    Then I expect exactly 14 events to be published on stream "ContentStream:cs-identifier"
+    And event at index 13 is of type "NodeAggregateWithNodeWasCreated" with payload:
+      | Key                           | Expected                                                                                                                                                                                                                                                                                                                                                                |
+      | contentStreamId               | "cs-identifier"                                                                                                                                                                                                                                                                                                                                                         |
+      | nodeAggregateId               | "nody-mc-nodeface"                                                                                                                                                                                                                                                                                                                                                      |
+      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                                                                                                                                                                                                                                               |
+      | originDimensionSpacePoint     | {"example": "general"}                                                                                                                                                                                                                                                                                                                                                  |
+      | succeedingSiblingsForCoverage | [{"dimensionSpacePoint": {"example": "general"}, "nodeAggregateId": "bustling-mc-nodeface"}, {"dimensionSpacePoint": {"example": "source"}, "nodeAggregateId": "younger-mc-nodeface"}, {"dimensionSpacePoint": {"example": "peer"}, "nodeAggregateId": "bustling-mc-nodeface"}, {"dimensionSpacePoint": {"example": "spec"}, "nodeAggregateId": "another-mc-nodeface"}] |
+      | parentNodeAggregateId         | "sir-david-nodenborough"                                                                                                                                                                                                                                                                                                                                                |
+      | nodeAggregateClassification   | "regular"                                                                                                                                                                                                                                                                                                                                                               |
