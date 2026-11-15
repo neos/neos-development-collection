@@ -1,6 +1,7 @@
 <?php
 namespace Neos\Fusion\Tests\Functional\FusionObjects;
 
+use Neos\Fusion\Tests\Functional\FusionObjects\Fixtures\Model\TestModel;
 use PHPUnit\Framework\Attributes\Test;
 
 /*
@@ -86,5 +87,17 @@ class ReduceTest extends AbstractFusionObjectTestCase
         $view->assign('items', ['element1', 'element2', 'element3', 'element4']);
         $view->setFusionPath('reduce/iteration');
         self::assertEquals('::element1-0-1-1--1-::element2-1-2----1::element3-2-3---1-::element4-3-4--1--1', $view->render());
+    }
+
+    #[Test]
+    public function flowQueryItemsAreEvaluatedOnlyOnce()
+    {
+        $firstItem = new TestModel(1, 'element1');
+        $view = $this->buildView();
+        $view->assign('items', [$firstItem, new TestModel(2, 'element2')]);
+        $view->setFusionPath('reduce/flowQueryItems');
+        self::assertEquals('element1,element2.', $view->render());
+        // The filter of the FlowQuery reads the counter once, so this read returns 2
+        self::assertSame(2, $firstItem->getCounter());
     }
 }

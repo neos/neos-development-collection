@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Fusion\Exception as FusionException;
 
 /**
@@ -105,6 +106,10 @@ class ReduceImplementation extends AbstractFusionObject
         }
         $itemKeyName = $this->getItemKey();
         $iterationName = $this->getIterationName();
+        if ($items instanceof FlowQuery) {
+            // Counting and iterating a FlowQuery would each evaluate its operations
+            $items = $items->get();
+        }
         $collectionTotalCount = is_countable($items) ? count($items) : null;
         foreach ($items as $itemKey => $item) {
             $context = $this->runtime->getCurrentContext();

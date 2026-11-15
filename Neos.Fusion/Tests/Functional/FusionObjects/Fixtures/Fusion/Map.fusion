@@ -40,3 +40,10 @@ map.keyRenderer = Neos.Fusion:Map {
   itemRenderer = ${'value-' + element}
   keyRenderer = ${'key-' + element}
 }
+
+map.flowQueryItems = Neos.Fusion:Map {
+  items = ${q(items).filter('[counter > 0]')}
+  itemName = 'element'
+  iterationName = 'iteration'
+  itemRenderer = ${element.value + '-' + iteration.isLast}
+}
