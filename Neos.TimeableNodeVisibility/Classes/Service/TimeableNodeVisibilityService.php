@@ -49,31 +49,48 @@ class TimeableNodeVisibilityService
         /** @var Node $node */
         foreach ($nodes as $node) {
             if ($this->needsEnabling($node, $now)) {
-                $contentRepository->handle(
-                    EnableNodeAggregate::create(
-                        $workspaceName,
-                        $node->aggregateId,
-                        $node->dimensionSpacePoint,
-                        NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
-                    )
-                );
+                try {
+                    $contentRepository->handle(
+                        EnableNodeAggregate::create(
+                            $workspaceName,
+                            $node->aggregateId,
+                            $node->dimensionSpacePoint,
+                            NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                        )
+                    );
 
-                $results[] = $result = ChangedVisibility::createForNodeWasEnabled($node);
-                $this->logResult($result);
-
+                    $results[] = $result = ChangedVisibility::createForNodeWasEnabled($node);
+                    $this->logResult($result);
+                } catch (\Exception $e) {
+                    $this->logger->error(sprintf(
+                        'Timed node visibility: Could not enable node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
+                        $node->aggregateId->value,
+                        implode(',', $node->dimensionSpacePoint->coordinates),
+                        $e->getMessage()
+                    ));
+                }
             }
             if ($this->needsDisabling($node, $now)) {
-                $contentRepository->handle(
-                    DisableNodeAggregate::create(
-                        $workspaceName,
-                        $node->aggregateId,
-                        $node->dimensionSpacePoint,
-                        NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
-                    )
-                );
+                try {
+                    $contentRepository->handle(
+                        DisableNodeAggregate::create(
+                            $workspaceName,
+                            $node->aggregateId,
+                            $node->dimensionSpacePoint,
+                            NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                        )
+                    );
 
-                $results[] = $result = ChangedVisibility::createForNodeWasDisabled($node);
-                $this->logResult($result);
+                    $results[] = $result = ChangedVisibility::createForNodeWasDisabled($node);
+                    $this->logResult($result);
+                } catch (\Exception $e) {
+                    $this->logger->error(sprintf(
+                        'Timed node visibility: Could not disable node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
+                        $node->aggregateId->value,
+                        implode(',', $node->dimensionSpacePoint->coordinates),
+                        $e->getMessage()
+                    ));
+                }
             }
         }
         return new ChangedVisibilities(...$results);
