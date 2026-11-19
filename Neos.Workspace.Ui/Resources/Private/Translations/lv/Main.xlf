@@ -273,10 +273,6 @@
         <source>Node</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Mezgls</target>
       </trans-unit>
-      <trans-unit id="restore.table.label" xml:space="preserve">
-        <source>Element</source>
-        <target state="needs-translation" state-qualifier="leveraged-mt">Virsraksts</target>
-      </trans-unit>
       <trans-unit id="restore.table.dimensions" xml:space="preserve">
         <source>Dimensions</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Izmēri</target>
@@ -296,6 +292,30 @@
       <trans-unit id="workspaces.discardChanges" xml:space="preserve">
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">Atcelt</target>
+      </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Aizvērt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Atcelt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Noņemt</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Tips</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType.label.USER" xml:space="preserve">
+        <source>User</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Lietotājs</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subject" xml:space="preserve">
+        <source>Name</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">Vārds</target>
       </trans-unit>
     </body>
   </file>

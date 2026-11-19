@@ -1,0 +1,98 @@
+{
+    "@feature": "02W-TagSubtree_WithoutDimensions_AndWorkspaces.feature",
+    "@scenario": "Partially publish subtree tagging",
+    "lady-eleonode-rootford": {
+        "[]": {
+            "children": {
+                "nodes": [
+                    "preceding-nodenborough",
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "succeeding-nodenborough"
+                ]
+            }
+        }
+    },
+    "nody-mc-nodeface": {
+        "[]": {
+            "node": {
+                "_discriminator": "nody-mc-nodeface",
+                "tags": {
+                    "my-tag": null
+                }
+            },
+            "parent": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            }
+        }
+    },
+    "preceding-nodenborough": {
+        "[]": {
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "succeeding-nodenborough"
+                ]
+            },
+            "references": {
+                "references": [
+                    {
+                        "node": {
+                            "_discriminator": "sir-david-nodenborough",
+                            "tags": {
+                                "my-tag": true
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "sir-david-nodenborough": {
+        "[]": {
+            "node": {
+                "_discriminator": "sir-david-nodenborough",
+                "tags": {
+                    "my-tag": true
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nody-mc-nodeface",
+                        "tags": {
+                            "my-tag": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "succeeding-nodenborough": {
+        "[]": {
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-david-nodenborough",
+                        "tags": {
+                            "my-tag": true
+                        }
+                    },
+                    "preceding-nodenborough"
+                ]
+            }
+        }
+    }
+}
