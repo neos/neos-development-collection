@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;

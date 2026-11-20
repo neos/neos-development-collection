@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclarationDictionary;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflicts;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Undeclared;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -187,6 +189,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         PropertyDeclaration::create(
                             name: PropertyName::fromString('text'),
                             type: PropertyType::string(),
+                            scope: Undeclared::INSTANCE,
                             defaultValue: null,
                             metadata: PropertyMetadataDictionary::create([]),
                             declaringType: ReferenceTypeName::fromString('Acme.Site:ReferenceA'),
@@ -206,6 +209,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         PropertyDeclaration::create(
                             name: PropertyName::fromString('text'),
                             type: PropertyType::float(),
+                            scope: Undeclared::INSTANCE,
                             defaultValue: null,
                             metadata: PropertyMetadataDictionary::create([]),
                             declaringType: ReferenceTypeName::fromString('Acme.Site:ReferenceB'),
@@ -335,6 +339,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     'text' => Property::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([
                             '_catchAll' => GenericArrayPropertyMetadata::create([
@@ -348,12 +353,14 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     'abstract' => Property::create(
                         name: PropertyName::fromString('abstract'),
                         type: PropertyType::string(),
-                        defaultValue: null,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                        defaultValue: 'base abstract',
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
+                        scope: PropertyScope::SCOPE_NODE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
@@ -364,7 +371,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         yield 'multi-tier multiple inheritance' => [
             'subject' => ReferenceTypeDeclarationDictionary::create(
                 self::getReferenceDeclaration(
-                    ReferenceTypeNameList::list(
+                    superTypeNames: ReferenceTypeNameList::list(
                         ReferenceTypeName::fromString('Acme.Site:BaseReference'),
                         ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
                     )
@@ -404,9 +411,41 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     ),
                 ),
                 properties: PropertyDictionary::create([
+                    'initiallyUndeclaredAndModified' => Property::create(
+                        name: PropertyName::fromString('initiallyUndeclaredAndModified'),
+                        type: PropertyType::int(),
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                        defaultValue: 43,
+                        metadata: PropertyMetadataDictionary::create([]),
+                    ),
+                    'initiallyUndeclaredAndUnmodified' => Property::create(
+                        name: PropertyName::fromString('initiallyUndeclaredAndUnmodified'),
+                        type: PropertyType::string(),
+                        scope: PropertyScope::SCOPE_NODE,
+                        defaultValue: null,
+                        metadata: PropertyMetadataDictionary::create([]),
+                    ),
+                    'initiallyDeclaredAndUnmodified' => Property::create(
+                        name: PropertyName::fromString('initiallyDeclaredAndUnmodified'),
+                        type: PropertyType::int(),
+                        scope: PropertyScope::SCOPE_SPECIALIZATIONS,
+                        defaultValue: 42,
+                        metadata: PropertyMetadataDictionary::create([]),
+                    ),
+                    'initiallyDeclaredAndModified' => Property::create(
+                        name: PropertyName::fromString('initiallyDeclaredAndModified'),
+                        type: PropertyType::int(),
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                        defaultValue: 43,
+                        metadata: PropertyMetadataDictionary::create([]),
+                    ),
                     'text' => Property::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
+                        // undeclared from self
+                        // undeclared from intermediate
+                        // specializations from another base which is the last applied with a scope
+                        scope: PropertyScope::SCOPE_SPECIALIZATIONS,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([
                             '_catchAll' => GenericArrayPropertyMetadata::create([
@@ -418,27 +457,37 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                             ]),
                         ])
                     ),
+                    // undeclared in self
+                    // undeclared in intermediate
+                    // undeclared in another base
+                    // declared in base as
+                    // * scope node aggregate
+                    // * default value "base abstract"
                     'abstract' => Property::create(
                         name: PropertyName::fromString('abstract'),
                         type: PropertyType::string(),
-                        defaultValue: null,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                        defaultValue: 'base abstract',
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
+                        scope: PropertyScope::SCOPE_NODE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'description' => Property::create(
                         name: PropertyName::fromString('description'),
                         type: PropertyType::string(),
+                        scope: PropertyScope::SCOPE_NODE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'author' => Property::create(
                         name: PropertyName::fromString('author'),
                         type: PropertyType::string(),
+                        scope: PropertyScope::SCOPE_NODE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
@@ -507,7 +556,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
         ReferenceTypeNameList $expectedResult,
     ): void {
         $referenceTypeGraph = $subject->expandToGraph();
-        Assert::assertEquals($expectedResult, $referenceTypeGraph->getSuperTypeNames($name));
+        $actualResult = $referenceTypeGraph->getSuperTypeNames($name);
+        Assert::assertEquals(
+            $expectedResult,
+            $actualResult,
+            'Expected ' . \json_encode($expectedResult->toStringArray())
+                . ', got' . \json_encode($actualResult->toStringArray())
+        );
     }
 
     /**
@@ -686,6 +741,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    scope: Undeclared::INSTANCE,
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
                         '_catchAll' => GenericArrayPropertyMetadata::create([
@@ -698,6 +754,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('value'),
                     type: PropertyType::float(),
+                    scope: Undeclared::INSTANCE,
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:Reference')
@@ -733,7 +790,8 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
-                    defaultValue: null,
+                    scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                    defaultValue: 'base text',
                     metadata: PropertyMetadataDictionary::create([
                         '_catchAll' => GenericArrayPropertyMetadata::create([
                             'foo' => 'bar',
@@ -746,7 +804,8 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('abstract'),
                     type: PropertyType::string(),
-                    defaultValue: null,
+                    scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                    defaultValue: 'base abstract',
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:BaseReference'),
                 ),
@@ -781,9 +840,42 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             ),
             properties: PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
+                    name: PropertyName::fromString('initiallyUndeclaredAndModified'),
+                    type: Undeclared::INSTANCE,
+                    scope: Undeclared::INSTANCE,
+                    defaultValue: Undeclared::INSTANCE,
+                    metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                ),
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('initiallyUndeclaredAndUnmodified'),
+                    type: Undeclared::INSTANCE,
+                    scope: Undeclared::INSTANCE,
+                    defaultValue: Undeclared::INSTANCE,
+                    metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                ),
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('initiallyDeclaredAndUnmodified'),
+                    type: PropertyType::int(),
+                    scope: PropertyScope::SCOPE_SPECIALIZATIONS,
+                    defaultValue: 42,
+                    metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                ),
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('initiallyDeclaredAndModified'),
+                    type: PropertyType::int(),
+                    scope: PropertyScope::SCOPE_SPECIALIZATIONS,
+                    defaultValue: 42,
+                    metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                ),
+                PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
-                    defaultValue: null,
+                    scope: PropertyScope::SCOPE_SPECIALIZATIONS,
+                    defaultValue: 'another text',
                     metadata: PropertyMetadataDictionary::create([
                         '_catchAll' => GenericArrayPropertyMetadata::create([
                             'foo' => 'barrr',
@@ -795,6 +887,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('description'),
                     type: PropertyType::string(),
+                    scope: Undeclared::INSTANCE,
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
@@ -824,8 +917,25 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             ),
             properties: PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
+                    name: PropertyName::fromString('initiallyUndeclaredAndModified'),
+                    type: PropertyType::int(),
+                    scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                    defaultValue: 43,
+                    metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                ),
+                PropertyDeclaration::create(
+                    name: PropertyName::fromString('initiallyDeclaredAndModified'),
+                    type: Undeclared::INSTANCE,
+                    scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                    defaultValue: 43,
+                    metadata: PropertyMetadataDictionary::create([]),
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                ),
+                PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
                     type: PropertyType::string(),
+                    scope: Undeclared::INSTANCE,
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([
                         '_catchAll' => GenericArrayPropertyMetadata::create([
@@ -838,6 +948,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('author'),
                     type: PropertyType::string(),
+                    scope: Undeclared::INSTANCE,
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
@@ -1062,12 +1173,13 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:AbstractIntermediary',
+                'Acme.Site:Reference',
             ]),
         ];
 
         yield 'conflictingSuperTypesWithoutWildcard' => [
             'constraints' => ReferenceTypeFilters::create(
-                includeWildcard: true,
+                includeWildcard: false,
                 includeAbstract: true,
                 explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::fromStringArray([
                     'Acme.Site:AbstractIntermediary',
@@ -1078,6 +1190,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
             ),
             'expectedResult' => ReferenceTypeNameSet::fromStringArray([
                 'Acme.Site:AbstractIntermediary',
+                'Acme.Site:Reference',
             ]),
         ];
     }

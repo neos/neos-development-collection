@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\Property;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflict;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Property\Property;

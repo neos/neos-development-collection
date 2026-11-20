@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\Property;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\PropertyDeclarationIsInvalid;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\PropertyDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -20,7 +22,8 @@ final readonly class PropertyDeclaration implements \JsonSerializable
 {
     private function __construct(
         public PropertyName $name,
-        public PropertyType $type,
+        public PropertyType|Undeclared $type,
+        public PropertyScope|Undeclared $scope,
         public mixed $defaultValue,
         public PropertyMetadataDictionary $metadata,
     ) {
@@ -31,12 +34,17 @@ final readonly class PropertyDeclaration implements \JsonSerializable
      */
     public static function create(
         PropertyName $name,
-        PropertyType $type,
+        PropertyType|Undeclared $type,
+        PropertyScope|Undeclared $scope,
         mixed $defaultValue,
         PropertyMetadataDictionary $metadata,
         ReferenceTypeName|NodeTypeName|null $declaringType,
     ): self {
-        if (!$type->isMatchedBy($defaultValue)) {
+        if (
+            $type !== Undeclared::INSTANCE
+            && $defaultValue !== Undeclared::INSTANCE
+            && !$type->isMatchedBy($defaultValue)
+        ) {
             throw PropertyDeclarationIsInvalid::becauseItsDefaultValueDoesNotMatchItsType(
                 $name,
                 $type,
@@ -47,6 +55,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         return new self(
             name: $name,
             type: $type,
+            scope: $scope,
             defaultValue: $defaultValue,
             metadata: $metadata,
         );
@@ -58,16 +67,30 @@ final readonly class PropertyDeclaration implements \JsonSerializable
     public static function fromArray(array $values, string $name, ReferenceTypeName|NodeTypeName $declaringType): self
     {
         $name = PropertyName::fromString($name);
-        $type = $declaringType instanceof ReferenceTypeName
-            ? PropertyType::fromReferenceTypeDeclaration($values['type'] ?? '', $name, $declaringType)
-            : PropertyType::fromNodeTypeDeclaration($values['type'] ?? '', $name, $declaringType);
-        $defaultValue = $values['defaultValue'] ?? null;
+
+        $type = array_key_exists('type', $values)
+            ? (
+                $declaringType instanceof ReferenceTypeName
+                    ? PropertyType::fromReferenceTypeDeclaration($values['type'], $name, $declaringType)
+                    : PropertyType::fromNodeTypeDeclaration($values['type'], $name, $declaringType)
+            )
+            : Undeclared::INSTANCE;
         unset($values['type']);
+
+        $scope = array_key_exists('scope', $values)
+            ? PropertyScope::from($values['scope'])
+            : Undeclared::INSTANCE;
+        unset($values['scope']);
+
+        $defaultValue = array_key_exists('defaultValue', $values)
+            ? $values['defaultValue']
+            : Undeclared::INSTANCE;
         unset($values['defaultValue']);
 
         return self::create(
             name: $name,
             type: $type,
+            scope: $scope,
             defaultValue: $defaultValue,
             metadata: PropertyMetadataDictionary::create([
                 '_catchAll' => GenericArrayPropertyMetadata::create($values),
@@ -81,6 +104,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         return new self(
             name: $property->name,
             type: $property->type,
+            scope: $property->scope,
             defaultValue: $property->defaultValue,
             metadata: $property->metadata,
         );
@@ -96,7 +120,11 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         ReferenceTypeName $referenceTypeName,
         ?ReferenceTypeName $previousReferenceTypeName = null,
     ): self {
-        if ($this->type->value !== $subTypePropertyDeclaration->type->value) {
+        if (
+            $this->type !== Undeclared::INSTANCE
+            && $subTypePropertyDeclaration->type !== Undeclared::INSTANCE
+            && $this->type->value !== $subTypePropertyDeclaration->type->value
+        ) {
             if (!array_key_exists($this->name->value, $superTypeConflicts)) {
                 $superTypeConflicts[$this->name->value][] = SuperTypeConflict::create(
                     // fallback should never happen, the first conflict can only occur
@@ -110,10 +138,18 @@ final readonly class PropertyDeclaration implements \JsonSerializable
                 propertyType: $subTypePropertyDeclaration->type,
             );
         }
+
         return self::create(
             name: $this->name,
-            type: $this->type,
-            defaultValue: $this->defaultValue ?: $subTypePropertyDeclaration->defaultValue,
+            type: $subTypePropertyDeclaration->type === Undeclared::INSTANCE
+                ? $this->type
+                : $subTypePropertyDeclaration->type,
+            scope: $subTypePropertyDeclaration->scope === Undeclared::INSTANCE
+                ? $this->scope
+                : $subTypePropertyDeclaration->scope,
+            defaultValue: $subTypePropertyDeclaration->defaultValue === Undeclared::INSTANCE
+                ? $this->defaultValue
+                : $subTypePropertyDeclaration->defaultValue,
             metadata: $this->metadata->mergeToSubType($subTypePropertyDeclaration->metadata),
             declaringType: $referenceTypeName,
         );
@@ -123,8 +159,9 @@ final readonly class PropertyDeclaration implements \JsonSerializable
     {
         return Property::create(
             name: $this->name,
-            type: $this->type,
-            defaultValue: $this->defaultValue,
+            type: $this->type === Undeclared::INSTANCE ? PropertyType::string() : $this->type,
+            scope: $this->scope === Undeclared::INSTANCE ? PropertyScope::SCOPE_NODE : $this->scope,
+            defaultValue: $this->defaultValue === Undeclared::INSTANCE ? null : $this->defaultValue,
             metadata: $this->metadata,
         );
     }

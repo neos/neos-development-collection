@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration\Exception;
 
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDistances;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
@@ -57,12 +57,14 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
         $superTypeDistances = [];
         $declaredSubTypeNames = [];
         $subTypeDistances = [];
+        $mergedDeclaredReferenceTypeMembersDictionary = MergedDeclaredReferenceTypeMembersDictionary::create();
         $currentHierarchyLevel = 0;
 
         foreach ($this->items as $declaration) {
             if (!array_key_exists($declaration->name->value, $referenceTypes)) {
                 $declaration->resolveReferenceTypeHierarchy(
                     dictionary: $this,
+                    mergedMembersDictionary: $mergedDeclaredReferenceTypeMembersDictionary,
                     hierarchySoFar: ReferenceTypeNameList::list(),
                     referenceTypes: $referenceTypes,
                     superTypeDistances: $superTypeDistances,

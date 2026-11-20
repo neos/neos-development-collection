@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;

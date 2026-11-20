@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration\Exception;
 
 /**
  * @implements \IteratorAggregate<string,list<SuperTypeConflict>>

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclarationDictionary;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\Flow\Configuration\ConfigurationManager;

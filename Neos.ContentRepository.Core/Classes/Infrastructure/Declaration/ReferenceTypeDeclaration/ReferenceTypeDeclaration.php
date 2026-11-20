@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\SuperTypeConflicts;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflicts;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
@@ -88,6 +88,7 @@ final readonly class ReferenceTypeDeclaration
      */
     public function resolveReferenceTypeHierarchy(
         ReferenceTypeDeclarationDictionary $dictionary,
+        MergedDeclaredReferenceTypeMembersDictionary $mergedMembersDictionary,
         ReferenceTypeNameList $hierarchySoFar,
         array &$referenceTypes,
         array &$superTypeDistances,
@@ -96,6 +97,7 @@ final readonly class ReferenceTypeDeclaration
         int $currentHierarchyLevel,
     ): void {
         $hierarchySoFar = $hierarchySoFar->append($this->name);
+        $currentHierarchyLevel++;
         $unknownSuperTypeNames = [];
         $finalSuperTypeNames = [];
         $superTypes = [];
@@ -121,6 +123,7 @@ final readonly class ReferenceTypeDeclaration
                 }
                 $superTypeDeclaration->resolveReferenceTypeHierarchy(
                     dictionary: $dictionary,
+                    mergedMembersDictionary: $mergedMembersDictionary,
                     hierarchySoFar: $hierarchySoFar,
                     referenceTypes: $referenceTypes,
                     superTypeDistances: $superTypeDistances,
@@ -144,13 +147,14 @@ final readonly class ReferenceTypeDeclaration
                     $superTypeDistances[$subTypeName->value][$superTypeName->value] = $subTypeHierarchyLevel;
                     $subTypeDistances[$superTypeName->value][$subTypeName->value] = $subTypeHierarchyLevel;
                 }
-                foreach ($superTypeDistances[$superTypeName->value] as $ancestorSubTypeName => $distance) {
+                foreach ($superTypeDistances[$superTypeName->value] ?? [] as $ancestorSuperTypeName => $distance) {
+                    $descendantDistance = $subTypeHierarchyLevel + $distance;
                     if (
-                        !array_key_exists($ancestorSubTypeName, $superTypeDistances[$subTypeName->value])
-                        || $superTypeDistances[$ancestorSubTypeName][$superTypeName->value] > $subTypeHierarchyLevel
+                        !array_key_exists($ancestorSuperTypeName, $superTypeDistances[$subTypeName->value])
+                        || $superTypeDistances[$superTypeName->value][$ancestorSuperTypeName] > $descendantDistance
                     ) {
-                        $superTypeDistances[$ancestorSubTypeName][$superTypeName->value] = $subTypeHierarchyLevel;
-                        $subTypeDistances[$superTypeName->value][$ancestorSubTypeName] = $subTypeHierarchyLevel;
+                        $superTypeDistances[$subTypeName->value][$ancestorSuperTypeName] = $descendantDistance;
+                        $subTypeDistances[$ancestorSuperTypeName][$subTypeName->value] = $descendantDistance;
                     }
                 }
             }
@@ -169,15 +173,18 @@ final readonly class ReferenceTypeDeclaration
             );
         }
 
-        $referenceTypes[$this->name->value] = $this->mergeToSubType(...$superTypes);
+        $referenceTypes[$this->name->value] = $this->mergeToSubType($mergedMembersDictionary, ...$superTypes);
     }
 
     /**
      * @throws ReferenceTypeDeclarationIsInvalid
      */
-    private function mergeToSubType(ReferenceType ...$superTypes): ReferenceType
-    {
+    private function mergeToSubType(
+        MergedDeclaredReferenceTypeMembersDictionary $mergedMembersDictionary,
+        ReferenceType ...$superTypes,
+    ): ReferenceType {
         if ($superTypes === []) {
+            $mergedMembersDictionary->add(MergedDeclaredReferenceTypeMembers::fromReferenceTypeDeclaration($this));
             return $this->toReferenceType();
         }
 
@@ -194,8 +201,10 @@ final readonly class ReferenceTypeDeclaration
         $superTypeConflicts = [];
         $previousSuperType = null;
         foreach ($superTypes as $superType) {
-            $properties = $properties?->mergeToSubType($superType->properties, $superTypeConflicts, $superType->name, $previousSuperType?->name)
-                ?: PropertyDeclarationDictionary::fromPropertyDictionary($superType->properties);
+            $mergedSuperTypeMembers = $mergedMembersDictionary->getMergedDeclaredReferenceTypeMembers($superType->name)
+                ?: throw new \RuntimeException('Space time continuum exception: somehow got a supertype without merged members, must not happen');
+            $properties = $properties?->mergeToSubType($mergedSuperTypeMembers->properties, $superTypeConflicts, $superType->name, $previousSuperType?->name)
+                ?: $mergedSuperTypeMembers->properties;
             $previousSuperType = $superType;
         }
         $properties = $properties->mergeToSubType($this->properties, $superTypeConflicts, $this->name);
@@ -205,6 +214,7 @@ final readonly class ReferenceTypeDeclaration
                 superTypeConflicts: SuperTypeConflicts::create($superTypeConflicts),
             );
         }
+        $mergedMembersDictionary->add(MergedDeclaredReferenceTypeMembers::create($this->name, $properties));
 
         return ReferenceType::create(
             name: $this->name,

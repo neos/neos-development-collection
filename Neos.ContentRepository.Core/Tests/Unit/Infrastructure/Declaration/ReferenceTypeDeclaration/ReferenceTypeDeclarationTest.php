@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
+namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\ReferenceTypeDeclarationIsInvalid;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
@@ -97,9 +98,17 @@ class ReferenceTypeDeclarationTest extends TestCase
             'properties' => PropertyDeclarationDictionary::create(
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
-                    type: PropertyType::string(),
-                    defaultValue: null,
-                    metadata: PropertyMetadataDictionary::create([]),
+                    type: PropertyType::int(),
+                    scope: PropertyScope::SCOPE_NODE_AGGREGATE,
+                    defaultValue: 42,
+                    metadata: PropertyMetadataDictionary::create([
+                        '_catchAll' => GenericArrayPropertyMetadata::create([
+                            'foo' => 'baz',
+                            'noodle' => 'soup',
+                            'wat' => 'atouille',
+                            'bool' => true,
+                        ]),
+                    ]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
                 )
             ),
@@ -179,6 +188,7 @@ class ReferenceTypeDeclarationTest extends TestCase
                 'properties' => [
                     'text' => [
                         'type' => 'string',
+                        'scope' => 'nodeAggregate',
                         'defaultValue' => 'my text',
                         'custom' => [
                             'someKey' => 'someValue'
@@ -202,6 +212,7 @@ class ReferenceTypeDeclarationTest extends TestCase
                     PropertyDeclaration::create(
                         name: PropertyName::fromString('text'),
                         type: PropertyType::string(),
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: 'my text',
                         metadata: PropertyMetadataDictionary::create([
                             '_catchAll' => GenericArrayPropertyMetadata::create([

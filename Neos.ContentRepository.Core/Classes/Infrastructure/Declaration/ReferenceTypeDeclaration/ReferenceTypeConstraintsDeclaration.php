@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedNodeTypes\NodeTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
 
 /**
