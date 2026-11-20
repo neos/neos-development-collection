@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSib
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
@@ -497,7 +498,7 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        if ($referenceType) {
+        if ($referenceType && $referenceType->name->value !== ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME) {
             foreach ($referenceProperties->values as $propertyName => $propertyValue) {
                 $property = $this->requireReferenceTypeProperty(
                     referenceType: $referenceType,

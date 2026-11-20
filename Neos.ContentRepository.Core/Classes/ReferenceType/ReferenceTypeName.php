@@ -11,6 +11,13 @@ use Neos\ContentRepository\Core\ReferenceType\Exception\ReferenceTypeNameIsInval
  */
 final class ReferenceTypeName implements \JsonSerializable
 {
+    /**
+     * The featureless reference type
+     * Will not perform declared property checks in 9.3
+     * Will prohibit setting properties in 10.0 and ongoing
+     */
+    public const string FEATURELESS_REFERENCE_TYPE_NAME = 'Neos.ContentRepository:Featureless';
+
     private const string PATTERN = '/^([a-zA-Z][a-zA-Z0-9:.]{0,254})$/';
 
     /**

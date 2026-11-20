@@ -12,6 +12,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Dbal\DbalSchemaFactory;
 
 /**
@@ -100,6 +101,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $table = self::createTable($this->tableNames->referenceRelation(), [
             (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true),
+            DbalSchemaFactory::columnForReferenceTypeName('type', $platform),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint', $platform),
             DbalSchemaFactory::columnForProperties('properties', $platform)->setNotnull(false),

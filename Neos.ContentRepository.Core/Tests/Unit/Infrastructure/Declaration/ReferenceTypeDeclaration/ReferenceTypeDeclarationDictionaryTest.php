@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\DeclarationBasedReferenceTypes;
+namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Declaration\ReferenceTypesDeclaration;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;

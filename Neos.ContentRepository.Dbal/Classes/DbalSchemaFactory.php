@@ -17,6 +17,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -128,6 +129,27 @@ final class DbalSchemaFactory
         $column = (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(255)
             ->setNotnull(true);
+
+        if ($platform instanceof AbstractMySQLPlatform) {
+            $column = $column
+                ->setPlatformOption('charset', 'ascii')
+                ->setPlatformOption('collation', 'ascii_general_ci');
+        }
+
+        return $column;
+    }
+
+    /**
+     * The ReferenceTypeName is an ascii string, we should be able to sort it properly, but we don't need unicode here.
+     *
+     * @see ReferenceTypeName
+     */
+    public static function columnForReferenceTypeName(string $columnName, AbstractPlatform $platform): Column
+    {
+        $column = (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(255)
+            ->setNotnull(true)
+            ->setDefault(ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME);
 
         if ($platform instanceof AbstractMySQLPlatform) {
             $column = $column

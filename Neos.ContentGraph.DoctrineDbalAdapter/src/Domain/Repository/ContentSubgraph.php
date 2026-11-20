@@ -523,7 +523,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $subselectParameters = Parameters::create(...$subselectParameters);
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select("dn.*, dh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
+            ->select("dn.*, dh.subtreetags, r.name AS referencename, r.type as referencetypename, r.properties AS referenceproperties")
             ->fromTableSubquery($this->hierarchyRelationQuery, 'dh')
             ->innerJoin('dh', $this->tableNames->node(), 'dn', 'dn.relationanchorpoint = dh.childnodeanchor')
             ->innerJoin('dn', $this->tableNames->referenceRelation(), 'r', 'r.destinationnodeaggregateid = dn.nodeaggregateid')
@@ -585,7 +585,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $subselectParameters = Parameters::create(...$subselectParameters);
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select("sn.*, sh.subtreetags, r.name AS referencename, r.properties AS referenceproperties")
+            ->select("sn.*, sh.subtreetags, r.name AS referencename, r.type AS referencetypename, r.properties AS referenceproperties")
             ->fromTableSubquery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId(
                 ReferenceDestinationNodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId)
             ), 'sh')

@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  * A single node references to write
  *
  * Simple:
- *   Just a node aggregate id as target {@see fromTarget}
+ *   Just a node aggregate id as target {@see fromTarget} and an optional reference type name that will default to Neos.ContentRepository:Featureless
  *
  * With properties:
  *   Additionally to the target also properties can be specified to be set on the references by using {@see PropertyValuesToWrite} in {@see fromTargetAndProperties}.
@@ -36,13 +36,9 @@ final readonly class NodeReferenceToWrite
 {
     private function __construct(
         public NodeAggregateId $targetNodeAggregateId,
-        public ?ReferenceTypeName $referenceTypeName,
+        public ReferenceTypeName $referenceTypeName,
         public PropertyValuesToWrite $properties,
     ) {
-        /**
-         * @todo for Neos 10: $referenceTypeName must be required
-         * either always or at least when $properties is not empty
-         */
     }
 
     /**
@@ -52,11 +48,11 @@ final readonly class NodeReferenceToWrite
      */
     public static function fromTarget(NodeAggregateId $target, ?ReferenceTypeName $referenceTypeName = null): self
     {
-        return new self($target, $referenceTypeName, PropertyValuesToWrite::createEmpty());
+        return new self($target, $referenceTypeName ?: ReferenceTypeName::fromString(ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME), PropertyValuesToWrite::createEmpty());
     }
 
-    public static function fromTargetAndProperties(NodeAggregateId $target, ?ReferenceTypeName $referenceTypeName, PropertyValuesToWrite $properties): self
+    public static function fromTargetAndProperties(NodeAggregateId $target, PropertyValuesToWrite $properties, ?ReferenceTypeName $referenceTypeName = null): self
     {
-        return new self($target, $referenceTypeName, $properties);
+        return new self($target, $referenceTypeName ?: ReferenceTypeName::fromString(ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME), $properties);
     }
 }

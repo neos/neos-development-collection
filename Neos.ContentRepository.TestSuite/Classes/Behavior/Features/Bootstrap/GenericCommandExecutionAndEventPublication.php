@@ -448,11 +448,11 @@ trait GenericCommandExecutionAndEventPublication
             $references = [];
             foreach ($nodeReferencesForProperty['references'] as $referenceData) {
                 $properties = isset($referenceData['properties']) ? $this->deserializeProperties($referenceData['properties']) : PropertyValuesToWrite::createEmpty();
-                $referenceTypeName = $referenceData['type'] ?? null;
+                $referenceTypeName = $referenceData['referenceTypeName'] ?? null;
                 $references[] = NodeReferenceToWrite::fromTargetAndProperties(
                     target: NodeAggregateId::fromString($referenceData['target']),
+                    properties: $properties,
                     referenceTypeName: $referenceTypeName ? ReferenceTypeName::fromString($referenceTypeName) : null,
-                    properties: $properties
                 );
             }
             $referencesForProperty[] = NodeReferencesForName::fromReferences(ReferenceName::fromString($nodeReferencesForProperty['referenceName']), $references);

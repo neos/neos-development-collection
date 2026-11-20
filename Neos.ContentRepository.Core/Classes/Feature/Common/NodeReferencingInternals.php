@@ -21,6 +21,9 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeRefere
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * @internal implementation detail of command handlers
@@ -31,6 +34,12 @@ trait NodeReferencingInternals
 
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
+    abstract protected function requireReferenceType(
+        ReferenceTypeName $referenceTypeName,
+        ReferenceName $referenceName,
+        NodeTypeName $nodeTypeName
+    ): ReferenceType;
+
     private function mapNodeReferencesToSerializedNodeReferences(NodeReferencesToWrite $references, NodeTypeName $nodeTypeName): SerializedNodeReferences
     {
         $serializedReferencesByProperty = [];
@@ -38,12 +47,14 @@ trait NodeReferencingInternals
             $serializedReferences = [];
             foreach ($referencesByProperty->references as $reference) {
                 $serializedReferences[] = SerializedNodeReference::fromTargetAndProperties(
-                    $reference->targetNodeAggregateId,
-                    $this->getPropertyConverter()->serializeReferencePropertyValues(
-                        $reference->properties,
-                        $this->requireNodeType($nodeTypeName),
-                        $referencesByProperty->referenceName
-                    )
+                    targetNodeAggregateId: $reference->targetNodeAggregateId,
+                    properties: $this->getPropertyConverter()->serializeReferencePropertyValues(
+                        propertyValuesToWrite: $reference->properties,
+                        referenceType: $this->requireReferenceType($reference->referenceTypeName, $referencesByProperty->referenceName, $nodeTypeName),
+                        nodeType: $this->requireNodeType($nodeTypeName),
+                        referenceName: $referencesByProperty->referenceName
+                    ),
+                    referenceTypeName: $reference->referenceTypeName,
                 );
             }
 

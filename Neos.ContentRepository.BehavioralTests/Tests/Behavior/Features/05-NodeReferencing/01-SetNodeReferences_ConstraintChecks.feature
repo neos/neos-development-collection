@@ -47,6 +47,7 @@ Feature: Constraint checks on SetNodeReferences
     """
     And using the following reference types:
     """yaml
+    'Neos.ContentRepository:Featureless': []
     'Neos.ContentRepository.Testing:ForbiddenReference': []
     'Neos.ContentRepository.Testing:AbstractReference':
       abstract: true
@@ -122,7 +123,7 @@ Feature: Constraint checks on SetNodeReferences
       | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"anthony-destinode"}]}] |
     Then the last command should have thrown an exception of type "DimensionSpacePointIsNotYetOccupied" with code 1552595396
 
-  # checks for destinationnodeAggregateIds
+  # checks for destinationNodeAggregateIds
   Scenario: Try to reference a non-existent node aggregate
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                   | Value                         |
@@ -254,7 +255,7 @@ Feature: Constraint checks on SetNodeReferences
       | references            | [{"referenceName": "unconstrained", "references": [{"target":"anthony-destinode", "type":"Neos.ContentRepository.Testing:ConstrainedReference", "properties": {"undeclared": "undefined"}}]}] |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1792507086
 
-  Scenario: Try to create a reference with a property its type does not declare
+  Scenario: Try to create a reference with a value that does not match the type declared in the reference type
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                   | Value                                                                                          |
       | sourceNodeAggregateId | "source-nodandaise"                                                                            |

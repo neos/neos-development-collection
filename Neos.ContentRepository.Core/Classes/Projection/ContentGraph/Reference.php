@@ -29,7 +29,7 @@ final readonly class Reference
     public function __construct(
         public Node $node,
         public ReferenceName $name,
-        public ?ReferenceTypeName $type,
+        public ReferenceTypeName $type,
         public ?PropertyCollection $properties,
     ) {
     }

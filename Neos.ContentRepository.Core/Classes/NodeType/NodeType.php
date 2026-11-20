@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes\ReferenceTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;

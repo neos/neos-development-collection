@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Infrastructure\DeclarationBasedReferenceTypes;
+namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;

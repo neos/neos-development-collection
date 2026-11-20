@@ -325,10 +325,10 @@ final class NodeDuplicationService
             }
             $serializedReferencesByName[$reference->name->value][] = NodeReferenceToWrite::fromTargetAndProperties(
                 target: $reference->node->aggregateId,
-                referenceTypeName: $reference->type,
                 properties: $reference->properties?->count() > 0
                     ? PropertyValuesToWrite::fromArray(iterator_to_array($reference->properties))
-                    : PropertyValuesToWrite::createEmpty()
+                    : PropertyValuesToWrite::createEmpty(),
+                referenceTypeName: $reference->type
             );
         }
 
