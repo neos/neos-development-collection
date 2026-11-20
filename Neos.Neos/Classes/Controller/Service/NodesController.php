@@ -21,13 +21,16 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTermMatcher;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -195,7 +198,25 @@ class NodesController extends ActionController
                 }
             }
         }
+
+        if ($nodes instanceof Nodes) {
+            $nodes = iterator_to_array($nodes, false);
+        }
+        // Each entry runs from the node up to its site node; the views reverse it into a breadcrumb.
+        /** @var Nodes[] $breadcrumbs */
+        $breadcrumbs = array_map(
+            fn (Node $node) => $subgraph->findAncestorNodes(
+                $node->aggregateId,
+                FindAncestorNodesFilter::create(
+                    NodeTypeCriteria::createWithDisallowedNodeTypeNames(
+                        NodeTypeNames::with(NodeTypeNameFactory::forSites())
+                    )
+                )
+            )->prepend($node),
+            $nodes
+        );
         $this->view->assign('nodes', $nodes);
+        $this->view->assign('breadcrumbs', $breadcrumbs);
     }
 
 
