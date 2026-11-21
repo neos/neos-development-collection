@@ -52,6 +52,21 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | b               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b"}         | b        |
       | c               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "c"}         | c        |
     And A site exists for node name "site"
+    And the sites configuration is:
+    """yaml
+    Neos:
+      Neos:
+        sitePresets:
+          'default':
+            uriPathSuffix: '.html'
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
+        sites:
+          '*':
+            preset: 'default'
+    """
 
   Scenario: initial state
     Then I expect the documenturipath table to contain exactly:
