@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
-use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\ReferenceTypeDeclarationIsInvalid;
-use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeConstraintsDeclaration;
-use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\NodeTypeFiltersDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeConstraintsDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
