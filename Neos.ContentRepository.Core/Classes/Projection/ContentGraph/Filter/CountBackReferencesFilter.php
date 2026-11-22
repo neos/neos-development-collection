@@ -63,7 +63,7 @@ final readonly class CountBackReferencesFilter
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
         }
         if (is_string($referenceTypes)) {
-            $referenceTypes = NodeTypeCriteria::fromFilterString($referenceTypes);
+            $referenceTypes = ReferenceTypeCriteria::fromFilterString($referenceTypes);
         }
         if (is_string($nodeSearchTerm)) {
             $nodeSearchTerm = SearchTerm::fulltext($nodeSearchTerm);

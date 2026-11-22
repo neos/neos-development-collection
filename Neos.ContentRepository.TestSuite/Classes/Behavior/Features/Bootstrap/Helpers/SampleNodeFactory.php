@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -118,6 +119,7 @@ class SampleNodeFactory
         return new Reference(
             node: self::createSampleNode(),
             name: ReferenceName::fromString('my-reference'),
+            referenceTypeName: ReferenceTypeName::fromString(ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME),
             properties: new PropertyCollection(
                 SerializedPropertyValues::fromArray([
                     'text' => SerializedPropertyValue::create(
@@ -142,12 +144,14 @@ class SampleNodeFactory
         Reference $reference,
         ?Node $node = null,
         ?ReferenceName $name = null,
+        ?ReferenceTypeName $referenceTypeName = null,
         ?SerializedPropertyValues $properties = null,
         bool $unsetProperties = false,
     ): Reference {
         return new Reference(
             node: $node ?: $reference->node,
             name: $name ?: $reference->name,
+            referenceTypeName: $referenceTypeName ?: $reference->referenceTypeName,
             properties: $unsetProperties
                 ? null
                 : (
