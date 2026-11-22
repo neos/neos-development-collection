@@ -98,6 +98,7 @@ final class ContentRepositoryFactory
         $subscriberFactoryDependencies = SubscriberFactoryDependencies::create(
             $contentRepositoryId,
             $nodeTypeManager,
+            $referenceTypeGraph,
             $contentDimensionSource,
             $this->interDimensionalVariationGraph,
             $this->propertyConverter,

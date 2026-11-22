@@ -49,6 +49,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\TimestampField;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\ReferenceType\ExpandedReferenceTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -56,6 +57,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -111,6 +113,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly Connection $dbal,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ReferenceTypeGraph $referenceTypeGraph,
         private readonly ContentGraphTableNames $tableNames
     ) {
         $this->nodeQueryBuilder = new NodeQueryBuilder($this->dbal, $tableNames);
@@ -523,7 +526,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $subselectParameters = Parameters::create(...$subselectParameters);
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select("dn.*, dh.subtreetags, r.name AS referencename, r.type as referencetypename, r.properties AS referenceproperties")
+            ->select("dn.*, dh.subtreetags, r.name AS referencename, r.referencetypename, r.properties AS referenceproperties")
             ->fromTableSubquery($this->hierarchyRelationQuery, 'dh')
             ->innerJoin('dh', $this->tableNames->node(), 'dn', 'dn.relationanchorpoint = dh.childnodeanchor')
             ->innerJoin('dn', $this->tableNames->referenceRelation(), 'r', 'r.destinationnodeaggregateid = dn.nodeaggregateid')
@@ -540,6 +543,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilder, 'dh');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "dn");
+        }
+        if ($filter->referenceTypes !== null) {
+            $this->nodeQueryBuilder->addReferenceTypeCriteria($queryBuilder, ExpandedReferenceTypeCriteria::create($filter->referenceTypes, $this->referenceTypeGraph), "r");
         }
         if ($filter->nodeSearchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "dn");
@@ -585,7 +591,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $subselectParameters = Parameters::create(...$subselectParameters);
 
         $queryBuilder = $this->createQueryBuilder()
-            ->select("sn.*, sh.subtreetags, r.name AS referencename, r.type AS referencetypename, r.properties AS referenceproperties")
+            ->select("sn.*, sh.subtreetags, r.name AS referencename, r.referencetypename, r.properties AS referenceproperties")
             ->fromTableSubquery($this->hierarchyRelationQuery->withPossibleChildNodeAggregateId(
                 ReferenceDestinationNodeAggregateIdCondition::forNodeAggregateId($nodeAggregateId)
             ), 'sh')
@@ -608,6 +614,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addSubtreeTagConstraints($queryBuilder, 'sh');
         if ($filter->nodeTypes !== null) {
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "sn");
+        }
+        if ($filter->referenceTypes !== null) {
+            $this->nodeQueryBuilder->addReferenceTypeCriteria($queryBuilder, ExpandedReferenceTypeCriteria::create($filter->referenceTypes, $this->referenceTypeGraph), "r");
         }
         if ($filter->nodeSearchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "sn");

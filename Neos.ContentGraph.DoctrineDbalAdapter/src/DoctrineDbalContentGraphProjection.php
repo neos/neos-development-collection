@@ -729,7 +729,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 try {
                     $this->dbal->insert($this->tableNames->referenceRelation(), [
                         'name' => $referencesByProperty->referenceName->value,
-                        'type' => $reference->referenceTypeName->value,
+                        'referencetypename' => $reference->referenceTypeName->value,
                         'position' => $position,
                         'nodeanchorpoint' => $nodeAnchorPoint->value,
                         'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
@@ -985,14 +985,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             INSERT INTO {$this->tableNames->referenceRelation()} (
               nodeanchorpoint,
               name,
-              type,
+              referencetypename,
               position,
               destinationnodeaggregateid
             )
             SELECT
               :destinationRelationAnchorPoint AS nodeanchorpoint,
               ref.name,
-              ref.type,
+              ref.referencetypename,
               ref.position,
               ref.destinationnodeaggregateid
             FROM

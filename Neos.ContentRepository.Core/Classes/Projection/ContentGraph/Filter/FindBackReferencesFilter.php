@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\ReferenceType\ReferenceTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -32,6 +33,7 @@ final readonly class FindBackReferencesFilter
      */
     private function __construct(
         public ?NodeTypeCriteria $nodeTypes,
+        public ?ReferenceTypeCriteria $referenceTypes,
         public ?SearchTerm $nodeSearchTerm,
         public ?PropertyValueCriteriaInterface $nodePropertyValue,
         public ?SearchTerm $referenceSearchTerm,
@@ -60,9 +62,13 @@ final readonly class FindBackReferencesFilter
         ReferenceName|string|null $referenceName = null,
         Ordering|array|null $ordering = null,
         Pagination|array|null $pagination = null,
+        ReferenceTypeCriteria|string|null $referenceTypes = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
+        }
+        if (is_string($referenceTypes)) {
+            $referenceTypes = ReferenceTypeCriteria::fromFilterString($referenceTypes);
         }
         if (is_string($nodeSearchTerm)) {
             $nodeSearchTerm = SearchTerm::fulltext($nodeSearchTerm);
@@ -85,7 +91,7 @@ final readonly class FindBackReferencesFilter
         if (is_array($pagination)) {
             $pagination = Pagination::fromArray($pagination);
         }
-        return new self($nodeTypes, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName, $ordering, $pagination);
+        return new self($nodeTypes, $referenceTypes, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName, $ordering, $pagination);
     }
 
     /**
@@ -106,6 +112,7 @@ final readonly class FindBackReferencesFilter
         ReferenceName|string|null $referenceName = null,
         Ordering|array|null $ordering = null,
         Pagination|array|null $pagination = null,
+        ReferenceTypeCriteria|string|null $referenceTypes = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,
@@ -116,6 +123,7 @@ final readonly class FindBackReferencesFilter
             $referenceName ?? $this->referenceName,
             $ordering ?? $this->ordering,
             $pagination ?? $this->pagination,
+            $referenceTypes ?? $this->referenceTypes,
         );
     }
 }

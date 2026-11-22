@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\ReferenceType\ReferenceTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -34,6 +35,7 @@ final readonly class CountBackReferencesFilter
      */
     private function __construct(
         public ?NodeTypeCriteria $nodeTypes,
+        public ?ReferenceTypeCriteria $referenceTypes,
         public ?SearchTerm $nodeSearchTerm,
         public ?PropertyValueCriteriaInterface $nodePropertyValue,
         public ?SearchTerm $referenceSearchTerm,
@@ -55,9 +57,13 @@ final readonly class CountBackReferencesFilter
         SearchTerm|string|null $referenceSearchTerm = null,
         PropertyValueCriteriaInterface|string|null $referencePropertyValue = null,
         ReferenceName|string|null $referenceName = null,
+        ReferenceTypeCriteria|string|null $referenceTypes = null,
     ): self {
         if (is_string($nodeTypes)) {
             $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
+        }
+        if (is_string($referenceTypes)) {
+            $referenceTypes = NodeTypeCriteria::fromFilterString($referenceTypes);
         }
         if (is_string($nodeSearchTerm)) {
             $nodeSearchTerm = SearchTerm::fulltext($nodeSearchTerm);
@@ -74,12 +80,12 @@ final readonly class CountBackReferencesFilter
         if (is_string($referenceName)) {
             $referenceName = ReferenceName::fromString($referenceName);
         }
-        return new self($nodeTypes, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName);
+        return new self($nodeTypes, $referenceTypes, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName);
     }
 
     public static function fromFindBackReferencesFilter(FindBackReferencesFilter $filter): self
     {
-        return new self($filter->nodeTypes, $filter->nodeSearchTerm, $filter->nodePropertyValue, $filter->referenceSearchTerm, $filter->referencePropertyValue, $filter->referenceName);
+        return new self($filter->nodeTypes, $filter->referenceTypes, $filter->nodeSearchTerm, $filter->nodePropertyValue, $filter->referenceSearchTerm, $filter->referencePropertyValue, $filter->referenceName);
     }
 
     /**
@@ -95,6 +101,7 @@ final readonly class CountBackReferencesFilter
         SearchTerm|string|null $referenceSearchTerm = null,
         PropertyValueCriteriaInterface|string|null $referencePropertyValue = null,
         ReferenceName|string|null $referenceName = null,
+        ReferenceTypeCriteria|string|null $referenceTypes = null,
     ): self {
         return self::create(
             $nodeTypes ?? $this->nodeTypes,
@@ -103,6 +110,7 @@ final readonly class CountBackReferencesFilter
             $referenceSearchTerm ?? $this->referenceSearchTerm,
             $referencePropertyValue ?? $this->referencePropertyValue,
             $referenceName ?? $this->referenceName,
+            $referenceTypes ?? $this->referenceTypes,
         );
     }
 }

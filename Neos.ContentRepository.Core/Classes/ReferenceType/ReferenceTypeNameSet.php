@@ -55,6 +55,14 @@ final readonly class ReferenceTypeNameSet implements \IteratorAggregate
         ));
     }
 
+    public function withAdditionalReferenceTypeName(ReferenceTypeName $referenceTypeName): self
+    {
+        $items = $this->items;
+        $items[$referenceTypeName->value] = $referenceTypeName;
+
+        return new self($items);
+    }
+
     public function hasElement(ReferenceTypeName $referenceTypeName): bool
     {
         return array_key_exists($referenceTypeName->value, $this->items);

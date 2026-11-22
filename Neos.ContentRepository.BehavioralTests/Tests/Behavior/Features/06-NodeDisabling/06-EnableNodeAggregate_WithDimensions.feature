@@ -15,6 +15,10 @@ Feature: Enable a node aggregate
         references:
           type: references
     """
+    And using the following reference types:
+    """yaml
+    'Neos.ContentRepository:Featureless': []
+    """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"

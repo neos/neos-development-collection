@@ -133,7 +133,7 @@ final class NodeFactory
             $result[] = new Reference(
                 node: $node,
                 name: ReferenceName::fromString($nodeRow['referencename']),
-                type: ReferenceTypeName::fromString($nodeRow['referencetypename'] ?? ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME),
+                referenceTypeName: ReferenceTypeName::fromString($nodeRow['referencetypename'] ?? ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME),
                 properties: $nodeRow['referenceproperties']
                     ? $this->createPropertyCollectionFromJsonString($nodeRow['referenceproperties'])
                     : null

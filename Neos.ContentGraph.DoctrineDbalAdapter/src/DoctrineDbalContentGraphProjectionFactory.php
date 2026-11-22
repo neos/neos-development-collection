@@ -51,6 +51,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ContentGraphPro
             $nodeFactory,
             $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
+            $projectionFactoryDependencies->referenceTypeGraph,
             $tableNames
         );
 

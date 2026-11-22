@@ -73,6 +73,19 @@ final readonly class ReferenceTypeGraph
         return ($this->subTypeDistances[$referenceTypeName->value] ?? null)?->toList() ?: ReferenceTypeNameList::list();
     }
 
+    public function expandNodeTypeSetToSubNodeTypes(
+        ReferenceTypeNameSet $referenceTypeNames,
+    ): ReferenceTypeNameSet {
+        $expandedReferenceTypeNames = $referenceTypeNames;
+        foreach ($referenceTypeNames as $referenceTypeName) {
+            $expandedReferenceTypeNames = $expandedReferenceTypeNames->union(
+                ReferenceTypeNameSet::fromList($this->getSubTypeNames($referenceTypeName))
+            );
+        }
+
+        return $expandedReferenceTypeNames;
+    }
+
     public function getReferenceTypesMatchingConstraints(
         ReferenceTypeFilters $constraints,
     ): ReferenceTypeSet {

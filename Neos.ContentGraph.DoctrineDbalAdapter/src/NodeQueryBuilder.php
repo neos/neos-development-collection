@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThan;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueStartsWith;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\ReferenceType\ExpandedReferenceTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -148,6 +149,32 @@ final readonly class NodeQueryBuilder
                 $queryBuilder->andWhere($queryBuilder->expr()->and($allowanceQueryPart, $denyQueryPart));
             }
         } elseif ($allowanceQueryPart && !$constraintsWithSubNodeTypes->isWildCardAllowed) {
+            $queryBuilder->andWhere($allowanceQueryPart);
+        } elseif ($denyQueryPart) {
+            $queryBuilder->andWhere($denyQueryPart);
+        }
+    }
+
+    public function addReferenceTypeCriteria(QueryBuilder $queryBuilder, ExpandedReferenceTypeCriteria $constraintsWithSubReferenceTypes, string $referenceTableAlias = 'r'): void
+    {
+        $referenceTablePrefix = $referenceTableAlias === '' ? '' : $referenceTableAlias . '.';
+        $allowanceQueryPart = '';
+        if (!$constraintsWithSubReferenceTypes->explicitlyAllowedReferenceTypeNames->isEmpty()) {
+            $allowanceQueryPart = $queryBuilder->expr()->in($referenceTablePrefix . 'referencetypename', ':explicitlyAllowedNodeTypeNames');
+            $queryBuilder->setParameter('explicitlyAllowedNodeTypeNames', $constraintsWithSubReferenceTypes->explicitlyAllowedReferenceTypeNames->toStringArray(), ArrayParameterType::STRING);
+        }
+        $denyQueryPart = '';
+        if (!$constraintsWithSubReferenceTypes->explicitlyDisallowedReferenceTypeNames->isEmpty()) {
+            $denyQueryPart = $queryBuilder->expr()->notIn($referenceTablePrefix . 'referencetypename', ':explicitlyDisallowedNodeTypeNames');
+            $queryBuilder->setParameter('explicitlyDisallowedNodeTypeNames', $constraintsWithSubReferenceTypes->explicitlyDisallowedReferenceTypeNames->toStringArray(), ArrayParameterType::STRING);
+        }
+        if ($allowanceQueryPart && $denyQueryPart) {
+            if ($constraintsWithSubReferenceTypes->isWildCardAllowed) {
+                $queryBuilder->andWhere($queryBuilder->expr()->or($allowanceQueryPart, $denyQueryPart));
+            } else {
+                $queryBuilder->andWhere($queryBuilder->expr()->and($allowanceQueryPart, $denyQueryPart));
+            }
+        } elseif ($allowanceQueryPart && !$constraintsWithSubReferenceTypes->isWildCardAllowed) {
             $queryBuilder->andWhere($allowanceQueryPart);
         } elseif ($denyQueryPart) {
             $queryBuilder->andWhere($denyQueryPart);

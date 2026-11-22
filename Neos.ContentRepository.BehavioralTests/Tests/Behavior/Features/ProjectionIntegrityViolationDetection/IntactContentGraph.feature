@@ -12,6 +12,10 @@ Feature: Create an intact content graph and run integrity violation detection
       references:
         myReferences: {}
     """
+    And using the following reference types:
+    """yaml
+    'Neos.ContentRepository:Featureless': []
+    """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:

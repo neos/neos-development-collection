@@ -123,6 +123,7 @@ trait NodeTraversalTrait
         $actualReferences = array_map(static fn (Reference $reference) => [
             'nodeAggregateId' => $reference->node->aggregateId->value,
             'name' => $reference->name->value,
+            'referenceTypeName' => $reference->referenceTypeName->value,
             'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
         ], iterator_to_array($subgraph->findReferences($nodeAggregateId, $filter)));
         Assert::assertSame($expectedReferences, $actualReferences);
@@ -142,6 +143,7 @@ trait NodeTraversalTrait
         $actualReferences = array_map(static fn (Reference $reference) => [
             'nodeAggregateId' => $reference->node->aggregateId->value,
             'name' => $reference->name->value,
+            'referenceTypeName' => $reference->referenceTypeName->value,
             'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
         ], iterator_to_array($subgraph->findBackReferences($nodeAggregateId, $filter)));
         Assert::assertSame($expectedReferences, $actualReferences);

@@ -328,7 +328,7 @@ final class NodeDuplicationService
                 properties: $reference->properties?->count() > 0
                     ? PropertyValuesToWrite::fromArray(iterator_to_array($reference->properties))
                     : PropertyValuesToWrite::createEmpty(),
-                referenceTypeName: $reference->type
+                referenceTypeName: $reference->referenceTypeName
             );
         }
 

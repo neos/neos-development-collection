@@ -517,7 +517,7 @@ trait ProjectedNodeTrait
             );
 
             if (isset($row['Type'])) {
-                Assert::assertSame($row['Type'], $actualReferences[$index]->type->value);
+                Assert::assertSame($row['Type'], $actualReferences[$index]->referenceTypeName->value);
             }
 
             if (isset($row['Properties'])) {

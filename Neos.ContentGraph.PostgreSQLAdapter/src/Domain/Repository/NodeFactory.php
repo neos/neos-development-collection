@@ -130,8 +130,8 @@ final class NodeFactory
                     null
                 ),
                 name: ReferenceName::fromString($referenceRow['referencename']),
-                type: $referenceRow['referencetype']
-                    ? ReferenceTypeName::fromString($referenceRow['referencetype'])
+                referenceTypeName: $referenceRow['referencetypename']
+                    ? ReferenceTypeName::fromString($referenceRow['referencetypename'])
                     : null,
                 properties: $referenceRow['referenceproperties']
                     ? new PropertyCollection(
