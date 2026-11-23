@@ -1,11 +1,11 @@
-Feature: Set node properties with different scopes
+Feature: Set node references with different scopes
 
   As a user of the CR I want to modify node references with different scopes.
 
   Background:
     Given using the following content dimensions:
-      | Identifier | Values       | Generalizations |
-      | language   | mul, de, gsw | gsw->de->mul    |
+      | Identifier | Values                      | Generalizations                      |
+      | example    | general, source, spec, peer | spec->source->general, peer->general |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:NodeWithReferences':
@@ -32,19 +32,49 @@ Feature: Set node properties with different scopes
         specializationsScopedReferences:
           type: references
           scope: specializations
+      references:
+        nodeScopedTypedReference:
+          constraints:
+            referenceTypes:
+              '*': false
+              'Neos.ContentRepository:ScopingExample': true
+          scope: node
+        nodeAggregateScopedTypedReference:
+          constraints:
+            referenceTypes:
+              '*': false
+              'Neos.ContentRepository:ScopingExample': true
+          scope: nodeAggregate
+        specializationsScopedTypedReference:
+          constraints:
+            referenceTypes:
+              '*': false
+              'Neos.ContentRepository:ScopingExample': true
+          scope: specializations
     """
     And using the following reference types:
     """yaml
     'Neos.ContentRepository:Featureless': []
+    'Neos.ContentRepository:ScopingExample':
+      properties:
+        nodeScopedProperty:
+          type: string
+          defaultValue: 'node scoped default'
+        nodeAggregateScopedProperty:
+          type: string
+          defaultValue: 'node aggregate scoped default'
+        specializationsScopedProperty:
+          type: string
+          defaultValue: 'specializations scoped default'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
-    And I am in workspace "live" and dimension space point {"language":"mul"}
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And I am in workspace "live" and dimension space point {"example":"general"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -56,168 +86,241 @@ Feature: Set node properties with different scopes
       | source-nodandaise | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
       | anthony-destinode | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithReferences |
     And the command CreateNodeVariant is executed with payload:
-      | Key             | Value               |
-      | nodeAggregateId | "source-nodandaise" |
-      | sourceOrigin    | {"language":"mul"}  |
-      | targetOrigin    | {"language":"de"}   |
+      | Key             | Value                 |
+      | nodeAggregateId | "source-nodandaise"   |
+      | sourceOrigin    | {"example":"general"} |
+      | targetOrigin    | {"example":"source"}  |
     And the command CreateNodeVariant is executed with payload:
-      | Key             | Value               |
-      | nodeAggregateId | "source-nodandaise" |
-      | sourceOrigin    | {"language":"mul"}  |
-      | targetOrigin    | {"language":"gsw"}  |
+      | Key             | Value                 |
+      | nodeAggregateId | "source-nodandaise"   |
+      | sourceOrigin    | {"example":"general"} |
+      | targetOrigin    | {"example":"spec"}    |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                 |
+      | nodeAggregateId | "source-nodandaise"   |
+      | sourceOrigin    | {"example":"general"} |
+      | targetOrigin    | {"example":"peer"}    |
 
   Scenario: Set node references in separate commands
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                     |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                       |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                     |
       | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                      |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                        |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                      |
       | references                      | [{"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                       |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                         |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                       |
       | references                      | [{"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                        |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                          |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                        |
       | references                      | [{"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                                |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                  |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                |
       | references                      | [{"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                                 |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                   |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                 |
       | references                      | [{"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                                  |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                    |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                  |
       | references                      | [{"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                             |
-      | sourceNodeAggregateId           | "source-nodandaise"               |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                |
+      | Key                             | Value                                                                                                   |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                     |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                   |
       | references                      | [{"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}] |
-
-    When I am in workspace "live" and dimension space point {"language": "mul"}
-    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}
-    And I expect this node to have the following references:
-      | Name                          | Node                                                | Properties |
-      | nodeAggregateScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-
-    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
-    And I expect this node to be referenced by:
-      | Name                          | Node                                                | Properties |
-      | nodeAggregateScopedReference  | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
-
-    When I am in workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
-    And I expect this node to have the following references:
-      | Name                            | Node                                                | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeScopedReference             | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeScopedReferences            | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | unscopedReference               | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | unscopedReferences              | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
-    And I expect this node to be referenced by:
-      | Name                            | Node                                               | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | nodeScopedReference             | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | nodeScopedReferences            | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | unscopedReference               | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | unscopedReferences              | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-
-    When I am in workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "gsw"}
-    And I expect this node to have the following references:
-      | Name                            | Node                                                | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
-    And I expect this node to be referenced by:
-      | Name                            | Node                                                | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-
-
-  Scenario: Set node properties in single command
     And the command SetNodeReferences is executed with payload:
-      | Key                             | Value                                                    |
-      | sourceNodeAggregateId           | "source-nodandaise"                                      |
-      | sourceOriginDimensionSpacePoint | {"language": "de"}                                       |
-      | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}]|
+      | Key                             | Value                                                                                                                                                          |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                                                                            |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                                                                          |
+      | references                      | [{"referenceName": "nodeScopedTypedReference", "references": [{"target": "anthony-destinode", "referenceTypeName": "Neos.ContentRepository:ScopingExample"}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                                                                                                   |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                                                                                     |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                                                                                   |
+      | references                      | [{"referenceName": "nodeAggregateScopedTypedReference", "references": [{"target": "anthony-destinode", "referenceTypeName": "Neos.ContentRepository:ScopingExample"}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                                                                                                     |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                                                                                       |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                                                                                     |
+      | references                      | [{"referenceName": "specializationsScopedTypedReference", "references": [{"target": "anthony-destinode", "referenceTypeName": "Neos.ContentRepository:ScopingExample"}]}] |
 
-    When I am in workspace "live" and dimension space point {"language": "mul"}
-    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "mul"}
+    When I am in workspace "live" and dimension space point {"example": "general"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "general"}
     And I expect this node to have the following references:
-      | Name                          | Node                                                | Properties |
-      | nodeAggregateScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
+      | Name                              | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
 
-    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
     And I expect this node to be referenced by:
-      | Name                          | Node                                                | Properties |
-      | nodeAggregateScopedReference  | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences | cs-identifier;source-nodandaise;{"language": "mul"} | null       |
+      | Name                              | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;source-nodandaise;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;source-nodandaise;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;source-nodandaise;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
 
-    When I am in workspace "live" and dimension space point {"language": "de"}
-    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
+    When I am in workspace "live" and dimension space point {"example": "source"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "source"}
     And I expect this node to have the following references:
-      | Name                            | Node                                                | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeScopedReference             | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeScopedReferences            | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | unscopedReference               | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | unscopedReferences              | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
+      | Name                                | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | nodeScopedReference                 | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedReferences                | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedTypedReference            | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | unscopedReference                   | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | unscopedReferences                  | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
     And I expect this node to be referenced by:
-      | Name                            | Node                                               | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | nodeScopedReference             | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | nodeScopedReferences            | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | unscopedReference               | cs-identifier;source-nodandaise;{"language": "de"} | null       |
-      | unscopedReferences              | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | Name                                | Node                                                  | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | nodeScopedReference                 | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedReferences                | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedTypedReference            | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | unscopedReference                   | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | unscopedReferences                  | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
 
-    When I am in workspace "live" and dimension space point {"language": "gsw"}
-    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "gsw"}
+    When I am in workspace "live" and dimension space point {"example": "spec"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "spec"}
     And I expect this node to have the following references:
-      | Name                            | Node                                                | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReference  | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-      | specializationsScopedReferences | cs-identifier;anthony-destinode;{"language": "mul"} | null       |
-    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "mul"}
+      | Name                                | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
     And I expect this node to be referenced by:
-      | Name                            | Node                                                | Properties |
-      | nodeAggregateScopedReference    | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-      | nodeAggregateScopedReferences   | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-      | specializationsScopedReference  | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
-      | specializationsScopedReferences | cs-identifier;source-nodandaise;{"language": "gsw"} | null       |
+      | Name                                | Node                                                | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+    When I am in workspace "live" and dimension space point {"example": "peer"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "peer"}
+    And I expect this node to have the following references:
+      | Name                              | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
+    And I expect this node to be referenced by:
+      | Name                              | Node                                                | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;source-nodandaise;{"example": "peer"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;source-nodandaise;{"example": "peer"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;source-nodandaise;{"example": "peer"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+  Scenario: Set node references in single command
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+      | sourceNodeAggregateId           | "source-nodandaise"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+      | sourceOriginDimensionSpacePoint | {"example": "source"}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+      | references                      | [{"referenceName": "unscopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "unscopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeAggregateScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReference", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "specializationsScopedReferences", "references": [{"target": "anthony-destinode"}]}, {"referenceName": "nodeScopedTypedReference", "references": [{"target": "anthony-destinode", "referenceTypeName": "Neos.ContentRepository:ScopingExample"}]}, {"referenceName": "nodeAggregateScopedTypedReference", "references": [{"target": "anthony-destinode", "referenceTypeName": "Neos.ContentRepository:ScopingExample"}]}, {"referenceName": "specializationsScopedTypedReference", "references": [{"target": "anthony-destinode", "referenceTypeName": "Neos.ContentRepository:ScopingExample"}]}] |
+
+    When I am in workspace "live" and dimension space point {"example": "general"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "general"}
+    And I expect this node to have the following references:
+      | Name                              | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
+    And I expect this node to be referenced by:
+      | Name                              | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;source-nodandaise;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;source-nodandaise;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;source-nodandaise;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+    When I am in workspace "live" and dimension space point {"example": "source"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "source"}
+    And I expect this node to have the following references:
+      | Name                                | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | nodeScopedReference                 | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedReferences                | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedTypedReference            | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | unscopedReference                   | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | unscopedReferences                  | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
+    And I expect this node to be referenced by:
+      | Name                                | Node                                                  | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | nodeScopedReference                 | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedReferences                | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeScopedTypedReference            | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | unscopedReference                   | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | unscopedReferences                  | cs-identifier;source-nodandaise;{"example": "source"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+
+    When I am in workspace "live" and dimension space point {"example": "spec"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "spec"}
+    And I expect this node to have the following references:
+      | Name                                | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
+    And I expect this node to be referenced by:
+      | Name                                | Node                                                | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference        | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences       | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference   | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+      | specializationsScopedReference      | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedReferences     | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | specializationsScopedTypedReference | cs-identifier;source-nodandaise;{"example": "spec"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+    When I am in workspace "live" and dimension space point {"example": "peer"}
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"example": "peer"}
+    And I expect this node to have the following references:
+      | Name                              | Node                                                   | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;anthony-destinode;{"example": "general"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"example": "general"}
+    And I expect this node to be referenced by:
+      | Name                              | Node                                                | Type                                  | Properties                                                                                                                                                                       |
+      | nodeAggregateScopedReference      | cs-identifier;source-nodandaise;{"example": "peer"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedReferences     | cs-identifier;source-nodandaise;{"example": "peer"} | Neos.ContentRepository:Featureless    | null                                                                                                                                                                             |
+      | nodeAggregateScopedTypedReference | cs-identifier;source-nodandaise;{"example": "peer"} | Neos.ContentRepository:ScopingExample | {"nodeScopedProperty": "node scoped default", "nodeAggregateScopedProperty": "node aggregate scoped default", "specializationsScopedProperty": "specializations scoped default"} |
