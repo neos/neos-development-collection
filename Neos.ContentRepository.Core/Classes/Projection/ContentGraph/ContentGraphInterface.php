@@ -111,7 +111,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ?NodeAggregate;
 
     /**
-     * @internal only for consumption inside the Command Handler
+     * @internal only for consumption inside the Command Handler. The returned order of node aggregates is undefined and not to be relied upon
      */
     public function findParentNodeAggregates(
         NodeAggregateId $childNodeAggregateId

@@ -97,7 +97,7 @@ final class AssetExportProcessor implements ProcessorInterface
         // Collection type?
         /** @var array{type: string, elementType: string|null, nullable: bool} $parsedType */
         $parsedType = TypeHandling::parseType($type);
-        if ($parsedType['elementType'] === null) {
+        if ($parsedType['elementType'] === null || !is_iterable($value)) {
             return [];
         }
         if (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class) && !is_subclass_of($parsedType['elementType'], \Stringable::class)) {

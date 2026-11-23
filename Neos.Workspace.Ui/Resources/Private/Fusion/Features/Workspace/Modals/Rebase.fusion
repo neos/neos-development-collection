@@ -49,7 +49,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Rebase) < prototype(Neos.Fusion:Comp
               <tbody>
               <tr>
                 <td>{private.i18n.id('workspaces.dialog.rebase.error')}:</td>
-                <td><b>{conflict.error}</b></td>
+                <td><b>{String.htmlSpecialChars(conflict.error)}</b></td>
               </tr>
               <tr>
                 <td>{private.i18n.id('workspaces.dialog.rebase.node')}:</td>

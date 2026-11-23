@@ -643,3 +643,107 @@ contentCache.dynamicWithChangingDiscriminator = Neos.Fusion:Value {
     }
   }
 }
+
+prototype(Neos.Fusion:Testing.CacheNesting.Leaf) < prototype(Neos.Fusion:Value) {
+  value = ${request.arguments.testArgument}
+}
+
+prototype(Neos.Fusion:Testing.CacheNesting.DynamicLeaf) < prototype(Neos.Fusion:Testing.CacheNesting.Leaf) {
+  @cache {
+    mode = 'dynamic'
+    entryDiscriminator = 'static'
+    context {
+      1 = 'someContextVariable'
+    }
+    entryTags {
+      1 = 'leaf'
+    }
+  }
+}
+
+prototype(Neos.Fusion:Testing.CacheNesting.DynamicLeafWithDisabledDiscriminator) < prototype(Neos.Fusion:Testing.CacheNesting.Leaf) {
+  @cache {
+    mode = 'dynamic'
+    entryDiscriminator = false
+    context {
+      1 = 'someContextVariable'
+    }
+  }
+}
+
+prototype(Neos.Fusion:Testing.CacheNesting.UncachedLeaf) < prototype(Neos.Fusion:Testing.CacheNesting.Leaf) {
+  @cache {
+    mode = 'uncached'
+    context {
+      1 = 'someContextVariable'
+    }
+  }
+}
+
+prototype(Neos.Fusion:Testing.CacheNesting.CachedSegment) < prototype(Neos.Fusion:Join) {
+  @cache {
+    mode = 'cached'
+    entryTags {
+      1 = ${'segment-' + label}
+    }
+  }
+}
+
+prototype(Neos.Fusion:Testing.CacheNesting.DynamicSegment) < prototype(Neos.Fusion:Join) {
+  @cache {
+    mode = 'dynamic'
+    entryDiscriminator = 'static'
+    context {
+      1 = 'someContextVariable'
+    }
+    entryTags {
+      1 = 'leaf'
+    }
+  }
+}
+
+# outer (cached) > first (cached) > dynamic leaf, second (cached) > dynamic leaf
+contentCache.nesting.cachedOuterWithCachedSegmentsContainingDynamicSegments = Neos.Fusion:Join {
+  first = Neos.Fusion:Testing.CacheNesting.CachedSegment {
+    @context.label = 'first'
+    10 = 'First|'
+    20 = Neos.Fusion:Testing.CacheNesting.DynamicLeaf
+    30 = '|'
+  }
+  second = Neos.Fusion:Testing.CacheNesting.CachedSegment {
+    @context.label = 'second'
+    10 = 'Second|'
+    20 = Neos.Fusion:Testing.CacheNesting.DynamicLeaf
+  }
+  @cache {
+    mode = 'cached'
+    entryTags {
+      1 = 'outer'
+    }
+  }
+}
+
+# same as above, but the outer segment is dynamic
+contentCache.nesting.dynamicOuterWithCachedSegmentsContainingDynamicSegments < contentCache.nesting.cachedOuterWithCachedSegmentsContainingDynamicSegments
+contentCache.nesting.dynamicOuterWithCachedSegmentsContainingDynamicSegments.@cache {
+  mode = 'dynamic'
+  entryDiscriminator = 'static'
+  context {
+    1 = 'someContextVariable'
+  }
+}
+
+# the second segment is a dynamic segment itself
+contentCache.nesting.cachedOuterWithCachedSegmentContainingDynamicSegmentAndDynamicSibling < contentCache.nesting.cachedOuterWithCachedSegmentsContainingDynamicSegments
+contentCache.nesting.cachedOuterWithCachedSegmentContainingDynamicSegmentAndDynamicSibling.second = Neos.Fusion:Testing.CacheNesting.DynamicSegment {
+  10 = 'Second|'
+  20 = Neos.Fusion:Testing.CacheNesting.Leaf
+}
+
+# the dynamic segment in the first segment has a disabled discriminator (behaves like uncached)
+contentCache.nesting.cachedOuterWithCachedSegmentContainingDisabledDynamicSegment < contentCache.nesting.cachedOuterWithCachedSegmentsContainingDynamicSegments
+contentCache.nesting.cachedOuterWithCachedSegmentContainingDisabledDynamicSegment.first.20 = Neos.Fusion:Testing.CacheNesting.DynamicLeafWithDisabledDiscriminator
+
+# control: the first segment contains an uncached segment instead of a dynamic one (was never affected)
+contentCache.nesting.cachedOuterWithCachedSegmentContainingUncachedSegment < contentCache.nesting.cachedOuterWithCachedSegmentsContainingDynamicSegments
+contentCache.nesting.cachedOuterWithCachedSegmentContainingUncachedSegment.first.20 = Neos.Fusion:Testing.CacheNesting.UncachedLeaf
