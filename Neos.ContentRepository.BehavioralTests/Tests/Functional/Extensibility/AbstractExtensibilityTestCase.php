@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\BehavioralTests\Tests\Functional\Extensibility;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandHookInterface;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -17,6 +18,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Core\Bootstrap;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @internal, only for tests of the Neos.* namespace
@@ -56,7 +58,7 @@ abstract class AbstractExtensibilityTestCase extends TestCase // we don't use Fl
                 ]
             ]
         ]);
-        FakeReferenceTypeGraphFactory::setConfiguration([]);
+        FakeReferenceTypeGraphFactory::setConfiguration([], new PropertyConverter(new Serializer()));
         FakeContentDimensionSourceFactory::setWithoutDimensions();
 
         $this->getObject(ContentRepositoryRegistry::class)->resetFactoryInstance(static::$contentRepositoryId);

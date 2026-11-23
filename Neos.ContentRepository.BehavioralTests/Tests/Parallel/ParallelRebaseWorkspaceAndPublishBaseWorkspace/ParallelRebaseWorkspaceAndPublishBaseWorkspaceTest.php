@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -49,6 +50,7 @@ use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * In Neos 9.0 it occurred that a rebase of a user workspace during publishing of the review base workspace lead to the rebase workspace still referencing the old review base content stream
@@ -89,7 +91,7 @@ class ParallelRebaseWorkspaceAndPublishBaseWorkspaceTest extends AbstractParalle
                 ]
             ]
         ]);
-        FakeReferenceTypeGraphFactory::setConfiguration([]);
+        FakeReferenceTypeGraphFactory::setConfiguration([], new PropertyConverter(new Serializer()));
 
         /** Hack until https://github.com/neos/neos-development-collection/issues/5869 is fixed */
         \Neos\ContentRepository\Dbal\MysqlPlatformContentRepositoryLocker::enableForContentRepository(ContentRepositoryId::fromString('test_parallel'));

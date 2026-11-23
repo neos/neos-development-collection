@@ -51,15 +51,13 @@ final class FakeReferenceTypeGraphFactory implements ReferenceTypeGraphFactoryIn
     /**
      * @param array<string,mixed> $referenceTypesToUse
      */
-    public static function setConfiguration(array $referenceTypesToUse, ?PropertyConverter $propertyConverter = null): void
+    public static function setConfiguration(array $referenceTypesToUse, PropertyConverter $propertyConverter): void
     {
-        if ($propertyConverter) {
-            self::$propertyConverter = $propertyConverter;
-        }
+        self::$propertyConverter = $propertyConverter;
         /** @phpstan-ignore neos.cr.internal (we are the test suite) */
         self::$referenceTypeGraph = ReferenceTypeDeclarationDictionary::fromArray(
             $referenceTypesToUse,
-            self::$propertyConverter ?: throw new \RuntimeException('property converter uninitialized, must call build first')
+            self::$propertyConverter,
         )
             ->expandToGraph();
     }

@@ -117,21 +117,7 @@ trait CRBehavioralTestsSubjectProvider
     {
         FakeReferenceTypeGraphFactory::setConfiguration(
             referenceTypesToUse: Yaml::parse($serializedReferenceTypesDeclarationDictionary->getRaw()) ?? [],
-            propertyConverter:  new PropertyConverter(
-                new Serializer([
-                    new DateTimeNormalizer(),
-                    new ScalarNormalizer(),
-                    new BackedEnumNormalizer(),
-                    new ArrayNormalizer(),
-                    new UriNormalizer(),
-                    new ValueObjectArrayDenormalizer(),
-                    new ValueObjectBoolDenormalizer(),
-                    new ValueObjectFloatDenormalizer(),
-                    new ValueObjectIntDenormalizer(),
-                    new ValueObjectStringDenormalizer(),
-                    new CollectionTypeDenormalizer()
-                ])
-            ),
+            propertyConverter: self::getPropertyConverter(),
         );
     }
 
@@ -205,7 +191,7 @@ trait CRBehavioralTestsSubjectProvider
             // ensure that the current content dimensions and node types of exactly THE content repository are preserved
             FakeContentDimensionSourceFactory::setContentDimensionSource($contentRepository->getContentDimensionSource());
             FakeNodeTypeManagerFactory::setNodeTypeManager($contentRepository->getNodeTypeManager());
-            FakeReferenceTypeGraphFactory::setConfiguration(Yaml::parse($serializedReferenceTypesConfiguration->getRaw()) ?? []);
+            FakeReferenceTypeGraphFactory::setConfiguration(Yaml::parse($serializedReferenceTypesConfiguration->getRaw()) ?? [], self::getPropertyConverter());
             $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
@@ -279,6 +265,25 @@ trait CRBehavioralTestsSubjectProvider
         Assert::assertNull($result);
 
         return $contentRepository;
+    }
+
+    private static function getPropertyConverter(): PropertyConverter
+    {
+        return new PropertyConverter(
+            new Serializer([
+                new DateTimeNormalizer(),
+                new ScalarNormalizer(),
+                new BackedEnumNormalizer(),
+                new ArrayNormalizer(),
+                new UriNormalizer(),
+                new ValueObjectArrayDenormalizer(),
+                new ValueObjectBoolDenormalizer(),
+                new ValueObjectFloatDenormalizer(),
+                new ValueObjectIntDenormalizer(),
+                new ValueObjectStringDenormalizer(),
+                new CollectionTypeDenormalizer()
+            ])
+        );
     }
 
     abstract protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository;

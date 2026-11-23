@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -38,6 +39,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * This tests ensures that the subscribers are updated without any locking problems (and to test via {@see DebugEventProjection} that locking is used at all!)
@@ -97,7 +99,7 @@ class ParallelWritingInWorkspacesTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
-        FakeReferenceTypeGraphFactory::setConfiguration([]);
+        FakeReferenceTypeGraphFactory::setConfiguration([], new PropertyConverter(new Serializer()));
 
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 

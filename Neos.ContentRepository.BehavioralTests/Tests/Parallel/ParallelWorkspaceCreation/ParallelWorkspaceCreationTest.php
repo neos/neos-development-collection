@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeA
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
@@ -39,6 +40,7 @@ use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
+use Symfony\Component\Serializer\Serializer;
 
 class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
 {
@@ -74,7 +76,7 @@ class ParallelWorkspaceCreationTest extends AbstractParallelTestCase
                 ]
             ]
         ]);
-        FakeReferenceTypeGraphFactory::setConfiguration([]);
+        FakeReferenceTypeGraphFactory::setConfiguration([], new PropertyConverter(new Serializer()));
 
         $setupLockResource = fopen(self::SETUP_LOCK_PATH, 'w+');
 
