@@ -43,7 +43,7 @@ use Neos\Utility\Arrays;
  *    and their sub node types.
  *
  * NOTE: Implementers of ContentSubgraphInterface need to take of implementing the above
- *       semantics. You can use the internal method {@see ExpandedReferenceTypeCriteria::create}
+ *       semantics. You can use the internal method {@see ExpandedNodeTypeCriteria::create}
  *       to take sub-nodes into account.
  *
  * @api

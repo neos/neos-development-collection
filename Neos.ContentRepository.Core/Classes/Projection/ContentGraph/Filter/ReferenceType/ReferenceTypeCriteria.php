@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\ReferenceType;
 
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\Utility\Arrays;
@@ -35,16 +37,15 @@ use Neos\Utility\Arrays;
  * 1) By specifying a reference type, you allow or deny it *and all of its sub reference types*
  *    according to the reference type hierarchy.
  *
- * 2) Deny rules win over allow rules.
+ * 2) Deny rules win over allow rules when the distance to a concrete reference type is identical.
  *
  * 3) If no constraint is specified, everything is allowed.
  *
  * 4) If only deny rules are specified, everything is allowed **except** the specified reference types
  *    and their sub reference types.
  *
- * NOTE: Implementers of ContentSubgraphInterface need to take of implementing the above
- *       semantics. You can use the internal method {@see ExpandedReferenceTypeCriteria::create}
- *       to take sub reference types into account.
+ * NOTE: Implementers of ContentSubgraphInterface can use the reference type graph {@see ReferenceTypeGraph::getReferenceTypesMatchingConstraints()}
+ * using the below {@see self::toReferenceTypeFilters method}
  *
  * @api
  */
@@ -138,5 +139,15 @@ final readonly class ReferenceTypeCriteria
         }
 
         return implode(',', $parts);
+    }
+
+    public function toReferenceTypeFilters(): ReferenceTypeFilters
+    {
+        return ReferenceTypeFilters::create(
+            includeWildcard: $this->explicitlyAllowedReferenceTypeNames->isEmpty(),
+            includeAbstract: false,
+            explicitlyIncludedReferenceTypeNames: $this->explicitlyAllowedReferenceTypeNames,
+            explicitlyExcludedReferenceTypeNames: $this->explicitlyDisallowedReferenceTypeNames,
+        );
     }
 }

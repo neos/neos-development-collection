@@ -49,7 +49,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\OrderingDirection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\TimestampField;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\ReferenceType\ExpandedReferenceTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -545,7 +544,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "dn");
         }
         if ($filter->referenceTypes !== null) {
-            $this->nodeQueryBuilder->addReferenceTypeCriteria($queryBuilder, ExpandedReferenceTypeCriteria::create($filter->referenceTypes, $this->referenceTypeGraph), "r");
+            $this->nodeQueryBuilder->addReferenceTypeCriteria(
+                $queryBuilder,
+                $this->referenceTypeGraph->getReferenceTypesMatchingConstraints($filter->referenceTypes->toReferenceTypeFilters())->toNames(),
+                "r"
+            );
         }
         if ($filter->nodeSearchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "dn");
@@ -616,7 +619,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->nodeQueryBuilder->addNodeTypeCriteria($queryBuilder, ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager), "sn");
         }
         if ($filter->referenceTypes !== null) {
-            $this->nodeQueryBuilder->addReferenceTypeCriteria($queryBuilder, ExpandedReferenceTypeCriteria::create($filter->referenceTypes, $this->referenceTypeGraph), "r");
+            $this->nodeQueryBuilder->addReferenceTypeCriteria(
+                $queryBuilder,
+                $this->referenceTypeGraph->getReferenceTypesMatchingConstraints($filter->referenceTypes->toReferenceTypeFilters())->toNames(),
+                "r"
+            );
         }
         if ($filter->nodeSearchTerm !== null) {
             $this->nodeQueryBuilder->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "sn");

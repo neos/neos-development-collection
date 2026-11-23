@@ -14,6 +14,10 @@ Feature: Node referencing without dimensions
          constraints:
            maxItems: 1
     """
+    And using the following reference types:
+    """yaml
+    'Neos.ContentRepository:Featureless': []
+    """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
