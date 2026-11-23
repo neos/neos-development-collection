@@ -61,7 +61,7 @@ final readonly class LocalGraphStateDiff implements \IteratorAggregate, \JsonSer
     }
 
     /**
-     * @return array<string,LocalSubgraphStateDiff>
+     * @return array<string,LocalSubgraphStateDiff|LocalSubgraphStateRemovedDiff>
      */
     public function jsonSerialize(): array
     {
