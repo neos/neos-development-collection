@@ -530,6 +530,7 @@ Feature: Test cases for node variation edge cases
       superTypes:
         'Neos.Neos:Document': true
     """
+
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
@@ -554,7 +555,28 @@ Feature: Test cases for node variation edge cases
       | nodeAggregateId | "shernode-homes"  |
       | sourceOrigin    | {"language":"de"} |
       | targetOrigin    | {"language":"en"} |
-
+    And A site exists for node name "site"
+    And the sites configuration is:
+    """yaml
+    Neos:
+      Neos:
+        sites:
+          'site':
+            preset: default
+            uriPathSuffix: ''
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de: de
+                        en: en-GB
+                        gsw: gsw
+                        en_US: en-US
+    """
     #
     # peer variant of hidden node below a parent hidden in target dimensions
     #
@@ -673,51 +695,52 @@ Feature: Test cases for node variation edge cases
       | targetOrigin    | {"language":"en"}    |
 
     # peer variants do not copy subtree tags
-    Then I am in dimension space point {"language":"gsw"}
-    And I expect the node with aggregate identifier "peer-parent" to not contain the tag "disabled"
+    When I am in dimension space point {"language":"gsw"}
+    Then I expect the node with aggregate identifier "peer-parent" to not contain the tag "disabled"
+    And the URL "/gsw/peer-parent" should match the node "peer-parent" in dimension '{"language":"gsw"}'
+    And the node "peer-parent" in dimension '{"language":"gsw"}' should resolve to URL "/gsw/peer-parent"
     And I expect the node with aggregate identifier "hidden-peer" to be explicitly tagged "disabled"
+    And the node "hidden-peer" in dimension '{"language":"gsw"}' should resolve to URL "/gsw/peer-parent/peer"
+    And no node should match URL "/gsw/peer-parent/peer"
 
-    Then I am in dimension space point {"language":"en_US"}
-    And I expect the node with aggregate identifier "peer-parent" to be explicitly tagged "disabled"
+    When I am in dimension space point {"language":"en_US"}
+    Then I expect the node with aggregate identifier "peer-parent" to be explicitly tagged "disabled"
+    And the node "peer-parent" in dimension '{"language":"en_US"}' should resolve to URL "/en-US/peer-parent"
+    And no node should match URL "/en-US/peer-parent"
     And I expect the node with aggregate identifier "hidden-peer" to inherit the tag "disabled"
+    And the node "hidden-peer" in dimension '{"language":"en_US"}' should resolve to URL "/en-US/peer-parent/peer"
+    And no node should match URL "/en-US/peer-parent/peer"
 
     # specialization variants copy subtree tags
-    Then I am in dimension space point {"language":"de"}
-    And I expect the node with aggregate identifier "specialist-parent" to not contain the tag "disabled"
+    When I am in dimension space point {"language":"de"}
+    Then I expect the node with aggregate identifier "specialist-parent" to not contain the tag "disabled"
+    And the node "specialist-parent" in dimension '{"language":"de"}' should resolve to URL "/de/specialist-parent"
+    And the URL "/de/specialist-parent" should match the node "specialist-parent" in dimension '{"language":"de"}'
     And I expect the node with aggregate identifier "hidden-specialist" to be explicitly tagged "disabled"
+    And the node "hidden-specialist" in dimension '{"language":"de"}' should resolve to URL "/de/specialist-parent/specialization"
+    And no node should match URL "/de/specialist-parent/specialization"
 
-    Then I am in dimension space point {"language":"gsw"}
-    And I expect the node with aggregate identifier "specialist-parent" to be explicitly tagged "disabled"
+    When I am in dimension space point {"language":"gsw"}
+    Then I expect the node with aggregate identifier "specialist-parent" to be explicitly tagged "disabled"
+    And the node "specialist-parent" in dimension '{"language":"gsw"}' should resolve to URL "/gsw/specialist-parent"
+    And no node should match URL "/gsw/specialist-parent"
     And I expect the node with aggregate identifier "hidden-specialist" to be explicitly tagged "disabled"
+    And the node "hidden-specialist" in dimension '{"language":"gsw"}' should resolve to URL "/gsw/specialist-parent/specialization"
+    And no node should match URL "/gsw/specialist-parent/specialization"
 
     # generalization variants copy subtree tags
-    Then I am in dimension space point {"language":"en_US"}
-    And I expect the node with aggregate identifier "general-parent" to be explicitly tagged "disabled"
+    When I am in dimension space point {"language":"en_US"}
+    Then I expect the node with aggregate identifier "general-parent" to be explicitly tagged "disabled"
+    And the node "general-parent" in dimension '{"language":"en_US"}' should resolve to URL "/en-US/general-parent"
+    And no node should match URL "/en-US/general-parent"
     And I expect the node with aggregate identifier "hidden-general" to be explicitly tagged "disabled"
+    And the node "hidden-general" in dimension '{"language":"en_US"}' should resolve to URL "/en-US/general-parent/generalization"
+    And no node should match URL "/en-US/general-parent/generalization"
 
-    Then I am in dimension space point {"language":"en"}
-    And I expect the node with aggregate identifier "general-parent" to not contain the tag "disabled"
+    When I am in dimension space point {"language":"en"}
+    Then I expect the node with aggregate identifier "general-parent" to not contain the tag "disabled"
+    And the node "general-parent" in dimension '{"language":"en"}' should resolve to URL "/en-GB/general-parent"
+    And the URL "/en-GB/general-parent" should match the node "general-parent" in dimension '{"language":"en"}'
     And I expect the node with aggregate identifier "hidden-general" to be explicitly tagged "disabled"
-
-    And I expect the documenturipath table to contain exactly:
-      | uripath                            | nodeaggregateid          | dimensionspacepointhash  | disabled |
-      | ""                                 | "lady-eleonode-rootford" | hash{"language":"en_US"} | 0        |
-      | ""                                 | "lady-eleonode-rootford" | hash{"language":"de"}    | 0        |
-      | ""                                 | "lady-eleonode-rootford" | hash{"language":"en"}    | 0        |
-      | ""                                 | "lady-eleonode-rootford" | hash{"language":"gsw"}   | 0        |
-      | ""                                 | "shernode-homes"         | hash{"language":"en_US"} | 0        |
-      | ""                                 | "shernode-homes"         | hash{"language":"de"}    | 0        |
-      | ""                                 | "shernode-homes"         | hash{"language":"en"}    | 0        |
-      | ""                                 | "shernode-homes"         | hash{"language":"gsw"}   | 0        |
-      | "general-parent"                   | "general-parent"         | hash{"language":"en_US"} | 1        |
-      | "general-parent"                   | "general-parent"         | hash{"language":"en"}    | 0        |
-      | "general-parent/generalization"    | "hidden-general"         | hash{"language":"en_US"} | 2        |
-      | "general-parent/generalization"    | "hidden-general"         | hash{"language":"en"}    | 1        |
-      | "peer-parent"                      | "peer-parent"            | hash{"language":"en_US"} | 1        |
-      | "peer-parent"                      | "peer-parent"            | hash{"language":"gsw"}   | 0        |
-      | "peer-parent/peer"                 | "hidden-peer"            | hash{"language":"en_US"} | 1        |
-      | "peer-parent/peer"                 | "hidden-peer"            | hash{"language":"gsw"}   | 1        |
-      | "specialist-parent"                | "specialist-parent"      | hash{"language":"de"}    | 0        |
-      | "specialist-parent"                | "specialist-parent"      | hash{"language":"gsw"}   | 1        |
-      | "specialist-parent/specialization" | "hidden-specialist"      | hash{"language":"de"}    | 1        |
-      | "specialist-parent/specialization" | "hidden-specialist"      | hash{"language":"gsw"}   | 2        |
+    And the node "hidden-general" in dimension '{"language":"en"}' should resolve to URL "/en-GB/general-parent/generalization"
+    And no node should match URL "/en-UK/general-parent/generalization"
