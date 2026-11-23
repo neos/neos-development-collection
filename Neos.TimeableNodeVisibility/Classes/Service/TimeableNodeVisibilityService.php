@@ -32,6 +32,13 @@ use Psr\Log\LoggerInterface;
 #[Flow\Scope('singleton')]
 class TimeableNodeVisibilityService
 {
+    /**
+     * This prefilter timezone is the maximum possible timezone the datetime can have in the node property. This
+     * widens the prefiltered nodes from content graph, which might get filtered exactly after converting to
+     * PHPs DateTimeImmutable. A meaningful comparison of DateTimes with timezones in MySQL/MariaDB is not possible.
+     */
+    private const PREFILTER_TIMEZONE = '+14:00';
+
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -85,6 +92,7 @@ class TimeableNodeVisibilityService
     private function getNodesWithExceededDates(ContentRepository $contentRepository, WorkspaceName $workspaceName, \DateTimeImmutable $now): \Generator
     {
         $dimensionSpacePoints = $contentRepository->getVariationGraph()->getDimensionSpacePoints();
+        $upperBoundDateTimeWithPrefilterTimeZone = $now->setTimezone(new \DateTimeZone(self::PREFILTER_TIMEZONE));
 
         foreach ($dimensionSpacePoints as $dimensionSpacePoint) {
 
@@ -106,8 +114,8 @@ class TimeableNodeVisibilityService
                 FindDescendantNodesFilter::create(
                     nodeTypes: NodeTypeCriteria::createWithAllowedNodeTypeNames(NodeTypeNames::fromStringArray(['Neos.TimeableNodeVisibility:Timeable'])),
                     propertyValue: OrCriteria::create(
-                        PropertyValueLessThanOrEqual::create(PropertyName::fromString('enableAfterDateTime'), $now->format(\DateTime::RFC3339)),
-                        PropertyValueLessThanOrEqual::create(PropertyName::fromString('disableAfterDateTime'), $now->format(\DateTime::RFC3339)),
+                        PropertyValueLessThanOrEqual::create(PropertyName::fromString('enableAfterDateTime'), $upperBoundDateTimeWithPrefilterTimeZone->format(\DateTimeInterface::RFC3339)),
+                        PropertyValueLessThanOrEqual::create(PropertyName::fromString('disableAfterDateTime'), $upperBoundDateTimeWithPrefilterTimeZone->format(\DateTimeInterface::RFC3339)),
                     )
 
                 )
