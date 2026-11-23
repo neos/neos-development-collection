@@ -195,8 +195,6 @@ trait RoutingTrait
         Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
     }
 
-    private $eventListenerRegistered = false;
-
     private function match(UriInterface $uri): ?NodeAddress
     {
         $router = $this->getObject(RouterInterface::class);
@@ -256,9 +254,8 @@ trait RoutingTrait
      */
     public function tableContainsExactly(TableNode $expectedRows): void
     {
-        /** @var Connection $dbal */
-        $dbal = $this->getObject(EntityManagerInterface::class)->getConnection();
-        $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
+        $dbal = $this->getObject(Connection::class);
+        $columns = implode(', ', $expectedRows->getRow(0));
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
             $this->currentContentRepository->id
         );
@@ -266,6 +263,7 @@ trait RoutingTrait
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 if (str_starts_with($cell, 'hash')) {
+                    // Feature to allow to write | hash{"example":"source"} | in a cell instead of knowing the actual internal hash
                     return DimensionSpacePoint::fromJsonString(substr($cell, strlen('hash')))->hash;
                 }
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
