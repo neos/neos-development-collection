@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\PropertyDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
@@ -26,6 +28,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         public PropertyScope|Undeclared $scope,
         public mixed $defaultValue,
         public PropertyMetadataDictionary $metadata,
+        private PropertyConverter $propertyConverter,
     ) {
     }
 
@@ -39,7 +42,16 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         mixed $defaultValue,
         PropertyMetadataDictionary $metadata,
         ReferenceTypeName|NodeTypeName|null $declaringType,
+        PropertyConverter $propertyConverter,
     ): self {
+        if ($type !== Undeclared::INSTANCE) {
+            if (class_exists($type->value) && !is_null($defaultValue) && !is_object($defaultValue)) {
+                $defaultValue = $propertyConverter->deserializePropertyValue(SerializedPropertyValue::create(
+                    value: $defaultValue,
+                    type: $type->value,
+                ));
+            }
+        }
         if (
             $type !== Undeclared::INSTANCE
             && $defaultValue !== Undeclared::INSTANCE
@@ -58,14 +70,19 @@ final readonly class PropertyDeclaration implements \JsonSerializable
             scope: $scope,
             defaultValue: $defaultValue,
             metadata: $metadata,
+            propertyConverter: $propertyConverter,
         );
     }
 
     /**
      * @param array<string,mixed> $values
      */
-    public static function fromArray(array $values, string $name, ReferenceTypeName|NodeTypeName $declaringType): self
-    {
+    public static function fromArray(
+        array $values,
+        string $name,
+        ReferenceTypeName|NodeTypeName $declaringType,
+        PropertyConverter $propertyConverter,
+    ): self {
         $name = PropertyName::fromString($name);
 
         $type = array_key_exists('type', $values)
@@ -96,10 +113,11 @@ final readonly class PropertyDeclaration implements \JsonSerializable
                 '_catchAll' => GenericArrayPropertyMetadata::create($values),
             ]),
             declaringType: $declaringType,
+            propertyConverter: $propertyConverter,
         );
     }
 
-    public static function fromProperty(Property $property): self
+    public static function fromProperty(Property $property, PropertyConverter $propertyConverter): self
     {
         return new self(
             name: $property->name,
@@ -107,6 +125,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
             scope: $property->scope,
             defaultValue: $property->defaultValue,
             metadata: $property->metadata,
+            propertyConverter: $propertyConverter,
         );
     }
 
@@ -152,6 +171,7 @@ final readonly class PropertyDeclaration implements \JsonSerializable
                 : $subTypePropertyDeclaration->defaultValue,
             metadata: $this->metadata->mergeToSubType($subTypePropertyDeclaration->metadata),
             declaringType: $referenceTypeName,
+            propertyConverter: $this->propertyConverter,
         );
     }
 

@@ -65,6 +65,20 @@ Feature: Node References without Dimensions
           type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
         postalAddress:
           type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
+    'Neos.ContentRepository.Testing:AnotherConstrainedReference':
+      superTypes:
+        'Neos.ContentRepository.Testing:ConstrainedReference': true
+      properties:
+        text:
+          defaultValue: 'my default text'
+        dayOfWeek:
+          defaultValue: 'https://schema.org/Friday'
+        postalAddress:
+          defaultValue:
+            streetAddress: '28 31st of February Street'
+            postalCode: '12345'
+            addressLocality: 'City'
+            addressCountry: 'Country'
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -278,3 +292,47 @@ Feature: Node References without Dimensions
     And I expect this node to be referenced by:
       | Name           | Node                               | Type                                                | Properties                                                                                                      |
       | typedReference | cs-identifier;source-nodandaise;{} | Neos.ContentRepository.Testing:ConstrainedReference | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"} |
+
+    # Remove properties
+    When the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                                                                                                                                                                                     |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                                                       |
+      | references            | [{"referenceName": "typedReference", "references": [{"referenceTypeName": "Neos.ContentRepository.Testing:ConstrainedReference", "properties":{"text":"my other text"}, "target": "anthony-destinode"}]}] |
+
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
+    And I expect this node to have the following references:
+      | Name           | Node                               | Type                                                | Properties               |
+      | typedReference | cs-identifier;anthony-destinode;{} | Neos.ContentRepository.Testing:ConstrainedReference | {"text":"my other text"} |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
+    And I expect this node to be referenced by:
+      | Name           | Node                               | Type                                                | Properties               |
+      | typedReference | cs-identifier;source-nodandaise;{} | Neos.ContentRepository.Testing:ConstrainedReference | {"text":"my other text"} |
+
+    # Default values
+    When the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                                                                                                                                                     |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                       |
+      | references            | [{"referenceName": "typedReference", "references": [{"referenceTypeName": "Neos.ContentRepository.Testing:AnotherConstrainedReference", "target": "anthony-destinode"}]}] |
+
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
+    And I expect this node to have the following references:
+      | Name           | Node                               | Type                                                       | Properties                                                                                                              |
+      | typedReference | cs-identifier;anthony-destinode;{} | Neos.ContentRepository.Testing:AnotherConstrainedReference | {"text": "my default text", "dayOfWeek": "DayOfWeek:https://schema.org/Friday", "postalAddress": "PostalAddress:dummy"} |
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
+    And I expect this node to be referenced by:
+      | Name           | Node                               | Type                                                       | Properties                                                                                                              |
+      | typedReference | cs-identifier;source-nodandaise;{} | Neos.ContentRepository.Testing:AnotherConstrainedReference | {"text": "my default text", "dayOfWeek": "DayOfWeek:https://schema.org/Friday", "postalAddress": "PostalAddress:dummy"} |
+
+    # Unset
+    When the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                                   |
+      | sourceNodeAggregateId | "source-nodandaise"                                     |
+      | references            | [{"referenceName": "typedReference", "references": []}] |
+
+    Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
+    And I expect this node to have no references
+
+    And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
+    And I expect this node to not be referenced

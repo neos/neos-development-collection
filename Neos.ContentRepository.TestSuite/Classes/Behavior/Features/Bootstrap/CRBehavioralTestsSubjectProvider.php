@@ -18,6 +18,16 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\UriNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
@@ -27,6 +37,9 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -102,7 +115,24 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingTheFollowingReferenceTypes(PyStringNode $serializedReferenceTypesDeclarationDictionary): void
     {
-        FakeReferenceTypeGraphFactory::setConfiguration(Yaml::parse($serializedReferenceTypesDeclarationDictionary->getRaw()) ?? []);
+        FakeReferenceTypeGraphFactory::setConfiguration(
+            referenceTypesToUse: Yaml::parse($serializedReferenceTypesDeclarationDictionary->getRaw()) ?? [],
+            propertyConverter:  new PropertyConverter(
+                new Serializer([
+                    new DateTimeNormalizer(),
+                    new ScalarNormalizer(),
+                    new BackedEnumNormalizer(),
+                    new ArrayNormalizer(),
+                    new UriNormalizer(),
+                    new ValueObjectArrayDenormalizer(),
+                    new ValueObjectBoolDenormalizer(),
+                    new ValueObjectFloatDenormalizer(),
+                    new ValueObjectIntDenormalizer(),
+                    new ValueObjectStringDenormalizer(),
+                    new CollectionTypeDenormalizer()
+                ])
+            ),
+        );
     }
 
     /**

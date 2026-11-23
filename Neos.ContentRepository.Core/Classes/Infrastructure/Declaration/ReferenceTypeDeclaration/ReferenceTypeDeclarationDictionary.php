@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeDistances;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
@@ -36,11 +37,11 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
     /**
      * @param array<string,array<string,mixed>> $values
      */
-    public static function fromArray(array $values): self
+    public static function fromArray(array $values, PropertyConverter $propertyConverter): self
     {
         $items = [];
         foreach ($values as $name => $item) {
-            $items[$name] = ReferenceTypeDeclaration::fromArray($item, $name);
+            $items[$name] = ReferenceTypeDeclaration::fromArray($item, $name, $propertyConverter);
         }
 
         return new self($items);

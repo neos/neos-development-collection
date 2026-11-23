@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
@@ -54,6 +56,20 @@ final readonly class SerializedNodeReference implements \JsonSerializable
             ),
             properties: isset($array['properties']) ? SerializedPropertyValues::fromArray($array['properties']) : SerializedPropertyValues::createEmpty()
         );
+    }
+
+    public function mergeDefaultReferencePropertyValues(ReferenceTypeGraph $referenceTypeGraph, PropertyConverter $propertyConverter): self
+    {
+        $referenceType = $referenceTypeGraph->getReferenceType($this->referenceTypeName);
+
+        return $referenceType
+            ? new self(
+                $this->targetNodeAggregateId,
+                $this->referenceTypeName,
+                SerializedPropertyValues::defaultFromReferenceType($referenceType, $propertyConverter)
+                    ->merge($this->properties),
+            )
+            : $this;
     }
 
     /**

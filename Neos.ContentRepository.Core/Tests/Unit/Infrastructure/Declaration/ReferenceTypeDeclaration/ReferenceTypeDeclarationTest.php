@@ -11,6 +11,16 @@ use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeConstraintsDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclaration;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\UriNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
@@ -20,6 +30,9 @@ use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ReferenceTypeDeclarationTest extends TestCase
 {
@@ -34,6 +47,7 @@ class ReferenceTypeDeclarationTest extends TestCase
         bool $resultExpected,
         ?\Throwable $expectedException,
     ): void {
+        $propertyConverter = self::createPropertyConverter();
         try {
             $actualResult = ReferenceTypeDeclaration::create(
                 name: $name,
@@ -42,6 +56,7 @@ class ReferenceTypeDeclarationTest extends TestCase
                 superTypeNames: $superTypeNames,
                 constraints: $constraints,
                 properties: $properties,
+                propertyConverter: $propertyConverter,
             );
             $actualException = null;
         } catch (\Throwable $actualException) {
@@ -70,6 +85,8 @@ class ReferenceTypeDeclarationTest extends TestCase
      */
     public static function creationParametersProvider(): iterable
     {
+        $propertyConverter = self::createPropertyConverter();
+
         yield 'minimal parameters' => [
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
             'isAbstract' => false,
@@ -110,6 +127,7 @@ class ReferenceTypeDeclarationTest extends TestCase
                         ]),
                     ]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    propertyConverter: $propertyConverter,
                 )
             ),
             'resultExpected' => true,
@@ -142,7 +160,9 @@ class ReferenceTypeDeclarationTest extends TestCase
         string $name,
         ReferenceTypeDeclaration $expectedResult,
     ): void {
-        Assert::assertEquals($expectedResult, ReferenceTypeDeclaration::fromArray($values, $name));
+        $propertyConverter = self::createPropertyConverter();
+
+        Assert::assertEquals($expectedResult, ReferenceTypeDeclaration::fromArray($values, $name, $propertyConverter));
     }
 
     /**
@@ -154,6 +174,8 @@ class ReferenceTypeDeclarationTest extends TestCase
      */
     public static function arrayProvider(): iterable
     {
+        $propertyConverter = self::createPropertyConverter();
+
         yield 'minimal values' => [
             'values' => [],
             'name' => 'Acme.Site:Reference',
@@ -167,6 +189,7 @@ class ReferenceTypeDeclarationTest extends TestCase
                     targetNodeTypes: NodeTypeFiltersDeclaration::create(false, []),
                 ),
                 properties: PropertyDeclarationDictionary::create(),
+                propertyConverter: $propertyConverter,
             )
         ];
 
@@ -222,9 +245,30 @@ class ReferenceTypeDeclarationTest extends TestCase
                             ]),
                         ]),
                         declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                        propertyConverter: $propertyConverter,
                     )
                 ),
+                propertyConverter: $propertyConverter,
             )
         ];
+    }
+
+    private static function createPropertyConverter(): PropertyConverter
+    {
+        return new PropertyConverter(
+            new Serializer([
+                new DateTimeNormalizer(),
+                new ScalarNormalizer(),
+                new BackedEnumNormalizer(),
+                new ArrayNormalizer(),
+                new UriNormalizer(),
+                new ValueObjectArrayDenormalizer(),
+                new ValueObjectBoolDenormalizer(),
+                new ValueObjectFloatDenormalizer(),
+                new ValueObjectIntDenormalizer(),
+                new ValueObjectStringDenormalizer(),
+                new CollectionTypeDenormalizer()
+            ])
+        );
     }
 }

@@ -167,7 +167,7 @@ trait NodeReferencing
                 $contentGraph->getContentStreamId(),
                 $command->sourceNodeAggregateId,
                 $affectedOrigins,
-                $references,
+                $references->mergeDefaultReferencePropertyValues($this->referenceTypeGraph, $this->propertyConverter),
             );
         }
 

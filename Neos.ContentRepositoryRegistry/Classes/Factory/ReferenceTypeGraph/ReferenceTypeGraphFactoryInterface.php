@@ -9,6 +9,9 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 
 interface ReferenceTypeGraphFactoryInterface
 {
-    /** @param array<string, mixed> $options */
-    public function build(ContentRepositoryId $contentRepositoryId, array $options): ReferenceTypeGraph;
+    /**
+     * @param array<string, mixed> $contentRepositorySettings
+     * @param array<string, mixed> $options
+     */
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $options): ReferenceTypeGraph;
 }

@@ -251,7 +251,7 @@ final class ContentRepositoryRegistry
         if (!$referenceTypeGraphFactory instanceof ReferenceTypeGraphFactoryInterface) {
             throw InvalidConfigurationException::fromMessage('referenceTypeGraph.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, ReferenceTypeGraphFactoryInterface::class, get_debug_type($referenceTypeGraphFactory));
         }
-        return $referenceTypeGraphFactory->build($contentRepositoryId, $contentRepositorySettings['referenceTypeGraph']['options'] ?? []);
+        return $referenceTypeGraphFactory->build($contentRepositoryId, $contentRepositorySettings, $contentRepositorySettings['referenceTypeGraph']['options'] ?? []);
     }
 
     /** @param array<string, mixed> $contentRepositorySettings */

@@ -15,6 +15,16 @@ use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclarat
 use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclaration;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceTypeDeclarationDictionary;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Undeclared;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\UriNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeFilters;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -32,6 +42,9 @@ use Neos\ContentRepository\Core\SharedModel\Property\PropertyMetadataDictionary;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class ReferenceTypeDeclarationDictionaryTest extends TestCase
 {
@@ -57,6 +70,8 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
      */
     public static function referenceTypeDeclarationProvider(): iterable
     {
+        $propertyConverter = self::createPropertyConverter();
+
         yield 'empty set' => [
             'subject' => ReferenceTypeDeclarationDictionary::create(),
             'expectedException' => null,
@@ -76,6 +91,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItHasUnknownSuperTypes(
@@ -100,6 +116,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: $propertyConverter,
                 ),
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:FinalReference'),
@@ -111,6 +128,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItHasFinalSuperTypes(
@@ -135,6 +153,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: $propertyConverter,
                 ),
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:AnotherReference'),
@@ -148,6 +167,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItHasCircularSuperTypes(
@@ -175,6 +195,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(includeWildcard: true, filteredNodeTypes: []),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: $propertyConverter,
                 ),
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:ReferenceA'),
@@ -193,8 +214,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                             defaultValue: null,
                             metadata: PropertyMetadataDictionary::create([]),
                             declaringType: ReferenceTypeName::fromString('Acme.Site:ReferenceA'),
+                            propertyConverter: $propertyConverter,
                         )
                     ),
+                    propertyConverter: $propertyConverter,
                 ),
                 ReferenceTypeDeclaration::create(
                     name: ReferenceTypeName::fromString('Acme.Site:ReferenceB'),
@@ -213,8 +236,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                             defaultValue: null,
                             metadata: PropertyMetadataDictionary::create([]),
                             declaringType: ReferenceTypeName::fromString('Acme.Site:ReferenceB'),
+                            propertyConverter: $propertyConverter,
                         )
                     ),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
             'expectedException' => ReferenceTypeDeclarationIsInvalid::becauseItHasConflictingSuperTypes(
@@ -274,6 +299,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         targetNodeTypes: NodeTypeFiltersDeclaration::create(false, ['Acme.Site:Node' => true]),
                     ),
                     properties: PropertyDeclarationDictionary::create(),
+                    propertyConverter: self::createPropertyConverter(),
                 )
             ),
             'name' => ReferenceTypeName::fromString('Acme.Site:Reference'),
@@ -716,6 +742,8 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
 
     private static function getReferenceDeclaration(ReferenceTypeNameList $superTypeNames): ReferenceTypeDeclaration
     {
+        $propertyConverter = self::createPropertyConverter();
+
         return ReferenceTypeDeclaration::create(
             name: ReferenceTypeName::fromString('Acme.Site:Reference'),
             isAbstract: false,
@@ -749,7 +777,8 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                             'wat' => 'atouille',
                         ]),
                     ]),
-                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference')
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('value'),
@@ -757,14 +786,18 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     scope: Undeclared::INSTANCE,
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
-                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference')
+                    declaringType: ReferenceTypeName::fromString('Acme.Site:Reference'),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
+            propertyConverter: $propertyConverter,
         );
     }
 
     private static function getBaseReferenceDeclaration(): ReferenceTypeDeclaration
     {
+        $propertyConverter = self::createPropertyConverter();
+
         return ReferenceTypeDeclaration::create(
             name: ReferenceTypeName::fromString('Acme.Site:BaseReference'),
             isAbstract: true,
@@ -800,6 +833,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         ]),
                     ]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('abstract'),
@@ -808,13 +842,17 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: 'base abstract',
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:BaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
+            propertyConverter: $propertyConverter,
         );
     }
 
     private static function getAnotherBaseReferenceDeclaration(): ReferenceTypeDeclaration
     {
+        $propertyConverter = self::createPropertyConverter();
+
         return ReferenceTypeDeclaration::create(
             name: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
             isAbstract: true,
@@ -846,6 +884,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: Undeclared::INSTANCE,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('initiallyUndeclaredAndUnmodified'),
@@ -854,6 +893,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: Undeclared::INSTANCE,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('initiallyDeclaredAndUnmodified'),
@@ -862,6 +902,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: 42,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('initiallyDeclaredAndModified'),
@@ -870,6 +911,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: 42,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
@@ -883,6 +925,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         ]),
                     ]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('description'),
@@ -891,13 +934,17 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:AnotherBaseReference'),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
+            propertyConverter: $propertyConverter,
         );
     }
 
     private static function getIntermediateReferenceDeclaration(): ReferenceTypeDeclaration
     {
+        $propertyConverter = self::createPropertyConverter();
+
         return ReferenceTypeDeclaration::create(
             name: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
             isAbstract: true,
@@ -923,6 +970,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: 43,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('initiallyDeclaredAndModified'),
@@ -931,6 +979,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: 43,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('text'),
@@ -944,6 +993,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                         ]),
                     ]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    propertyConverter: $propertyConverter,
                 ),
                 PropertyDeclaration::create(
                     name: PropertyName::fromString('author'),
@@ -952,8 +1002,10 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     defaultValue: null,
                     metadata: PropertyMetadataDictionary::create([]),
                     declaringType: ReferenceTypeName::fromString('Acme.Site:IntermediateReference'),
+                    propertyConverter: $propertyConverter,
                 ),
             ),
+            propertyConverter: $propertyConverter,
         );
     }
 
@@ -1241,6 +1293,26 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                 ),
             ),
             properties: PropertyDeclarationDictionary::create(),
+            propertyConverter: self::createPropertyConverter(),
+        );
+    }
+
+    private static function createPropertyConverter(): PropertyConverter
+    {
+        return new PropertyConverter(
+            new Serializer([
+                new DateTimeNormalizer(),
+                new ScalarNormalizer(),
+                new BackedEnumNormalizer(),
+                new ArrayNormalizer(),
+                new UriNormalizer(),
+                new ValueObjectArrayDenormalizer(),
+                new ValueObjectBoolDenormalizer(),
+                new ValueObjectFloatDenormalizer(),
+                new ValueObjectIntDenormalizer(),
+                new ValueObjectStringDenormalizer(),
+                new CollectionTypeDenormalizer()
+            ])
         );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflict;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Property\Property;
@@ -36,11 +37,14 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
     /**
      * @param array<string,array<string,mixed>> $values
      */
-    public static function fromArray(array $values, NodeTypeName|ReferenceTypeName $declaringType): self
-    {
+    public static function fromArray(
+        array $values,
+        NodeTypeName|ReferenceTypeName $declaringType,
+        PropertyConverter $propertyConverter,
+    ): self {
         $items = [];
         foreach ($values as $name => $item) {
-            $items[$name] = PropertyDeclaration::fromArray($item, $name, $declaringType);
+            $items[$name] = PropertyDeclaration::fromArray($item, $name, $declaringType, $propertyConverter);
         }
         return new self($items);
     }
@@ -53,10 +57,11 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
         self|PropertyDictionary $subTypeProperties,
         array &$superTypeConflicts,
         ReferenceTypeName $referenceTypeName,
+        PropertyConverter $propertyConverter,
         ?ReferenceTypeName $previousReferenceTypeName = null,
     ): self {
         if ($subTypeProperties instanceof PropertyDictionary) {
-            $subTypeProperties = self::fromPropertyDictionary($subTypeProperties);
+            $subTypeProperties = self::fromPropertyDictionary($subTypeProperties, $propertyConverter);
         }
         $items = $this->items;
         foreach ($subTypeProperties->items as $key => $item) {
@@ -70,10 +75,10 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
         return new self($items);
     }
 
-    public static function fromPropertyDictionary(PropertyDictionary $dictionary): self
+    public static function fromPropertyDictionary(PropertyDictionary $dictionary, PropertyConverter $propertyConverter): self
     {
         return new self(array_map(
-            fn (Property $item): PropertyDeclaration => PropertyDeclaration::fromProperty($item),
+            fn (Property $item): PropertyDeclaration => PropertyDeclaration::fromProperty($item, $propertyConverter),
             $dictionary->items,
         ));
     }

@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDe
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflicts;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeConstraints;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
@@ -24,6 +25,7 @@ final readonly class ReferenceTypeDeclaration
         public ReferenceTypeNameList $superTypeNames,
         public ReferenceTypeConstraintsDeclaration $constraints,
         public PropertyDeclarationDictionary $properties,
+        private PropertyConverter $propertyConverter,
     ) {
     }
 
@@ -37,6 +39,7 @@ final readonly class ReferenceTypeDeclaration
         ReferenceTypeNameList $superTypeNames,
         ReferenceTypeConstraintsDeclaration $constraints,
         PropertyDeclarationDictionary $properties,
+        PropertyConverter $propertyConverter,
     ): self {
         if ($isAbstract && $isFinal) {
             throw ReferenceTypeDeclarationIsInvalid::becauseItIsBothAbstractAndFinal($name);
@@ -49,13 +52,14 @@ final readonly class ReferenceTypeDeclaration
             superTypeNames: $superTypeNames,
             constraints: $constraints,
             properties: $properties,
+            propertyConverter: $propertyConverter,
         );
     }
 
     /**
      * @param array<string,array<string,mixed>> $values
      */
-    public static function fromArray(array $values, string $name): self
+    public static function fromArray(array $values, string $name, PropertyConverter $propertyConverter): self
     {
         $name = ReferenceTypeName::fromString($name);
         if (!is_bool(($isAbstract = $values['abstract'] ?? false))) {
@@ -71,7 +75,8 @@ final readonly class ReferenceTypeDeclaration
             isFinal: $isFinal,
             superTypeNames: ReferenceTypeNameList::fromStringArray(array_keys($values['superTypes'] ?? [])),
             constraints: ReferenceTypeConstraintsDeclaration::fromArray($values['constraints'] ?? []),
-            properties: PropertyDeclarationDictionary::fromArray($values['properties'] ?? [], $name),
+            properties: PropertyDeclarationDictionary::fromArray($values['properties'] ?? [], $name, $propertyConverter),
+            propertyConverter: $propertyConverter,
         );
     }
 
@@ -203,11 +208,11 @@ final readonly class ReferenceTypeDeclaration
         foreach ($superTypes as $superType) {
             $mergedSuperTypeMembers = $mergedMembersDictionary->getMergedDeclaredReferenceTypeMembers($superType->name)
                 ?: throw new \RuntimeException('Space time continuum exception: somehow got a supertype without merged members, must not happen');
-            $properties = $properties?->mergeToSubType($mergedSuperTypeMembers->properties, $superTypeConflicts, $superType->name, $previousSuperType?->name)
+            $properties = $properties?->mergeToSubType($mergedSuperTypeMembers->properties, $superTypeConflicts, $superType->name, $this->propertyConverter, $previousSuperType?->name)
                 ?: $mergedSuperTypeMembers->properties;
             $previousSuperType = $superType;
         }
-        $properties = $properties->mergeToSubType($this->properties, $superTypeConflicts, $this->name);
+        $properties = $properties->mergeToSubType($this->properties, $superTypeConflicts, $this->name, $this->propertyConverter);
         if ($superTypeConflicts !== []) {
             throw ReferenceTypeDeclarationIsInvalid::becauseItHasConflictingSuperTypes(
                 referenceTypeName: $this->name,
