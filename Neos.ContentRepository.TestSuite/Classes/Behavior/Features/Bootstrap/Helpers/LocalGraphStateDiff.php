@@ -10,13 +10,13 @@ use Neos\Flow\Annotations as Flow;
  * The difference between two local graph states, indexed by dimension space point hash
  *
  * @internal
- * @implements \IteratorAggregate<string,LocalSubgraphStateDiff>
+ * @implements \IteratorAggregate<string,LocalSubgraphStateDiff|LocalSubgraphStateRemovedDiff>
  */
 #[Flow\Proxy(false)]
 final readonly class LocalGraphStateDiff implements \IteratorAggregate, \JsonSerializable
 {
     /**
-     * @param array<string,LocalSubgraphStateDiff> $items
+     * @param array<string,LocalSubgraphStateDiff|LocalSubgraphStateRemovedDiff> $items
      */
     private function __construct(
         public array $items
@@ -24,7 +24,7 @@ final readonly class LocalGraphStateDiff implements \IteratorAggregate, \JsonSer
     }
 
     /**
-     * @param array<string,LocalSubgraphStateDiff> $items
+     * @param array<string,LocalSubgraphStateDiff|LocalSubgraphStateRemovedDiff> $items
      */
     public static function create(array $items): self
     {
@@ -35,7 +35,21 @@ final readonly class LocalGraphStateDiff implements \IteratorAggregate, \JsonSer
     {
         return new self(array_filter(
             array_map(
-                fn (?LocalSubgraphState $item): ?LocalSubgraphStateDiff => $item ? LocalSubgraphStateDiff::fromLocalSubgraphState($item) : null,
+                fn (?LocalSubgraphState $item): ?LocalSubgraphStateDiff => $item
+                    ? LocalSubgraphStateDiff::fromLocalSubgraphState($item)
+                    : null,
+                $localGraphState->items,
+            )
+        ));
+    }
+
+    public static function removedFromLocalGraphState(LocalGraphState $localGraphState): self
+    {
+        return new self(array_filter(
+            array_map(
+                fn (?LocalSubgraphState $item): ?LocalSubgraphStateRemovedDiff => $item
+                    ? LocalSubgraphStateRemovedDiff::create()
+                    : null,
                 $localGraphState->items,
             )
         ));
