@@ -1,0 +1,1364 @@
+{
+    "@feature": "03W-RemoveNodeAggregate_WithDimensions_WithWorkspaces.feature",
+    "@scenario": "Partially publish removing a node aggregate with strategy allVariants",
+    "nodingers-cat": {
+        "{\"example\":\"general\"}": {
+            "node": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-nodeward-nodington-iii",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "aggregateId": "sir-nodeward-nodington-iii",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-nodeward-nodington-iii",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "sir-nodeward-nodington-iii",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-nodeward-nodington-iii",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "sir-nodeward-nodington-iii",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "lady-eleonode-rootford",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "lady-eleonode-rootford",
+                "originDimensionSpacePoint": [],
+                "classification": "root",
+                "nodeTypeName": "Neos.ContentRepository:Root",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    },
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "sir-nodeward-nodington-iii",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "sir-nodeward-nodington-iii",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "esquire",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nodingers-grandkitten": {
+        "{\"example\":\"general\"}": {
+            "node": {
+                "_discriminator": "nodingers-grandkitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-grandkitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "grandchild-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "nodingers-grandkitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-grandkitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "grandchild-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nodingers-grandkitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-grandkitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "grandchild-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nodingers-grandkitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-grandkitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "grandchild-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            }
+        }
+    },
+    "nodingers-kitten": {
+        "{\"example\":\"general\"}": {
+            "node": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-grandkitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "aggregateId": "nodingers-grandkitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "grandchild-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-grandkitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodingers-grandkitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "grandchild-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-grandkitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodingers-grandkitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "grandchild-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nodingers-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "children": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-grandkitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodingers-grandkitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "grandchild-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            },
+            "succeedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-other-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodingers-other-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "other-child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "nodingers-other-kitten": {
+        "{\"example\":\"general\"}": {
+            "node": {
+                "_discriminator": "nodingers-other-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-other-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "other-child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "general"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "node": {
+                "_discriminator": "nodingers-other-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-other-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "other-child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "source"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "source"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "node": {
+                "_discriminator": "nodingers-other-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-other-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "other-child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "spec"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "spec"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "node": {
+                "_discriminator": "nodingers-other-kitten",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-other-kitten",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "other-child-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "parent": {
+                "_discriminator": "nodingers-cat",
+                "contentRepositoryId": "default",
+                "workspaceName": "intermediate",
+                "dimensionSpacePoint": {
+                    "example": "peer"
+                },
+                "aggregateId": "nodingers-cat",
+                "originDimensionSpacePoint": {
+                    "example": "general"
+                },
+                "classification": "regular",
+                "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                "name": "parent-document",
+                "timestamps": {
+                    "created": "2026-02-07T06:00:00+00:00",
+                    "originalCreated": "2026-02-07T06:00:00+00:00",
+                    "lastModified": null,
+                    "originalLastModified": null
+                }
+            },
+            "precedingSiblings": {
+                "nodes": [
+                    {
+                        "_discriminator": "nodingers-kitten",
+                        "contentRepositoryId": "default",
+                        "workspaceName": "intermediate",
+                        "dimensionSpacePoint": {
+                            "example": "peer"
+                        },
+                        "aggregateId": "nodingers-kitten",
+                        "originDimensionSpacePoint": {
+                            "example": "general"
+                        },
+                        "classification": "regular",
+                        "nodeTypeName": "Neos.ContentRepository.Testing:Document",
+                        "name": "child-document",
+                        "timestamps": {
+                            "created": "2026-02-07T06:00:00+00:00",
+                            "originalCreated": "2026-02-07T06:00:00+00:00",
+                            "lastModified": null,
+                            "originalLastModified": null
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "lady-eleonode-rootford": {
+        "{\"example\":\"general\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        }
+    },
+    "sir-nodeward-nodington-iii": {
+        "{\"example\":\"general\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        }
+    }
+}
