@@ -23,8 +23,8 @@ use Neos\Flow\Annotations as Flow;
 final readonly class DateTimeContentChange
 {
     public function __construct(
-        public ?\DateTime $original,
-        public ?\DateTime $changed
+        public ?\DateTimeInterface $original,
+        public ?\DateTimeInterface $changed
     ) {
     }
 }
