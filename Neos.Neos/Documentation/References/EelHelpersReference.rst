@@ -1274,13 +1274,6 @@ Generate a `@cache` entry identifier for a given node:
       documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
     }
 
-Neos.Caching.getWorkspaceChain(node)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``node`` (Node|null)
-
-**Return** (array<string,Workspace>)
-
 Neos.Caching.nodeTag(nodes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
