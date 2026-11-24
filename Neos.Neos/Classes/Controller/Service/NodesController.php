@@ -208,8 +208,9 @@ class NodesController extends ActionController
             fn (Node $node) => $subgraph->findAncestorNodes(
                 $node->aggregateId,
                 FindAncestorNodesFilter::create(
-                    NodeTypeCriteria::createWithDisallowedNodeTypeNames(
-                        NodeTypeNames::with(NodeTypeNameFactory::forSites())
+                    NodeTypeCriteria::create(
+                        NodeTypeNames::with(NodeTypeNameFactory::forDocument()),
+                        NodeTypeNames::with(NodeTypeNameFactory::forSites()),
                     )
                 )
             )->prepend($node),
