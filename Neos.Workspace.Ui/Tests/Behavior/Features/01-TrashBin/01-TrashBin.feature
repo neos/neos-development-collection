@@ -181,3 +181,70 @@ Feature: Tests for the trash bin
       | nodingers-cat   | initiating-user-identifier | 2025-06-26T07:10:15+00:00 | [{"example":"peer"}]                         |
       | nodingers-cat   | initiating-user-identifier | 2025-06-24T15:56:25+00:00 | [{"example":"source"},{"example":"special"}] |
 
+  Scenario: Changing the base workspace replaces the trash bin entries with those of the new base workspace
+
+    When the current date and time is "2025-06-24T17:56:25+02:00"
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | workspaceName                | "user-workspace"     |
+      | nodeAggregateId              | "nodingers-cat"      |
+      | coveredDimensionSpacePoint   | {"example":"source"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "removed"            |
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user-workspace" |
+      | newContentStreamId | "new-user-cs-id" |
+
+    Then I expect the trash bin for workspace "user-workspace" to contain exactly the following items:
+      | nodeAggregateId | userId                     | deleteTime                | affectedDimensionSpacePoints                 |
+      | nodingers-cat   | initiating-user-identifier | 2025-06-24T15:56:25+00:00 | [{"example":"source"},{"example":"special"}] |
+    And I expect the trash bin for workspace "review-workspace" to contain exactly the following items:
+      | nodeAggregateId | userId                     | deleteTime                | affectedDimensionSpacePoints                 |
+      | nodingers-cat   | initiating-user-identifier | 2025-06-24T15:56:25+00:00 | [{"example":"source"},{"example":"special"}] |
+
+    When the command ChangeBaseWorkspace is executed with payload:
+      | Key                | Value                     |
+      | workspaceName      | "user-workspace"          |
+      | baseWorkspaceName  | "live"                    |
+      | newContentStreamId | "changed-base-user-cs-id" |
+
+    # the node is visible again in user-workspace, as live does not contain the soft removal
+    Then I expect the trash bin for workspace "user-workspace" to contain exactly the following items:
+      | nodeAggregateId | userId | deleteTime | affectedDimensionSpacePoints |
+    And I expect the trash bin for workspace "review-workspace" to contain exactly the following items:
+      | nodeAggregateId | userId                     | deleteTime                | affectedDimensionSpacePoints                 |
+      | nodingers-cat   | initiating-user-identifier | 2025-06-24T15:56:25+00:00 | [{"example":"source"},{"example":"special"}] |
+
+  Scenario: Soft removing a node again after changing the base workspace creates a single trash bin entry
+
+    When the current date and time is "2025-06-24T17:56:25+02:00"
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | workspaceName                | "user-workspace"     |
+      | nodeAggregateId              | "nodingers-cat"      |
+      | coveredDimensionSpacePoint   | {"example":"source"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "removed"            |
+    And the command PublishWorkspace is executed with payload:
+      | Key                | Value            |
+      | workspaceName      | "user-workspace" |
+      | newContentStreamId | "new-user-cs-id" |
+    And the command ChangeBaseWorkspace is executed with payload:
+      | Key                | Value                     |
+      | workspaceName      | "user-workspace"          |
+      | baseWorkspaceName  | "live"                    |
+      | newContentStreamId | "changed-base-user-cs-id" |
+
+    When the current date and time is "2025-06-26T09:10:15+02:00"
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value                |
+      | workspaceName                | "user-workspace"     |
+      | nodeAggregateId              | "nodingers-cat"      |
+      | coveredDimensionSpacePoint   | {"example":"source"} |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "removed"            |
+
+    Then I expect the trash bin for workspace "user-workspace" to contain exactly the following items:
+      | nodeAggregateId | userId                     | deleteTime                | affectedDimensionSpacePoints                 |
+      | nodingers-cat   | initiating-user-identifier | 2025-06-26T07:10:15+00:00 | [{"example":"source"},{"example":"special"}] |

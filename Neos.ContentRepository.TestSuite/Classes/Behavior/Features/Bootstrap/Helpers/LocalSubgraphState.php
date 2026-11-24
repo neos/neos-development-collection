@@ -56,13 +56,13 @@ final readonly class LocalSubgraphState
     }
 
     /**
-     * @return ?LocalSubgraphStateDiff A local subgraph state diff containing all differing elements or null if nothing is changed
+     * @return LocalSubgraphStateDiff|LocalSubgraphStateRemovedDiff|null A local subgraph state diff containing all differing elements or null if nothing is changed
      */
-    public function diff(?self $other, ?WorkspaceName $expectedWorkspaceName = null): ?LocalSubgraphStateDiff
+    public function diff(?self $other, ?WorkspaceName $expectedWorkspaceName = null): LocalSubgraphStateDiff|LocalSubgraphStateRemovedDiff|null
     {
         if ($other === null) {
             // the whole state is the diff
-            return LocalSubgraphStateDiff::fromLocalSubgraphState($this);
+            return LocalSubgraphStateRemovedDiff::create();
         }
         if ($this->parent === null) {
             if ($other->parent === null) {
