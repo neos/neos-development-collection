@@ -60,15 +60,13 @@ class TimeableNodeVisibilityService
                     );
 
                     $results[] = $result = ChangedVisibility::createForNodeWasEnabled($node);
-                    $this->logResult($result);
                 } catch (\Exception $e) {
-                    $this->logger->error(sprintf(
-                        'Timed node visibility: Could not enable node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
-                        $node->aggregateId->value,
-                        implode(',', $node->dimensionSpacePoint->coordinates),
-                        $e->getMessage()
-                    ));
+                    $results[] = $result = ChangedVisibility::createForError(
+                        $node,
+                        sprintf('Could not enable node: %s', $e->getMessage())
+                    );
                 }
+                $this->logResult($result);
             }
             if ($this->needsDisabling($node, $now)) {
                 try {
@@ -82,15 +80,13 @@ class TimeableNodeVisibilityService
                     );
 
                     $results[] = $result = ChangedVisibility::createForNodeWasDisabled($node);
-                    $this->logResult($result);
                 } catch (\Exception $e) {
-                    $this->logger->error(sprintf(
-                        'Timed node visibility: Could not disable node [NodeAggregateId: %s, DimensionSpacePoints: %s]: %s',
-                        $node->aggregateId->value,
-                        implode(',', $node->dimensionSpacePoint->coordinates),
-                        $e->getMessage()
-                    ));
+                    $results[] = $result = ChangedVisibility::createForError(
+                        $node,
+                        sprintf('Could not disable node: %s', $e->getMessage())
+                    );
                 }
+                $this->logResult($result);
             }
         }
         return new ChangedVisibilities(...$results);
@@ -172,6 +168,17 @@ class TimeableNodeVisibilityService
 
     private function logResult(ChangedVisibility $result): void
     {
+        if ($result->isError()) {
+            $this->logger->error(
+                sprintf('Timed node visibility: %s [NodeAggregateId: %s, DimensionSpacePoints: %s]',
+                    $result->message,
+                    $result->node->aggregateId->value,
+                    implode(',', $result->node->originDimensionSpacePoint->coordinates)
+                )
+            );
+            return;
+        }
+
         $this->logger->info(
             sprintf('Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]',
                 $result->type->value,
