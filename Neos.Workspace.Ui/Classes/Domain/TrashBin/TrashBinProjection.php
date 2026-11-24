@@ -225,6 +225,8 @@ class TrashBinProjection implements ProjectionInterface
 
     private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
     {
+        $this->replaceWorkspaceEntries($event->workspaceName, $event->baseWorkspaceName);
+
         $this->dbal->update(
             $this->workspaceHierarchyTableName,
             [

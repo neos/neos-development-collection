@@ -27,11 +27,11 @@ prototype(Neos.Workspace.Ui:Component.Modal.Rebase) < prototype(Neos.Fusion:Comp
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <div class="neos-header">
-          <i class="fas fa-bolt"></i> {private.i18n.id('workspaces.dialog.forceSyncWorkspace').arguments([props.workspaceTitle, props.baseWorkspaceTitle])}
+          <i class="fas fa-bolt"></i> {private.i18n.id('workspaces.dialog.forceSyncWorkspace').arguments([String.htmlSpecialChars(props.workspaceTitle), String.htmlSpecialChars(props.baseWorkspaceTitle)])}
         </div>
       </header>
       <section>
-        <p>{private.i18n.id('workspaces.dialog.thisCanLeadToLostChanges').arguments([props.baseWorkspaceTitle, props.workspaceTitle])}</p>
+        <p>{private.i18n.id('workspaces.dialog.thisCanLeadToLostChanges').arguments([String.htmlSpecialChars(props.baseWorkspaceTitle), String.htmlSpecialChars(props.workspaceTitle)])}</p>
         <details>
           <summary>
             {private.i18n.id('workspaces.dialog.ShowInformationAboutConflict').arguments([Array.length(props.conflictInformation)])}
@@ -42,7 +42,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Rebase) < prototype(Neos.Fusion:Comp
               <tbody>
               <tr>
                 <td>{private.i18n.id('workspaces.dialog.rebase.error')}:</td>
-                <td><b>{conflict.error}</b></td>
+                <td><b>{String.htmlSpecialChars(conflict.error)}</b></td>
               </tr>
               <tr>
                 <td>{private.i18n.id('workspaces.dialog.rebase.node')}:</td>

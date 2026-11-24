@@ -74,17 +74,19 @@
   .neos-menu-wrapper {
     margin: 0;
     padding: 0;
+		flex-grow: 1;
   }
 
 	.neos-menu-bottom-wrapper {
 		bottom: 0;
-		position: absolute;
+		position: sticky;
 		width: 100%;
 	}
 
   .neos-menu-panel-open & {
     left: 0;
-    display: block;
+    display: flex;
+		flex-direction: column;
   }
 
   &.neos-noscript {
@@ -180,7 +182,6 @@
       i {
         display: block;
         position: absolute;
-        background-color: $grayDark;
         top: 0;
         left: 0;
         width: $menuButtonWidth;
@@ -189,7 +190,6 @@
         line-height: $unit;
         vertical-align: middle;
         text-align: center;
-        z-index: 10010;
       }
     }
 

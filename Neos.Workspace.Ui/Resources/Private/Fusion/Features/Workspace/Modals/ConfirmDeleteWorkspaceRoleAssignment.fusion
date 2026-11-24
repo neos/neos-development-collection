@@ -22,14 +22,14 @@ prototype(Neos.Workspace.Ui:Component.Modal.ConfirmDeleteWorkspaceRoleAssignment
       <header>
         <Neos.Workspace.Ui:Component.Popover.CloseButton id={private.popoverId}/>
         <h3 class="neos-header">
-          {private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.header').arguments({workspace: props.formData.workspaceTitle.value})}
+          {private.i18n.id('workspaces.deleteWorkspaceRoleAssignment.header').arguments({workspace: String.htmlSpecialChars(props.formData.workspaceTitle.value)})}
         </h3>
       </header>
       <section>
         <p>
           {private.i18n.arguments({
-            workspace: props.formData.workspaceTitle.value,
-            subject: props.formData.subjectLabel,
+            workspace: String.htmlSpecialChars(props.formData.workspaceTitle.value),
+            subject: String.htmlSpecialChars(props.formData.subjectLabel),
             role: private.localisedRoleLabel
           }).id('workspaces.deleteWorkspaceRoleAssignment.message')}
         </p>

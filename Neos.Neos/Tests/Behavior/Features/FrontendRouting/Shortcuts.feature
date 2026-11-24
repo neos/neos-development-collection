@@ -306,3 +306,32 @@ Feature: Routing behavior of shortcut nodes
       | node-a          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "a", "targetMode": "selectedTarget", "target": "node://node-b"} | node-a   |
       | node-b          | shortcuts             | Neos.Neos:Shortcut | {"uriPathSegment": "b", "targetMode": "selectedTarget", "target": "node://node-a"} | node-b   |
     Then The node "node-a" in dimension "{}" should not resolve to an URL
+
+  Scenario: Changing the target mode of a shortcut resolves the correct target
+    Given I am in workspace "live" and dimension space point {}
+    When I am on URL "/"
+    Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts/shortcut-first-child/first-child-node"
+
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                        |
+      | nodeAggregateId | "shortcut-first-child-node"  |
+      | propertyValues  | {"targetMode": "parentNode"} |
+    Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough/shortcuts"
+
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                                                                       |
+      | nodeAggregateId | "shortcut-first-child-node"                                                 |
+      | propertyValues  | {"targetMode": "selectedTarget", "target": "node://sir-david-nodenborough"} |
+    Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough"
+
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                                          |
+      | nodeAggregateId | "shortcut-first-child-node"                    |
+      | propertyValues  | {"target": "node://sir-david-nodenborough-ii"} |
+    Then the node "shortcut-first-child-node" in dimension "{}" should resolve to URL "/david-nodenborough-2"
+
+    When the command SetNodeProperties is executed with payload:
+      | Key             | Value                               |
+      | nodeAggregateId | "shortcut-first-child-node"         |
+      | propertyValues  | {"target": "node://i-do-not-exist"} |
+    Then the node "shortcut-first-child-node" in dimension "{}" should not resolve to an URL

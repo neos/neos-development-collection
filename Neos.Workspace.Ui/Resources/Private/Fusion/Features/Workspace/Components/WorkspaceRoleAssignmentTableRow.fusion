@@ -30,14 +30,14 @@ prototype(Neos.Workspace.Ui:Component.WorkspaceRoleAssignmentTableRow) < prototy
 
   renderer = afx`
     <tr>
-      <td>{props.roleAssignmentFormData.subjectLabel}</td>
+      <td>{String.htmlSpecialChars(props.roleAssignmentFormData.subjectLabel)}</td>
       <td>{private.i18n.id('workspaces.workspace.workspaceRoleAssignment.role.label.' + props.roleAssignmentFormData.roleLabel)}</td>
       <td class="workspace-action-column">
         <Neos.Workspace.Ui:Component.Button
           isDanger
           title={private.i18n.arguments({
-            workspace: props.workspaceTitle,
-            subject: props.roleAssignmentFormData.subjectLabel,
+            workspace: String.htmlSpecialChars(props.workspaceTitle),
+            subject: String.htmlSpecialChars(props.roleAssignmentFormData.subjectLabel),
             role: private.localisedRoleLabel
           }).id('workspaces.deleteWorkspaceRoleAssignment.action')}
           icon="trash-alt icon-white"
