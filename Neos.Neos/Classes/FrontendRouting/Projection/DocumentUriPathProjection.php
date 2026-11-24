@@ -707,10 +707,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 "TRIM(LEADING '/' FROM SUBSTRING(nodeAggregateIdPath, {$sourceNodeAggregateIdPathOffset}))"
             )}),
                 uriPath = TRIM('/' FROM {$this->concatSql(
-                    ':newParentUriPath',
-                    "'/'",
-                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"
-                )}),
+                ':newParentUriPath',
+                "'/'",
+                "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"
+            )}),
                 disabled = disabled + {$disabledDelta},
                 removed = removed + {$removedDelta}
             WHERE
