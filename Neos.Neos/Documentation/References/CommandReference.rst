@@ -163,7 +163,7 @@ Arguments
 ^^^^^^^^^
 
 ``--cache-identifier``
-
+  
 
 
 
@@ -1892,7 +1892,7 @@ Options
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
 ``--quiet``
-
+  
 
 
 
@@ -2933,7 +2933,7 @@ Options
 ``--content-repository``
   The name of the content repository. (Default: 'default')
 ``--force``
-
+  
 
 
 
