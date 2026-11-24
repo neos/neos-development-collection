@@ -71,7 +71,7 @@ enum PropertyScope: string implements \JsonSerializable
         return PropertyScope::SCOPE_NODE;
     }
 
-    public function isSmallerThan(self $other): bool
+    public function isTighterThan(self $other): bool
     {
         return match ($this) {
             self::SCOPE_NODE => $other !== self::SCOPE_NODE,

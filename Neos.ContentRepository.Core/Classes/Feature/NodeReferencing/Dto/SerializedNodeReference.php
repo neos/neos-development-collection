@@ -74,7 +74,7 @@ final readonly class SerializedNodeReference implements \JsonSerializable
             : $this;
     }
 
-    public function mergeSmallerScopedCurrentReferenceValues(
+    public function mergeTighterScopedCurrentReferenceValues(
         PropertyScope $appliedScope,
         ?Reference $currentReference,
         ReferenceTypeGraph $referenceTypeGraph,
@@ -87,18 +87,19 @@ final readonly class SerializedNodeReference implements \JsonSerializable
             return $this;
         }
 
-        $smallerScopedReferenceValues = [];
+        $tighterScopedReferenceValues = [];
         foreach ($referenceType->properties as $property) {
-            if ($property->scope->isSmallerThan($appliedScope)) {
-                $smallerScopedReferenceValues[$property->name->value] = iterator_to_array($currentReference->properties?->serialized() ?: [])[$property->name->value] ?? null;
+            if ($property->scope->isTighterThan($appliedScope)) {
+                $tighterScopedReferenceValues[$property->name->value]
+                    = iterator_to_array($currentReference->properties?->serialized() ?: [])[$property->name->value] ?? null;
             }
         }
 
-        return $smallerScopedReferenceValues !== []
+        return $tighterScopedReferenceValues !== []
             ? new self(
                 $this->targetNodeAggregateId,
                 $this->referenceTypeName,
-                $this->properties->merge(SerializedPropertyValues::fromArray(array_filter($smallerScopedReferenceValues))),
+                $this->properties->merge(SerializedPropertyValues::fromArray(array_filter($tighterScopedReferenceValues))),
             )
             : $this;
     }

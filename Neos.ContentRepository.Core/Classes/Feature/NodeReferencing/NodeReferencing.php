@@ -165,7 +165,7 @@ trait NodeReferencing
             );
             $furtherSplitEvents = false;
             foreach ($references as $reference) {
-                if ($reference->getMinimumPropertyScope($appliedScope, $this->referenceTypeGraph)->isSmallerThan($appliedScope)) {
+                if ($reference->getTightestPropertyScope($appliedScope, $this->referenceTypeGraph)->isTighterThan($appliedScope)) {
                     // we found a reference property with a smaller scope than the reference itself,
                     // so we must split the events by dimension space point to keep those properties unchanged
                     $furtherSplitEvents = true;

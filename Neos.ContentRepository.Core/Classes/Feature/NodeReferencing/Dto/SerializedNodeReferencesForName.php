@@ -105,7 +105,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
             $this->referenceName,
             ...array_map(
                 fn (SerializedNodeReference $item): SerializedNodeReference
-                    => $item->mergeSmallerScopedCurrentReferenceValues(
+                    => $item->mergeTighterScopedCurrentReferenceValues(
                         appliedScope: $appliedScope,
                         currentReference: array_find(
                             $currentReferences->references,
@@ -119,7 +119,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
         );
     }
 
-    public function getMinimumPropertyScope(PropertyScope $referenceScope, ReferenceTypeGraph $referenceTypeGraph): PropertyScope
+    public function getTightestPropertyScope(PropertyScope $referenceScope, ReferenceTypeGraph $referenceTypeGraph): PropertyScope
     {
         $minimumPropertyScope = $referenceScope;
         foreach ($this->references as $reference) {
@@ -128,7 +128,7 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
                 continue;
             }
             foreach ($referenceType->properties as $property) {
-                if ($property->scope->isSmallerThan($minimumPropertyScope)) {
+                if ($property->scope->isTighterThan($minimumPropertyScope)) {
                     $minimumPropertyScope = $property->scope;
                 }
             }
