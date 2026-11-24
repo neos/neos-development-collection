@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2026-11-12
+This reference was automatically generated from code on 2026-11-24
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -1273,6 +1273,13 @@ Generate a `@cache` entry identifier for a given node:
     entryIdentifier {
       documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
     }
+
+Neos.Caching.getWorkspaceChain(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``node`` (Node|null)
+
+**Return** (array<string,Workspace>)
 
 Neos.Caching.nodeTag(nodes)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^

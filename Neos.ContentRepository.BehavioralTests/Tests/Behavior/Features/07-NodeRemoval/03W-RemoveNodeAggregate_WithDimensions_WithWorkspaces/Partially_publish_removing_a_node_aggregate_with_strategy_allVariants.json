@@ -1,0 +1,104 @@
+{
+    "@feature": "03W-RemoveNodeAggregate_WithDimensions_WithWorkspaces.feature",
+    "@scenario": "Partially publish removing a node aggregate with strategy allVariants",
+    "nodingers-cat": {
+        "{\"example\":\"general\"}": "_removed",
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed",
+        "{\"example\":\"peer\"}": "_removed"
+    },
+    "nodingers-grandkitten": {
+        "{\"example\":\"general\"}": "_removed",
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed",
+        "{\"example\":\"peer\"}": "_removed"
+    },
+    "nodingers-kitten": {
+        "{\"example\":\"general\"}": "_removed",
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed",
+        "{\"example\":\"peer\"}": "_removed"
+    },
+    "nodingers-other-kitten": {
+        "{\"example\":\"general\"}": "_removed",
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed",
+        "{\"example\":\"peer\"}": "_removed"
+    },
+    "lady-eleonode-rootford": {
+        "{\"example\":\"general\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        }
+    },
+    "sir-nodeward-nodington-iii": {
+        "{\"example\":\"general\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"source\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"peer\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        }
+    }
+}
