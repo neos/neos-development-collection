@@ -31,7 +31,7 @@ final class NodeAggregateIsNoSibling extends \DomainException
             'Node aggregate "' . $nodeAggregateId->value
                 . '" is no sibling of node aggregate "' . $referenceNodeAggregateId->value
                 . '" but was expected to be in dimension space point '
-                . json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR),
+                . \json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR),
             1713081020
         );
     }
