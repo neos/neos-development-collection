@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\ReferenceTypeDeclarationIsInvalid;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflicts;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\PropertyDeclarationDictionary;
@@ -228,7 +229,7 @@ final readonly class ReferenceTypeDeclaration
                 sourceNodeTypes: $constraints->sourceNodeTypes->toNodeTypeFilters(),
                 targetNodeTypes: $constraints->targetNodeTypes->toNodeTypeFilters(),
             ),
-            properties: $properties->toPropertyDictionary(),
+            properties: $properties->toPropertyDictionary(PropertyScope::SCOPE_NODE_AGGREGATE),
         );
     }
 
@@ -241,7 +242,7 @@ final readonly class ReferenceTypeDeclaration
                 sourceNodeTypes: $this->constraints->sourceNodeTypes->toNodeTypeFilters(),
                 targetNodeTypes: $this->constraints->targetNodeTypes->toNodeTypeFilters(),
             ),
-            properties: $this->properties->toPropertyDictionary(),
+            properties: $this->properties->toPropertyDictionary(PropertyScope::SCOPE_NODE_AGGREGATE),
         );
     }
 }

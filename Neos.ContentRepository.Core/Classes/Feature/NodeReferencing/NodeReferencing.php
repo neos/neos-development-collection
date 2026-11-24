@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
@@ -156,19 +157,49 @@ trait NodeReferencing
         }
 
         foreach (self::splitReferencesByScope($command->references, $sourceNodeType) as $rawScope => $references) {
-            $scope = PropertyScope::from($rawScope);
-            $affectedOrigins = $scope->resolveAffectedOrigins(
+            $appliedScope = PropertyScope::from($rawScope);
+            $affectedOrigins = $appliedScope->resolveAffectedOrigins(
                 $command->sourceOriginDimensionSpacePoint,
                 $sourceNodeAggregate,
-                $this->interDimensionalVariationGraph
+                $this->interDimensionalVariationGraph,
             );
-            $events[] = new NodeReferencesWereSet(
-                $contentGraph->getWorkspaceName(),
-                $contentGraph->getContentStreamId(),
-                $command->sourceNodeAggregateId,
-                $affectedOrigins,
-                $references->mergeDefaultReferencePropertyValues($this->referenceTypeGraph, $this->propertyConverter),
-            );
+            $furtherSplitEvents = false;
+            foreach ($references as $reference) {
+                if ($reference->getMinimumPropertyScope($appliedScope, $this->referenceTypeGraph)->isSmallerThan($appliedScope)) {
+                    // we found a reference property with a smaller scope than the reference itself,
+                    // so we must split the events by dimension space point to keep those properties unchanged
+                    $furtherSplitEvents = true;
+                }
+            }
+            if ($furtherSplitEvents) {
+                foreach ($affectedOrigins as $affectedOrigin) {
+                    $referencesToUse = $references;
+                    if (!$affectedOrigin->equals($command->sourceOriginDimensionSpacePoint)) {
+                        $referencesToUse = $referencesToUse->mergeTighterScopedCurrentReferenceValues(
+                            nodeAggregateId: $command->sourceNodeAggregateId,
+                            appliedScope: $appliedScope,
+                            affectedOrigin: $affectedOrigin,
+                            referenceTypeGraph: $this->referenceTypeGraph,
+                            contentGraph: $contentGraph,
+                        );
+                    }
+                    $events[] = new NodeReferencesWereSet(
+                        $contentGraph->getWorkspaceName(),
+                        $contentGraph->getContentStreamId(),
+                        $command->sourceNodeAggregateId,
+                        new OriginDimensionSpacePointSet([$affectedOrigin]),
+                        $referencesToUse->mergeDefaultReferencePropertyValues($this->referenceTypeGraph, $this->propertyConverter),
+                    );
+                }
+            } else {
+                $events[] = new NodeReferencesWereSet(
+                    $contentGraph->getWorkspaceName(),
+                    $contentGraph->getContentStreamId(),
+                    $command->sourceNodeAggregateId,
+                    $affectedOrigins,
+                    $references->mergeDefaultReferencePropertyValues($this->referenceTypeGraph, $this->propertyConverter),
+                );
+            }
         }
 
         if ($events === []) {

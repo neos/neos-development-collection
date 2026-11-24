@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Infrastructure\Declaration\Exception\SuperTypeConflict;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -83,10 +84,10 @@ final readonly class PropertyDeclarationDictionary implements \IteratorAggregate
         ));
     }
 
-    public function toPropertyDictionary(): PropertyDictionary
+    public function toPropertyDictionary(PropertyScope $defaultScope): PropertyDictionary
     {
         return PropertyDictionary::create(array_map(
-            fn (PropertyDeclaration $item): Property => $item->toProperty(),
+            fn (PropertyDeclaration $item): Property => $item->toProperty($defaultScope),
             $this->items,
         ));
     }

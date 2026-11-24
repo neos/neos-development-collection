@@ -386,7 +386,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
-                        scope: PropertyScope::SCOPE_NODE,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
@@ -447,7 +447,7 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     'initiallyUndeclaredAndUnmodified' => Property::create(
                         name: PropertyName::fromString('initiallyUndeclaredAndUnmodified'),
                         type: PropertyType::string(),
-                        scope: PropertyScope::SCOPE_NODE,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
@@ -499,21 +499,21 @@ class ReferenceTypeDeclarationDictionaryTest extends TestCase
                     'value' => Property::create(
                         name: PropertyName::fromString('value'),
                         type: PropertyType::float(),
-                        scope: PropertyScope::SCOPE_NODE,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'description' => Property::create(
                         name: PropertyName::fromString('description'),
                         type: PropertyType::string(),
-                        scope: PropertyScope::SCOPE_NODE,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),
                     'author' => Property::create(
                         name: PropertyName::fromString('author'),
                         type: PropertyType::string(),
-                        scope: PropertyScope::SCOPE_NODE,
+                        scope: PropertyScope::SCOPE_NODE_AGGREGATE,
                         defaultValue: null,
                         metadata: PropertyMetadataDictionary::create([]),
                     ),

@@ -14,8 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -82,6 +89,52 @@ final readonly class SerializedNodeReferencesForName implements \JsonSerializabl
                 $this->references,
             )
         );
+    }
+
+    public function mergeTighterScopedCurrentReferenceValues(
+        NodeAggregateId $nodeAggregateId,
+        PropertyScope $appliedScope,
+        OriginDimensionSpacePoint $affectedOrigin,
+        ReferenceTypeGraph $referenceTypeGraph,
+        ContentGraphInterface $contentGraph,
+    ): self {
+        $currentReferences = $contentGraph->getSubgraph($affectedOrigin->toDimensionSpacePoint(), VisibilityConstraints::createEmpty())
+            ->findReferences($nodeAggregateId, FindReferencesFilter::create(referenceName: $this->referenceName));
+
+        return new self(
+            $this->referenceName,
+            ...array_map(
+                fn (SerializedNodeReference $item): SerializedNodeReference
+                    => $item->mergeSmallerScopedCurrentReferenceValues(
+                        appliedScope: $appliedScope,
+                        currentReference: array_find(
+                            $currentReferences->references,
+                            fn (Reference $reference): bool
+                                => $reference->node->aggregateId->equals($item->targetNodeAggregateId)
+                        ),
+                        referenceTypeGraph: $referenceTypeGraph,
+                    ),
+                $this->references,
+            )
+        );
+    }
+
+    public function getMinimumPropertyScope(PropertyScope $referenceScope, ReferenceTypeGraph $referenceTypeGraph): PropertyScope
+    {
+        $minimumPropertyScope = $referenceScope;
+        foreach ($this->references as $reference) {
+            $referenceType = $referenceTypeGraph->getReferenceType($reference->referenceTypeName);
+            if (!$referenceType) {
+                continue;
+            }
+            foreach ($referenceType->properties as $property) {
+                if ($property->scope->isSmallerThan($minimumPropertyScope)) {
+                    $minimumPropertyScope = $property->scope;
+                }
+            }
+        }
+
+        return $minimumPropertyScope;
     }
 
     public function jsonSerialize(): mixed

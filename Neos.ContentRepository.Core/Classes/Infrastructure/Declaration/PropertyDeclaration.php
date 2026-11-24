@@ -175,12 +175,12 @@ final readonly class PropertyDeclaration implements \JsonSerializable
         );
     }
 
-    public function toProperty(): Property
+    public function toProperty(PropertyScope $defaultScope): Property
     {
         return Property::create(
             name: $this->name,
             type: $this->type === Undeclared::INSTANCE ? PropertyType::string() : $this->type,
-            scope: $this->scope === Undeclared::INSTANCE ? PropertyScope::SCOPE_NODE : $this->scope,
+            scope: $this->scope === Undeclared::INSTANCE ? $defaultScope : $this->scope,
             defaultValue: $this->defaultValue === Undeclared::INSTANCE ? null : $this->defaultValue,
             metadata: $this->metadata,
         );

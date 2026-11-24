@@ -14,8 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -68,6 +70,35 @@ final readonly class SerializedNodeReference implements \JsonSerializable
                 $this->referenceTypeName,
                 SerializedPropertyValues::defaultFromReferenceType($referenceType, $propertyConverter)
                     ->merge($this->properties),
+            )
+            : $this;
+    }
+
+    public function mergeSmallerScopedCurrentReferenceValues(
+        PropertyScope $appliedScope,
+        ?Reference $currentReference,
+        ReferenceTypeGraph $referenceTypeGraph,
+    ): self {
+        if (!$currentReference) {
+            return $this;
+        }
+        $referenceType = $referenceTypeGraph->getReferenceType($this->referenceTypeName);
+        if (!$referenceType) {
+            return $this;
+        }
+
+        $smallerScopedReferenceValues = [];
+        foreach ($referenceType->properties as $property) {
+            if ($property->scope->isSmallerThan($appliedScope)) {
+                $smallerScopedReferenceValues[$property->name->value] = iterator_to_array($currentReference->properties?->serialized() ?: [])[$property->name->value] ?? null;
+            }
+        }
+
+        return $smallerScopedReferenceValues !== []
+            ? new self(
+                $this->targetNodeAggregateId,
+                $this->referenceTypeName,
+                $this->properties->merge(SerializedPropertyValues::fromArray(array_filter($smallerScopedReferenceValues))),
             )
             : $this;
     }
