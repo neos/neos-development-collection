@@ -11,7 +11,7 @@
                 <f:for each="{nodes}" as="node" key="index">
                     <li class="node">
                         <span class="node-path">{node.path}</span>
-                        <f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
+                        <f:alias map="{documentNode: '{documentNodes.{index}}'}">
                             <f:if condition="{documentNode}">
                                 <f:then>
                                     <a href="{neos:uri.node(node: documentNode, absolute: true)}" class="node-frontend-uri">
