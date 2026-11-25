@@ -217,7 +217,7 @@ class NodesController extends ActionController
             $nodes
         );
 
-        $documentNodes = array_map(fn (Nodes $breadcrumb) => $breadcrumb->last(), $breadcrumbs);
+        $documentNodes = array_map(fn (Nodes $breadcrumb) => $breadcrumb->first(), $breadcrumbs);
 
         $this->view->assign('nodes', $nodes);
         $this->view->assign('breadcrumbs', $breadcrumbs);
