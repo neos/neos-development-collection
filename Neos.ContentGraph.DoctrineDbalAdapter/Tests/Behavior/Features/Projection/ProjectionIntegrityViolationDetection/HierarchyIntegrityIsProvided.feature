@@ -54,7 +54,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
     And I expect integrity violation detection result error number 1 to have code 1597909228
 
   Scenario: Remove hierarchy relations for node
-    And I remove the following hierarchy relation:
+    When I remove the following hierarchy relation:
       | Key                   | Value                    |
       | contentStreamId       | "cs-identifier"          |
       | dimensionSpacePoint   | {"language":"de"}        |
