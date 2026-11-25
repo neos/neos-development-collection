@@ -15,6 +15,7 @@ namespace Neos\ContentRepositoryRegistry;
  */
 
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypesLoader;
+use Neos\ContentRepositoryRegistry\Configuration\ReferenceTypesLoader;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\Booting\Sequence;
@@ -41,6 +42,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) use ($bootstrap) {
             $configurationManager->registerConfigurationType('NodeTypes', new NodeTypesLoader(new YamlSource(), FLOW_PATH_CONFIGURATION, $bootstrap));
+            $configurationManager->registerConfigurationType('ReferenceTypes', new ReferenceTypesLoader(new YamlSource(), FLOW_PATH_CONFIGURATION));
         });
 
         if ($bootstrap->getContext()->isProduction()) {
@@ -54,15 +56,21 @@ class Package extends BasePackage
                 foreach ($packageManager->getFlowPackages() as $package) {
                     if (file_exists($package->getConfigurationPath())) {
                         $nodeTypeConfigurationFileMonitor->monitorDirectory($package->getConfigurationPath(), 'NodeTypes(\..+)\.yaml');
+                        $nodeTypeConfigurationFileMonitor->monitorDirectory($package->getConfigurationPath(), 'ReferenceTypes(\..+)\.yaml');
                     }
 
                     $nodeTypesConfigurationDirectory = Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes']);
                     if (\is_dir($nodeTypesConfigurationDirectory)) {
                         $nodeTypeConfigurationFileMonitor->monitorDirectory($nodeTypesConfigurationDirectory, '(.+)\.yaml');
                     }
+                    $referenceTypesConfigurationDirectory = Files::concatenatePaths([$package->getPackagePath(), 'ReferenceTypes']);
+                    if (\is_dir($referenceTypesConfigurationDirectory)) {
+                        $nodeTypeConfigurationFileMonitor->monitorDirectory($referenceTypesConfigurationDirectory, '(.+)\.yaml');
+                    }
                 }
 
                 $nodeTypeConfigurationFileMonitor->monitorDirectory(FLOW_PATH_CONFIGURATION, 'NodeTypes(\..+)\.yaml');
+                $nodeTypeConfigurationFileMonitor->monitorDirectory(FLOW_PATH_CONFIGURATION, 'ReferenceTypes(\..+)\.yaml');
 
                 $nodeTypeConfigurationFileMonitor->detectChanges();
                 $nodeTypeConfigurationFileMonitor->shutdownObject();
