@@ -217,7 +217,14 @@ class NodesController extends ActionController
             $nodes
         );
 
-        $documentNodes = array_map(fn (Nodes $breadcrumb) => $breadcrumb->first(), $breadcrumbs);
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
+        $documentNodes = array_map(fn (Node $node, Nodes $breadcrumb) =>
+            $nodeTypeManager->getNodeType($node->nodeTypeName)?->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)
+                ? $node
+                : $breadcrumb->first(),
+            $nodes,
+            $breadcrumbs,
+        );
 
         $this->view->assign('nodes', $nodes);
         $this->view->assign('breadcrumbs', $breadcrumbs);
