@@ -36,12 +36,17 @@ final readonly class ReferenceTypeDeclarationDictionary implements \IteratorAggr
 
     /**
      * @param array<string,array<string,mixed>> $values
+     * @param array<string,mixed> $metadataDeclarationRegistryValues
      */
-    public static function fromArray(array $values, PropertyConverter $propertyConverter): self
-    {
+    public static function fromArray(
+        array $values,
+        array $metadataDeclarationRegistryValues,
+        PropertyConverter $propertyConverter,
+    ): self {
+        $metadataDeclarationRegistry = ReferenceMetadataDeclarationImplementationRegistry::fromArray($metadataDeclarationRegistryValues);
         $items = [];
         foreach ($values as $name => $item) {
-            $items[$name] = ReferenceTypeDeclaration::fromArray($item, $name, $propertyConverter);
+            $items[$name] = ReferenceTypeDeclaration::fromArray($item, $name, $metadataDeclarationRegistry, $propertyConverter);
         }
 
         return new self($items);

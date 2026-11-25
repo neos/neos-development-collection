@@ -32,8 +32,9 @@ readonly class DeclarationBasedReferenceTypeGraphFactory implements ReferenceTyp
         return (new \ReflectionClass(ReferenceTypeGraph::class))->newLazyProxy(
             /** @phpstan-ignore neos.cr.internal */
             fn (): ReferenceTypeGraph => ReferenceTypeDeclarationDictionary::fromArray(
-                $this->configurationManager->getConfiguration('ReferenceTypes'),
-                new PropertyConverter($this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings))
+                values: $this->configurationManager->getConfiguration('ReferenceTypes'),
+                metadataDeclarationRegistryValues: $options['referenceMetadataDeclarations'] ?? [],
+                propertyConverter: new PropertyConverter($this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings))
             )->expandToGraph(),
         );
     }

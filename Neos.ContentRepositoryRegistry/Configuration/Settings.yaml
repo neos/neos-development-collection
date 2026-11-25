@@ -45,6 +45,10 @@ Neos:
 
         referenceTypeGraph:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph\DeclarationBasedReferenceTypeGraphFactory
+          options:
+            # A dictionary of implementations of the {@see Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceMetadataDeclarationInterface}
+            # Indexed by class name, values are bool for de/registration
+            referenceMetadataDeclarations: {}
 
         contentDimensionSource:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory

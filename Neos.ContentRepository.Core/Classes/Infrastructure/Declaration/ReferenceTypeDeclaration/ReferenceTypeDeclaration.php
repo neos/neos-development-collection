@@ -19,6 +19,9 @@ use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameList;
  */
 final readonly class ReferenceTypeDeclaration
 {
+    /**
+     * @param ReferenceMetadataDeclarationDictionary<ReferenceMetadataDeclarationInterface> $metadata
+     */
     private function __construct(
         public ReferenceTypeName $name,
         public bool $isAbstract,
@@ -26,11 +29,13 @@ final readonly class ReferenceTypeDeclaration
         public ReferenceTypeNameList $superTypeNames,
         public ReferenceTypeConstraintsDeclaration $constraints,
         public PropertyDeclarationDictionary $properties,
+        public ReferenceMetadataDeclarationDictionary $metadata,
         private PropertyConverter $propertyConverter,
     ) {
     }
 
     /**
+     * @param ReferenceMetadataDeclarationDictionary<ReferenceMetadataDeclarationInterface> $metadata
      * @throws ReferenceTypeDeclarationIsInvalid
      */
     public static function create(
@@ -40,6 +45,7 @@ final readonly class ReferenceTypeDeclaration
         ReferenceTypeNameList $superTypeNames,
         ReferenceTypeConstraintsDeclaration $constraints,
         PropertyDeclarationDictionary $properties,
+        ReferenceMetadataDeclarationDictionary $metadata,
         PropertyConverter $propertyConverter,
     ): self {
         if ($isAbstract && $isFinal) {
@@ -53,21 +59,35 @@ final readonly class ReferenceTypeDeclaration
             superTypeNames: $superTypeNames,
             constraints: $constraints,
             properties: $properties,
+            metadata: $metadata,
             propertyConverter: $propertyConverter,
         );
     }
 
     /**
      * @param array<string,array<string,mixed>> $values
+     * @param ReferenceMetadataDeclarationImplementationRegistry<ReferenceMetadataDeclarationInterface> $availableDeclarationClasses
      */
-    public static function fromArray(array $values, string $name, PropertyConverter $propertyConverter): self
-    {
+    public static function fromArray(
+        array $values,
+        string $name,
+        ReferenceMetadataDeclarationImplementationRegistry $availableDeclarationClasses,
+        PropertyConverter $propertyConverter,
+    ): self {
         $name = ReferenceTypeName::fromString($name);
         if (!is_bool(($isAbstract = $values['abstract'] ?? false))) {
             throw new \InvalidArgumentException('Invalid value for bool "abstract", ' . get_debug_type($isAbstract) . ' given.');
         }
         if (!is_bool(($isFinal = $values['final'] ?? false))) {
             throw new \InvalidArgumentException('Invalid value for bool "final", ' . get_debug_type($isFinal) . ' given.');
+        }
+
+        $metadataDeclarations = [];
+        foreach ($availableDeclarationClasses as $availableDeclarationClass) {
+            $metadataDeclaration = $availableDeclarationClass::tryExtractFromArray($values);
+            if ($metadataDeclaration) {
+                $metadataDeclarations[] = $metadataDeclaration;
+            }
         }
 
         return new self(
@@ -77,6 +97,7 @@ final readonly class ReferenceTypeDeclaration
             superTypeNames: ReferenceTypeNameList::fromStringArray(array_keys($values['superTypes'] ?? [])),
             constraints: ReferenceTypeConstraintsDeclaration::fromArray($values['constraints'] ?? []),
             properties: PropertyDeclarationDictionary::fromArray($values['properties'] ?? [], $name, $propertyConverter),
+            metadata: ReferenceMetadataDeclarationDictionary::create(...$metadataDeclarations),
             propertyConverter: $propertyConverter,
         );
     }
@@ -204,6 +225,8 @@ final readonly class ReferenceTypeDeclaration
 
         /** @var ?PropertyDeclarationDictionary $properties */
         $properties = null;
+        /** @var ?ReferenceMetadataDeclarationDictionary<ReferenceMetadataDeclarationInterface> $metadata */
+        $metadata = null;
         $superTypeConflicts = [];
         $previousSuperType = null;
         foreach ($superTypes as $superType) {
@@ -211,6 +234,8 @@ final readonly class ReferenceTypeDeclaration
                 ?: throw new \RuntimeException('Space time continuum exception: somehow got a supertype without merged members, must not happen');
             $properties = $properties?->mergeToSubType($mergedSuperTypeMembers->properties, $superTypeConflicts, $superType->name, $this->propertyConverter, $previousSuperType?->name)
                 ?: $mergedSuperTypeMembers->properties;
+            $metadata = $metadata?->mergeToSubType($mergedSuperTypeMembers->metadata)
+                ?: $mergedSuperTypeMembers->metadata;
             $previousSuperType = $superType;
         }
         $properties = $properties->mergeToSubType($this->properties, $superTypeConflicts, $this->name, $this->propertyConverter);
@@ -220,7 +245,7 @@ final readonly class ReferenceTypeDeclaration
                 superTypeConflicts: SuperTypeConflicts::create($superTypeConflicts),
             );
         }
-        $mergedMembersDictionary->add(MergedDeclaredReferenceTypeMembers::create($this->name, $properties));
+        $mergedMembersDictionary->add(MergedDeclaredReferenceTypeMembers::create($this->name, $properties, $metadata));
 
         return ReferenceType::create(
             name: $this->name,
@@ -230,6 +255,7 @@ final readonly class ReferenceTypeDeclaration
                 targetNodeTypes: $constraints->targetNodeTypes->toNodeTypeFilters(),
             ),
             properties: $properties->toPropertyDictionary(PropertyScope::SCOPE_NODE_AGGREGATE),
+            metadata: $metadata->toReferenceMetadataDictionary(),
         );
     }
 
@@ -243,6 +269,7 @@ final readonly class ReferenceTypeDeclaration
                 targetNodeTypes: $this->constraints->targetNodeTypes->toNodeTypeFilters(),
             ),
             properties: $this->properties->toPropertyDictionary(PropertyScope::SCOPE_NODE_AGGREGATE),
+            metadata: $this->metadata->toReferenceMetadataDictionary(),
         );
     }
 }

@@ -39,7 +39,11 @@ final class FakeReferenceTypeGraphFactory implements ReferenceTypeGraphFactoryIn
         }
         if (isset($options['referenceTypes'])) {
             // allows to be configured for testing
-            $dictionary = ReferenceTypeDeclarationDictionary::fromArray($options['referenceTypes'], self::$propertyConverter);
+            $dictionary = ReferenceTypeDeclarationDictionary::fromArray(
+                values: $options['referenceTypes'],
+                metadataDeclarationRegistryValues: $options['metadataDeclarations'] ?? [],
+                propertyConverter: self::$propertyConverter
+            );
         } else {
             $dictionary = ReferenceTypeDeclarationDictionary::create();
         }
@@ -50,14 +54,16 @@ final class FakeReferenceTypeGraphFactory implements ReferenceTypeGraphFactoryIn
 
     /**
      * @param array<string,mixed> $referenceTypesToUse
+     * @param array<string,mixed> $metadataDeclarationsToUse
      */
-    public static function setConfiguration(array $referenceTypesToUse, PropertyConverter $propertyConverter): void
+    public static function setConfiguration(array $referenceTypesToUse, array $metadataDeclarationsToUse, PropertyConverter $propertyConverter): void
     {
         self::$propertyConverter = $propertyConverter;
         /** @phpstan-ignore neos.cr.internal (we are the test suite) */
         self::$referenceTypeGraph = ReferenceTypeDeclarationDictionary::fromArray(
-            $referenceTypesToUse,
-            self::$propertyConverter,
+            values: $referenceTypesToUse,
+            metadataDeclarationRegistryValues: $metadataDeclarationsToUse,
+            propertyConverter: self::$propertyConverter,
         )
             ->expandToGraph();
     }

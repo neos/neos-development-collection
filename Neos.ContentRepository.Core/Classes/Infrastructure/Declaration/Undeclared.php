@@ -9,7 +9,7 @@ namespace Neos\ContentRepository\Core\Infrastructure\Declaration;
  *
  * Implemented as an enum for sameness comparison
  *
- * @internal
+ * @api to be used in custom declarations
  */
 enum Undeclared
 {

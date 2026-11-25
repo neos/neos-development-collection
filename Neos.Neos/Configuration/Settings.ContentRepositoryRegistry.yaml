@@ -28,3 +28,11 @@ Neos:
 
           'Neos.Neos:PendingChangesProjection':
             factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory
+
+        referenceTypeGraph:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ReferenceTypeGraph\DeclarationBasedReferenceTypeGraphFactory
+          options:
+            # A dictionary of implementations of the {@see Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeDeclaration\ReferenceMetadataDeclarationInterface}
+            # Indexed by class name, values are bool for de/registration
+            referenceMetadataDeclarations:
+              'Neos\Neos\Domain\ReferenceLabel\ReferenceLabelMetadataDeclaration': true

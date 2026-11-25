@@ -14,25 +14,34 @@ use Neos\ContentRepository\Core\SharedModel\Property\PropertyDictionary;
  */
 final readonly class ReferenceType
 {
+    /**
+     * @param ReferenceMetadataDictionary<ReferenceMetadataInterface> $metadata
+     */
     private function __construct(
         public ReferenceTypeName $name,
         public bool $isAbstract,
         public ReferenceTypeConstraints $constraints,
         public PropertyDictionary $properties,
+        public ReferenceMetadataDictionary $metadata,
     ) {
     }
 
+    /**
+     * @param ReferenceMetadataDictionary<ReferenceMetadataInterface> $metadata
+     */
     public static function create(
         ReferenceTypeName $name,
         bool $isAbstract,
         ReferenceTypeConstraints $constraints,
         PropertyDictionary $properties,
+        ReferenceMetadataDictionary $metadata,
     ): self {
         return new self(
             name: $name,
             isAbstract: $isAbstract,
             constraints: $constraints,
             properties: $properties,
+            metadata: $metadata,
         );
     }
 

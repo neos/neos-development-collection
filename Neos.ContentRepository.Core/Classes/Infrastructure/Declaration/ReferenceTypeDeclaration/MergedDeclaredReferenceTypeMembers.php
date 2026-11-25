@@ -12,19 +12,28 @@ use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
  */
 final readonly class MergedDeclaredReferenceTypeMembers
 {
+    /**
+     * @param ReferenceMetadataDeclarationDictionary<ReferenceMetadataDeclarationInterface> $metadata
+     */
     private function __construct(
         public ReferenceTypeName $name,
         public PropertyDeclarationDictionary $properties,
+        public ReferenceMetadataDeclarationDictionary $metadata,
     ) {
     }
 
+    /**
+     * @param ReferenceMetadataDeclarationDictionary<ReferenceMetadataDeclarationInterface> $metadata
+     */
     public static function create(
         ReferenceTypeName $name,
         PropertyDeclarationDictionary $properties,
+        ReferenceMetadataDeclarationDictionary $metadata,
     ): self {
         return new self(
             name: $name,
             properties: $properties,
+            metadata: $metadata,
         );
     }
 
@@ -33,6 +42,7 @@ final readonly class MergedDeclaredReferenceTypeMembers
         return new self(
             name: $declaration->name,
             properties: $declaration->properties,
+            metadata: $declaration->metadata,
         );
     }
 }
