@@ -213,23 +213,11 @@ class NodesController extends ActionController
                         NodeTypeNames::with(NodeTypeNameFactory::forSites()),
                     )
                 )
-            )->prepend($node),
+            ),
             $nodes
         );
 
-        $nodeTypeManager = $contentRepository->getNodeTypeManager();
-        $documentNodes = array_map(
-            function (Nodes $breadcrumb) use ($nodeTypeManager): ?Node {
-                foreach ($breadcrumb as $breadcrumbNode) {
-                    $nodeType = $nodeTypeManager->getNodeType($breadcrumbNode->nodeTypeName);
-                    if ($nodeType?->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
-                        return $breadcrumbNode;
-                    }
-                }
-                return null;
-            },
-            $breadcrumbs
-        );
+        $documentNodes = array_map(fn(Nodes $breadcrumb) => ($breadcrumb->last()), $breadcrumbs);
 
         $this->view->assign('nodes', $nodes);
         $this->view->assign('breadcrumbs', $breadcrumbs);
