@@ -24,9 +24,11 @@ final readonly class ReferenceLabelMetadataDeclaration implements ReferenceMetad
 
     public static function tryExtractFromArray(array &$declaration): ?static
     {
+        $result = null;
+
         if (array_key_exists('label', $declaration)) {
             if (is_string($declaration['label'])) {
-                return new self(
+                $result = new self(
                     label: $declaration['label'],
                     generatorClass: Undeclared::INSTANCE,
                 );
@@ -38,7 +40,7 @@ final readonly class ReferenceLabelMetadataDeclaration implements ReferenceMetad
                     && in_array(ReferenceLabelGeneratorInterface::class, class_implements($generatorClassName))
                 ) {
                     /** @var class-string<ReferenceLabelGeneratorInterface> $generatorClassName */
-                    return new self(
+                    $result = new self(
                         label: Undeclared::INSTANCE,
                         generatorClass: $generatorClassName,
                     );
@@ -47,7 +49,7 @@ final readonly class ReferenceLabelMetadataDeclaration implements ReferenceMetad
             unset($declaration['label']);
         }
 
-        return null;
+        return $result;
     }
 
     public function toMetadata(): ReferenceLabelMetadata
