@@ -218,10 +218,11 @@ class NodesController extends ActionController
         );
 
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
-        $documentNodes = array_map(fn (Node $node, Nodes $breadcrumb) =>
-            $nodeTypeManager->getNodeType($node->nodeTypeName)?->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)
-                ? $node
-                : $breadcrumb->first(),
+        $documentNodes = array_map(
+            fn (Node $node, Nodes $breadcrumb) =>
+                $nodeTypeManager->getNodeType($node->nodeTypeName)?->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)
+                    ? $node
+                    : $breadcrumb->first(),
             $nodes,
             $breadcrumbs,
         );
