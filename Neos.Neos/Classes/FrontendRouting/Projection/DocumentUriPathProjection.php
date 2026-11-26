@@ -696,7 +696,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'newParentUriPath' => $newParentNode->getUriPath(),
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
-                'newSiteNodeName' => $newParentNode->getSiteNodeName()->value,
+                'newSiteNodeName' => $newParentNode->isRoot()
+                    ? $node->getSiteNodeName()->value
+                    : $newParentNode->getSiteNodeName()->value,
             ]
         );
     }
