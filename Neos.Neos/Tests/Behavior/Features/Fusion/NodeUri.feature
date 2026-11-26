@@ -39,6 +39,10 @@ Feature: Tests for the "Neos.Neos:NodeUri" Fusion prototype
         node = ${node}
         section = 'foo'
       }
+      uriWithQueryParameters = Neos.Neos:NodeUri {
+        node = ${node}
+        queryParameters = ${{q: 'abc'}}
+      }
       uriWithAppendExceedingArguments = Neos.Neos:NodeUri {
         node = ${node}
         arguments = ${{q: 'abc'}}
@@ -60,6 +64,7 @@ Feature: Tests for the "Neos.Neos:NodeUri" Fusion prototype
     uri: /en/a1
     link: <a href="/en/a1">Neos.Neos:Test.DocumentType (a1)</a>
     uriWithSection: /en/a1#foo
+    uriWithQueryParameters: /en/a1?q=abc
     uriWithAppendExceedingArguments: /en/a1?q=abc
     absoluteUri: http://localhost/en/a1
     mixed: http://localhost/en/a1?q=abc#foo
