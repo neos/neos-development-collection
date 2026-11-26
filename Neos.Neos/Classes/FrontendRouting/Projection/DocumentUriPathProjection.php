@@ -680,10 +680,11 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 uriPath = TRIM('/' FROM {$this->concatSql(
                     ':newParentUriPath',
                     "'/'",
-                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"   
+                    "TRIM(LEADING '/' FROM SUBSTRING(uriPath, {$sourceUriPathOffset}))"
                 )}),
                 disabled = disabled + {$disabledDelta},
-                removed = removed + {$removedDelta}
+                removed = removed + {$removedDelta},
+                siteNodeName = :newSiteNodeName
             WHERE
                 dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (nodeAggregateId = :nodeAggregateId
@@ -695,6 +696,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'newParentUriPath' => $newParentNode->getUriPath(),
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
+                'newSiteNodeName' => $newParentNode->getSiteNodeName()->value,
             ]
         );
     }
