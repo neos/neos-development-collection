@@ -104,7 +104,9 @@ final readonly class NodeQueryBuilder
             ->from($this->tableNames->node(), 'pn')
             ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withPossibleChildNodeAggregateId($nodeAggregateIdCondition), 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNames->node(), 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
-            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery, 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
+            ->innerJoinTableSubquery('pn', $hierarchyRelationQuery->withPossibleChildNodeAggregateId(
+                ParentNodeAggregateIdCondition::forNodeAggregateId($childNodeAggregateId)
+            ), 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
             ->whereCondition('cn', $nodeAggregateIdCondition);
     }
 
