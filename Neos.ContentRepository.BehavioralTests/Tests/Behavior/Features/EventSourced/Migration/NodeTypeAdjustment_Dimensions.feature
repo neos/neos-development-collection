@@ -12,8 +12,35 @@ Feature: Adjust node types with a node migration
           'Neos.ContentRepository.Testing:Document': true
           'Neos.ContentRepository.Testing:OtherDocument': true
 
-    'Neos.ContentRepository.Testing:Document': []
-    'Neos.ContentRepository.Testing:OtherDocument': []
+    'Neos.ContentRepository.Testing:Document':
+      childNodes:
+        main:
+          type: 'Neos.ContentRepository.Testing:ContentCollection'
+          constraints:
+            nodeTypes:
+              'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': true
+              '*': false
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ContentCollection': false
+
+    'Neos.ContentRepository.Testing:OtherDocument':
+      childNodes:
+          main:
+            type: 'Neos.ContentRepository.Testing:ContentCollection'
+            constraints:
+              nodeTypes:
+                'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': true
+                '*': false
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ContentCollection': false
+    'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': []
+
+    Neos.ContentRepository.Testing:ContentCollection:
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': false
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -38,7 +65,13 @@ Feature: Adjust node types with a node migration
       | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint | {"language": "de"}                        |
       | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
-
+      | tetheredDescendantNodeAggregateIds | {"main": "main-collection-id"}            |
+    And the command CreateNodeAggregateWithNode is executed with payload:
+      | Key                       | Value                                                            |
+      | nodeAggregateId           | "sir-david-nodenborough-child"                                   |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:OnlyInDocumentContentCollection" |
+      | originDimensionSpacePoint | {"language": "de"}                                                                |
+      | parentNodeAggregateId     | "main-collection-id"                                             |
     ########################
     # Actual Test
     ########################
@@ -50,7 +83,23 @@ Feature: Adjust node types with a node migration
         nodeTypes:
           'Neos.ContentRepository.Testing:OtherDocument': true
 
-    'Neos.ContentRepository.Testing:OtherDocument': []
+    'Neos.ContentRepository.Testing:OtherDocument':
+      childNodes:
+          main:
+            type: 'Neos.ContentRepository.Testing:ContentCollection'
+            constraints:
+              nodeTypes:
+                'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': true
+                '*': false
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:ContentCollection': false
+    'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': []
+
+    Neos.ContentRepository.Testing:ContentCollection:
+      constraints:
+        nodeTypes:
+          'Neos.ContentRepository.Testing:OnlyInDocumentContentCollection': false
     """
     # we should be able to rename the node type
     When I run the following node migration for workspace "live", creating target workspace "migration-workspace" on contentStreamId "migration-cs", without publishing on success:
