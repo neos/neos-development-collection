@@ -11,9 +11,8 @@
           label: i18n
           position: 10
           icon: 'icon-copy'
-  properties:
+  references:
     references:
-      type: 'references'
       ui:
         inspector:
           group: 'references'
