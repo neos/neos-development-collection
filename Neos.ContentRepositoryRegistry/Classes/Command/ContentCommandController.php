@@ -19,6 +19,11 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception\SubtreeIsAlreadyTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Exception\SubtreeIsNotTagged;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
@@ -26,6 +31,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Cli\CommandController;
@@ -90,6 +96,97 @@ final class ContentCommandController extends CommandController
         }
 
         $this->outputLine('<success>Done!</success>');
+    }
+
+
+    /**
+     * Adds a subtree tag to the given node aggregate, covering all dimension space point variants.
+     *
+     * Subtree tags are inherited by all descendants of the tagged node. They are the basis for
+     * the subtree-tag-based privileges (see {@see \Neos\Neos\Security\Authorization\Privilege\EditNodePrivilege}
+     * and ReadNodePrivilege), whose Policy.yaml matchers refer to tags applied with this command:
+     * ```
+     * ./flow content:tagsubtree 979d1c11-6d1a-4f31-8dfc-31dd45f45b34 my-restricted-area
+     * ```
+     *
+     * @param string $nodeAggregateId The identifier of the node aggregate to tag
+     * @param string $tag The subtree tag to add (lowercase letters, digits, "_", "." and "-", at most 36 characters)
+     * @param string $contentRepository The content repository identifier. (Default: 'default')
+     * @param string $workspace The workspace name. (Default: 'live')
+     */
+    public function tagSubtreeCommand(string $nodeAggregateId, string $tag, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
+    {
+        ['contentRepository' => $contentRepositoryInstance, 'workspaceName' => $workspaceName, 'nodeAggregate' => $nodeAggregate, 'subtreeTag' => $subtreeTag] = $this->prepareSubtreeTagOperation($nodeAggregateId, $tag, $contentRepository, $workspace);
+
+        try {
+            $contentRepositoryInstance->handle(TagSubtree::create(
+                $workspaceName,
+                $nodeAggregate->nodeAggregateId,
+                array_values($nodeAggregate->coveredDimensionSpacePoints->points)[0],
+                NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
+                $subtreeTag
+            ));
+        } catch (SubtreeIsAlreadyTagged $exception) {
+            $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
+            $this->quit(1);
+        }
+        $this->outputLine('<success>Tagged node aggregate "%s" with "%s" in workspace "%s" (all variants)</success>', [$nodeAggregate->nodeAggregateId->value, $subtreeTag->value, $workspaceName->value]);
+    }
+
+    /**
+     * Removes a subtree tag from the given node aggregate, covering all dimension space point variants.
+     *
+     * Only explicitly set tags can be removed; tags that a node inherits from an ancestor
+     * have to be removed on the node they were applied to.
+     *
+     * @param string $nodeAggregateId The identifier of the node aggregate to untag
+     * @param string $tag The subtree tag to remove
+     * @param string $contentRepository The content repository identifier. (Default: 'default')
+     * @param string $workspace The workspace name. (Default: 'live')
+     */
+    public function untagSubtreeCommand(string $nodeAggregateId, string $tag, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
+    {
+        ['contentRepository' => $contentRepositoryInstance, 'workspaceName' => $workspaceName, 'nodeAggregate' => $nodeAggregate, 'subtreeTag' => $subtreeTag] = $this->prepareSubtreeTagOperation($nodeAggregateId, $tag, $contentRepository, $workspace);
+
+        try {
+            $contentRepositoryInstance->handle(UntagSubtree::create(
+                $workspaceName,
+                $nodeAggregate->nodeAggregateId,
+                array_values($nodeAggregate->coveredDimensionSpacePoints->points)[0],
+                NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
+                $subtreeTag
+            ));
+        } catch (SubtreeIsNotTagged $exception) {
+            $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
+            $this->quit(1);
+        }
+        $this->outputLine('<success>Removed tag "%s" from node aggregate "%s" in workspace "%s" (all variants)</success>', [$subtreeTag->value, $nodeAggregate->nodeAggregateId->value, $workspaceName->value]);
+    }
+
+    /**
+     * @return array{contentRepository: ContentRepository, workspaceName: WorkspaceName, nodeAggregate: \Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate, subtreeTag: SubtreeTag}
+     */
+    private function prepareSubtreeTagOperation(string $nodeAggregateId, string $tag, string $contentRepository, string $workspace): array
+    {
+        try {
+            $subtreeTag = SubtreeTag::fromString($tag);
+        } catch (\InvalidArgumentException $exception) {
+            $this->outputLine('<error>%s</error>', [$exception->getMessage()]);
+            $this->quit(1);
+        }
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepository));
+        $workspaceName = WorkspaceName::fromString($workspace);
+        try {
+            $nodeAggregate = $contentRepositoryInstance->getContentGraph($workspaceName)->findNodeAggregateById(NodeAggregateId::fromString($nodeAggregateId));
+        } catch (WorkspaceDoesNotExist) {
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspaceName->value]);
+            $this->quit(1);
+        }
+        if ($nodeAggregate === null) {
+            $this->outputLine('<error>Node aggregate "%s" does not exist in workspace "%s"</error>', [$nodeAggregateId, $workspaceName->value]);
+            $this->quit(1);
+        }
+        return ['contentRepository' => $contentRepositoryInstance, 'workspaceName' => $workspaceName, 'nodeAggregate' => $nodeAggregate, 'subtreeTag' => $subtreeTag];
     }
 
     private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, WorkspaceName $workspaceName, ContentRepository $contentRepository): void
