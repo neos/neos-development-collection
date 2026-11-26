@@ -14,6 +14,7 @@ declare(strict_types=1);
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\AssetUsage\AssetUsageIndexingProcessor;
@@ -38,14 +39,9 @@ trait AssetUsageTrait
      */
     abstract private function getObject(string $className): object;
 
-    /**
-     * @BeforeScenario
-     */
-    final public function pruneAssetUsage(): void
+    final public function pruneAssetUsage(ContentRepositoryId $contentRepositoryId): void
     {
-        foreach (static::$alreadySetUpContentRepositories as $contentRepositoryId) {
-            $this->getObject(\Neos\Neos\AssetUsage\Domain\AssetUsageRepository::class)->removeAll($contentRepositoryId);
-        }
+        $this->getObject(\Neos\Neos\AssetUsage\Domain\AssetUsageRepository::class)->removeAll($contentRepositoryId);
     }
 
     /**

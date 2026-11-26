@@ -115,6 +115,8 @@ class FeatureContext implements BehatContext
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         FakeContentDimensionSourceFactory::reset();
         FakeNodeTypeManagerFactory::reset();
+        $this->pruneAssetUsage($contentRepositoryId);
+        $this->pruneWorkspaceService($contentRepositoryId);
 
         return $contentRepository;
     }
