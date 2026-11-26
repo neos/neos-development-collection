@@ -47,22 +47,6 @@ trait NodeCreation
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
-     * @Given /^the event RootNodeAggregateWithNodeWasCreated was published with payload:$/
-     * @param TableNode $payloadTable
-     * @throws \Exception
-     */
-    public function theEventRootNodeAggregateWithNodeWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
-    {
-        $eventPayload = $this->readPayloadTable($payloadTable);
-        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
-        $nodeAggregateId = NodeAggregateId::fromString($eventPayload['nodeAggregateId']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
-
-        $this->publishEvent('RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
-        $this->currentRootNodeAggregateId = $nodeAggregateId;
-    }
-
-    /**
      * @Given /^the event NodeAggregateWithNodeWasCreated was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
