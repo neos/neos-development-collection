@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetCollection;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Utility\Arrays;
 
 /**
@@ -158,8 +159,7 @@ class Site
     /**
      * Returns the node name of this site
      *
-     * If you need to fetch the root node for this site, use the content
-     * context, do not use the NodeDataRepository!
+     * If you need to fetch the root node for this site, use {@see SiteNodeUtility::findSiteNodeBySite()}
      *
      * @return SiteNodeName The node name
      * @api
