@@ -48,8 +48,8 @@ Feature: Subtree tags are only inserted to the current write layer if differing 
       | newParentNodeAggregateId     | "lady-eleonode-rootford" |
 
     And I am in workspace "user"
-    # All 4 covered DSPs of the single node
-    Then I expect 4 hierarchies to exist in the active write layer
+      # All 4 covered DSPs of the moved node, plus the same for its descendant nody-mc-nodeface, whose sort path gets the new prefix
+    Then I expect 8 hierarchies to exist in the active write layer
 
   Scenario: Move a node within a tagged subtree
   If not implemented carefully move node could create hierarchies for all descendents and tag them with the current tag
@@ -78,8 +78,8 @@ Feature: Subtree tags are only inserted to the current write layer if differing 
       | newParentNodeAggregateId     | "lady-abigail-nodenborough" |
 
     And I am in workspace "user"
-    # All 4 covered DSPs of the single node
-    Then I expect 4 hierarchies to exist in the active write layer
+    # All 4 covered DSPs of the moved node, plus the same for its descendant nody-mc-nodeface, whose sort path gets the new prefix
+    Then I expect 8 hierarchies to exist in the active write layer
 
   Scenario: Tag a node in user where its child node and descendants are already tagged via live
     When the command TagSubtree is executed with payload:

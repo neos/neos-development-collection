@@ -58,8 +58,9 @@ Feature: Run projection integrity violation detection regarding root connection
       | childNodeAggregateId       | "sir-david-nodenborough"                   |
       | newParentNodeAggregateId   | "nody-mc-nodeface"                         |
     And I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 1 errors
-    And I expect integrity violation detection result error number 1 to have code 1597754245
+    Then I expect the integrity violation detection result to contain exactly 2 errors
+    And I expect integrity violation detection result error number 1 to have code 1597909228
+    And I expect integrity violation detection result error number 2 to have code 1597754245
 
     # Another error. One error per subgraph
     When I change the following hierarchy relation's parent:
@@ -70,6 +71,8 @@ Feature: Run projection integrity violation detection regarding root connection
       | childNodeAggregateId       | "sir-david-nodenborough"                    |
       | newParentNodeAggregateId   | "nody-mc-nodeface"                          |
     And I run integrity violation detection
-    Then I expect the integrity violation detection result to contain exactly 2 errors
-    And I expect integrity violation detection result error number 1 to have code 1597754245
-    And I expect integrity violation detection result error number 2 to have code 1597754245
+    Then I expect the integrity violation detection result to contain exactly 4 errors
+    And I expect integrity violation detection result error number 1 to have code 1597909228
+    And I expect integrity violation detection result error number 2 to have code 1597909228
+    And I expect integrity violation detection result error number 3 to have code 1597754245
+    And I expect integrity violation detection result error number 4 to have code 1597754245

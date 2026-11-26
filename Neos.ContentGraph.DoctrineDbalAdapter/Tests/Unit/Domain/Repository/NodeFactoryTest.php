@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Domain\Repository;
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Unit\Domain\Repository;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePointsRepository;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
