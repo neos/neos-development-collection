@@ -30,10 +30,11 @@ use Neos\Utility\Arrays;
  *  }
  * )
  */
-class Thumbnail implements ImageInterface
+class Thumbnail implements ImageInterface, FocalPointSupportInterface
 {
     use DimensionsTrait;
     use QualityTrait;
+    use FocalPointTrait;
 
     /**
      * @var ThumbnailGeneratorStrategy
