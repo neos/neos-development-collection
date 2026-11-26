@@ -18,6 +18,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
 
 /**
  * The node variant selection strategy for node aggregates as selected when creating commands.
@@ -34,7 +36,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
  *
  * @api used as part of commands
  */
-enum NodeVariantSelectionStrategy: string implements \JsonSerializable
+enum NodeVariantSelectionStrategy: string implements ProvidesSchema, \JsonSerializable
 {
     /**
      * The "all specializations" strategy, meaning all specializations covered by this node aggregate are affected
@@ -70,5 +72,18 @@ enum NodeVariantSelectionStrategy: string implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        // note: a static variable is used instead of a static property because enums must not declare properties
+        static $schemaRuntimeCache = null;
+        if ($schemaRuntimeCache === null) {
+            $schemaRuntimeCache = StringSchema::create(
+                description: 'Strategy to select the variants of a node aggregate that are affected by a command',
+                enum: array_column(self::cases(), 'value'),
+            );
+        }
+        return $schemaRuntimeCache;
     }
 }

@@ -13,6 +13,7 @@
     "require": {
         "neos/eventstore": "~2.0.1",
         "php": "^8.4",
+        "neos/jsonschema": "*",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",

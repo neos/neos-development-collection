@@ -14,16 +14,20 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
+
 /**
  * @api
  */
-final readonly class PropertyName implements \JsonSerializable
+final readonly class PropertyName implements ProvidesSchema, \JsonSerializable
 {
     private function __construct(
         public string $value
     ) {
-        if ($value === '') {
-            throw new \InvalidArgumentException('Property name must not be empty.', 1519745994);
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid property name "%s": %s', $value, $validationResult->issues), 1519745994);
         }
     }
 
@@ -35,6 +39,16 @@ final readonly class PropertyName implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        return $schema ??= StringSchema::create(
+            description: 'Name of a node property as declared in the node type',
+            examples: ['title'],
+            minLength: 1,
+        );
     }
 
     public function __toString(): string

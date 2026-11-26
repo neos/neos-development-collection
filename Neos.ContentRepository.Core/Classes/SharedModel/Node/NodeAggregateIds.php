@@ -16,6 +16,10 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\JsonSchema\AnyOfSchema;
+use Neos\JsonSchema\ArraySchema;
+use Neos\JsonSchema\ObjectSchema;
+use Neos\JsonSchema\ProvidesSchema;
 
 /**
  * An immutable collection of NodeAggregateIds, indexed by their value
@@ -23,7 +27,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
  * @implements \IteratorAggregate<string|int,NodeAggregateId>
  * @api
  */
-final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSerializable
+final class NodeAggregateIds implements ProvidesSchema, \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
      * @param array<string|int,NodeAggregateId> $nodeAggregateIds
@@ -104,6 +108,23 @@ final class NodeAggregateIds implements \IteratorAggregate, \Countable, \JsonSer
     public function toJson(): string
     {
         return \json_encode($this, JSON_THROW_ON_ERROR);
+    }
+
+    public static function schema(): AnyOfSchema
+    {
+        static $schema = null;
+        // note: the IDs are serialized as object indexed by their value, unless PHP considers the result a list (e.g. for the IDs "0" and "1")
+        return $schema ??= AnyOfSchema::create(
+            ObjectSchema::create(
+                description: 'A set of node aggregate identifiers, indexed by their value',
+                additionalProperties: NodeAggregateId::schema(),
+                propertyNames: NodeAggregateId::schema(),
+            ),
+            ArraySchema::create(
+                description: 'A list of node aggregate identifiers',
+                items: NodeAggregateId::schema(),
+            ),
+        );
     }
 
     /**

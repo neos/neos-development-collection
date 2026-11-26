@@ -14,12 +14,15 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
 
+use Neos\JsonSchema\ProvidesSchema;
+use Neos\JsonSchema\StringSchema;
+
 /**
  * A tag that can be added to Node aggregates that is inherited by all its descendants
  *
  * @api
  */
-final class SubtreeTag implements \JsonSerializable
+final class SubtreeTag implements ProvidesSchema, \JsonSerializable
 {
     /**
      * @var array<string,self>
@@ -36,12 +39,9 @@ final class SubtreeTag implements \JsonSerializable
 
     private function __construct(public string $value)
     {
-        $regexPattern = '/^[a-z0-9_.-]{1,36}$/';
-        if (preg_match($regexPattern, $value) !== 1) {
-            throw new \InvalidArgumentException(sprintf('The SubtreeTag value "%s" does not adhere to the regular expression "%s"', $value, $regexPattern), 1695467813);
-        }
-        if (is_numeric($this->value)) {
-            throw new \InvalidArgumentException(sprintf('The SubtreeTag value "%s" must not be fully numeric', $value), 1779911018);
+        $validationResult = self::schema()->validate($value);
+        if (!$validationResult->valid) {
+            throw new \InvalidArgumentException(sprintf('Invalid SubtreeTag value "%s": %s', $value, $validationResult->issues), 1695467813);
         }
     }
 
@@ -58,6 +58,19 @@ final class SubtreeTag implements \JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->value;
+    }
+
+    public static function schema(): StringSchema
+    {
+        static $schema = null;
+        // note: the negative lookahead rejects fully numeric values (as in {@see is_numeric()})
+        return $schema ??= StringSchema::create(
+            description: 'A tag that is added to a node aggregate and inherited by all its descendants',
+            examples: ['disabled', 'access-restricted'],
+            minLength: 1,
+            maxLength: 36,
+            pattern: '^(?!-?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:e-?[0-9]+)?$)[a-z0-9_.-]+$',
+        );
     }
 
     public function __toString(): string
