@@ -70,7 +70,7 @@ prototype(Neos.Workspace.Ui:Component.Modal.Create) < prototype(Neos.Fusion:Comp
               <Neos.Fusion.Form:Select>
                 <Neos.Fusion:Loop items={props.baseWorkspaceOptions} itemName="workspaceTitle" itemKey="workspaceName">
                   <Neos.Fusion.Form:Select.Option
-                    option.value={workspaceName}>{workspaceTitle}</Neos.Fusion.Form:Select.Option>
+                    option.value={workspaceName}>{String.htmlSpecialChars(workspaceTitle)}</Neos.Fusion.Form:Select.Option>
                 </Neos.Fusion:Loop>
               </Neos.Fusion.Form:Select>
             </Neos.Fusion.Form:Neos.BackendModule.FieldContainer>

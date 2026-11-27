@@ -21,7 +21,7 @@ prototype(Neos.NodeTypes.AssetList:AssetList) < prototype(Neos.Neos:ContentCompo
       </li>
       <Neos.Fusion:Loop items={props.assets} itemName="asset">
         <li>
-          <Neos.Fusion:Link.Resource href.resource={asset.resource}>{asset.resource.filename}</Neos.Fusion:Link.Resource>
+          <Neos.Fusion:Link.Resource href.resource={asset.resource}>{String.htmlSpecialChars(asset.resource.filename)}</Neos.Fusion:Link.Resource>
         </li>
       </Neos.Fusion:Loop>
     </ul>

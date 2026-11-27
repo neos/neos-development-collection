@@ -66,7 +66,7 @@ final class GraphState implements \IteratorAggregate, \JsonSerializable
         }
 
         $missingItems = array_map(
-            fn (LocalGraphState $item): LocalGraphStateDiff => LocalGraphStateDiff::fromLocalGraphState($item),
+            fn (LocalGraphState $item): LocalGraphStateDiff => LocalGraphStateDiff::removedFromLocalGraphState($item),
             array_diff_key($this->items, $other->items),
         );
         $additionalItems = array_map(

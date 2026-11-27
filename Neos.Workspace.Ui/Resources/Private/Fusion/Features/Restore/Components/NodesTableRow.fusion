@@ -42,7 +42,7 @@ prototype(Neos.Workspace.Ui:Component.NodesTableRow) < prototype(Neos.Fusion:Com
       </td>
       <td></td>
       <td>
-        <span>{props.restorelistItem.deletionUserName}</span>
+        <span>{String.htmlSpecialChars(props.restorelistItem.deletionUserName)}</span>
       </td>
       <td>
         <span @if.hasDeletionDate={props.restorelistItem.deleteTime}>{Date.format(props.restorelistItem.deleteTime, 'Y-m-d H:i')}</span>

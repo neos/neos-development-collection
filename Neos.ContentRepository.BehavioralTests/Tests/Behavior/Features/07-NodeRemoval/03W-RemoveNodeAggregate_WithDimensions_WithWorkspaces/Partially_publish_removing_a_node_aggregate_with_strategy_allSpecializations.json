@@ -1,0 +1,60 @@
+{
+    "@feature": "03W-RemoveNodeAggregate_WithDimensions_WithWorkspaces.feature",
+    "@scenario": "Partially publish removing a node aggregate with strategy allSpecializations",
+    "lady-eleonode-rootford": {
+        "{\"example\":\"source\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "children": {
+                "nodes": [
+                    "sir-nodeward-nodington-iii"
+                ],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        }
+    },
+    "nodingers-cat": {
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed"
+    },
+    "nodingers-grandkitten": {
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed"
+    },
+    "nodingers-kitten": {
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed"
+    },
+    "nodingers-other-kitten": {
+        "{\"example\":\"source\"}": "_removed",
+        "{\"example\":\"spec\"}": "_removed"
+    },
+    "sir-nodeward-nodington-iii": {
+        "{\"example\":\"source\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        },
+        "{\"example\":\"spec\"}": {
+            "precedingSiblings": {
+                "nodes": [],
+                "removedNodes": {
+                    "nodingers-cat": "nodingers-cat"
+                }
+            }
+        }
+    }
+}

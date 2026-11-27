@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2026-11-01
+This reference was automatically generated from code on 2026-11-26
 
 
 .. _`Eel Helpers Reference: Array`:
@@ -1493,6 +1493,16 @@ Neos.Node
 Eel helper for ContentRepository Nodes
 
 Implemented in: ``Neos\Neos\Fusion\Helper\NodeHelper``
+
+Neos.Node.equals(nodeA, nodeB)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Compares nodes for equality
+
+* ``nodeA`` (Node|null)
+* ``nodeB`` (Node|null)
+
+**Return** (bool)
 
 Neos.Node.isDisabled(node)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
