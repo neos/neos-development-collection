@@ -50,6 +50,12 @@ class ThumbnailGeneratorStrategy
     protected $throwableStorage;
 
     /**
+     * @Flow\InjectConfiguration(package="Neos.Media", path="thumbnailGenerators")
+     * @var array
+     */
+    protected $generatorOptions;
+
+    /**
      * Refresh the given thumbnail
      *
      * @param Thumbnail $thumbnail
@@ -74,6 +80,33 @@ class ThumbnailGeneratorStrategy
         }
 
         $this->logger->error(sprintf('All thumbnail generators failed to generate a thumbnail for asset %s (%s)', $thumbnail->getOriginalAsset()->getResource()->getSha1(), $thumbnail->getOriginalAsset()->getResource()->getFilename()), LogEnvironment::fromMethodName(__METHOD__));
+    }
+
+    /**
+     * Whether any enabled generator is configured to process assets although the rendered
+     * thumbnail would be identical to the original (same dimensions, no quality or format
+     * change). By default the ThumbnailService returns the original asset in that case, so
+     * no generator ever runs. Generators that do more than resizing — watermarking, image
+     * optimisation, provenance markings — are enabled for such assets via
+     * Neos.Media.thumbnailGenerators.<className>.processUnmodifiedAssets: true
+     *
+     * @return boolean
+     */
+    public function shouldProcessUnmodifiedAssets(): bool
+    {
+        foreach ($this->generatorOptions ?? [] as $className => $options) {
+            if (!is_array($options) || ($options['processUnmodifiedAssets'] ?? false) !== true) {
+                continue;
+            }
+            if (($options['disable'] ?? false) === true) {
+                continue;
+            }
+            if (!is_a($className, ThumbnailGeneratorInterface::class, true)) {
+                continue;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
