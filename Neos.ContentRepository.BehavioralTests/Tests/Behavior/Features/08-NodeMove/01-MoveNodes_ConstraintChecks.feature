@@ -279,7 +279,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId                    | "sir-david-nodenborough"    |
       | newPrecedingSiblingNodeAggregateId | "lady-abigail-nodenborough" |
       | relationDistributionStrategy       | "scatter"                   |
-    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   Scenario: Try to move existing node after a node which is not a child of the new parent
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
@@ -307,7 +307,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId                     | "sir-david-nodenborough"    |
       | newSucceedingSiblingNodeAggregateId | "lady-abigail-nodenborough" |
       | relationDistributionStrategy        | "scatter"                   |
-    Then the last command should have thrown an exception of type "NodeAggregateIsNoSibling"
+    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   Scenario: Try to move existing node before a node which is not a child of the new parent
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:

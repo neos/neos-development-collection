@@ -8,14 +8,14 @@
         <div>
             <h1>{neos:backend.translate(id: 'service.nodes.title', value: 'Nodes')}</h1>
             <ul class="nodes">
-                <f:for each="{nodes}" as="node">
+                <f:for each="{nodes}" as="node" key="index">
                     <li class="node">
                         <span class="node-path">{node.path}</span>
                         <f:alias map="{documentNode: '{neos:node.closestDocument(node: node)}'}">
                             <f:if condition="{documentNode}">
                                 <f:then>
                                     <a href="{neos:uri.node(node: documentNode, absolute: true)}" class="node-frontend-uri">
-                                        <f:render section="breadcrumb" arguments="{node: documentNode}" />
+                                        <f:render section="breadcrumb" arguments="{breadcrumb: '{breadcrumbs.{index}}'}" />
                                     </a>
                                 </f:then>
                                 <f:else>
@@ -35,5 +35,5 @@
         </div>
     </body>
 </html>
-<f:section name="breadcrumb"><f:if condition="{node.parent} && {node.parent.depth} > 1"><f:render section="breadcrumb" arguments="{node: node.parent}" /> &gt; </f:if>{neos:node.label(node: node)}</f:section>
+<f:section name="breadcrumb"><f:for each="{breadcrumb}" as="breadcrumbNode" reverse="true" iteration="breadcrumbIteration">{neos:node.label(node: breadcrumbNode)}<f:if condition="{breadcrumbIteration.isLast}"><f:else> &gt; </f:else></f:if></f:for></f:section>
 

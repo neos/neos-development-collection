@@ -265,10 +265,6 @@
         <source>Node</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">ノード</target>
       </trans-unit>
-      <trans-unit id="restore.table.label" xml:space="preserve">
-        <source>Element</source>
-        <target state="needs-translation" state-qualifier="leveraged-mt">タイトル</target>
-      </trans-unit>
       <trans-unit id="restore.dialog.restore.cancel" xml:space="preserve">
         <source>Cancel</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">キャンセル</target>
@@ -284,6 +280,22 @@
       <trans-unit id="workspaces.discardChanges" xml:space="preserve">
         <source>Discard</source>
         <target state="needs-translation" state-qualifier="leveraged-mt">破棄</target>
+      </trans-unit>
+      <trans-unit id="close" xml:space="preserve">
+        <source>Close</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">閉じる</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">キャンセル</target>
+      </trans-unit>
+      <trans-unit id="workspaces.deleteWorkspaceRoleAssignment.confirm" xml:space="preserve">
+        <source>Remove</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">削除する</target>
+      </trans-unit>
+      <trans-unit id="workspaces.workspace.workspaceRoleAssignment.subjectType" xml:space="preserve">
+        <source>Type</source>
+        <target state="needs-translation" state-qualifier="leveraged-mt">種類</target>
       </trans-unit>
     </body>
   </file>

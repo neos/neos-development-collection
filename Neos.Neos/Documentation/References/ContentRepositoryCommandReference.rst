@@ -3,7 +3,7 @@
 ContentRepository Command Reference
 ===================================
 
-This reference was automatically generated from code on 2026-10-09
+This reference was automatically generated from code on 2026-11-26
 
 
 .. _`ContentRepository Command Reference: AddDimensionShineThrough`:
