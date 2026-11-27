@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use Neos\TimeableNodeVisibility\Domain\ChangedVisibilities;
@@ -37,6 +38,9 @@ class TimeableNodeVisibilityService
 
     #[Flow\Inject]
     protected LoggerInterface $logger;
+
+    #[Flow\Inject]
+    protected ThrowableStorageInterface $throwableStorage;
 
     public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ChangedVisibilities
     {
@@ -63,7 +67,7 @@ class TimeableNodeVisibilityService
                 } catch (\Exception $e) {
                     $results[] = $result = ChangedVisibility::createForError(
                         $node,
-                        sprintf('Could not enable node: %s', $e->getMessage())
+                        sprintf('Could not enable node: %s', $this->throwableStorage->logThrowable($e))
                     );
                 }
                 $this->logResult($result);
@@ -83,7 +87,7 @@ class TimeableNodeVisibilityService
                 } catch (\Exception $e) {
                     $results[] = $result = ChangedVisibility::createForError(
                         $node,
-                        sprintf('Could not disable node: %s', $e->getMessage())
+                        sprintf('Could not disable node: %s', $this->throwableStorage->logThrowable($e))
                     );
                 }
                 $this->logResult($result);
