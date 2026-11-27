@@ -181,7 +181,8 @@ class TimeableNodeVisibilityService
     {
         if ($result->isError()) {
             $this->logger->error(
-                sprintf('Timed node visibility: %s [NodeAggregateId: %s, DimensionSpacePoints: %s]',
+                sprintf(
+                    'Timed node visibility: %s [NodeAggregateId: %s, DimensionSpacePoints: %s]',
                     $result->message,
                     $result->node->aggregateId->value,
                     implode(',', $result->node->originDimensionSpacePoint->coordinates)
