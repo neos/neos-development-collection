@@ -17,6 +17,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWer
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
@@ -119,6 +120,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event),
+            NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
@@ -192,6 +194,35 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'nodeTypeName' => $nodeInSomeDimension->getNodeTypeName()->value,
             ]);
         }
+    }
+
+    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
+    {
+        if (!$event->workspaceName->isLive()) {
+            return;
+        }
+
+        $nodeRow = $this->dbal->fetchAssociative(
+            'SELECT nodeAggregateIdPath AS nodeaggregateidpath, nodeTypeName AS nodetypename FROM '
+            . $this->tableNamePrefix . '_uri WHERE nodeAggregateId = :nodeAggregateId LIMIT 1',
+            ['nodeAggregateId' => $event->nodeAggregateId->value]
+        );
+        if ($nodeRow === false) {
+            return;
+        }
+
+        if ($this->getDocumentTypeClassification(NodeTypeName::fromString($nodeRow['nodetypename'])) !== DocumentTypeClassification::CLASSIFICATION_SITE) {
+            return;
+        }
+
+        $nodeAggregateIdPath = $nodeRow['nodeaggregateidpath'];
+        $this->updateNodeQuery('SET siteNodeName = :siteNodeName
+                WHERE nodeAggregateIdPath = :nodeAggregateIdPath
+                    OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix', [
+            'siteNodeName' => $event->newNodeName,
+            'nodeAggregateIdPath' => $nodeAggregateIdPath,
+            'childNodeAggregateIdPathPrefix' => $nodeAggregateIdPath . '/%',
+        ]);
     }
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
