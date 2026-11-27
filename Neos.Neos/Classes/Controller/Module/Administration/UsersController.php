@@ -470,8 +470,9 @@ class UsersController extends AbstractModuleController
         // Use optional chaining to compare timestamps.
         // Will be null, if expirationDate is null or not set, otherwise an integer.
         // Using the datetime object directly would not work, as different instance are used.
+        $expirationDate = $expirationDate ? new \DateTime($expirationDate) : null;
         if ($account->getExpirationDate()?->getTimestamp() !== $expirationDate?->getTimestamp()) {
-            $account->setExpirationDate($expirationDate ? new \DateTime($expirationDate) : null);
+            $account->setExpirationDate($expirationDate);
             $this->accountRepository->update($account);
         }
 
