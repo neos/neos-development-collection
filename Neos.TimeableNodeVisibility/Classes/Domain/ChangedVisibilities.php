@@ -31,4 +31,9 @@ class ChangedVisibilities
     {
         return array_filter($this->results, fn ($handlingResult) => $handlingResult->type === $result);
     }
+
+    public function hasErrors(): bool
+    {
+        return $this->countByType(ChangedVisibilityType::ERROR) > 0;
+    }
 }
