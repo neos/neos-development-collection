@@ -537,6 +537,20 @@ final class NodeType
             );
     }
 
+    public function matchesConstraints(NodeTypeFilters $constraints): bool
+    {
+        $constraintValues = [
+            '*' => $constraints->isWildcardAllowed,
+        ];
+        foreach ($constraints->explicitlyIncludedNodeTypeNames as $explicitlyIncludedNodeTypeName) {
+            $constraintValues[$explicitlyIncludedNodeTypeName->value] = true;
+        }
+        foreach ($constraints->explicitlyExcludedNodeTypeNames as $explicitlyExcludedNodeTypeName) {
+            $constraintValues[$explicitlyExcludedNodeTypeName->value] = true;
+        }
+        return ConstraintCheck::create($constraintValues)->isNodeTypeAllowed($this);
+    }
+
     /**
      * @param array<string,mixed> $fullConfiguration
      */

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\ReferenceType;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+
 /**
  * @api
  */
@@ -104,6 +108,39 @@ final readonly class ReferenceTypeGraph
                 $constraints->explicitlyExcludedReferenceTypeNames,
             ),
         ));
+    }
+
+    public function getReferenceTypesMatchingNodeTypes(
+        NodeTypeName $sourceNodeTypeName,
+        ReferenceName $referenceName,
+        NodeTypeName $targetNodeTypeName,
+        NodeTypeManager $nodeTypeManager,
+    ): ReferenceTypeSet {
+        $matchingReferenceTypes = [];
+
+        $sourceNodeType = $nodeTypeManager->getNodeType($sourceNodeTypeName);
+        if (!$sourceNodeType) {
+            return ReferenceTypeSet::create();
+        }
+        $targetNodeType = $nodeTypeManager->getNodeType($targetNodeTypeName);
+        if (!$targetNodeType) {
+            return ReferenceTypeSet::create();
+        }
+
+        $referenceTypeCandidates = $this->getReferenceTypesMatchingConstraints(
+            $sourceNodeType->getReferenceTypeConstraints($referenceName),
+        );
+
+        foreach ($referenceTypeCandidates as $referenceTypeCandidate) {
+            if (
+                $sourceNodeType->matchesConstraints($referenceTypeCandidate->constraints->sourceNodeTypes)
+                && $targetNodeType->matchesConstraints($referenceTypeCandidate->constraints->targetNodeTypes)
+            ) {
+                $matchingReferenceTypes[] = $referenceTypeCandidate;
+            }
+        }
+
+        return ReferenceTypeSet::create(...$matchingReferenceTypes);
     }
 
     private function isCloserToExplicitlyAllowed(
