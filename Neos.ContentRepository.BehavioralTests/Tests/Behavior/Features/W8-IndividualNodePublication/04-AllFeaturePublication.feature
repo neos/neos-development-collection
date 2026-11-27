@@ -546,6 +546,101 @@ Feature: Publishing hide/show scenario of nodes
       | referenceProperty | user-cs-identifier-modified;nody-mc-nodeface;{"language":"de"}       | null       |
       | referenceProperty | user-cs-identifier-modified;sir-david-nodenborough;{"language":"de"} | null       |
 
+  Scenario: (SetNodeReferences) It is possible to override via publish setting node references
+    When the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                   |
+      | workspaceName                   | "live"                                                                                  |
+      | sourceNodeAggregateId           | "sir-david-nodenborough"                                                                |
+      | sourceOriginDimensionSpacePoint | {"language":"de"}                                                                       |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"nody-mc-nodeface"}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                         |
+      | workspaceName                   | "live"                                                                                        |
+      | sourceNodeAggregateId           | "nody-mc-nodeface"                                                                            |
+      | sourceOriginDimensionSpacePoint | {"language":"de"}                                                                             |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"sir-david-nodenborough"}]}] |
+
+    Given the command CreateWorkspace is executed with payload:
+      | Key                | Value                |
+      | workspaceName      | "user-test"          |
+      | baseWorkspaceName  | "live"               |
+      | newContentStreamId | "user-cs-identifier" |
+
+    # SETUP: override two node references in USER workspace
+    When the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                             |
+      | workspaceName                   | "user-test"                                                                                       |
+      | sourceNodeAggregateId           | "sir-david-nodenborough"                                                                          |
+      | sourceOriginDimensionSpacePoint | {"language":"de"}                                                                                 |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"sir-nodeward-nodington-iii"}]}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value                                                                                             |
+      | workspaceName                   | "user-test"                                                                                       |
+      | sourceNodeAggregateId           | "nody-mc-nodeface"                                                                                |
+      | sourceOriginDimensionSpacePoint | {"language":"de"}                                                                                 |
+      | references                      | [{"referenceName": "referenceProperty", "references": [{"target":"sir-nodeward-nodington-iii"}]}] |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                             | Properties |
+      | referenceProperty | cs-identifier;nody-mc-nodeface;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                   | Properties |
+      | referenceProperty | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"de"}
+    And I expect this node to have no references
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                            | Properties |
+      | referenceProperty | user-cs-identifier;sir-nodeward-nodington-iii;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                            | Properties |
+      | referenceProperty | user-cs-identifier;sir-nodeward-nodington-iii;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier;sir-nodeward-nodington-iii;{"language":"de"}
+    And I expect this node to have no references
+
+    When the command PublishIndividualNodesFromWorkspace is executed with payload:
+      | Key                             | Value                         |
+      | workspaceName                   | "user-test"                   |
+      | nodesToPublish                  | ["sir-david-nodenborough"]    |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified" |
+
+    When I am in workspace "live" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                       | Properties |
+      | referenceProperty | cs-identifier;sir-nodeward-nodington-iii;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                   | Properties |
+      | referenceProperty | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"de"}
+    And I expect this node to have no references
+    And I expect this node to be referenced by:
+      | Name              | Node                                                   | Properties |
+      | referenceProperty | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
+
+    When I am in workspace "user-test" and dimension space point {"language":"de"}
+    Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                                     | Properties |
+      | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{"language":"de"}
+    And I expect this node to have the following references:
+      | Name              | Node                                                                     | Properties |
+      | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{"language":"de"} | null       |
+    Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{"language":"de"}
+    And I expect this node to have no references
+    And I expect this node to be referenced by:
+      | Name              | Node                                                                 | Properties |
+      | referenceProperty | user-cs-identifier-modified;nody-mc-nodeface;{"language":"de"}       | null       |
+      | referenceProperty | user-cs-identifier-modified;sir-david-nodenborough;{"language":"de"} | null       |
+
   Scenario: (CreateRootNodeAggregateWithNode) It is possible to publish new root nodes
     Given the command CreateWorkspace is executed with payload:
       | Key                | Value                |

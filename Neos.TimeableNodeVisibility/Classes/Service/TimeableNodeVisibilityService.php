@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag;
 use Neos\Neos\Domain\SubtreeTagging\NeosVisibilityConstraints;
 use Neos\TimeableNodeVisibility\Domain\ChangedVisibilities;
@@ -45,6 +46,9 @@ class TimeableNodeVisibilityService
     #[Flow\Inject]
     protected LoggerInterface $logger;
 
+    #[Flow\Inject]
+    protected ThrowableStorageInterface $throwableStorage;
+
     public function handleExceededNodeDates(ContentRepositoryId $contentRepositoryId, WorkspaceName $workspaceName): ChangedVisibilities
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -56,30 +60,43 @@ class TimeableNodeVisibilityService
         /** @var Node $node */
         foreach ($nodes as $node) {
             if ($this->needsEnabling($node, $now)) {
-                $contentRepository->handle(
-                    EnableNodeAggregate::create(
-                        $workspaceName,
-                        $node->aggregateId,
-                        $node->dimensionSpacePoint,
-                        NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
-                    )
-                );
+                try {
+                    $contentRepository->handle(
+                        EnableNodeAggregate::create(
+                            $workspaceName,
+                            $node->aggregateId,
+                            $node->dimensionSpacePoint,
+                            NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                        )
+                    );
 
-                $results[] = $result = ChangedVisibility::createForNodeWasEnabled($node);
+                    $results[] = $result = ChangedVisibility::createForNodeWasEnabled($node);
+                } catch (\Exception $e) {
+                    $results[] = $result = ChangedVisibility::createForError(
+                        $node,
+                        sprintf('Could not enable node: %s', $this->throwableStorage->logThrowable($e))
+                    );
+                }
                 $this->logResult($result);
-
             }
             if ($this->needsDisabling($node, $now)) {
-                $contentRepository->handle(
-                    DisableNodeAggregate::create(
-                        $workspaceName,
-                        $node->aggregateId,
-                        $node->dimensionSpacePoint,
-                        NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
-                    )
-                );
+                try {
+                    $contentRepository->handle(
+                        DisableNodeAggregate::create(
+                            $workspaceName,
+                            $node->aggregateId,
+                            $node->dimensionSpacePoint,
+                            NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                        )
+                    );
 
-                $results[] = $result = ChangedVisibility::createForNodeWasDisabled($node);
+                    $results[] = $result = ChangedVisibility::createForNodeWasDisabled($node);
+                } catch (\Exception $e) {
+                    $results[] = $result = ChangedVisibility::createForError(
+                        $node,
+                        sprintf('Could not disable node: %s', $this->throwableStorage->logThrowable($e))
+                    );
+                }
                 $this->logResult($result);
             }
         }
@@ -162,6 +179,18 @@ class TimeableNodeVisibilityService
 
     private function logResult(ChangedVisibility $result): void
     {
+        if ($result->isError()) {
+            $this->logger->error(
+                sprintf(
+                    'Timed node visibility: %s [NodeAggregateId: %s, DimensionSpacePoints: %s]',
+                    $result->message,
+                    $result->node->aggregateId->value,
+                    implode(',', $result->node->originDimensionSpacePoint->coordinates)
+                )
+            );
+            return;
+        }
+
         $this->logger->info(
             sprintf(
                 'Timed node visibility: %s node [NodeAggregateId: %s, DimensionSpacePoints: %s]',

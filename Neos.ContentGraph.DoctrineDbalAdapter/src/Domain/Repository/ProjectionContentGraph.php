@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\ContentGraphTableNames;
@@ -537,7 +538,34 @@ class ProjectionContentGraph
                 'nodeRelationAnchorPoint' => $nodeRelationAnchorPoint->value,
             ]);
         } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf('Failed to load content stream ids for relation anchor point %s from database: %s', $nodeRelationAnchorPoint->value, $e->getMessage()), 1716478504, $e);
+            throw new \RuntimeException(sprintf('Failed to load content stream layers for relation anchor point %s from database: %s', $nodeRelationAnchorPoint->value, $e->getMessage()), 1716478504, $e);
+        }
+        return ContentStreamLayers::fromArray($contentStreamLayers);
+    }
+
+    public function getContentStreamLayersHierarchyIdIsContainedIn(
+        HierarchyRelationId $hierarchyRelationId,
+        ContentStreamLayers $contentStreamLayers,
+    ): ContentStreamLayers {
+        $contentStreamLayersStatement = <<<SQL
+            SELECT
+                h.contentstreamlayer
+            FROM
+                -- using table instead of HierarchyRelationStatement because we want to find the matching hierarchy ids across layers
+                {$this->tableNames->hierarchyRelation()} h
+            WHERE
+                h.id = :hierarchyRelationId
+                AND h.contentstreamlayer IN (:contentStreamLayers) 
+        SQL;
+        try {
+            $contentStreamLayers = $this->dbal->fetchFirstColumn($contentStreamLayersStatement, [
+                'hierarchyRelationId' => $hierarchyRelationId->value,
+                'contentStreamLayers' => $contentStreamLayers->toIntArray()
+            ], [
+                'contentStreamLayers' => ArrayParameterType::INTEGER
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to load content stream layers for hierarchy relation id %s (%s) from database: %s', $hierarchyRelationId->value, $contentStreamLayers->toDebugString(), $e->getMessage()), 1793778769, $e);
         }
         return ContentStreamLayers::fromArray($contentStreamLayers);
     }
