@@ -25,6 +25,7 @@
 			<table class="neos-table">
 					<thead>
 						<tr>
+							<th>&nbsp;</th>
 							<th title="{neos:backend.translate(id: 'users.sortBy.fullName', source: 'Modules', package: 'Neos.Neos')}">
 								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'name.fullName', labelIdentifier:'users.name'}" />
 							</th>
@@ -39,17 +40,24 @@
 					</thead>
 					<f:for each="{paginatedUsers}" key="index" as="user">
 						<tr>
+							<td>
+								<f:for each="{user.accounts}" as="account">
+									<f:if condition="{account.expirationDate}">
+										<i class="fas fa-lock{f:if(condition: '{account.expirationDate} > {now}', then: '-open')} icon-white" title="{neos:backend.translate(id: 'users.tooltip.expirationDate', value: 'Expiration Date', source: 'Modules', package: 'Neos.Neos')}: {account.expirationDate -> f:format.date(localeFormatType: 'dateTime', localeFormatLength: 'medium', forceLocale: '{neos:backend.interfaceLanguage()}')}"></i>
+									</f:if>
+								</f:for>
+							</td>
 							<td>{user.name.fullName}</td>
 							<td>
 								<f:for each="{user.accounts}" as="account">
 									<i class="fas fa-user icon-white"></i>{account.accountIdentifier} <f:render partial="Module/Shared/Roles" arguments="{roles: account.roles}" />
 								</f:for>
 							</td>
-              <td>
-                <f:for each="{user.accounts}" as="account">
-                  <f:format.date localeFormatType="dateTime" localeFormatLength="medium" forceLocale="{neos:backend.interfaceLanguage()}">{account.lastSuccessfulAuthenticationDate}</f:format.date>
-                </f:for>
-              </td>
+							<td>
+								<f:for each="{user.accounts}" as="account">
+									<f:format.date localeFormatType="dateTime" localeFormatLength="medium" forceLocale="{neos:backend.interfaceLanguage()}">{account.lastSuccessfulAuthenticationDate}</f:format.date>
+								</f:for>
+							</td>
 							<td class="neos-action">
 								<div class="neos-pull-right">
 									<f:link.action action="show" arguments="{user: user}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'users.tooltip.view', source: 'Modules', package: 'Neos.Neos')}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
