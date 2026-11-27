@@ -1,0 +1,581 @@
+`9.2.1 (2026-11-27) <https://github.com/neos/neos-development-collection/releases/tag/9.2.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Avoid duplicate cr-queries to build breadcrumbs <https://github.com/neos/neos-development-collection/pull/6057>`_
+---------------------------------------------------------------------------------------------------------------------------
+
+This was previously `6056 <https://github.com/neos/neos-development-collection/pull/6056>`_
+
+I have reopened this to target 9.0.
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as ``['key' => 'value']``.
+
+NEOS-1460 #close
+
+`BUGFIX: Improve error handling in TimeableNodeVisibilityService <https://github.com/neos/neos-development-collection/pull/6047>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This PR improves the error handling of the timeable node visibility service, to ensure all nodes get handled even in error case.
+
+In error case, the node handling continues. The errors get logged and returned to the CLI command with ends with exit code "1" and outputs the errors.
+
+* Packages: ``Neos`` ``TimeableNodeVisibility``
+
+`BUGFIX: Fast node & references cleanup during `ContentStreamWasRemoved` <https://github.com/neos/neos-development-collection/pull/6019>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Followup to `#5776 <https://github.com/neos/neos-development-collection/issues/5776>`_
+
+Previously the singly delete nodes query was using no index an examined all nodes where there was no hierarchy relation matching. This is super expensive if you have 250K nodes.
+
+```sql
+DELETE n
+FROM cr_default_p_graph_node n
+  LEFT JOIN cr_default_p_graph_hierarchyrelation h
+  ON h.childnodeanchor = n.relationanchorpoint
+    AND h.contentstreamlayer != :targetContentStreamLayer
+WHERE h.childnodeanchor IS NULL;
+```
+
+Instead we do two steps in removing the nodes:
+
+First all hierarchies that will be collapsed during a possible merge can thus unreference a node which must e deleted. Here we query first what the ``INSERT ON DUPLICATE KEY`` will remove. (And we must also check if no one else uses these node candidates but thats cheaper than comparing all nodes)
+
+After the (optional) merge well check which node rows where previously part of the content stream layer we wanted to remove. All these candiates are again compared to all other hierarchies but that too is cheaper again.
+
+solves: https://github.com/neos/neos-development-collection/issues/5891
+
+Because the cleanup should be now fast enough.
+
+**Upgrade instructions**
+
+**Review instructions**
+
+This change is tested mostly via `#5808 <https://github.com/neos/neos-development-collection/issues/5808>`_behind the scenes. If we would fail to cleanup nodes in any scenario we would get:
+
+> Node nody-mc-nodeface (relationanchorpoint XXX) found but no hierarchy references that node.
+
+(The same for orphaned references or orphaned hierarchies)
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [x] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Hard-node-removal must only remove edge if it was created in the current write layer <https://github.com/neos/neos-development-collection/pull/6028>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+otherwise the hierarchy must be set to null as we would - if deleting it - make the underlayer layer where the node also existed active again
+
+
+<img width="2227" height="2219" alt="image" src="https://github.com/user-attachments/assets/0d3f2d75-7f11-40b5-ad70-04e84709017c" />
+
+
+**Upgrade instructions**
+
+**Checklist**
+
+- update ``neos/contentgraph-doctrinedbaladapter-forward-compatibility`` !!!
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix node creation after partial node move <https://github.com/neos/neos-development-collection/pull/6043>`_
+--------------------------------------------------------------------------------------------------------------------
+
+This streamlines the resolution of inter dimensional siblings (aka target coordinates per dimension space point for move, create and vary) into a single class.
+
+Required / strongly recommended for implementation of further bugfixes or tests.
+
+Originally designed as a mere code cleanup in preparation of `#5403 <https://github.com/neos/neos-development-collection/issues/5403>``_in 9.3, it also solves ``#6042 <https://github.com/neos/neos-development-collection/issues/6042>`_and thus targets 9.0 instead. 
+
+**Review instructions**
+
+See the new tests, that failed previously
+
+* Packages: ``ContentRepository.BehavioralTests`` ``ContentRepository.Core``
+
+`BUGFIX: Align DocumentUriPathProjection to contentGraph when varying disabled and removed tagged nodes <https://github.com/neos/neos-development-collection/pull/5971>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+A newly created peer-variant of a hidden document-node would get the disabled information copied. This makes the uri-path hidden but the node is not since the created node-information in the uriPath projection will copy the disabled tag to the new node-information. The state cannot be fixed by the editor because each hide/unhide of the new variant will only raise and lower the disabled level by 1 never allowing it to become zero (visible) again.
+
+Background: 
+
+Currently the UriPathProjection will copy the disabled and removed informations directly from the source node when a new node variant is created.
+
+This is incorrect as the values must be calculated using the same logic as subtree tags which are handled by the contentGraphProjection that will:
+- copy all directly assigned subtree-tags to during ``createSpecializationVariant``
+- NOT copy subtree-tags at all for ``createPeerVariant`` and ``createGeneralizationVariant``
+
+This change brings the behavior of the documentUriProjection in line and ensure that ``disabledLevel`` and ``removedLevel`` are calculated from the information of the parentNode adjusted by information from the directly assigned tags during ``createSpecializationVariant``.
+
+* Resolves: `#5972 <https://github.com/neos/neos-development-collection/issues/5972>`_
+
+**Upgrade instructions**
+
+If you have problems with variants of disabled nodes that are visible in the backend but are not visible in the frontend you should run a replay of the documentUriProjection. If you do not have such problems no changes are needed. 
+
+**Review instructions**
+
+The question wether one should copy subtree-tag informations also during peerVariant or generalizationVariant creation is NOT to be discussed here as this would be a feature that belongs elsewhere.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Flush routing caches when shortcut targetMode or target are changed <https://github.com/neos/neos-development-collection/pull/6009>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Flush routing caches when shortcut targetMode or target are changed. Otherwise previously rendered urls for the shortcut node are never updated.
+
+* Resolves: `#6008 <https://github.com/neos/neos-development-collection/issues/6008>`_
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Prefilter node candidate for timeable node visibility with a maximum possible timezone gap <https://github.com/neos/neos-development-collection/pull/6049>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+If a node stores dates for ``enableAfterDateTime`` or ``disableAfterDateTime`` in a different timezone as the command is running with, this might miss some nodes to enable/disable at the right time. They will get handled eventually, but later than expected.
+
+This PR widens the prefilter condition, to fetch all node candidates to handle including a addional gap of the maximum timezone offset. This might return more nodes as needed, but they get filtered in PHP after converting all date strings into DateTimeImmutable objects, which allow a exact comparison.
+
+* Packages: ``Neos`` ``TimeableNodeVisibility``
+
+`BUGFIX: Render full breadcrumbs in the node search service <https://github.com/neos/neos-development-collection/pull/6050>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+**Review instructions**
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos``
+
+`BUGFIX: Replace workspace entries on baseworkspace change <https://github.com/neos/neos-development-collection/pull/6052>`_
+----------------------------------------------------------------------------------------------------------------------------
+
+This change replaces the workspace entries on baseworkspace change accordingly to workspace publish, rebase and discard.
+
+* Fixes: `#6051 <https://github.com/neos/neos-development-collection/issues/6051>`_ 
+
+* Packages: ``Workspace.Ui``
+
+`BUGFIX: Render dedicates diff view for image, asset and date changes <https://github.com/neos/neos-development-collection/pull/6030>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Fixes the rendering of image, asset and date diff views in the review screen. Also shows properties which have been set to "null".
+
+<img width="2495" height="868" alt="image" src="https://github.com/user-attachments/assets/89598481-80a8-48e8-918a-aff8f4ab14ea" />
+
+<img width="2497" height="797" alt="Image" src="https://github.com/user-attachments/assets/fb41cfde-c8c8-481d-9604-c18459a241f0" />
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: Sanitize workspace title and subject label <https://github.com/neos/neos-development-collection/pull/6031>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Sanitizes workspace title and subject label in Workspace.UI as they are user input.
+
+Related PR for 9.1: Based on: https://github.com/neos/neos-development-collection/pull/6032
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: Sanitize workspace title and subject label <https://github.com/neos/neos-development-collection/pull/6032>`_
+---------------------------------------------------------------------------------------------------------------------
+
+Sanitizes workspace title and subject label in Workspace.UI as they are user input.
+
+Related PR for 9.2: Based on: https://github.com/neos/neos-development-collection/pull/6031
+
+* Packages: ``Neos`` ``Workspace.Ui``
+
+`BUGFIX: Sanitize filename in AssetList <https://github.com/neos/neos-development-collection/pull/6033>`_
+---------------------------------------------------------------------------------------------------------
+
+Sanitizes filenames in AssetList as they are coming from user input.
+
+* Packages: ``Neos`` ``NodeTypes.AssetList``
+
+`BUGFIX: Sanitize filename and fix property path <https://github.com/neos/neos-development-collection/pull/6029>`_
+------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Workspace.Ui``
+
+`BUGFIX: Add primary keys to DocumentUriPathProjection and AssetUsage tables <https://github.com/neos/neos-development-collection/pull/5990>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+This PR converts two unique indizes on **DocumentUriPathProjection and AssetUsage** tables into primary keys.
+
+The tables don't have primary keys yet, which is recommanded for innodb tables. Also some hosting providers try to ensure this with the MySQL option ``sql_require_primary_key = ON``.
+
+I changed the existing migration for asset usage, to allow users to install Neos in database systems with  ``sql_require_primary_key = ON``. Otherwise the install process will fail even if a followup migration would fix the missing PK. A second migration will only apply if the non-fixed migration was already applied.
+
+This PR intenionally doesn't fix the missing PK on the HierarchyRelation table, as it has no existing unique key to re-use in Neos <9.2. That's why it will be fixed in >= 9.2 only (https://github.com/neos/neos-development-collection/pull/5991).
+
+See also: https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/migrating-to-mariadb/migrating-to-mariadb-from-sql-server/understanding-mariadb-architecture#primary-key-and-indexes
+
+> If an InnoDB table doesn't have a user-defined primary key, the first UNIQUE index whose columns are all NOT NULL is used as a primary key. If there is no such index, the table will have a clustered index. The terminology here can be a bit confusing for SQL Server and other DBMS users. A clustered index in InnoDB is a 6 bytes value that is added to the table. This index and its values are completely invisible to the users. It's important to note that clustered indexes are governed by a global mutex that greatly reduces their scalability.
+
+> Some consequences of these design choices are the following:
+For performance reasons, a primary key value should be inserted in order. In other words, the last inserted value should be the highest. This order is normally followed when inserting values into an AUTO_INCREMENT primary key. The reason is that inserting values in the middle of an ordered data structure is slower, unless they fit into existing holes. If we insert primary key values randomly, InnoDB often has to rearrange pages to make some room for the new data.
+A big primary keys means that all secondary indexes are also big.
+A query by primary key will require a single search. A query on a secondary index that also reads columns not contained in the index will require one search on the index, plus one more search for each row that satisfies the index condition.
+We shouldn't explicitly include the primary key in a secondary index. If we do so, the primary key column will be duplicated in the index.
+
+Fixes partially `#5988 <https://github.com/neos/neos-development-collection/issues/5988>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix and declare compatibility for MySQL 9.7 <https://github.com/neos/neos-development-collection/pull/6025>`_
+----------------------------------------------------------------------------------------------------------------------
+
+Previously the test would fail with
+
+> Syntax error or access violation: 3143 Invalid JSON path expression. The error is around character position 7
+
+The reason for this is the ``CONCAT`` expression for this example returning ``$.tag-1`` which is not a valid json path but needs to be quoted.
+
+```sql
+SELECT t.tag
+FROM JSON_TABLE(JSON_KEYS('{"tag-1": true, "tag-2": false}'), '\\$[*]' COLUMNS (tag VARCHAR(30) PATH '\\$')) t
+WHERE JSON_CONTAINS_PATH('{"tag-1": true}', 'all', CONCAT('\\$.', t.tag)) = 0
+```
+
+We cant use the ``QUOTE`` function as it introduces single quotes. But its safe to use double quotes just around as the subtree tags are constraint to not include them: ``^[a-z0-9_.-]{1,36}$``
+
+* Packages: ``.github``
+
+`BUGFIX: Speedup `findNodeAggregatesTaggedBy()` for big content graph <https://github.com/neos/neos-development-collection/pull/6021>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Previously with 250K Nodes / Hierarchies in live the query takes more than 30 seconds.
+
+Reason for that is that the first filtering of the hierarchies to only return the say removed tagged nodes and then use that small result set to join again on the hierarchy relation (to get variants of the node aggregate) and then the node is not done in that order but the optimizer starts elsewhere and will not have fun.
+
+Until now the query started at ``n`` then the first (tagged) ``h`` then the second (full) ``h`` then ``dsp``
+With this change filters the first ``h``, then the second (full) ``h`` then ``n`` then ``dsp`` as desired.
+
+The query is still not the fastest and im not happy with it in several ways:
+
+- obviously it causes pain to build full NodeAggregates, so we could instead just return NodeAggregateIds and fetch them in a second roundtrip back to get all NodeAggregates in an indexed way making the ``STRAIGHT_JOIN`` hack obsolete
+- first of all, its a hack and should not belong on the contentGraph
+- as we dont need hierarchy we could write a simple "live" projection to only track the explict "removed" node ids and use the content graph to fetch them
+
+This change already resolves the most pain for now though.
+
+<details><summary>Details, the ``ANALYZE`` tables</summary>
+<p>
+
+### Before
+
+> execution: 33 s 347 ms
+
+| id | select\\_type | table | type | possible\\_keys | key | key\\_len | ref | rows | r\\_rows | filtered | r\\_filtered | Extra |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | PRIMARY | n | ALL | PRIMARY | null | null | null | 193064 | 259799.00 | 100 | 100 | Using where |
+  | 1 | PRIMARY | h | ref | IDX\\_F42AC33686FAE8C,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33686FAE8CF49B2E28C8561CBE462CE4F5,IDX\\_F42AC33F49B2E28C8561CBE | IDX\\_F42AC33686FAE8C | 9 | my-db-lol.n.relationanchorpoint | 1 | 1.02 | 100 | 0 | Using index condition; Using where |
+| 1 | PRIMARY | h2 | ref | IDX\\_F42AC33686FAE8C,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33686FAE8CF49B2E28C8561CBE462CE4F5,IDX\\_F42AC33F49B2E28C8561CBE | IDX\\_F42AC33686FAE8C | 9 | my-db-lol.n.relationanchorpoint | 1 | 2.14 | 100 | 66.67 | Using index condition; Using where |
+| 1 | PRIMARY | dsp | eq\\_ref | PRIMARY | PRIMARY | 34 | my-db-lol.h2.dimensionspacepointhash | 1 | 1.00 | 100 | 100 |  |
+| 5 | DEPENDENT SUBQUERY | hwin | ref | PRIMARY,IDX\\_F42AC33BF396750,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33F49B2E28C8561CBE | PRIMARY | 4 | my-db-lol.h2.id | 1 | 2.13 | 100 | 15.62 | Using where |
+| 3 | DEPENDENT SUBQUERY | hwin | ref | PRIMARY,IDX\\_F42AC33BF396750,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33F49B2E28C8561CBE | PRIMARY | 4 | my-db-lol.h.id | 1 | 1.10 | 100 | 4.31 | Using where |
+
+### After (``STRAIGHT_JOIN``)
+
+> execution: 518 ms
+
+| id | select\\_type | table | type | possible\\_keys | key | key\\_len | ref | rows | r\\_rows | filtered | r\\_filtered | Extra |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | PRIMARY | h | ALL | IDX\\_F42AC33686FAE8C,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33686FAE8CF49B2E28C8561CBE462CE4F5,IDX\\_F42AC33F49B2E28C8561CBE | null | null | null | 264624 | 265692.00 | 100 | 0 | Using where |
+  | 1 | PRIMARY | h2 | ref | IDX\\_F42AC33686FAE8C,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33686FAE8CF49B2E28C8561CBE462CE4F5,IDX\\_F42AC33F49B2E28C8561CBE | IDX\\_F42AC33686FAE8C | 9 | my-db-lol.h.childnodeanchor | 1 | 2.14 | 100 | 66.67 | Using index condition; Using where |
+| 1 | PRIMARY | n | eq\\_ref | PRIMARY | PRIMARY | 8 | my-db-lol.h.childnodeanchor | 1 | 1.00 | 100 | 100 |  |
+| 1 | PRIMARY | dsp | eq\\_ref | PRIMARY | PRIMARY | 34 | my-db-lol.h2.dimensionspacepointhash | 1 | 1.00 | 100 | 100 |  |
+| 5 | DEPENDENT SUBQUERY | hwin | ref | PRIMARY,IDX\\_F42AC33BF396750,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33F49B2E28C8561CBE | PRIMARY | 4 | my-db-lol.h2.id | 1 | 2.13 | 100 | 15.62 | Using where |
+| 3 | DEPENDENT SUBQUERY | hwin | ref | PRIMARY,IDX\\_F42AC33BF396750,IDX\\_F42AC33F49B2E28,IDX\\_F42AC33F49B2E28C8561CBE | PRIMARY | 4 | my-db-lol.h.id | 1 | 1.10 | 100 | 4.31 | Using where |
+
+
+</p>
+</details> 
+
+* Packages: ``Neos`` ``ContentGraph.DoctrineDbalAdapter``
+
+`BUGFIX: Skip null values of collection properties in asset export <https://github.com/neos/neos-development-collection/pull/6024>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+## Summary
+
+``site:exportLegacyData`` crashes if a property of type ``array<…>`` (e.g. ``array<Neos\\Media\\Domain\\Model\\Asset>``) has the value ``null``:
+
+```
+foreach() argument must be of type array|object, null given
+  in Neos.ContentRepository.LegacyNodeMigration/Classes/Processors/AssetExportProcessor.php line 109
+```
+
+```diff
+ AssetExportProcessor::extractAssetIdentifiers($type, $value)
+   $parsedType = TypeHandling::parseType($type)
+-  if elementType === null
++  if elementType === null || $value is not iterable
+     return []
+   foreach ($value as $elementValue) …
+```
+
+
+* Packages: ``ContentRepository.LegacyNodeMigration``
+
+`BUGFIX: Make media:importresources command compatible with dbal 3 <https://github.com/neos/neos-development-collection/pull/5985>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+With Neos 8.4 doctrine/dbal is now automatically installed with a minimal version 3 since the doctrine/migration dependency has been bumped.
+The previously used code in the import resources command didn't work anymore with dbal v3 and therefore needed to be adjusted.
+
+This resolves the following error:
+
+```
+Call to undefined method Doctrine\\DBAL\\Statement::fetchAll()
+
+  Type: Error
+  File: Data/Temporary/Development/SubContextLocal/Cache/Code/Flow_Object_Classes/N
+        eos_Media_Command_MediaCommandController.php
+  Line: 151
+```
+
+* Packages: ``Media``
+
+`BUGFIX: Keep cache segment markers after resolving dynamic segments in cached segments <https://github.com/neos/neos-development-collection/pull/5998>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+> [!NOTE]
+> This bug was found with AI assistance while analyzing a Redis dump of the content cache from a production site. The tests and this description were generated by AI as well. The fix itself is a two-line change that restores one state flag. It was verified against a real Neos 8.4 project and the Neos.Fusion test suite, and is already being trialed on our customers' sites. I will post an update with the results in the next few days.
+
+
+This fixes a case where the content cache stores nested cached segments **inline as plain HTML** in the entry of their outer segment instead of as placeholders. Afterwards, those nested segments and the dynamic segments inside them can no longer be flushed by their own tags. The outdated content stays visible until the outer segment is flushed.
+
+It happens when an outer ``cached`` or ``dynamic`` segment is rendered again while its nested segments are still in the cache, and one of those nested cache hits contains a ``dynamic`` segment:
+
+```
+outer (cached)              <- re-rendered (e.g. after editing a content element)
+├── first  (cached, hit)
+│   └── dynamic segment     <- resolved as its own entry point, which resets the flag
+└── second (cached, hit)    <- now embedded WITHOUT markers -> frozen in "outer"
+```
+
+A typical real-world occurrence: a page's main ``ContentCollection`` contains sections (cached), and each section contains a dynamic listing. After an editor changes any element on that page, the listings of all following sections are frozen in the collection's cache entry. Newly published items never show up there, even though the listing tags are flushed correctly.
+
+**Cause:** In ``RuntimeContentCache::preEvaluate()``, the callback for ``evalCached=`` makes the dynamic segment its own cache entry point by setting ``inCacheEntryPoint = null``, and restores that state afterwards. When the nested entry point finishes, ``postProcess()`` also resets ``addCacheSegmentMarkersToPlaceholders`` to ``false``, but this flag was not restored. The rest of the outer cache miss was then rendered as if it were no cache miss: following cache hits were returned without segment markers and ended up inline in the outer cache entry.
+
+**Fix:** Save ``addCacheSegmentMarkersToPlaceholders`` before resolving the dynamic segment and restore it afterwards, just like ``inCacheEntryPoint``:
+
+```php
+$previouslyInCacheEntryPoint = $self->inCacheEntryPoint;
+$previouslyAddCacheSegmentMarkersToPlaceholders = $self->addCacheSegmentMarkersToPlaceholders;
+$self->inCacheEntryPoint = null;
+// ... evaluate the dynamic segment ...
+$self->inCacheEntryPoint = $previouslyInCacheEntryPoint;
+$self->addCacheSegmentMarkersToPlaceholders = $previouslyAddCacheSegmentMarkersToPlaceholders;
+```
+
+related: #1958, `#1960 <https://github.com/neos/neos-development-collection/issues/1960>`_
+
+**Upgrade instructions**
+
+None. Cache entries that were already stored with inline content are only corrected after they are flushed. Flushing the ``Neos_Fusion_Content`` cache once after the update fixes all of them.
+
+**Review instructions**
+
+The new data-provider test ``ContentCacheTest::nestedSegmentsAreStillFlushableAfterOuterSegmentWasRerendered`` covers the affected nesting variants plus one control case. Each case does the following:
+
+1. Render with ``testArgument = 1``, so everything is cached.
+2. Flush ``outer`` and render again. The nested segments are cache hits, so this is where the bug kicks in.
+3. Set ``testArgument = 2``, flush ``leaf`` (the tag of the dynamic segments) and render twice.
+
+| Data set | Before (without fix) | After (with fix) |
+|---|---|---|
+| cached outer, cached segments containing dynamic segments | ❌ ``First\\|2\\|Second\\|1`` | ✅ ``First\\|2\\|Second\\|2`` |
+| dynamic outer, cached segments containing dynamic segments | ❌ ``First\\|2\\|Second\\|1`` | ✅ ``First\\|2\\|Second\\|2`` |
+| cached outer, cached segment containing dynamic segment followed by dynamic segment | ❌ ``First\\|2\\|Second\\|1`` | ✅ ``First\\|2\\|Second\\|2`` |
+| cached outer, cached segment containing dynamic segment with disabled discriminator | ❌ ``First\\|2\\|Second\\|1`` | ✅ ``First\\|2\\|Second\\|2`` |
+| cached outer, cached segment containing **uncached** segment (control) | ✅ ``First\\|2\\|Second\\|2`` | ✅ ``First\\|2\\|Second\\|2`` |
+
+**All nesting combinations**
+
+To make sure the fix does no harm elsewhere, I ran an additional matrix test, which is not part of this PR because of its runtime of ~5 minutes. It covers every combination of the modes ``none``, ``cached``, ``uncached``, ``dynamic`` and ``dynamic`` with ``entryDiscriminator = false`` for this structure:
+
+```
+outer > child A > grandchild a > value
+      > child B > grandchild b > value
+```
+
+That is 5⁵ = 3125 combinations, each in 4 flush scenarios (baseline, flush outer, flush child A, flush child B), so 12,500 cases. Each case checks the output after every step against the expected fresh rendering.
+
+| | Failing cases |
+|---|---|
+| Without fix | **48** of 12,500, all ``flush outer`` → upper described test-behavior  |
+| With fix | **0** of 12,500 |
+
+The 48 failing combinations are exactly those where:
+- the outer segment is ``cached`` or ``dynamic``,
+- child A is a ``cached`` hit containing a ``dynamic`` segment (with ``'static'`` or ``false`` discriminator), and
+- child B depends on its own cache entry (``cached`` or ``dynamic`` child, or a ``cached`` / ``dynamic`` grandchild).
+
+No other combination changes its behavior. I can share the generator script and the matrix test if you want to run them yourself.
+
+**Further checks:**
+- All ``Neos.Fusion`` functional tests (288) and unit tests (476) pass (run locally against Neos 8.4.7).
+- On a real Neos 8.4 project I reproduced the original problem: page warm, only the main ``ContentCollection`` entry removed, then rendered again.
+  - Without the fix, that entry contained 7 listings as inline HTML and only 1 placeholder.
+  - With the fix, it contains one placeholder per section, the same as after a cold rendering.
+
+  - If it's a bugfix, use the `lowest maintained branch which has the bug <https://www.neos.io/features/release-roadmap.html>`_
+  - If it's a non-breaking feature, use the branch of the next version (might be either minor or major)
+  - If it's a breaking feature it should typically go into the next major version
+- [ ] Reviewer - PR Title is brief but complete and starts with ``FEATURE|TASK|BUGFIX``
+- [ ] Reviewer - The first section explains the change briefly for change-logs
+- [ ] Reviewer - Breaking Changes are marked with ``!!!`` and have upgrade-instructions
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Check if target node has parent to resolve shortcut <https://github.com/neos/neos-development-collection/pull/6000>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+This checks if the node has a parent node in case the parentNode shall be the target. If no parent node was found the target is ``null``.
+
+This can rarely happen, but if you f.e. create a node and add a shortcut as childnode (with target parentNode) and discard the creation of the parent node, this will end in a fatal error (e.g in workspace review, where the childnode is still rendered).
+
+* Packages: ``Neos``
+
+`BUGFIX: Render message with arguments <https://github.com/neos/neos-development-collection/pull/6016>`_
+--------------------------------------------------------------------------------------------------------
+
+``getMessage()`` only returns the message with placeholders. While ``render()`` replaces the placeholder with given arguments.
+
+* Packages: ``ContentRepositoryRegistry``
+
+`TASK: Add PHP 8.6 to CI pipeline <https://github.com/neos/neos-development-collection/pull/6060>`_
+---------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Add graph state tests for node removal <https://github.com/neos/neos-development-collection/pull/6055>`_
+---------------------------------------------------------------------------------------------------------------
+
+This adds graph state tests for node removal, potentially helpful for `#6028 <https://github.com/neos/neos-development-collection/issues/6028>`_
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+Snapshot generation is adjusted to declare removed nodes explicitly to save space and make them distinguishable from created nodes
+
+
+* Packages: ``ContentRepository.TestSuite``
+
+`TASK: Declare symfony/serializer requirement <https://github.com/neos/neos-development-collection/pull/6040>`_
+---------------------------------------------------------------------------------------------------------------
+
+Fusion requires symfony/serializer package, but the declaration is missing
+
+* Resolves: `#5714 <https://github.com/neos/neos-development-collection/issues/5714>`_
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Rewrite node comparison in fusion <https://github.com/neos/neos-development-collection/pull/6011>`_
+----------------------------------------------------------------------------------------------------------
+
+This adds a migration for fusion to replace node comparison which is commonly used to determine if a node is the site node or documentNode.
+
+As the comparison in EEL is strict (``===``), it will now return ``false`` if you compare the nodes. So we need to use the aggregateId instead.
+
+```diff
+-    @if.onHomepage = ${documentNode == site}
++    @if.onHomepage = ${Neos.Node.equals(documentNode, site)}
+```
+
+
+see https://github.com/neos/neos-seo/issues/203
+
+* Packages: ``Neos``
+
+`TASK: Remove orphaned translation files <https://github.com/neos/neos-development-collection/pull/6027>`_
+----------------------------------------------------------------------------------------------------------
+
+Removes orphaned translation files. They are leftovers or upmerge failures, as the component have have moved into other packages.
+
+* Packages: ``Neos`` ``NodeTypes``
+
+`TASK: Graph State Tests <https://github.com/neos/neos-development-collection/pull/5823>`_
+------------------------------------------------------------------------------------------
+
+This adds a new test suite, mainly to cover publishing.
+
+The general idea is to make postcondition checks purely based on state, not identity. Since we have no clear concept of identity for nodes and edges, we can't know whether we got the right version of a node or its relatives. What we can assert, though, is whatever we fetched matches the users' expectations - by having a certain state (which includes identity properties like workspace name, node aggregate id and origin dimension space point, but also properties, subtree tags, timestamps and so on).
+This makes comparing workspace states rather easy, especially in regard to the planned changes in https://github.com/neos/neos-development-collection/pull/5776 and the concept of state-based publishing. It also does not violate the idea of behavioral tests as it still describes the system's behavior.
+
+**Upgrade instructions**
+
+none
+
+**Review instructions**
+
+Read the tests :)
+
+
+* Packages: ``Neos`` ``ContentRepository.BehavioralTests``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/9.2.0...9.2.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
