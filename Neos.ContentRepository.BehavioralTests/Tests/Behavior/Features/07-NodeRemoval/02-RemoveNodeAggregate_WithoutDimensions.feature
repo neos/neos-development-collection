@@ -9,6 +9,8 @@ Feature: Remove NodeAggregate
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Document':
+      properties:
+        text: string
       references:
         references: {}
     """
@@ -16,24 +18,24 @@ Feature: Remove NodeAggregate
     And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                |
-      | workspaceName        | "live"               |
-      | newContentStreamId   | "cs-identifier"      |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And I am in workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName      |
       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document      |
       | nody-mc-nodeface       | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child         |
       | younger-mc-nodeface    | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | younger-child |
       | nodingers-cat          | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet           |
       | nodingers-kitten       | Neos.ContentRepository.Testing:Document | nodingers-cat          | kitten        |
     And the command SetNodeReferences is executed with payload:
-      | Key                   | Value                                  |
-      | sourceNodeAggregateId | "nodingers-cat"                        |
+      | Key                   | Value                                                                                   |
+      | sourceNodeAggregateId | "nodingers-cat"                                                                         |
       | references            | [{"referenceName": "references", "references": [{"target": "sir-david-nodenborough"}]}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                                                          |
@@ -47,10 +49,10 @@ Feature: Remove NodeAggregate
       | nodeVariantSelectionStrategy | "allVariants"   |
     Then I expect exactly 10 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 9 is of type "NodeAggregateWasRemoved" with payload:
-      | Key                                  | Expected        |
-      | contentStreamId                      | "cs-identifier" |
-      | nodeAggregateId                      | "nodingers-cat" |
-      | affectedCoveredDimensionSpacePoints  | [[]]            |
+      | Key                                 | Expected        |
+      | contentStreamId                     | "cs-identifier" |
+      | nodeAggregateId                     | "nodingers-cat" |
+      | affectedCoveredDimensionSpacePoints | [[]]            |
     Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
@@ -133,38 +135,45 @@ Feature: Remove NodeAggregate
     # And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     # And I expect this node to have no references
 
-  Scenario: Remove a node aggregate in root workspace and expect to be still existing with references and backreferences in another workspace
-    When the command CreateWorkspace is executed with payload:
-      | Key                | Value                |
-      | workspaceName      | "user"               |
-      | baseWorkspaceName  | "live"               |
-      | newContentStreamId | "user-cs-identifier" |
-
-    When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value           |
-      | workspaceName                | "live"          |
-      | nodeAggregateId              | "nodingers-cat" |
-      | nodeVariantSelectionStrategy | "allVariants"   |
-
-    When I am in workspace "live"
-    And I expect node aggregate identifier "nodingers-cat" to lead to no node
-
-    When I am in workspace "user"
-    And I expect node aggregate identifier "nodingers-cat" to lead to node user-cs-identifier;nodingers-cat;{}
-    And I expect this node to have the following references:
-      | Name       | Node                                         | Properties |
-      | references | user-cs-identifier;sir-david-nodenborough;{} | null       |
-
-    And I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
-    And I expect this node to have the following references:
-      | Name       | Node                                | Properties |
-      | references | user-cs-identifier;nodingers-cat;{} | null       |
-
   Scenario: Remove a node aggregate with descendants and expect all of them to be gone
     When the command RemoveNodeAggregate is executed with payload:
-      | Key                          | Value           |
+      | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
-      | nodeVariantSelectionStrategy | "allVariants"   |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+  Scenario: Remove node aggregate which was already modified
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                    |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"text": "Other text"}   |
+
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
+
+    And I expect the node aggregate "sir-david-nodenborough" to not exist
+    And I expect the node aggregate "nody-mc-nodeface" to not exist
+    And I expect the node aggregate "younger-mc-nodeface" to not exist
+
+  Scenario: Remove node aggregate with child node which was already modified
+    Given the command SetNodeProperties is executed with payload:
+      | Key                       | Value                  |
+      | nodeAggregateId           | "nody-mc-nodeface"     |
+      | originDimensionSpacePoint | {}                     |
+      | propertyValues            | {"text": "Other text"} |
+
+    And the command RemoveNodeAggregate is executed with payload:
+      | Key                          | Value                    |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {}                       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
 
     And I expect the node aggregate "sir-david-nodenborough" to not exist
     And I expect the node aggregate "nody-mc-nodeface" to not exist

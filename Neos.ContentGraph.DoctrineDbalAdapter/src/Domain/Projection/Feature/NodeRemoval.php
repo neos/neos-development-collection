@@ -46,30 +46,12 @@ trait NodeRemoval
             $this->removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes($outgoingRelation, $contentStreamLayers);
         }
 
-        if ($contentStreamLayers->getWriteLayer()->equals($ingoingRelation->contentStreamLayer)) {
+        if (
+            $contentStreamLayers->getWriteLayer()->equals($ingoingRelation->contentStreamLayer)
+            && $this->projectionContentGraph->getContentStreamLayersHierarchyIdIsContainedIn($ingoingRelation->hierarchyRelationId, $contentStreamLayers)
+                ->equalsSingle($ingoingRelation->contentStreamLayer)
+        ) {
             $ingoingRelation->removeFromDatabase($this->dbal, $this->tableNames);
-            // remove node itself if it does not have any incoming hierarchy relations anymore
-            // also remove outbound reference relations
-            $deleteRelationsStatement = <<<SQL
-                DELETE
-                    n, r
-                FROM
-                    {$this->tableNames->node()} n
-                    LEFT JOIN {$this->tableNames->referenceRelation()} r ON r.nodeanchorpoint = n.relationanchorpoint
-                    -- using table instead of HierarchyRelationStatement because if any layer still uses this node we cannot remove it
-                    LEFT JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
-                WHERE
-                    n.relationanchorpoint = :anchorPointForNode
-                    -- the following line means "left join leads to NO MATCHING hierarchyrelation"
-                    AND h.contentstreamlayer IS NULL
-            SQL;
-            try {
-                $this->dbal->executeStatement($deleteRelationsStatement, [
-                    'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
-                ]);
-            } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to remove relations from database: %s', $e->getMessage()), 1716473385, $e);
-            }
         } else {
             $copyRemovedHierarchyRelationStatement = <<<SQL
                 INSERT INTO {$this->tableNames->hierarchyRelation()} (
@@ -95,6 +77,7 @@ trait NodeRemoval
                 WHERE 
                     id = :id
                     AND contentstreamlayer = :contentStreamLayer
+                ON DUPLICATE KEY UPDATE parentnodeanchor = NULL, childnodeanchor = NULL, position = NULL, subtreetags = NULL, dimensionspacepointhash = NULL
             SQL;
 
             try {
@@ -104,8 +87,30 @@ trait NodeRemoval
                     'targetContentStreamLayer' => $contentStreamLayers->getWriteLayer()->value,
                 ]);
             } catch (DBALException $e) {
-                throw new \RuntimeException(sprintf('Failed to copy hierarchy relation: %s', $e->getMessage()), 1775978611, $e);
+                throw new \RuntimeException(sprintf('Failed to mark hierarchy relation as removed: %s', $e->getMessage()), 1775978611, $e);
             }
+        }
+        // remove node itself if it does not have any incoming hierarchy relations anymore
+        // also remove outbound reference relations
+        $deleteRelationsStatement = <<<SQL
+                DELETE
+                    n, r
+                FROM
+                    {$this->tableNames->node()} n
+                    LEFT JOIN {$this->tableNames->referenceRelation()} r ON r.nodeanchorpoint = n.relationanchorpoint
+                    -- using table instead of HierarchyRelationStatement because if any layer still uses this node we cannot remove it
+                    LEFT JOIN {$this->tableNames->hierarchyRelation()} h ON h.childnodeanchor = n.relationanchorpoint
+                WHERE
+                    n.relationanchorpoint = :anchorPointForNode
+                    -- the following line means "left join leads to NO MATCHING hierarchyrelation"
+                    AND h.contentstreamlayer IS NULL
+            SQL;
+        try {
+            $this->dbal->executeStatement($deleteRelationsStatement, [
+                'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
+            ]);
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to remove relations from database: %s', $e->getMessage()), 1716473385, $e);
         }
     }
 }
