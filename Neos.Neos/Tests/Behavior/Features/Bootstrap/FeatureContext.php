@@ -23,6 +23,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrai
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Utility\Environment;
@@ -82,6 +83,7 @@ class FeatureContext implements BehatContext
     {
         FakeContentDimensionSourceFactory::reset();
         FakeNodeTypeManagerFactory::reset();
+        FakeReferenceTypeGraphFactory::reset();
     }
 
     /**
@@ -115,6 +117,7 @@ class FeatureContext implements BehatContext
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         FakeContentDimensionSourceFactory::reset();
         FakeNodeTypeManagerFactory::reset();
+        FakeReferenceTypeGraphFactory::reset();
 
         return $contentRepository;
     }

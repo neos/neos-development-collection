@@ -37,6 +37,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 use Neos\ContentRepository\Core\Feature\RebaseableCommand;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
 /**
@@ -51,6 +52,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         private CommandHandlingDependencies $commandHandlingDependencies,
         private InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private NodeTypeManager $nodeTypeManager,
+        private ReferenceTypeGraph $referenceTypeGraph,
     ) {
     }
 
@@ -176,6 +178,11 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
     protected function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
+    }
+
+    protected function getReferenceTypeGraph(): ReferenceTypeGraph
+    {
+        return $this->referenceTypeGraph;
     }
 
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet

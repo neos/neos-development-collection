@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyNames;
 use Psr\Clock\ClockInterface;
@@ -103,6 +104,24 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
                 $deserializedDefaultValue
             );
             $values[$propertyName] = $properlySerializedDefaultValue;
+        }
+
+        return new self($values);
+    }
+
+    /** @internal */
+    public static function defaultFromReferenceType(ReferenceType $referenceType, PropertyConverter $propertyConverter): self
+    {
+        $values = [];
+        foreach ($referenceType->properties as $property) {
+            if ($property->defaultValue === null) {
+                continue;
+            }
+            $properlySerializedDefaultValue = $propertyConverter->serializePropertyValue(
+                $property->type,
+                $property->defaultValue,
+            );
+            $values[$property->name->value] = $properlySerializedDefaultValue;
         }
 
         return new self($values);

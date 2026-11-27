@@ -22,6 +22,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStream;
@@ -42,6 +43,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         private NodeFactory $nodeFactory,
         private ContentRepositoryId $contentRepositoryId,
         private NodeTypeManager $nodeTypeManager,
+        private ReferenceTypeGraph $referenceTypeGraph,
         private ContentGraphTableNames $tableNames
     ) {
     }
@@ -71,7 +73,7 @@ final readonly class ContentGraphReadModelAdapter implements ContentGraphReadMod
         $firstRow = reset($rows);
         $currentContentStreamId = ContentStreamId::fromString($firstRow['currentContentStreamId']);
         $contentStreamLayers = ContentStreamLayers::fromArray(array_column($rows, 'contentStreamLayer'));
-        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamLayers);
+        return new ContentGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->referenceTypeGraph, $this->tableNames, $workspaceName, $currentContentStreamId, $contentStreamLayers);
     }
 
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace

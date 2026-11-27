@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependenc
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\CatchUpHook\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -30,6 +31,7 @@ use Neos\ContentRepository\TestSuite\Fakes\FakeCatchUpHookFactory2;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeProjectionFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event;
@@ -38,6 +40,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Flow\Core\Bootstrap;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @internal, only for tests of the Neos.* namespace
@@ -118,6 +121,7 @@ abstract class AbstractSubscriptionEngineTestCase extends TestCase // we don't u
         );
 
         FakeNodeTypeManagerFactory::setConfiguration([]);
+        FakeReferenceTypeGraphFactory::setConfiguration([], new PropertyConverter(new Serializer()));
         FakeContentDimensionSourceFactory::setWithoutDimensions();
 
         $this->getObject(ContentRepositoryRegistry::class)->resetFactoryInstance(self::$contentRepositoryId);

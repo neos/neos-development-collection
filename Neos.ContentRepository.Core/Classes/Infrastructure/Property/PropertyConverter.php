@@ -18,6 +18,8 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceType;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -94,13 +96,16 @@ final class PropertyConverter
 
     public function serializeReferencePropertyValues(
         PropertyValuesToWrite $propertyValuesToWrite,
+        ReferenceType $referenceType,
         NodeType $nodeType,
         ReferenceName $referenceName
     ): SerializedPropertyValues {
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            $declaredType = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]['type'] ?? 'string';
+            $declaredType = $referenceType->name->value === ReferenceTypeName::FEATURELESS_REFERENCE_TYPE_NAME
+                ? $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]['type'] ?? 'string'
+                : ($referenceType->getPropertyType(PropertyName::fromString($propertyName))?->value ?: 'string');
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 PropertyType::fromNodeTypeDeclaration(

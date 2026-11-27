@@ -375,7 +375,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced nodes (which will not have a hierarchy relation anymore)
         $deleteNodesStatement = <<<SQL
             DELETE n FROM {$this->tableNames->node()} n
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
             LEFT JOIN {$this->tableNames->hierarchyRelation()} h
               ON h.childnodeanchor = n.relationanchorpoint
                 AND h.contentstreamlayer != :targetContentStreamLayer
@@ -392,7 +392,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced reference relations (i.e. because the referenced nodes will be gone)
         $deleteReferencesStatement = <<<SQL
             DELETE r FROM {$this->tableNames->referenceRelation()} r
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers
               LEFT JOIN {$this->tableNames->hierarchyRelation()} h
                 ON h.childnodeanchor = r.nodeanchorpoint
                 AND h.contentstreamlayer != :targetContentStreamLayer
@@ -729,6 +729,7 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
                 try {
                     $this->dbal->insert($this->tableNames->referenceRelation(), [
                         'name' => $referencesByProperty->referenceName->value,
+                        'referencetypename' => $reference->referenceTypeName->value,
                         'position' => $position,
                         'nodeanchorpoint' => $nodeAnchorPoint->value,
                         'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
@@ -984,12 +985,14 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
             INSERT INTO {$this->tableNames->referenceRelation()} (
               nodeanchorpoint,
               name,
+              referencetypename,
               position,
               destinationnodeaggregateid
             )
             SELECT
               :destinationRelationAnchorPoint AS nodeanchorpoint,
               ref.name,
+              ref.referencetypename,
               ref.position,
               ref.destinationnodeaggregateid
             FROM

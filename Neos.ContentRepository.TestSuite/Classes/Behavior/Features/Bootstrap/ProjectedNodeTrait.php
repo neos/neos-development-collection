@@ -516,6 +516,10 @@ trait ProjectedNodeTrait
                     . ', given was ' . json_encode($actualReferenceDiscriminator)
             );
 
+            if (isset($row['Type'])) {
+                Assert::assertSame($row['Type'], $actualReferences[$index]->referenceTypeName->value);
+            }
+
             if (isset($row['Properties'])) {
                 $actualProperties = $actualReferences[$index]->properties;
                 $rawExpectedProperties = \json_decode($row['Properties'], true, 512, JSON_THROW_ON_ERROR);

@@ -100,6 +100,7 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $table = self::createTable($this->tableNames->referenceRelation(), [
             (new Column('name', self::type(Types::STRING)))->setLength(255)->setNotnull(true),
+            DbalSchemaFactory::columnForReferenceTypeName('referencetypename', $platform),
             (new Column('position', self::type(Types::INTEGER)))->setNotnull(true),
             DbalSchemaFactory::columnForNodeAnchorPoint('nodeanchorpoint', $platform),
             DbalSchemaFactory::columnForProperties('properties', $platform)->setNotnull(false),

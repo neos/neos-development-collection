@@ -14,9 +14,13 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Infrastructure\Declaration\ReferenceTypeFiltersDeclaration;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeFilters;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocessorException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\PositionalArraySorter;
@@ -515,6 +519,36 @@ final class NodeType
     {
         $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
         return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
+    }
+
+    public function getReferenceTypeConstraints(ReferenceName $referenceName): ReferenceTypeFilters
+    {
+        $declarationArray = $this->getConfiguration(
+            'references.' . $referenceName->value . '.constraints.referenceTypes'
+        );
+
+        return is_array($declarationArray)
+            ? ReferenceTypeFiltersDeclaration::fromArray($declarationArray)->toReferenceTypeFilters()
+            : ReferenceTypeFilters::create(
+                includeWildcard: true,
+                includeAbstract: true,
+                explicitlyIncludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+                explicitlyExcludedReferenceTypeNames: ReferenceTypeNameSet::create(),
+            );
+    }
+
+    public function matchesConstraints(NodeTypeFilters $constraints): bool
+    {
+        $constraintValues = [
+            '*' => $constraints->isWildcardAllowed,
+        ];
+        foreach ($constraints->explicitlyIncludedNodeTypeNames as $explicitlyIncludedNodeTypeName) {
+            $constraintValues[$explicitlyIncludedNodeTypeName->value] = true;
+        }
+        foreach ($constraints->explicitlyExcludedNodeTypeNames as $explicitlyExcludedNodeTypeName) {
+            $constraintValues[$explicitlyExcludedNodeTypeName->value] = true;
+        }
+        return ConstraintCheck::create($constraintValues)->isNodeTypeAllowed($this);
     }
 
     /**

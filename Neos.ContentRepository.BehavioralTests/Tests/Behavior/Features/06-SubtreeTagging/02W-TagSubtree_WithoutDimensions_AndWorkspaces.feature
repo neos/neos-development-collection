@@ -14,6 +14,10 @@ Feature: Disable a node aggregate
         references:
           type: references
     """
+    And using the following reference types:
+    """yaml
+    'Neos.ContentRepository:Featureless': []
+    """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
     Given the current date and time is "2026-02-07T06:00:00+00:00"

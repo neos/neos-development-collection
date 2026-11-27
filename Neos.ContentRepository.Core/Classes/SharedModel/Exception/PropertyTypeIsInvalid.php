@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Exception;
  */
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
 /**
@@ -33,6 +34,18 @@ final class PropertyTypeIsInvalid extends \DomainException
             'Given property "' . $propertyName->value . '" is declared as undefined type "' . $declaredType
                 . '" in node type "' . $nodeTypeName->value . '"',
             1630063406
+        );
+    }
+
+    public static function becauseItIsUndefinedInReferenceType(
+        PropertyName $propertyName,
+        string $declaredType,
+        ReferenceTypeName $referenceTypeName,
+    ): self {
+        return new self(
+            'Given property "' . $propertyName->value . '" is declared as undefined type "' . $declaredType
+            . '" in reference type "' . $referenceTypeName->value . '"',
+            1792415975
         );
     }
 }

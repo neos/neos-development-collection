@@ -8,5 +8,7 @@ Neos:
           factoryObjectName: 'Neos\ContentRepository\TestSuite\Fakes\FakeClockFactory'
         nodeTypeManager:
           factoryObjectName: 'Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory'
+        referenceTypeGraph:
+          factoryObjectName: 'Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory'
         contentDimensionSource:
           factoryObjectName: 'Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory'

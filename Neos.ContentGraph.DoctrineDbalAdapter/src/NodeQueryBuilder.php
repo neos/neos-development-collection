@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueStartsWith;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\SearchTerm\SearchTerm;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeNameSet;
 use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -152,6 +153,14 @@ final readonly class NodeQueryBuilder
         } elseif ($denyQueryPart) {
             $queryBuilder->andWhere($denyQueryPart);
         }
+    }
+
+    public function addReferenceTypeCriteria(QueryBuilder $queryBuilder, ReferenceTypeNameSet $allowedReferenceTypeNames, string $referenceTableAlias = 'r'): void
+    {
+        $referenceTablePrefix = $referenceTableAlias === '' ? '' : $referenceTableAlias . '.';
+        $allowanceQueryPart = $queryBuilder->expr()->in($referenceTablePrefix . 'referencetypename', ':allowedReferenceTypeNames');
+        $queryBuilder->setParameter('allowedReferenceTypeNames', $allowedReferenceTypeNames->toStringArray(), ArrayParameterType::STRING);
+        $queryBuilder->andWhere($allowanceQueryPart);
     }
 
     public function addSearchTermConstraints(QueryBuilder $queryBuilder, SearchTerm $searchTerm, string $nodeTableAlias = 'n'): void

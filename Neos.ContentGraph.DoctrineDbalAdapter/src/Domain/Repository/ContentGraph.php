@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggre
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -81,6 +82,7 @@ final class ContentGraph implements ContentGraphInterface
         private readonly NodeFactory $nodeFactory,
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ReferenceTypeGraph $referenceTypeGraph,
         private readonly ContentGraphTableNames $tableNames,
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $contentStreamId,
@@ -114,6 +116,7 @@ final class ContentGraph implements ContentGraphInterface
             $this->dbal,
             $this->nodeFactory,
             $this->nodeTypeManager,
+            $this->referenceTypeGraph,
             $this->tableNames
         );
     }

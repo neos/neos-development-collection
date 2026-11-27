@@ -14,6 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
@@ -63,6 +69,38 @@ final readonly class SerializedNodeReferences implements \JsonSerializable, \Ite
     public static function fromJsonString(string $jsonString): self
     {
         return self::fromArray(\json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR));
+    }
+
+    public function mergeTighterScopedCurrentReferenceValues(
+        NodeAggregateId $nodeAggregateId,
+        PropertyScope $appliedScope,
+        OriginDimensionSpacePoint $affectedOrigin,
+        ReferenceTypeGraph $referenceTypeGraph,
+        ContentGraphInterface $contentGraph,
+    ): self {
+        return new self(...array_map(
+            fn (SerializedNodeReferencesForName $references): SerializedNodeReferencesForName
+                => $references->mergeTighterScopedCurrentReferenceValues(
+                    nodeAggregateId: $nodeAggregateId,
+                    appliedScope: $appliedScope,
+                    affectedOrigin: $affectedOrigin,
+                    referenceTypeGraph: $referenceTypeGraph,
+                    contentGraph: $contentGraph,
+                ),
+            $this->references,
+        ));
+    }
+
+    public function mergeDefaultReferencePropertyValues(ReferenceTypeGraph $referenceTypeGraph, PropertyConverter $propertyConverter): self
+    {
+        return new self(...array_map(
+            fn (SerializedNodeReferencesForName $references): SerializedNodeReferencesForName
+                => $references->mergeDefaultReferencePropertyValues(
+                    $referenceTypeGraph,
+                    $propertyConverter,
+                ),
+            $this->references,
+        ));
     }
 
     public function getIterator(): \Traversable

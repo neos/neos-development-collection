@@ -18,14 +18,28 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\UriNormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Service\ContentRepositoryMaintainer;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\Subscription\Engine\SubscriptionEngine;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
 use Neos\ContentRepository\TestSuite\Fakes\FakeContentDimensionSourceFactory;
 use Neos\ContentRepository\TestSuite\Fakes\FakeNodeTypeManagerFactory;
+use Neos\ContentRepository\TestSuite\Fakes\FakeReferenceTypeGraphFactory;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
+use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -97,6 +111,17 @@ trait CRBehavioralTestsSubjectProvider
     }
 
     /**
+     * @Given /^using the following reference types:$/
+     */
+    public function usingTheFollowingReferenceTypes(PyStringNode $serializedReferenceTypesDeclarationDictionary): void
+    {
+        FakeReferenceTypeGraphFactory::setConfiguration(
+            referenceTypesToUse: Yaml::parse($serializedReferenceTypesDeclarationDictionary->getRaw()) ?? [],
+            propertyConverter: self::getPropertyConverter(),
+        );
+    }
+
+    /**
      * @Given /^using identifier "([^"]*)", I define a content repository$/
      */
     public function usingIdentifierIDefineAContentRepository(string $contentRepositoryId): void
@@ -117,8 +142,9 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            // ensure that the current node types of exactly THE content repository are preserved
+            // ensure that the current node and reference types of exactly THE content repository are preserved
             FakeNodeTypeManagerFactory::setNodeTypeManager($contentRepository->getNodeTypeManager());
+            FakeReferenceTypeGraphFactory::setReferenceTypeGraph($contentRepository->getReferenceTypeGraph());
             FakeContentDimensionSourceFactory::setContentDimensionSource(
                 GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensions)
             );
@@ -140,9 +166,32 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            // ensure that the current node types of exactly THE content repository are preserved
+            // ensure that the current content dimensions and reference types of exactly THE content repository are preserved
             FakeContentDimensionSourceFactory::setContentDimensionSource($contentRepository->getContentDimensionSource());
+            FakeReferenceTypeGraphFactory::setReferenceTypeGraph($contentRepository->getReferenceTypeGraph());
             FakeNodeTypeManagerFactory::setConfiguration(Yaml::parse($serializedNodeTypesConfiguration->getRaw()) ?? []);
+            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
+            if ($this->currentContentRepository->id->value === $contentRepositoryId) {
+                $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
+            }
+        }
+    }
+
+    /**
+     * @Given /^I change the reference types in content repository "([^"]*)" to:$/
+     */
+    public function iChangeTheReferenceTypesInContentRepositoryTo(
+        string $contentRepositoryId,
+        PyStringNode $serializedReferenceTypesConfiguration
+    ): void {
+        if (!array_key_exists($contentRepositoryId, $this->contentRepositories)) {
+            throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
+        } else {
+            $contentRepository = $this->contentRepositories[$contentRepositoryId];
+            // ensure that the current content dimensions and node types of exactly THE content repository are preserved
+            FakeContentDimensionSourceFactory::setContentDimensionSource($contentRepository->getContentDimensionSource());
+            FakeNodeTypeManagerFactory::setNodeTypeManager($contentRepository->getNodeTypeManager());
+            FakeReferenceTypeGraphFactory::setConfiguration(Yaml::parse($serializedReferenceTypesConfiguration->getRaw()) ?? [], self::getPropertyConverter());
             $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
@@ -216,6 +265,25 @@ trait CRBehavioralTestsSubjectProvider
         Assert::assertNull($result);
 
         return $contentRepository;
+    }
+
+    private static function getPropertyConverter(): PropertyConverter
+    {
+        return new PropertyConverter(
+            new Serializer([
+                new DateTimeNormalizer(),
+                new ScalarNormalizer(),
+                new BackedEnumNormalizer(),
+                new ArrayNormalizer(),
+                new UriNormalizer(),
+                new ValueObjectArrayDenormalizer(),
+                new ValueObjectBoolDenormalizer(),
+                new ValueObjectFloatDenormalizer(),
+                new ValueObjectIntDenormalizer(),
+                new ValueObjectStringDenormalizer(),
+                new CollectionTypeDenormalizer()
+            ])
+        );
     }
 
     abstract protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository;

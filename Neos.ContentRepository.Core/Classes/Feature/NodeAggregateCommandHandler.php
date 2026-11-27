@@ -51,6 +51,7 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtree;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\ReferenceType\ReferenceTypeGraph;
 use Psr\Clock\ClockInterface;
 
 /**
@@ -80,6 +81,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     public function __construct(
         private readonly CommandHandlingDependencies $commandHandlingDependencies,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ReferenceTypeGraph $referenceTypeGraph,
         private readonly DimensionSpace\ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly DimensionSpace\InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly PropertyConverter $propertyConverter,
@@ -123,6 +125,11 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected function getNodeTypeManager(): NodeTypeManager
     {
         return $this->nodeTypeManager;
+    }
+
+    protected function getReferenceTypeGraph(): ReferenceTypeGraph
+    {
+        return $this->referenceTypeGraph;
     }
 
     protected function getAllowedDimensionSubspace(): DimensionSpacePointSet
