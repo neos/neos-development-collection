@@ -2167,9 +2167,9 @@ Examples
 	Header
 	<f:renderChildren arguments="{foo: 'bar'}" />
 	Footer
-
+	
 	<-- in the outer template, using the widget -->
-
+	
 	<x:widget.someWidget>
 	  Foo: {foo}
 	</x:widget.someWidget>
