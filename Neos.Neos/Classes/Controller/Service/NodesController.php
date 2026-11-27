@@ -202,21 +202,34 @@ class NodesController extends ActionController
         if ($nodes instanceof Nodes) {
             $nodes = iterator_to_array($nodes, false);
         }
-        // Each entry runs from the node up to its site node; the views reverse it into a breadcrumb.
+
         /** @var Nodes[] $breadcrumbs */
         $breadcrumbs = array_map(
             fn (Node $node) => $subgraph->findAncestorNodes(
                 $node->aggregateId,
                 FindAncestorNodesFilter::create(
-                    NodeTypeCriteria::createWithDisallowedNodeTypeNames(
-                        NodeTypeNames::with(NodeTypeNameFactory::forSites())
+                    NodeTypeCriteria::create(
+                        NodeTypeNames::with(NodeTypeNameFactory::forDocument()),
+                        NodeTypeNames::with(NodeTypeNameFactory::forSites()),
                     )
                 )
-            )->prepend($node),
+            ),
             $nodes
         );
+
+        $nodeTypeManager = $contentRepository->getNodeTypeManager();
+        $documentNodes = array_map(
+            fn (Node $node, Nodes $breadcrumb) =>
+                $nodeTypeManager->getNodeType($node->nodeTypeName)?->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)
+                    ? $node
+                    : $breadcrumb->first(),
+            $nodes,
+            $breadcrumbs,
+        );
+
         $this->view->assign('nodes', $nodes);
         $this->view->assign('breadcrumbs', $breadcrumbs);
+        $this->view->assign('documentNodes', $documentNodes);
     }
 
 
