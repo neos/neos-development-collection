@@ -420,15 +420,13 @@ final class DoctrineDbalContentGraphProjection implements ContentGraphProjection
         // Drop non-referenced nodes and reference relations (which will not have a hierarchy relation anymore)
         $deleteNodesAndReferencesStatement = <<<SQL
             DELETE n, r FROM {$this->tableNames->node()} n
+            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
+            INNER JOIN {$this->tableNames->hierarchyRelation()} AS hWrite
+              ON hWrite.childnodeanchor = n.relationanchorpoint
+              AND hWrite.contentstreamlayer = :targetContentStreamLayer
             LEFT JOIN {$this->tableNames->referenceRelation()} r
               ON r.nodeanchorpoint = n.relationanchorpoint
-            -- using table instead of HierarchyRelationStatement because node rows can be shared for all layers 
-            WHERE EXISTS(
-              SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
-                WHERE h.contentstreamlayer = :targetContentStreamLayer
-                AND h.childnodeanchor = n.relationanchorpoint
-            )
-            AND NOT EXISTS(
+            WHERE NOT EXISTS(
               SELECT 1 FROM {$this->tableNames->hierarchyRelation()} AS h
                 WHERE h.contentstreamlayer != :targetContentStreamLayer
                 AND h.childnodeanchor = n.relationanchorpoint
