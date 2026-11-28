@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Fusion\Exception as FusionException;
 
 /**
@@ -84,6 +85,10 @@ class MapImplementation extends AbstractFusionObject
         }
         $itemKey = $this->getItemKey();
         $iterationName = $this->getIterationName();
+        if ($collection instanceof FlowQuery) {
+            // Counting and iterating a FlowQuery would each evaluate its operations
+            $collection = $collection->get();
+        }
         $collectionTotalCount = is_countable($collection) ? count($collection) : null;
 
         $keyRenderPath = $this->path . '/keyRenderer';

@@ -35,3 +35,11 @@ reduce.iteration = Neos.Fusion:Reduce {
   iterationName = 'iteration'
   itemReducer = ${carry + '::' + element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
 }
+
+reduce.flowQueryItems = Neos.Fusion:Reduce {
+  items = ${q(items).filter('[counter > 0]')}
+  itemName = 'element'
+  carryName = 'carry'
+  iterationName = 'iteration'
+  itemReducer = ${carry + element.value + (iteration.isLast ? '.' : ',')}
+}
